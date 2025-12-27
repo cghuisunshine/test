@@ -268,9 +268,7 @@
             <h2>Quick takeaways</h2>
             <div class="card">
               <ul style="margin: 0; padding-left: 18px">
-                <li>
-                  <strong>Definition:</strong> <code>G = H - TS</code>.
-                </li>
+                <li><strong>Definition:</strong> <code>G = H - TS</code>.</li>
                 <li>
                   <strong>Key criterion (constant T,P):</strong>
                   <code>&Delta;G &lt; 0</code> spontaneous,
@@ -278,7 +276,7 @@
                 </li>
                 <li>
                   <strong>Second-law link (constant T,P):</strong>
-                  <code>&Delta;G = -T&Delta;S_universe</code>.
+                  <code>&Delta;G = -T&Delta;S<sub>universe</sub></code>.
                 </li>
                 <li>
                   <strong>Reactions:</strong>
@@ -287,7 +285,7 @@
                 </li>
                 <li>
                   <strong>Maximum useful work:</strong>
-                  <code>w_useful,max = -&Delta;G</code>.
+                  <code>w<sub>useful,max</sub> = -&Delta;G</code>.
                 </li>
               </ul>
             </div>
@@ -303,135 +301,93 @@
 
             <h3>State functions you already know</h3>
             <ul>
-              <li>
-                <strong>Internal energy:</strong> <code>U</code>
-              </li>
-              <li>
-                <strong>Enthalpy:</strong> <code>H = U + PV</code>
-              </li>
-              <li>
-                <strong>Entropy:</strong> <code>S</code>
-              </li>
+              <li><strong>Internal energy:</strong> <code>U</code></li>
+              <li><strong>Enthalpy:</strong> <code>H = U + PV</code></li>
+              <li><strong>Entropy:</strong> <code>S</code></li>
             </ul>
 
             <h3>Gibbs free energy</h3>
             <span class="eq">G = H - TS = U + PV - TS</span>
-            <p class="muted" style="margin: 8px 0 0">
-              Units: joules (J) or kJ per mole for reactions.
-            </p>
+            <p class="muted" style="margin: 8px 0 0">Units: joules (J) or kJ per mole for reactions.</p>
           </section>
 
           <section id="second-law">
             <h2>Connection to the Second Law</h2>
-            <p>
-              The Second Law is usually written for the “universe” (system +
-              surroundings):
-            </p>
-            <span class="eq">&Delta;S_universe = &Delta;S_system + &Delta;S_surroundings \ge 0</span>
+            <p>The Second Law is usually written for the “universe” (system + surroundings):</p>
+            <span class="eq">&Delta;S<sub>universe</sub> = &Delta;S<sub>system</sub> + &Delta;S<sub>surroundings</sub> &ge; 0</span>
 
             <p>
               Gibbs free energy becomes the “go-to” criterion because, under the
-              common constraint of <strong>constant temperature</strong>
-              (<code>T</code>) and <strong>constant pressure</strong>
-              (<code>P</code>), the Second Law can be rewritten in terms of
-              <code>&Delta;G</code>.
+              common constraint of <strong>constant temperature</strong> (<code>T</code>)
+              and <strong>constant pressure</strong> (<code>P</code>), the Second Law
+              can be rewritten in terms of <code>&Delta;G</code>.
             </p>
 
             <h3>Derivation (constant T,P; only PV work)</h3>
-            <p>
-              If the surroundings are a thermal reservoir at temperature
-              <code>T</code>, then:
-            </p>
+            <p>If the surroundings are a thermal reservoir at temperature <code>T</code>, then:</p>
             <ul>
-              <li>
-                At constant pressure, the heat exchanged by the system is
-                <code>q_p = &Delta;H</code>.
-              </li>
+              <li>At constant pressure, the heat exchanged by the system is <code>q<sub>p</sub> = &Delta;H</code>.</li>
               <li>
                 The surroundings’ entropy change is
-                <code>&Delta;S_surroundings = -q_p/T = -&Delta;H/T</code>.
+                <code>&Delta;S<sub>surroundings</sub> = -q<sub>p</sub>/T = -&Delta;H/T</code>.
               </li>
             </ul>
 
-            <p>
-              Therefore:
-            </p>
-            <span class="eq">&Delta;S_universe = &Delta;S_system - &Delta;H/T</span>
-            <p>
-              Multiply by <code>-T</code>:
-            </p>
-            <span class="eq">-T&Delta;S_universe = &Delta;H - T&Delta;S_system = &Delta;G</span>
+            <p>Therefore:</p>
+            <span class="eq">&Delta;S<sub>universe</sub> = &Delta;S<sub>system</sub> - &Delta;H/T</span>
+            <p>Multiply by <code>-T</code>:</p>
+            <span class="eq">-T&Delta;S<sub>universe</sub> = &Delta;H - T&Delta;S<sub>system</sub> = &Delta;G</span>
 
             <div class="card">
               <p style="margin: 0">
                 <strong>Result (constant T,P):</strong>
-                <code>&Delta;G = -T&Delta;S_universe</code>.
-                So the Second Law condition <code>&Delta;S_universe \ge 0</code>
-                is equivalent to <code>&Delta;G \le 0</code>.
+                <code>&Delta;G = -T&Delta;S<sub>universe</sub></code>.
+                So the Second Law condition <code>&Delta;S<sub>universe</sub> &ge; 0</code>
+                is equivalent to <code>&Delta;G &le; 0</code>.
               </p>
             </div>
 
             <p class="muted" style="margin: 10px 0 0">
-              Want the deeper context? See
+              See also:
               <a href="second-law-of-thermodynamics-tutorial.html">Second Law of Thermodynamics</a>
-              and the idea that entropy generation in real processes is
-              nonnegative.
+              (entropy generation and why real processes satisfy <code>S<sub>gen</sub> &ge; 0</code>).
             </p>
           </section>
 
           <section id="spontaneous">
             <h2>Spontaneity and equilibrium (constant T,P)</h2>
             <p>
-              Because <code>&Delta;G = -T&Delta;S_universe</code> under constant
+              Because <code>&Delta;G = -T&Delta;S<sub>universe</sub></code> under constant
               <code>T</code> and <code>P</code>:
             </p>
             <ul>
-              <li>
-                <code>&Delta;G &lt; 0</code> means
-                <code>&Delta;S_universe &gt; 0</code>: spontaneous.
-              </li>
-              <li>
-                <code>&Delta;G = 0</code> means
-                <code>&Delta;S_universe = 0</code>: equilibrium (reversible limit).
-              </li>
-              <li>
-                <code>&Delta;G &gt; 0</code> means
-                <code>&Delta;S_universe &lt; 0</code>: not spontaneous as written.
-              </li>
+              <li><code>&Delta;G &lt; 0</code> means <code>&Delta;S<sub>universe</sub> &gt; 0</code>: spontaneous.</li>
+              <li><code>&Delta;G = 0</code> means <code>&Delta;S<sub>universe</sub> = 0</code>: equilibrium (reversible limit).</li>
+              <li><code>&Delta;G &gt; 0</code> means <code>&Delta;S<sub>universe</sub> &lt; 0</code>: not spontaneous as written.</li>
             </ul>
 
             <h3>Temperature dependence</h3>
             <p>
-              Using <code>&Delta;G = &Delta;H - T&Delta;S</code>, increasing
-              <code>T</code> makes the entropy term more important.
+              Using <code>&Delta;G = &Delta;H - T&Delta;S</code>, increasing <code>T</code>
+              makes the entropy term more important.
             </p>
 
             <div class="two-col">
               <div class="card">
                 <h3 style="margin-top: 0">If &Delta;H &lt; 0 and &Delta;S &gt; 0</h3>
-                <p style="margin: 0">
-                  Always spontaneous (
-                  <code>&Delta;G</code> negative at all <code>T</code>).
-                </p>
+                <p style="margin: 0">Always spontaneous (<code>&Delta;G</code> negative at all <code>T</code>).</p>
               </div>
               <div class="card">
                 <h3 style="margin-top: 0">If &Delta;H &gt; 0 and &Delta;S &lt; 0</h3>
-                <p style="margin: 0">
-                  Never spontaneous (
-                  <code>&Delta;G</code> positive at all <code>T</code>).
-                </p>
+                <p style="margin: 0">Never spontaneous (<code>&Delta;G</code> positive at all <code>T</code>).</p>
               </div>
               <div class="card">
                 <h3 style="margin-top: 0">If &Delta;H &lt; 0 and &Delta;S &lt; 0</h3>
-                <p style="margin: 0">
-                  Spontaneous at low <code>T</code>.
-                </p>
+                <p style="margin: 0">Spontaneous at low <code>T</code>.</p>
               </div>
               <div class="card">
                 <h3 style="margin-top: 0">If &Delta;H &gt; 0 and &Delta;S &gt; 0</h3>
-                <p style="margin: 0">
-                  Spontaneous at high <code>T</code>.
-                </p>
+                <p style="margin: 0">Spontaneous at high <code>T</code>.</p>
               </div>
             </div>
           </section>
@@ -439,10 +395,9 @@
           <section id="reaction">
             <h2>Reactions: Q, K, and &Delta;G</h2>
             <p>
-              For a chemical reaction at a fixed temperature, the free energy
-              change depends on how far you are from equilibrium:
+              For a chemical reaction at a fixed temperature, the free energy change depends on how far you are from equilibrium:
             </p>
-            <span class="eq">&Delta;G = &Delta;G&deg; + RT \ln Q</span>
+            <span class="eq">&Delta;G = &Delta;G&deg; + RT ln Q</span>
             <ul>
               <li><code>R</code> is the gas constant.</li>
               <li><code>Q</code> is the reaction quotient (activities; often approximated with concentrations/pressures).</li>
@@ -450,33 +405,25 @@
             </ul>
 
             <h3>Equilibrium constant</h3>
-            <p>
-              At equilibrium, <code>&Delta;G = 0</code> and <code>Q = K</code>, so:
-            </p>
-            <span class="eq">&Delta;G&deg; = -RT \ln K</span>
+            <p>At equilibrium, <code>&Delta;G = 0</code> and <code>Q = K</code>, so:</p>
+            <span class="eq">&Delta;G&deg; = -RT ln K</span>
             <p class="muted" style="margin: 8px 0 0">
-              Big <code>K</code> means products are favored and
-              <code>&Delta;G&deg;</code> is strongly negative.
+              Big <code>K</code> means products are favored and <code>&Delta;G&deg;</code> is strongly negative.
             </p>
           </section>
 
           <section id="work">
             <h2>Useful work and batteries</h2>
             <p>
-              At constant <code>T</code> and <code>P</code>, the maximum
-              non-expansion (useful) work a process can deliver equals the drop
-              in Gibbs free energy:
+              At constant <code>T</code> and <code>P</code>, the maximum non-expansion (useful) work a process can deliver equals the drop in Gibbs free energy:
             </p>
-            <span class="eq">w_useful,max = -&Delta;G</span>
+            <span class="eq">w<sub>useful,max</sub> = -&Delta;G</span>
 
             <h3>Electrochemistry shortcut</h3>
-            <p>
-              For an electrochemical cell:
-            </p>
+            <p>For an electrochemical cell:</p>
             <span class="eq">&Delta;G = -nFE</span>
             <p class="muted" style="margin: 8px 0 0">
-              Here <code>n</code> is moles of electrons, <code>F</code> is
-              Faraday’s constant, and <code>E</code> is the cell potential.
+              Here <code>n</code> is moles of electrons, <code>F</code> is Faraday’s constant, and <code>E</code> is the cell potential.
             </p>
           </section>
 
@@ -485,60 +432,43 @@
 
             <h3>1) Spontaneous at 298 K?</h3>
             <p>
-              A process has <code>&Delta;H = -40 kJ</code> and
-              <code>&Delta;S = -120 J/K</code> at <code>T = 298 K</code>.
+              A process has <code>&Delta;H = -40 kJ</code> and <code>&Delta;S = -120 J/K</code> at <code>T = 298 K</code>.
             </p>
-            <span class="eq">&Delta;G = &Delta;H - T&Delta;S = -40 kJ - 298(-0.120 kJ/K) \approx -4.2 kJ</span>
-            <p>
-              Since <code>&Delta;G &lt; 0</code>, it’s spontaneous (at these
-              conditions).
-            </p>
+            <span class="eq">&Delta;G = &Delta;H - T&Delta;S = -40 kJ - 298(-0.120 kJ/K) &approx; -4.2 kJ</span>
+            <p>Since <code>&Delta;G &lt; 0</code>, it’s spontaneous (at these conditions).</p>
 
             <h3>2) Find K from &Delta;G&deg;</h3>
             <p>
-              For a reaction, <code>&Delta;G&deg; = +5.7 kJ/mol</code> at
-              <code>298 K</code>. What is <code>K</code>?
+              For a reaction, <code>&Delta;G&deg; = +5.7 kJ/mol</code> at <code>298 K</code>. What is <code>K</code>?
             </p>
-            <span class="eq">K = \exp(-&Delta;G&deg;/(RT)) \approx \exp(-5700/(8.314\cdot298)) \approx 0.10</span>
+            <span class="eq">K = exp(-&Delta;G&deg;/(RT)) &approx; exp(-5700/(8.314&middot;298)) &approx; 0.10</span>
 
             <h3>3) Second-law interpretation</h3>
-            <p>
-              If <code>&Delta;G = -2.5 kJ</code> at <code>T = 300 K</code>, then:
-            </p>
-            <span class="eq">&Delta;S_universe = -&Delta;G/T \approx (2500 J)/(300 K) \approx 8.3 J/K</span>
-            <p>
-              The universe’s entropy increases, consistent with the Second Law.
-            </p>
+            <p>If <code>&Delta;G = -2.5 kJ</code> at <code>T = 300 K</code>, then:</p>
+            <span class="eq">&Delta;S<sub>universe</sub> = -&Delta;G/T &approx; (2500 J)/(300 K) &approx; 8.3 J/K</span>
+            <p>The universe’s entropy increases, consistent with the Second Law.</p>
 
             <h3>4) Maximum electrical work</h3>
             <p>
-              If a cell transfers <code>n = 2</code> moles of electrons per mole
-              of reaction and has <code>E = 1.10 V</code>, then:
+              If a cell transfers <code>n = 2</code> moles of electrons per mole of reaction and has <code>E = 1.10 V</code>, then:
             </p>
-            <span class="eq">&Delta;G = -nFE \approx -(2)(96485 C/mol)(1.10 J/C) \approx -212 kJ/mol</span>
+            <span class="eq">&Delta;G = -nFE &approx; -(2)(96485 C/mol)(1.10 J/C) &approx; -212 kJ/mol</span>
           </section>
 
           <section id="pitfalls">
             <h2>Common pitfalls</h2>
             <ul>
               <li>
-                <strong>Confusing &Delta;G and &Delta;G&deg;</strong>:
-                <code>&Delta;G</code> depends on current conditions (Q);
-                <code>&Delta;G&deg;</code> is tied to the standard state.
+                <strong>Confusing &Delta;G and &Delta;G&deg;</strong>: <code>&Delta;G</code> depends on current conditions (Q); <code>&Delta;G&deg;</code> is tied to the standard state.
               </li>
               <li>
-                <strong>Forgetting the constraint</strong>: the criterion
-                <code>&Delta;G &lt; 0</code> is specifically for constant T and
-                P.
+                <strong>Forgetting the constraint</strong>: the criterion <code>&Delta;G &lt; 0</code> is specifically for constant T and P.
               </li>
               <li>
-                <strong>Mixing up “spontaneous” and “fast”</strong>:
-                thermodynamics predicts direction; kinetics sets rate.
+                <strong>Mixing up “spontaneous” and “fast”</strong>: thermodynamics predicts direction; kinetics sets rate.
               </li>
               <li>
-                <strong>Activities vs concentrations</strong>: equilibrium
-                expressions are exact in terms of activity; concentrations are
-                an approximation.
+                <strong>Activities vs concentrations</strong>: equilibrium expressions are exact in terms of activity; concentrations are an approximation.
               </li>
             </ul>
           </section>
@@ -549,17 +479,15 @@
               <ul style="margin: 0; padding-left: 18px">
                 <li><code>G = H - TS = U + PV - TS</code></li>
                 <li><code>&Delta;G = &Delta;H - T&Delta;S</code></li>
-                <li><code>&Delta;G = -T&Delta;S_universe</code> (constant T,P; only PV work)</li>
+                <li><code>&Delta;G = -T&Delta;S<sub>universe</sub></code> (constant T,P; only PV work)</li>
                 <li><code>&Delta;G = &Delta;G&deg; + RT ln Q</code></li>
                 <li><code>&Delta;G&deg; = -RT ln K</code></li>
-                <li><code>w_useful,max = -&Delta;G</code></li>
+                <li><code>w<sub>useful,max</sub> = -&Delta;G</code></li>
               </ul>
             </div>
 
             <footer>
-              <p style="margin: 12px 0 0">
-                File: <code>docs/gibbs_free_energy.html</code>
-              </p>
+              <p style="margin: 12px 0 0">File: <code>docs/gibbs_free_energy.html</code></p>
             </footer>
           </section>
         </article>
