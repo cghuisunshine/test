@@ -315,17 +315,17 @@
         <h2>Contents</h2>
         <ul>
           <li><a href="#start">1) What HTML is</a></li>
-          <li><a href="#origin">2) Origin &amp; history</a></li>
+          <li><a href="#origin">2) Origin and history</a></li>
           <li><a href="#anatomy">3) Tags, elements, attributes</a></li>
           <li><a href="#skeleton">4) Basic document skeleton</a></li>
           <li><a href="#text">5) Headings, paragraphs, text</a></li>
           <li><a href="#semantics">6) Semantic layout</a></li>
-          <li><a href="#links">7) Links &amp; navigation</a></li>
+          <li><a href="#links">7) Links and navigation</a></li>
           <li><a href="#media">8) Images, audio, video</a></li>
           <li><a href="#lists">9) Lists</a></li>
           <li><a href="#tables">10) Tables</a></li>
           <li><a href="#forms">11) Forms</a></li>
-          <li><a href="#metadata">12) Metadata &amp; SEO</a></li>
+          <li><a href="#metadata">12) Metadata and SEO</a></li>
           <li><a href="#a11y">13) Accessibility</a></li>
           <li><a href="#responsive">14) Responsive basics</a></li>
           <li><a href="#modern">15) Modern HTML features</a></li>
@@ -340,8 +340,8 @@
           <h2>1) What HTML is</h2>
           <p>
             <strong>HTML</strong> (HyperText Markup Language) is the language that describes the <em>structure</em> and
-            <em>meaning</em> of content on the web. It is not a programming language: HTML doesnt have variables and loops.
-            Instead, it marks content as “this is a heading”, “this is a link”, “this is a form field”, etc.
+            <em>meaning</em> of content on the web. It is not a programming language: HTML does not have variables and loops.
+            Instead, it marks content as "this is a heading", "this is a link", "this is a form field", etc.
           </p>
 
           <div class="note">
@@ -363,7 +363,7 @@
         </section>
 
         <section class="card" id="origin">
-          <h2>2) Origin &amp; history (where HTML came from)</h2>
+          <h2>2) Origin and history (where HTML came from)</h2>
           <p>
             HTML originated as part of the early World Wide Web. It was designed so scientists and researchers could share
             documents that contained <em>hypertext links</em> (clickable references) across the internet.
@@ -371,18 +371,18 @@
 
           <h3>Key milestones (high level)</h3>
           <ul>
-            <li><strong>198991:</strong> Tim Berners-Lee proposes the Web at CERN and builds the first browser/editor and server.</li>
+            <li><strong>1989-91:</strong> Tim Berners-Lee proposes the Web at CERN and builds the first browser/editor and server.</li>
             <li><strong>Early 1990s:</strong> HTML evolves from SGML-inspired ideas: simple tags for headings, paragraphs, links.</li>
             <li><strong>1995:</strong> HTML 2.0 helps standardize common browser behavior.</li>
             <li><strong>Late 1990s:</strong> HTML 4.01 adds stronger support for scripting, forms, and internationalization.</li>
             <li><strong>2000s:</strong> XHTML explores stricter XML rules; adoption is mixed on the open web.</li>
             <li><strong>2014+:</strong> HTML5 becomes the foundation for modern web apps: semantic elements, audio/video, richer forms.</li>
-            <li><strong>Today:</strong> HTML is maintained as a “living standard” (continuously updated) alongside related specs.</li>
+            <li><strong>Today:</strong> HTML is maintained as a living standard (continuously updated) alongside related specs.</li>
           </ul>
 
           <div class="warn">
             <p style="margin: 0">
-              “HTML5” is often used as a broad term for modern web features. In practice, the web is a collection of
+              "HTML5" is often used as a broad term for modern web features. In practice, the web is a collection of
               specifications: HTML, CSS, JavaScript, DOM APIs, and many platform APIs.
             </p>
           </div>
@@ -608,14 +608,14 @@
 
           <div class="warn">
             <p style="margin: 0">
-              Dont use <code>&lt;div&gt;</code> for everything. Use semantic elements first, then use <code>&lt;div&gt;</code> only when
-              theres no meaningful element.
+              Do not use <code>&lt;div&gt;</code> for everything. Use semantic elements first, then use <code>&lt;div&gt;</code> only when
+              there is no meaningful element.
             </p>
           </div>
         </section>
 
         <section class="card" id="links">
-          <h2>7) Links &amp; navigation</h2>
+          <h2>7) Links and navigation</h2>
           <p>
             Links are the original superpower of the Web. The anchor element <code>&lt;a&gt;</code> creates a hyperlink.
           </p>
@@ -633,7 +633,7 @@
 
           <div class="note">
             <p style="margin: 0">
-              Use clear link text. “Click here” is vague; “Download the syllabus (PDF)” is better.
+              Use clear link text. "Click here" is vague; "Download the syllabus (PDF)" is better.
             </p>
           </div>
         </section>
@@ -651,7 +651,7 @@
             </p>
           </div>
 
-          <h3>Figure + caption</h3>
+          <h3>Figure and caption</h3>
           <pre><code>&lt;figure&gt;
   &lt;img src="chart.png" alt="Bar chart of monthly sales" /&gt;
   &lt;figcaption&gt;Figure 1: Monthly sales in 2025.&lt;/figcaption&gt;
@@ -688,7 +688,7 @@
   &lt;li&gt;Bake&lt;/li&gt;
 &lt;/ol&gt;</code></pre>
 
-          <h3>Description list (terms &amp; definitions)</h3>
+          <h3>Description list (terms and definitions)</h3>
           <pre><code>&lt;dl&gt;
   &lt;dt&gt;HTTP&lt;/dt&gt;
   &lt;dd&gt;The protocol used to transfer web resources.&lt;/dd&gt;
@@ -700,7 +700,7 @@
         <section class="card" id="tables">
           <h2>10) Tables</h2>
           <p>
-            Tables are for <strong>tabular data</strong> (data in rows and columns). Dont use tables for page layout.
+            Tables are for <strong>tabular data</strong> (data in rows and columns). Do not use tables for page layout.
           </p>
 
           <h3>Basic table</h3>
@@ -806,7 +806,7 @@
         </section>
 
         <section class="card" id="metadata">
-          <h2>12) Metadata &amp; SEO basics</h2>
+          <h2>12) Metadata and SEO basics</h2>
           <p>
             Metadata lives in <code>&lt;head&gt;</code>. It helps browsers, social apps, and search engines understand your page.
           </p>
@@ -846,7 +846,7 @@
             <li>Use semantic elements (<code>&lt;button&gt;</code> for actions, <code>&lt;a&gt;</code> for navigation).</li>
             <li>Ensure everything works with a keyboard (use <kbd>Tab</kbd>, <kbd>Enter</kbd>, <kbd>Space</kbd>).</li>
             <li>Provide text alternatives: <code>alt</code> on images, captions for videos when possible.</li>
-            <li>Use proper labels for form controls (dont rely on placeholder text).</li>
+            <li>Use proper labels for form controls (do not rely on placeholder text).</li>
             <li>Maintain good color contrast.</li>
           </ul>
 
@@ -926,7 +926,7 @@
           <h2>16) Best practices (quick checklist)</h2>
           <ul>
             <li><strong>Start semantic:</strong> choose elements based on meaning, then style with CSS.</li>
-            <li><strong>Keep headings ordered:</strong> dont jump from <code>h2</code> straight to <code>h5</code> without reason.</li>
+            <li><strong>Keep headings ordered:</strong> do not jump from <code>h2</code> straight to <code>h5</code> without reason.</li>
             <li><strong>Write accessible forms:</strong> always use <code>&lt;label&gt;</code>, <code>fieldset</code>, and clear errors.</li>
             <li><strong>Optimize media:</strong> use appropriate image sizes, and include <code>width</code>/<code>height</code> to reduce layout shift.</li>
             <li><strong>Validate and test:</strong> open the page in multiple browsers, and use keyboard-only navigation.</li>
@@ -961,7 +961,7 @@
 
           <h3>D) Accessibility</h3>
           <ol start="7">
-            <li>Write two good link texts for a PDF download and a video page (avoid “click here”).</li>
+            <li>Write two good link texts for a PDF download and a video page (avoid "click here").</li>
             <li>For each image, write the correct <code>alt</code>: (1) a decorative divider image, (2) a product photo.</li>
           </ol>
         </section>
@@ -1004,14 +1004,17 @@
                 <pre><code>&lt;article&gt;
   &lt;header&gt;
     &lt;h1&gt;How Rainbows Form&lt;/h1&gt;
-    &lt;p&gt;By Sam  Updated 2025-12-27&lt;/p&gt;
+    &lt;p&gt;By Sam (Updated 2025-12-27)&lt;/p&gt;
   &lt;/header&gt;
   &lt;p&gt;Rainbows form when light refracts and reflects inside water droplets...&lt;/p&gt;
   &lt;p&gt;The colors separate because different wavelengths bend by different amounts...&lt;/p&gt;
 &lt;/article&gt;</code></pre>
               </li>
               <li>
-                <p class="tiny" style="margin: 0">Example: replace <code>&lt;div class="nav"&gt;</code> with <code>&lt;nav&gt;</code>, <code>&lt;div class="footer"&gt;</code> with <code>&lt;footer&gt;</code>, etc.</p>
+                <p class="tiny" style="margin: 0">
+                  Example: replace <code>&lt;div class="nav"&gt;</code> with <code>&lt;nav&gt;</code>, <code>&lt;div class="footer"&gt;</code> with
+                  <code>&lt;footer&gt;</code>, etc.
+                </p>
               </li>
             </ol>
           </details>
@@ -1045,8 +1048,8 @@
             <ol>
               <li>
                 <ul>
-                  <li>“Download course outline (PDF)”</li>
-                  <li>“Watch: How to solve quadratic equations (video)”</li>
+                  <li>"Download course outline (PDF)"</li>
+                  <li>"Watch: How to solve quadratic equations (video)"</li>
                 </ul>
               </li>
               <li>
@@ -1059,7 +1062,7 @@
           </details>
 
           <p class="footer">
-            This tutorial is a single, self-contained HTML file (no external dependencies). Its suitable for printing,
+            This tutorial is a single, self-contained HTML file (no external dependencies). It is suitable for printing,
             sharing, or hosting on GitHub Pages.
           </p>
         </section>
