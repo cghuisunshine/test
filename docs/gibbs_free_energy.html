@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gibbs Free Energy — A Detailed Tutorial</title>
+    <meta
+      name="description"
+      content="A detailed tutorial on Gibbs free energy: historical origin, definitions, derivations, equilibrium criteria, and worked examples."
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #111a33;
+        --text: #e9eefc;
+        --muted: #b8c4e6;
+        --accent: #8fd3ff;
+        --accent2: #c7a6ff;
+        --border: rgba(255, 255, 255, 0.12);
+        --code: rgba(255, 255, 255, 0.07);
+        --shadow: rgba(0, 0, 0, 0.35);
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f7f8fe;
+          --panel: #ffffff;
+          --text: #0b1020;
+          --muted: #3c476a;
+          --accent: #005bd6;
+          --accent2: #6c2bd9;
+          --border: rgba(0, 0, 0, 0.12);
+          --code: rgba(0, 0, 0, 0.05);
+          --shadow: rgba(0, 0, 0, 0.08);
+        }
+      }
+
+      body {
+        margin: 0;
+        font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+          Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: radial-gradient(
+            1200px 700px at 10% -10%,
+            rgba(143, 211, 255, 0.28),
+            transparent 60%
+          ),
+          radial-gradient(
+            1200px 700px at 100% 0%,
+            rgba(199, 166, 255, 0.26),
+            transparent 60%
+          ),
+          var(--bg);
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 28px 18px 64px;
+      }
+
+      header {
+        background: linear-gradient(
+          135deg,
+          rgba(143, 211, 255, 0.16),
+          rgba(199, 166, 255, 0.14)
+        );
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 22px 18px;
+        box-shadow: 0 10px 30px var(--shadow);
+      }
+
+      h1 {
+        margin: 0 0 6px;
+        letter-spacing: -0.02em;
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      section,
+      nav {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 10px 28px var(--shadow);
+      }
+
+      nav h2 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      nav ol {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+        letter-spacing: -0.01em;
+      }
+
+      h3 {
+        margin: 14px 0 8px;
+        font-size: 1.05rem;
+        letter-spacing: -0.01em;
+      }
+
+      p,
+      li {
+        color: var(--text);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.04),
+          rgba(255, 255, 255, 0.02)
+        );
+      }
+
+      code,
+      kbd {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        background: var(--code);
+        border: 1px solid var(--border);
+        padding: 0.08em 0.35em;
+        border-radius: 8px;
+        font-size: 0.94em;
+      }
+
+      .eq {
+        display: block;
+        margin: 10px 0;
+        padding: 10px 12px;
+        background: var(--code);
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      th,
+      td {
+        border: 1px solid var(--border);
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      @media (min-width: 920px) {
+        main {
+          grid-template-columns: 320px 1fr;
+          align-items: start;
+        }
+        nav {
+          position: sticky;
+          top: 14px;
+          height: fit-content;
+        }
+        .two-col {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      footer {
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.12em 0.65em;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(143, 211, 255, 0.12);
+        color: var(--text);
+        font-size: 0.92em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="pill">Thermodynamics tutorial</div>
+        <h1>Gibbs Free Energy</h1>
+        <p>
+          What it is, where it came from, and how to use it to predict
+          spontaneity, equilibrium, and useful work at constant temperature and
+          pressure.
+        </p>
+      </header>
+
+      <main>
+        <nav aria-label="Table of contents">
+          <h2>Contents</h2>
+          <ol>
+            <li><a href="#big-idea">The big idea</a></li>
+            <li><a href="#origin">Origin &amp; historical context</a></li>
+            <li><a href="#definitions">Definitions &amp; meanings</a></li>
+            <li><a href="#derivation">Deriving the key criteria</a></li>
+            <li><a href="#chemical-potential">Chemical potential &amp; mixtures</a></li>
+            <li><a href="#reactions">Reactions: Q, K, and &Delta;G</a></li>
+            <li><a href="#work">Free energy and useful work</a></li>
+            <li><a href="#temperature-pressure">How T and P change G</a></li>
+            <li><a href="#examples">Worked examples</a></li>
+            <li><a href="#pitfalls">Common pitfalls</a></li>
+            <li><a href="#summary">Summary</a></li>
+            <li><a href="#further">Further reading</a></li>
+          </ol>
+          <p class="muted" style="margin: 10px 0 0">
+            Tip: search within the page for <code>&Delta;G</code>,
+            <code>K</code>, or <code>chemical potential</code>.
+          </p>
+        </nav>
+
+        <article>
+          <section id="big-idea">
+            <h2>The big idea</h2>
+            <p>
+              Gibbs free energy, usually written <strong>G</strong>, is a
+              thermodynamic “accounting function” that tells you whether a
+              process can happen spontaneously under the common lab conditions
+              of approximately constant temperature and pressure.
+            </p>
+            <div class="card">
+              <p style="margin: 0 0 8px">
+                Under constant <strong>T</strong> and <strong>P</strong>:
+              </p>
+              <span class="eq"
+                >&Delta;G &lt; 0 (spontaneous) &nbsp; | &nbsp; &Delta;G = 0
+                (equilibrium) &nbsp; | &nbsp; &Delta;G &gt; 0 (nonspontaneous)</span
+              >
+              <p class="muted" style="margin: 8px 0 0">
+                This is a criterion for direction, not speed. A reaction can
+                have &Delta;G &lt; 0 and still be slow without a catalyst.
+              </p>
+            </div>
+          </section>
+
+          <section id="origin">
+            <h2>Origin &amp; historical context</h2>
+            <p>
+              The free energy named after <strong>Josiah Willard Gibbs</strong>
+              (1839–1903) grew out of his foundational work on equilibrium
+              thermodynamics. In the 1870s, Gibbs published a series of papers
+              culminating in the landmark 1876–1878 monograph
+              <em>On the Equilibrium of Heterogeneous Substances</em>.
+            </p>
+            <p>
+              Gibbs’s key move was to treat equilibrium as a problem in
+              <strong>variational calculus</strong>: for a system constrained by
+              its environment (for example, fixed T and P), equilibrium is found
+              by minimizing an appropriate thermodynamic potential. The function
+              we now call <strong>Gibbs free energy</strong> became the natural
+              potential for constant-T, constant-P situations—exactly the setup
+              for most chemistry and materials experiments.
+            </p>
+            <div class="two-col">
+              <div class="card">
+                <h3 style="margin-top: 0">Why “free”?</h3>
+                <p style="margin: 0">
+                  “Free energy” historically meant energy “free” to do
+                  non-expansion work under specified constraints. For Gibbs free
+                  energy, the constraints are usually constant T and P.
+                </p>
+              </div>
+              <div class="card">
+                <h3 style="margin-top: 0">Related idea</h3>
+                <p style="margin: 0">
+                  Helmholtz free energy <code>F = U − TS</code> is the potential
+                  for constant T and constant volume, common in physics and
+                  statistical mechanics.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="definitions">
+            <h2>Definitions &amp; meanings</h2>
+            <p>
+              You’ll see Gibbs free energy defined in several equivalent ways.
+              Each highlights a different physical meaning.
+            </p>
+
+            <h3>Core definitions</h3>
+            <span class="eq">G = H − TS</span>
+            <p class="muted" style="margin: 6px 0 0">
+              where enthalpy <code>H = U + PV</code>, internal energy is
+              <code>U</code>, pressure is <code>P</code>, volume is
+              <code>V</code>, temperature is <code>T</code>, and entropy is
+              <code>S</code>.
+            </p>
+            <span class="eq">G = U + PV − TS</span>
+
+            <h3>What each term is “paying for”</h3>
+            <ul>
+              <li>
+                <strong>U</strong>: microscopic energy stored in motions and
+                interactions of particles.
+              </li>
+              <li>
+                <strong>PV</strong>: the “cost” to make room against an external
+                pressure (expansion work).
+              </li>
+              <li>
+                <strong>TS</strong>: energy effectively “tied up” by thermal
+                disorder at temperature T.
+              </li>
+            </ul>
+
+            <h3>Units</h3>
+            <p>
+              G is an energy. In chemistry it’s often reported as
+              <code>kJ/mol</code> for molar quantities (e.g., reaction free
+              energy). In physics it may be per system (J) or per particle.
+            </p>
+          </section>
+
+          <section id="derivation">
+            <h2>Deriving the key criteria</h2>
+            <p>
+              The power of G comes from combining the first and second laws for
+              a system in contact with a thermal and mechanical environment.
+              Here’s the standard path.
+            </p>
+
+            <h3>Start with the thermodynamic identities</h3>
+            <p>
+              For a simple compressible system (no electrical, surface, or other
+              generalized work terms), the differential form of internal energy
+              is:
+            </p>
+            <span class="eq">dU = T dS − P dV</span>
+            <p class="muted">
+              (More generally, you add terms like <code>+ &mu; dn</code> for
+              composition changes, or <code>+ E dQ</code> for electrical work.)
+            </p>
+
+            <h3>Define H and then G</h3>
+            <p>Enthalpy is <code>H = U + PV</code>, so:</p>
+            <span class="eq">dH = dU + P dV + V dP</span>
+            <p>Substitute <code>dU</code>:</p>
+            <span class="eq">dH = T dS + V dP</span>
+            <p>Now define Gibbs free energy <code>G = H − TS</code>:</p>
+            <span class="eq">dG = dH − T dS − S dT</span>
+            <p>Substitute <code>dH</code>:</p>
+            <span class="eq">dG = V dP − S dT</span>
+            <p class="muted">
+              This compact result is why G is so convenient: it tells you how G
+              changes with pressure and temperature.
+            </p>
+
+            <h3>The equilibrium/minimum principle</h3>
+            <p>
+              Consider a system at fixed temperature and pressure, allowed to
+              change internally (reaction progress, phase redistribution, etc.).
+              Under those constraints:
+            </p>
+            <span class="eq">T, P constant &rArr; dG &le; 0</span>
+            <p>
+              So <strong>G decreases</strong> for spontaneous change and reaches
+              a <strong>minimum</strong> at equilibrium.
+            </p>
+            <div class="card">
+              <p style="margin: 0">
+                The underlying intuition: at constant T and P, the combination
+                <code>H − TS</code> is the bookkeeping that accounts for both the
+                energy released/absorbed (<code>&Delta;H</code>) and the entropy
+                “price” of organizing/disorganizing at temperature T
+                (<code>T&Delta;S</code>).
+              </p>
+            </div>
+          </section>
+
+          <section id="chemical-potential">
+            <h2>Chemical potential &amp; mixtures</h2>
+            <p>
+              Real chemical systems change composition. For multicomponent
+              systems, the full differential includes composition:
+            </p>
+            <span class="eq">dG = V dP − S dT + &Sigma;<sub>i</sub> &mu;<sub>i</sub> dn<sub>i</sub></span>
+            <p>
+              The quantity <code>&mu;<sub>i</sub></code> is the
+              <strong>chemical potential</strong> of component i:
+            </p>
+            <span class="eq"
+              >&mu;<sub>i</sub> = (&part;G/&part;n<sub>i</sub>)<sub>T,P,n<sub>j&ne;i</sub></sub></span
+            >
+            <p>
+              You can think of chemical potential as “free energy per mole” for
+              adding a little of species i to the system at constant T and P.
+            </p>
+
+            <h3>Equilibrium conditions</h3>
+            <ul>
+              <li>
+                <strong>Phase equilibrium</strong>: each species has equal
+                chemical potential in all coexisting phases.
+              </li>
+              <li>
+                <strong>Reaction equilibrium</strong>: the weighted sum of
+                chemical potentials satisfies the reaction stoichiometry.
+              </li>
+            </ul>
+          </section>
+
+          <section id="reactions">
+            <h2>Reactions: Q, K, and &Delta;G</h2>
+            <p>
+              For a chemical reaction at temperature T and pressure P, the free
+              energy change depends on composition. Two formulas are especially
+              useful.
+            </p>
+
+            <h3>Reaction free energy at nonstandard conditions</h3>
+            <span class="eq">&Delta;G = &Delta;G&deg; + RT ln Q</span>
+            <p class="muted">
+              <code>R</code> is the gas constant, <code>Q</code> is the reaction
+              quotient (built from activities), and <code>&deg;</code> indicates
+              a chosen standard state (often 1 bar for gases, 1 M for solutes,
+              pure solids/liquids at 1 bar).
+            </p>
+
+            <h3>Link to equilibrium constant</h3>
+            <p>At equilibrium, <code>&Delta;G = 0</code> and <code>Q = K</code>:</p>
+            <span class="eq">&Delta;G&deg; = −RT ln K</span>
+            <p>
+              This connects thermodynamics (free energies) to chemical
+              equilibrium (K).
+            </p>
+
+            <div class="card">
+              <h3 style="margin-top: 0">What does “standard” really mean?</h3>
+              <p style="margin: 0">
+                <code>&Delta;G&deg;</code> is not “the free energy change at 1
+                atm for everything” in a naive sense; it’s tied to a
+                convention-defined reference state for each species. In precise
+                work you use <strong>activities</strong>, not raw
+                concentrations or partial pressures.
+              </p>
+            </div>
+          </section>
+
+          <section id="work">
+            <h2>Free energy and useful work</h2>
+            <p>
+              Under constant T and P, the decrease in Gibbs free energy gives an
+              upper bound on the maximum <strong>useful (non-PV) work</strong>
+              obtainable from a process.
+            </p>
+            <span class="eq">w<sub>useful,max</sub> = −&Delta;G</span>
+            <p class="muted">
+              “Useful work” excludes the expansion/compression work
+              <code>P&Delta;V</code> that is already accounted for in enthalpy.
+            </p>
+
+            <h3>Electrochemistry (batteries)</h3>
+            <p>
+              In an ideal (reversible) electrochemical cell, electrical work is
+              the useful work, so:
+            </p>
+            <span class="eq">&Delta;G = −n F E</span>
+            <p class="muted">
+              where <code>n</code> is moles of electrons transferred,
+              <code>F</code> is Faraday’s constant, and <code>E</code> is the
+              cell potential.
+            </p>
+          </section>
+
+          <section id="temperature-pressure">
+            <h2>How T and P change G</h2>
+            <p>
+              From <code>dG = V dP − S dT</code>, you can read off two important
+              derivatives:
+            </p>
+            <div class="two-col">
+              <div class="card">
+                <h3 style="margin-top: 0">Pressure dependence</h3>
+                <span class="eq">(&part;G/&part;P)<sub>T</sub> = V</span>
+                <p style="margin: 0" class="muted">
+                  Increasing pressure tends to favor states with smaller volume
+                  (think: denser phases).
+                </p>
+              </div>
+              <div class="card">
+                <h3 style="margin-top: 0">Temperature dependence</h3>
+                <span class="eq">(&part;G/&part;T)<sub>P</sub> = −S</span>
+                <p style="margin: 0" class="muted">
+                  Increasing temperature lowers G more for high-entropy states,
+                  which is why higher T often favors disorder (like melting).
+                </p>
+              </div>
+            </div>
+
+            <h3>Gibbs–Helmholtz relation (temperature dependence of &Delta;G)</h3>
+            <p>
+              A common form (for a fixed pressure) relates how
+              <code>G/T</code> changes with T:
+            </p>
+            <span class="eq"
+              >(&part;(G/T)/&part;T)<sub>P</sub> = −H/T<sup>2</sup></span
+            >
+            <p class="muted">
+              This is useful when estimating how equilibrium constants shift
+              with temperature via <code>&Delta;G&deg; = −RT ln K</code>.
+            </p>
+          </section>
+
+          <section id="examples">
+            <h2>Worked examples</h2>
+
+            <h3>1) When does ice melt spontaneously?</h3>
+            <p>
+              For melting at 1 bar: <code>H<sub>2</sub>O(s) → H<sub>2</sub>O(l)</code>.
+              A simple approximation uses:
+            </p>
+            <span class="eq">&Delta;G &approx; &Delta;H<sub>fus</sub> − T&Delta;S<sub>fus</sub></span>
+            <p>
+              At the melting point (<code>T = 273.15 K</code>), the phases are in
+              equilibrium, so <code>&Delta;G = 0</code> and:
+            </p>
+            <span class="eq">&Delta;S<sub>fus</sub> = &Delta;H<sub>fus</sub>/T<sub>m</sub></span>
+            <p>
+              For <code>T &gt; T<sub>m</sub></code>, the <code>T&Delta;S</code>
+              term dominates and <code>&Delta;G &lt; 0</code>: melting is
+              spontaneous. For <code>T &lt; T<sub>m</sub></code>,
+              <code>&Delta;G &gt; 0</code>: freezing is spontaneous.
+            </p>
+
+            <h3>2) Predicting reaction direction with Q</h3>
+            <p>
+              Suppose <code>&Delta;G&deg;</code> is known for a reaction at
+              temperature T. You measure concentrations/pressures and compute
+              Q. Then:
+            </p>
+            <ul>
+              <li>
+                If <code>Q &lt; K</code>, then <code>ln(Q/K) &lt; 0</code> and
+                <code>&Delta;G &lt; 0</code>: the reaction proceeds forward.
+              </li>
+              <li>
+                If <code>Q = K</code>, then <code>&Delta;G = 0</code>:
+                equilibrium.
+              </li>
+              <li>
+                If <code>Q &gt; K</code>, then <code>&Delta;G &gt; 0</code>: the
+                reaction proceeds in reverse.
+              </li>
+            </ul>
+
+            <h3>3) Maximum electrical work from a battery</h3>
+            <p>
+              If a cell transfers <code>n = 2</code> moles of electrons per mole
+              of reaction and has <code>E = 1.10 V</code>, then the ideal free
+              energy change is:
+            </p>
+            <span class="eq">&Delta;G = −n F E &approx; −(2)(96485 C/mol)(1.10 J/C) &approx; −212 kJ/mol</span>
+            <p class="muted">
+              Real cells deliver less because of irreversibilities (internal
+              resistance, overpotentials, heat losses).
+            </p>
+
+            <h3>Practice problems (with short answers)</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Problem</th>
+                  <th>Answer sketch</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    A process at constant T,P has <code>&Delta;H = −40 kJ</code>
+                    and <code>&Delta;S = −120 J/K</code> at <code>T = 298 K</code>.
+                    Is it spontaneous?
+                  </td>
+                  <td>
+                    <code>&Delta;G = &Delta;H − T&Delta;S = −40 kJ − 298(−0.120 kJ/K) &approx; −4.2 kJ</code>.
+                    Spontaneous.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    For a reaction, <code>&Delta;G&deg; = +5.7 kJ/mol</code> at
+                    <code>298 K</code>. What is K?
+                  </td>
+                  <td>
+                    <code>K = exp(−&Delta;G&deg;/(RT)) &approx; exp(−5700/(8.314·298)) &approx; 0.10</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    At fixed T,P, why does equilibrium correspond to a minimum
+                    of G rather than a maximum?
+                  </td>
+                  <td>
+                    Because spontaneous changes require <code>dG &le; 0</code>.
+                    The system “rolls downhill” until no further decrease is
+                    possible.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="pitfalls">
+            <h2>Common pitfalls</h2>
+            <ul>
+              <li>
+                <strong>Confusing &Delta;G and &Delta;G&deg;</strong>: the first
+                depends on current conditions (Q); the second is tied to a
+                standard state.
+              </li>
+              <li>
+                <strong>Mixing up “spontaneous” and “fast”</strong>: kinetics
+                controls rate; thermodynamics controls direction and limits.
+              </li>
+              <li>
+                <strong>Using concentration instead of activity</strong> in
+                precise equilibrium calculations (especially for ions).
+              </li>
+              <li>
+                <strong>Forgetting the constraint</strong>: the criterion
+                <code>&Delta;G &lt; 0</code> is specifically for constant T and
+                P. Other constraints use other potentials (e.g., Helmholtz free
+                energy at constant T and V).
+              </li>
+              <li>
+                <strong>Sign convention slips</strong>: keep units consistent
+                (J vs kJ) and remember that <code>&Delta;G = &Delta;H − T&Delta;S</code>.
+              </li>
+            </ul>
+          </section>
+
+          <section id="summary">
+            <h2>Summary</h2>
+            <div class="card">
+              <ul style="margin: 0; padding-left: 18px">
+                <li><code>G = H − TS = U + PV − TS</code></li>
+                <li><code>dG = V dP − S dT + &Sigma; &mu; dn</code></li>
+                <li>At constant T,P: spontaneous change makes G decrease.</li>
+                <li><code>&Delta;G = &Delta;G&deg; + RT ln Q</code></li>
+                <li><code>&Delta;G&deg; = −RT ln K</code></li>
+                <li><code>w<sub>useful,max</sub> = −&Delta;G</code></li>
+              </ul>
+            </div>
+          </section>
+
+          <section id="further">
+            <h2>Further reading</h2>
+            <ul>
+              <li>
+                J. W. Gibbs, <em>On the Equilibrium of Heterogeneous Substances</em>
+                (1876–1878).
+              </li>
+              <li>
+                Any physical chemistry text sections on thermodynamic potentials,
+                chemical potential, and equilibrium constants.
+              </li>
+              <li>
+                For a statistical mechanics perspective: connections between G,
+                the partition function, and chemical potential.
+              </li>
+            </ul>
+            <p class="muted" style="margin: 10px 0 0">
+              This page is self-contained and designed to be viewed locally.
+            </p>
+          </section>
+
+          <footer>
+            <p style="margin: 0">
+              File: <code>docs/gibbs_free_energy.html</code>
+            </p>
+          </footer>
+        </article>
+      </main>
+    </div>
+  </body>
+</html>
