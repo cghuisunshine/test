@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HTML — Complete Tutorial (Origins to Modern HTML5)</title>
+    <meta
+      name="description"
+      content="A detailed, student-friendly HTML tutorial covering origins/history, document structure, semantic elements, links, images, tables, forms, accessibility, SEO, responsive design, and best practices with exercises."
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #101938;
+        --panel-2: #0f1733;
+        --text: #e8ecff;
+        --muted: #b7c0ff;
+        --accent: #7aa2ff;
+        --accent-2: #4ee7b0;
+        --warn: #ffcc66;
+        --danger: #ff6b6b;
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: rgba(0, 0, 0, 0.35);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(1200px 700px at 20% 0%, #182a65 0%, var(--bg) 55%) fixed;
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .skip {
+        position: absolute;
+        top: -50px;
+        left: 12px;
+        background: #000;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        z-index: 10;
+      }
+
+      .skip:focus {
+        top: 12px;
+      }
+
+      header {
+        padding: 34px 18px 10px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      header h1 {
+        margin: 0 0 6px;
+        font-size: 2rem;
+        letter-spacing: 0.2px;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 18px 44px;
+      }
+
+      nav {
+        position: sticky;
+        top: 14px;
+        align-self: start;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 12px 28px var(--shadow);
+        padding: 14px 14px 10px;
+      }
+
+      nav h2 {
+        margin: 0 0 10px;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      nav a {
+        display: block;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      nav a:hover {
+        background: rgba(122, 162, 255, 0.12);
+        border-color: rgba(122, 162, 255, 0.25);
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      .card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 16px 38px var(--shadow);
+        padding: 18px 18px 14px;
+        margin: 0 0 14px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+      }
+
+      .card h3 {
+        margin: 18px 0 8px;
+        font-size: 1.05rem;
+        color: #dfe6ff;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 0;
+      }
+
+      .pill {
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.18);
+        color: #eff4ff;
+        white-space: nowrap;
+      }
+
+      .note {
+        border-left: 4px solid var(--accent-2);
+        padding: 10px 12px;
+        background: rgba(78, 231, 176, 0.08);
+        border-radius: 12px;
+      }
+
+      .warn {
+        border-left: 4px solid var(--warn);
+        padding: 10px 12px;
+        background: rgba(255, 204, 102, 0.1);
+        border-radius: 12px;
+      }
+
+      .danger {
+        border-left: 4px solid var(--danger);
+        padding: 10px 12px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 12px;
+      }
+
+      code,
+      pre,
+      kbd {
+        font-family: var(--mono);
+      }
+
+      code {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 0.1rem 0.35rem;
+        border-radius: 10px;
+      }
+
+      pre {
+        overflow: auto;
+        padding: 12px 12px;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      kbd {
+        font-size: 0.95em;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.22);
+        border-radius: 10px;
+        padding: 0.15rem 0.45rem;
+        white-space: nowrap;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 10px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        vertical-align: top;
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.06);
+        color: #eaf0ff;
+      }
+
+      tr:hover td {
+        background: rgba(122, 162, 255, 0.07);
+      }
+
+      .tiny {
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .footer {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      details {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      details + details {
+        margin-top: 10px;
+      }
+
+      summary {
+        cursor: pointer;
+        color: #eaf0ff;
+        font-weight: 650;
+      }
+
+      @media (max-width: 980px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          position: relative;
+          top: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#start">Skip to content</a>
+
+    <header>
+      <h1>HTML — Complete Tutorial</h1>
+      <p>
+        Learn HTML from the ground up: where it came from (origin), how documents are structured, and how to write modern,
+        semantic, accessible pages.
+      </p>
+      <div class="pill-row" aria-label="Key topics">
+        <span class="pill">Origins</span>
+        <span class="pill">Semantics</span>
+        <span class="pill">Links</span>
+        <span class="pill">Images</span>
+        <span class="pill">Tables</span>
+        <span class="pill">Forms</span>
+        <span class="pill">Accessibility</span>
+        <span class="pill">SEO</span>
+        <span class="pill">Responsive</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#start">1) What HTML is</a></li>
+          <li><a href="#origin">2) Origin &amp; history</a></li>
+          <li><a href="#anatomy">3) Tags, elements, attributes</a></li>
+          <li><a href="#skeleton">4) Basic document skeleton</a></li>
+          <li><a href="#text">5) Headings, paragraphs, text</a></li>
+          <li><a href="#semantics">6) Semantic layout</a></li>
+          <li><a href="#links">7) Links &amp; navigation</a></li>
+          <li><a href="#media">8) Images, audio, video</a></li>
+          <li><a href="#lists">9) Lists</a></li>
+          <li><a href="#tables">10) Tables</a></li>
+          <li><a href="#forms">11) Forms</a></li>
+          <li><a href="#metadata">12) Metadata &amp; SEO</a></li>
+          <li><a href="#a11y">13) Accessibility</a></li>
+          <li><a href="#responsive">14) Responsive basics</a></li>
+          <li><a href="#modern">15) Modern HTML features</a></li>
+          <li><a href="#best">16) Best practices</a></li>
+          <li><a href="#practice">Practice</a></li>
+          <li><a href="#answers">Answers</a></li>
+        </ul>
+      </nav>
+
+      <main id="start" tabindex="-1">
+        <section class="card">
+          <h2>1) What HTML is</h2>
+          <p>
+            <strong>HTML</strong> (HyperText Markup Language) is the language that describes the <em>structure</em> and
+            <em>meaning</em> of content on the web. It is not a programming language: HTML doesnt have variables and loops.
+            Instead, it marks content as “this is a heading”, “this is a link”, “this is a form field”, etc.
+          </p>
+
+          <div class="note">
+            <p style="margin: 0">
+              Think of a web page as a team:
+              <strong>HTML</strong> = structure/content,
+              <strong>CSS</strong> = design/layout,
+              <strong>JavaScript</strong> = behavior/interaction.
+            </p>
+          </div>
+
+          <h3>How browsers use HTML</h3>
+          <ol>
+            <li>The browser downloads HTML.</li>
+            <li>It parses it into a tree called the <strong>DOM</strong> (Document Object Model).</li>
+            <li>It downloads CSS and applies styles.</li>
+            <li>It runs JavaScript, which can change the DOM.</li>
+          </ol>
+        </section>
+
+        <section class="card" id="origin">
+          <h2>2) Origin &amp; history (where HTML came from)</h2>
+          <p>
+            HTML originated as part of the early World Wide Web. It was designed so scientists and researchers could share
+            documents that contained <em>hypertext links</em> (clickable references) across the internet.
+          </p>
+
+          <h3>Key milestones (high level)</h3>
+          <ul>
+            <li><strong>198991:</strong> Tim Berners-Lee proposes the Web at CERN and builds the first browser/editor and server.</li>
+            <li><strong>Early 1990s:</strong> HTML evolves from SGML-inspired ideas: simple tags for headings, paragraphs, links.</li>
+            <li><strong>1995:</strong> HTML 2.0 helps standardize common browser behavior.</li>
+            <li><strong>Late 1990s:</strong> HTML 4.01 adds stronger support for scripting, forms, and internationalization.</li>
+            <li><strong>2000s:</strong> XHTML explores stricter XML rules; adoption is mixed on the open web.</li>
+            <li><strong>2014+:</strong> HTML5 becomes the foundation for modern web apps: semantic elements, audio/video, richer forms.</li>
+            <li><strong>Today:</strong> HTML is maintained as a “living standard” (continuously updated) alongside related specs.</li>
+          </ul>
+
+          <div class="warn">
+            <p style="margin: 0">
+              “HTML5” is often used as a broad term for modern web features. In practice, the web is a collection of
+              specifications: HTML, CSS, JavaScript, DOM APIs, and many platform APIs.
+            </p>
+          </div>
+
+          <h3>Why the origin matters</h3>
+          <p class="tiny">
+            HTML was built for documents first. Modern apps can be built with it too, but the best pages still respect the
+            original goal: clear meaning (semantics), easy navigation (links), and broad access (works for everyone).
+          </p>
+        </section>
+
+        <section class="card" id="anatomy">
+          <h2>3) Tags, elements, and attributes</h2>
+          <p>
+            An <strong>element</strong> usually consists of an opening tag, content, and a closing tag. Some elements are
+            <strong>void</strong> (no closing tag), like <code>&lt;img&gt;</code>.
+          </p>
+
+          <h3>Example</h3>
+          <pre><code>&lt;p class="lead"&gt;Hello, web!&lt;/p&gt;</code></pre>
+          <ul>
+            <li><code>p</code> is the tag name</li>
+            <li><code>class</code> is an attribute name</li>
+            <li><code>lead</code> is the attribute value</li>
+          </ul>
+
+          <h3>Common attributes</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Attribute</th>
+                <th>Where used</th>
+                <th>What it does</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>id</code></td>
+                <td>Most elements</td>
+                <td>Unique identifier (also used for linking to a section like <code>#about</code>)</td>
+              </tr>
+              <tr>
+                <td><code>class</code></td>
+                <td>Most elements</td>
+                <td>Groups elements for CSS styling and JS selection</td>
+              </tr>
+              <tr>
+                <td><code>href</code></td>
+                <td><code>&lt;a&gt;</code></td>
+                <td>Link destination</td>
+              </tr>
+              <tr>
+                <td><code>src</code></td>
+                <td><code>&lt;img&gt;</code>, <code>&lt;script&gt;</code></td>
+                <td>Resource URL</td>
+              </tr>
+              <tr>
+                <td><code>alt</code></td>
+                <td><code>&lt;img&gt;</code></td>
+                <td>Text alternative for images (critical for accessibility)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Nesting rules (quick idea)</h3>
+          <p>
+            Some elements can contain many other elements (like <code>&lt;div&gt;</code>), while some have restrictions.
+            For example, a <code>&lt;p&gt;</code> should not contain another block-level element like <code>&lt;div&gt;</code>.
+          </p>
+        </section>
+
+        <section class="card" id="skeleton">
+          <h2>4) Basic document skeleton</h2>
+          <p>
+            Every HTML page starts with a doctype and has two main sections: <code>&lt;head&gt;</code> (metadata) and
+            <code>&lt;body&gt;</code> (visible content).
+          </p>
+          <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+          <div class="note">
+            <p style="margin: 0">
+              The <code>lang</code> attribute helps screen readers and search engines understand the language.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="text">
+          <h2>5) Headings, paragraphs, and text</h2>
+          <h3>Headings</h3>
+          <p>
+            Use headings to create a meaningful outline. Typically a page has one main <code>&lt;h1&gt;</code>, then sections use
+            <code>&lt;h2&gt;</code>, sub-sections use <code>&lt;h3&gt;</code>, and so on.
+          </p>
+          <pre><code>&lt;h1&gt;Solar System&lt;/h1&gt;
+&lt;h2&gt;Planets&lt;/h2&gt;
+&lt;h3&gt;Earth&lt;/h3&gt;</code></pre>
+
+          <h3>Paragraphs and emphasis</h3>
+          <pre><code>&lt;p&gt;A paragraph is written with the &lt;code&gt;p&lt;/code&gt; element.&lt;/p&gt;
+&lt;p&gt;Use &lt;strong&gt;strong&lt;/strong&gt; for importance and &lt;em&gt;em&lt;/em&gt; for emphasis.&lt;/p&gt;</code></pre>
+
+          <h3>Inline text elements</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Element</th>
+                <th>Use</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&lt;span&gt;</code></td>
+                <td>Generic inline container (usually for styling)</td>
+                <td><code>&lt;span class="tag"&gt;New&lt;/span&gt;</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;code&gt;</code></td>
+                <td>Inline code</td>
+                <td><code>Use &lt;code&gt;href&lt;/code&gt;</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;br&gt;</code></td>
+                <td>Line break (use rarely)</td>
+                <td><code>Line 1&lt;br&gt;Line 2</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;hr&gt;</code></td>
+                <td>Thematic break between topics</td>
+                <td><code>&lt;hr&gt;</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card" id="semantics">
+          <h2>6) Semantic layout (meaningful structure)</h2>
+          <p>
+            Semantic HTML uses elements that describe what the content <em>is</em>, not just how it looks. This improves
+            accessibility, SEO, and maintainability.
+          </p>
+
+          <h3>Common semantic elements</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Element</th>
+                <th>Meaning</th>
+                <th>Typical use</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&lt;header&gt;</code></td>
+                <td>Intro for a page/section</td>
+                <td>Logo, title, navigation</td>
+              </tr>
+              <tr>
+                <td><code>&lt;nav&gt;</code></td>
+                <td>Navigation links</td>
+                <td>Main menu, table of contents</td>
+              </tr>
+              <tr>
+                <td><code>&lt;main&gt;</code></td>
+                <td>Main content</td>
+                <td>The primary topic of the page (usually one)</td>
+              </tr>
+              <tr>
+                <td><code>&lt;section&gt;</code></td>
+                <td>Section of related content</td>
+                <td>Chapters/topics</td>
+              </tr>
+              <tr>
+                <td><code>&lt;article&gt;</code></td>
+                <td>Self-contained piece</td>
+                <td>Blog post, news article, forum post</td>
+              </tr>
+              <tr>
+                <td><code>&lt;aside&gt;</code></td>
+                <td>Related but not main</td>
+                <td>Sidebar, callouts</td>
+              </tr>
+              <tr>
+                <td><code>&lt;footer&gt;</code></td>
+                <td>Closing info</td>
+                <td>Author, links, copyright notice</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Example page layout</h3>
+          <pre><code>&lt;header&gt;
+  &lt;h1&gt;City Guide&lt;/h1&gt;
+  &lt;nav&gt;
+    &lt;a href="#food"&gt;Food&lt;/a&gt;
+    &lt;a href="#parks"&gt;Parks&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+  &lt;section id="food"&gt;
+    &lt;h2&gt;Food&lt;/h2&gt;
+    &lt;article&gt;
+      &lt;h3&gt;Street Market&lt;/h3&gt;
+      &lt;p&gt;...&lt;/p&gt;
+    &lt;/article&gt;
+  &lt;/section&gt;
+&lt;/main&gt;
+
+&lt;footer&gt;
+  &lt;p&gt;Updated 2025&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+
+          <div class="warn">
+            <p style="margin: 0">
+              Dont use <code>&lt;div&gt;</code> for everything. Use semantic elements first, then use <code>&lt;div&gt;</code> only when
+              theres no meaningful element.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="links">
+          <h2>7) Links &amp; navigation</h2>
+          <p>
+            Links are the original superpower of the Web. The anchor element <code>&lt;a&gt;</code> creates a hyperlink.
+          </p>
+
+          <h3>Link to another page</h3>
+          <pre><code>&lt;a href="https://example.com"&gt;Visit Example&lt;/a&gt;</code></pre>
+
+          <h3>Link to a section on the same page</h3>
+          <pre><code>&lt;a href="#forms"&gt;Jump to forms&lt;/a&gt;
+
+&lt;section id="forms"&gt;...&lt;/section&gt;</code></pre>
+
+          <h3>Open in a new tab (and stay safe)</h3>
+          <pre><code>&lt;a href="https://example.com" target="_blank" rel="noopener noreferrer"&gt;Open Example&lt;/a&gt;</code></pre>
+
+          <div class="note">
+            <p style="margin: 0">
+              Use clear link text. “Click here” is vague; “Download the syllabus (PDF)” is better.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="media">
+          <h2>8) Images, audio, and video</h2>
+
+          <h3>Images</h3>
+          <pre><code>&lt;img src="images/mountain.jpg" alt="A snowy mountain under a blue sky" width="900" height="600" /&gt;</code></pre>
+
+          <div class="warn">
+            <p style="margin: 0">
+              Always write meaningful <code>alt</code> text.
+              If an image is purely decorative, use <code>alt=""</code> (empty) so screen readers can skip it.
+            </p>
+          </div>
+
+          <h3>Figure + caption</h3>
+          <pre><code>&lt;figure&gt;
+  &lt;img src="chart.png" alt="Bar chart of monthly sales" /&gt;
+  &lt;figcaption&gt;Figure 1: Monthly sales in 2025.&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+
+          <h3>Audio</h3>
+          <pre><code>&lt;audio controls&gt;
+  &lt;source src="song.mp3" type="audio/mpeg" /&gt;
+  &lt;p&gt;Your browser does not support audio.&lt;/p&gt;
+&lt;/audio&gt;</code></pre>
+
+          <h3>Video</h3>
+          <pre><code>&lt;video controls width="720"&gt;
+  &lt;source src="movie.mp4" type="video/mp4" /&gt;
+  &lt;p&gt;Your browser does not support video.&lt;/p&gt;
+&lt;/video&gt;</code></pre>
+        </section>
+
+        <section class="card" id="lists">
+          <h2>9) Lists</h2>
+          <p>Lists make content scannable and are extremely common in navigation, instructions, and summaries.</p>
+
+          <h3>Unordered list (bullets)</h3>
+          <pre><code>&lt;ul&gt;
+  &lt;li&gt;Milk&lt;/li&gt;
+  &lt;li&gt;Bread&lt;/li&gt;
+  &lt;li&gt;Eggs&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+
+          <h3>Ordered list (numbers)</h3>
+          <pre><code>&lt;ol&gt;
+  &lt;li&gt;Preheat oven&lt;/li&gt;
+  &lt;li&gt;Mix ingredients&lt;/li&gt;
+  &lt;li&gt;Bake&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+
+          <h3>Description list (terms &amp; definitions)</h3>
+          <pre><code>&lt;dl&gt;
+  &lt;dt&gt;HTTP&lt;/dt&gt;
+  &lt;dd&gt;The protocol used to transfer web resources.&lt;/dd&gt;
+  &lt;dt&gt;URL&lt;/dt&gt;
+  &lt;dd&gt;The address of a resource on the web.&lt;/dd&gt;
+&lt;/dl&gt;</code></pre>
+        </section>
+
+        <section class="card" id="tables">
+          <h2>10) Tables</h2>
+          <p>
+            Tables are for <strong>tabular data</strong> (data in rows and columns). Dont use tables for page layout.
+          </p>
+
+          <h3>Basic table</h3>
+          <pre><code>&lt;table&gt;
+  &lt;caption&gt;Bus schedule&lt;/caption&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th scope="col"&gt;Route&lt;/th&gt;
+      &lt;th scope="col"&gt;First&lt;/th&gt;
+      &lt;th scope="col"&gt;Last&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;th scope="row"&gt;12A&lt;/th&gt;
+      &lt;td&gt;06:10&lt;/td&gt;
+      &lt;td&gt;22:40&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+
+          <div class="note">
+            <p style="margin: 0">
+              Use <code>&lt;caption&gt;</code> and proper header cells (<code>&lt;th&gt;</code> with <code>scope</code>) for accessibility.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="forms">
+          <h2>11) Forms</h2>
+          <p>
+            Forms collect user input. HTML provides many input types and built-in validation. Always pair inputs with
+            <code>&lt;label&gt;</code>.
+          </p>
+
+          <h3>Simple form example</h3>
+          <pre><code>&lt;form action="/signup" method="post"&gt;
+  &lt;label for="email"&gt;Email&lt;/label&gt;
+  &lt;input id="email" name="email" type="email" required /&gt;
+
+  &lt;label for="password"&gt;Password&lt;/label&gt;
+  &lt;input id="password" name="password" type="password" minlength="8" required /&gt;
+
+  &lt;button type="submit"&gt;Create account&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+          <h3>Common input types</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Use</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>text</code></td>
+                <td>General text</td>
+                <td>Add <code>maxlength</code>, <code>pattern</code>, and helpful <code>autocomplete</code></td>
+              </tr>
+              <tr>
+                <td><code>email</code></td>
+                <td>Email address</td>
+                <td>Basic validation is built-in</td>
+              </tr>
+              <tr>
+                <td><code>password</code></td>
+                <td>Passwords</td>
+                <td>Use <code>autocomplete</code> like <code>current-password</code> or <code>new-password</code></td>
+              </tr>
+              <tr>
+                <td><code>number</code></td>
+                <td>Numeric values</td>
+                <td>Supports <code>min</code>, <code>max</code>, <code>step</code></td>
+              </tr>
+              <tr>
+                <td><code>date</code></td>
+                <td>Dates</td>
+                <td>Browser provides a date picker</td>
+              </tr>
+              <tr>
+                <td><code>file</code></td>
+                <td>Upload files</td>
+                <td>Use <code>accept</code> and remember server-side validation</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Grouping fields</h3>
+          <pre><code>&lt;fieldset&gt;
+  &lt;legend&gt;Contact preferences&lt;/legend&gt;
+  &lt;label&gt;&lt;input type="radio" name="contact" value="email" /&gt; Email&lt;/label&gt;
+  &lt;label&gt;&lt;input type="radio" name="contact" value="sms" /&gt; SMS&lt;/label&gt;
+&lt;/fieldset&gt;</code></pre>
+
+          <div class="danger">
+            <p style="margin: 0">
+              HTML validation improves user experience but is not security.
+              Always validate and sanitize on the server too.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="metadata">
+          <h2>12) Metadata &amp; SEO basics</h2>
+          <p>
+            Metadata lives in <code>&lt;head&gt;</code>. It helps browsers, social apps, and search engines understand your page.
+          </p>
+
+          <h3>Essential head tags</h3>
+          <pre><code>&lt;head&gt;
+  &lt;meta charset="utf-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+  &lt;title&gt;Page title&lt;/title&gt;
+  &lt;meta name="description" content="A short summary of this page." /&gt;
+&lt;/head&gt;</code></pre>
+
+          <h3>Favicon</h3>
+          <pre><code>&lt;link rel="icon" href="/favicon.ico" /&gt;</code></pre>
+
+          <h3>Open Graph (social previews)</h3>
+          <pre><code>&lt;meta property="og:title" content="My Article" /&gt;
+&lt;meta property="og:description" content="A short summary..." /&gt;
+&lt;meta property="og:image" content="https://example.com/preview.png" /&gt;</code></pre>
+
+          <div class="note">
+            <p style="margin: 0">
+              Good SEO starts with good content and semantic HTML: real headings, descriptive links, accessible images.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="a11y">
+          <h2>13) Accessibility (a11y)</h2>
+          <p>
+            Accessibility means people with different abilities can use your page: screen readers, keyboard users, low-vision
+            users, and more.
+          </p>
+
+          <h3>High-impact habits</h3>
+          <ul>
+            <li>Use semantic elements (<code>&lt;button&gt;</code> for actions, <code>&lt;a&gt;</code> for navigation).</li>
+            <li>Ensure everything works with a keyboard (use <kbd>Tab</kbd>, <kbd>Enter</kbd>, <kbd>Space</kbd>).</li>
+            <li>Provide text alternatives: <code>alt</code> on images, captions for videos when possible.</li>
+            <li>Use proper labels for form controls (dont rely on placeholder text).</li>
+            <li>Maintain good color contrast.</li>
+          </ul>
+
+          <h3>ARIA: use when needed</h3>
+          <p class="tiny">
+            ARIA attributes can help describe UI controls, but they are not a replacement for semantic HTML.
+            Prefer native elements first.
+          </p>
+          <pre><code>&lt;button aria-label="Close dialog"&gt;
+  &times;
+&lt;/button&gt;</code></pre>
+
+          <div class="warn">
+            <p style="margin: 0">
+              Avoid making clickable <code>&lt;div&gt;</code> or <code>&lt;span&gt;</code> elements. Use a real <code>&lt;button&gt;</code>.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="responsive">
+          <h2>14) Responsive basics</h2>
+          <p>
+            Responsive design means your page adapts to different screen sizes. HTML helps by being flexible by default, and
+            CSS handles most of the layout.
+          </p>
+
+          <h3>Viewport meta tag (required)</h3>
+          <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;</code></pre>
+
+          <h3>Responsive images (idea)</h3>
+          <p class="tiny">
+            You can provide multiple image sizes with <code>srcset</code> so phones download smaller files.
+          </p>
+          <pre><code>&lt;img
+  src="photo-800.jpg"
+  srcset="photo-400.jpg 400w, photo-800.jpg 800w, photo-1200.jpg 1200w"
+  sizes="(max-width: 600px) 100vw, 600px"
+  alt="A lighthouse at sunset"
+/&gt;</code></pre>
+        </section>
+
+        <section class="card" id="modern">
+          <h2>15) Modern HTML features (useful, no frameworks needed)</h2>
+
+          <h3>Details/summary (built-in accordion)</h3>
+          <pre><code>&lt;details&gt;
+  &lt;summary&gt;What is HTML?&lt;/summary&gt;
+  &lt;p&gt;HTML is a markup language for structuring web content.&lt;/p&gt;
+&lt;/details&gt;</code></pre>
+
+          <h3>Dialog (native modal)</h3>
+          <p class="tiny">Dialog needs JavaScript to open/close, but the element and accessibility behavior are built-in.</p>
+          <pre><code>&lt;dialog id="info"&gt;
+  &lt;h2&gt;About&lt;/h2&gt;
+  &lt;p&gt;This is a dialog.&lt;/p&gt;
+  &lt;form method="dialog"&gt;
+    &lt;button&gt;Close&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/dialog&gt;</code></pre>
+
+          <h3>Template (inert HTML for later use)</h3>
+          <pre><code>&lt;template id="card-template"&gt;
+  &lt;article class="card"&gt;
+    &lt;h2&gt;Title&lt;/h2&gt;
+    &lt;p&gt;Body text...&lt;/p&gt;
+  &lt;/article&gt;
+&lt;/template&gt;</code></pre>
+
+          <div class="note">
+            <p style="margin: 0">
+              Even if you use frameworks, knowing these built-ins helps you build simpler pages and debug faster.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="best">
+          <h2>16) Best practices (quick checklist)</h2>
+          <ul>
+            <li><strong>Start semantic:</strong> choose elements based on meaning, then style with CSS.</li>
+            <li><strong>Keep headings ordered:</strong> dont jump from <code>h2</code> straight to <code>h5</code> without reason.</li>
+            <li><strong>Write accessible forms:</strong> always use <code>&lt;label&gt;</code>, <code>fieldset</code>, and clear errors.</li>
+            <li><strong>Optimize media:</strong> use appropriate image sizes, and include <code>width</code>/<code>height</code> to reduce layout shift.</li>
+            <li><strong>Validate and test:</strong> open the page in multiple browsers, and use keyboard-only navigation.</li>
+          </ul>
+
+          <div class="warn">
+            <p style="margin: 0">
+              Avoid deprecated tags like <code>&lt;font&gt;</code> and using HTML for visual styling. Use CSS instead.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="practice">
+          <h2>Practice</h2>
+          <h3>A) Document structure</h3>
+          <ol>
+            <li>Create a basic HTML page with a title and one main heading.</li>
+            <li>Add a navigation bar that links to two sections on the same page.</li>
+          </ol>
+
+          <h3>B) Semantics</h3>
+          <ol start="3">
+            <li>Write a short article with a headline, author line, and two paragraphs.</li>
+            <li>Replace unnecessary <code>&lt;div&gt;</code> elements with appropriate semantic elements.</li>
+          </ol>
+
+          <h3>C) Forms</h3>
+          <ol start="5">
+            <li>Create a sign-up form with email and password fields (with basic validation).</li>
+            <li>Add a radio group for preferred contact method using <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code>.</li>
+          </ol>
+
+          <h3>D) Accessibility</h3>
+          <ol start="7">
+            <li>Write two good link texts for a PDF download and a video page (avoid “click here”).</li>
+            <li>For each image, write the correct <code>alt</code>: (1) a decorative divider image, (2) a product photo.</li>
+          </ol>
+        </section>
+
+        <section class="card" id="answers">
+          <h2>Answers</h2>
+
+          <details>
+            <summary>A) Document structure</summary>
+            <ol>
+              <li>
+                <pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;
+    &lt;title&gt;My First Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello, HTML&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+              </li>
+              <li>
+                <pre><code>&lt;nav&gt;
+  &lt;a href="#about"&gt;About&lt;/a&gt;
+  &lt;a href="#contact"&gt;Contact&lt;/a&gt;
+&lt;/nav&gt;
+
+&lt;section id="about"&gt;&lt;h2&gt;About&lt;/h2&gt;&lt;/section&gt;
+&lt;section id="contact"&gt;&lt;h2&gt;Contact&lt;/h2&gt;&lt;/section&gt;</code></pre>
+              </li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>B) Semantics</summary>
+            <ol>
+              <li>
+                <pre><code>&lt;article&gt;
+  &lt;header&gt;
+    &lt;h1&gt;How Rainbows Form&lt;/h1&gt;
+    &lt;p&gt;By Sam  Updated 2025-12-27&lt;/p&gt;
+  &lt;/header&gt;
+  &lt;p&gt;Rainbows form when light refracts and reflects inside water droplets...&lt;/p&gt;
+  &lt;p&gt;The colors separate because different wavelengths bend by different amounts...&lt;/p&gt;
+&lt;/article&gt;</code></pre>
+              </li>
+              <li>
+                <p class="tiny" style="margin: 0">Example: replace <code>&lt;div class="nav"&gt;</code> with <code>&lt;nav&gt;</code>, <code>&lt;div class="footer"&gt;</code> with <code>&lt;footer&gt;</code>, etc.</p>
+              </li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>C) Forms</summary>
+            <ol>
+              <li>
+                <pre><code>&lt;form action="/signup" method="post"&gt;
+  &lt;label for="email"&gt;Email&lt;/label&gt;
+  &lt;input id="email" name="email" type="email" required /&gt;
+
+  &lt;label for="password"&gt;Password&lt;/label&gt;
+  &lt;input id="password" name="password" type="password" minlength="8" required /&gt;
+
+  &lt;button type="submit"&gt;Sign up&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+              </li>
+              <li>
+                <pre><code>&lt;fieldset&gt;
+  &lt;legend&gt;Preferred contact&lt;/legend&gt;
+  &lt;label&gt;&lt;input type="radio" name="contact" value="email" /&gt; Email&lt;/label&gt;
+  &lt;label&gt;&lt;input type="radio" name="contact" value="sms" /&gt; SMS&lt;/label&gt;
+&lt;/fieldset&gt;</code></pre>
+              </li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>D) Accessibility</summary>
+            <ol>
+              <li>
+                <ul>
+                  <li>“Download course outline (PDF)”</li>
+                  <li>“Watch: How to solve quadratic equations (video)”</li>
+                </ul>
+              </li>
+              <li>
+                <ul>
+                  <li>Decorative divider: <code>alt=""</code></li>
+                  <li>Product photo: <code>alt="Red running shoes, side view"</code> (describe what matters)</li>
+                </ul>
+              </li>
+            </ol>
+          </details>
+
+          <p class="footer">
+            This tutorial is a single, self-contained HTML file (no external dependencies). Its suitable for printing,
+            sharing, or hosting on GitHub Pages.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
