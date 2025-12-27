@@ -1,0 +1,1334 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Triangular (Trigonometric) Functions 12 — Complete Tutorial</title>
+    <meta
+      name="description"
+      content="A detailed Grade 12 tutorial on triangular (trigonometric) functions: radians, unit circle, graphs and transformations, identities, equations, inverse trig, and solving triangles with practice problems."
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #101938;
+        --panel-2: #0f1733;
+        --text: #e8ecff;
+        --muted: #b7c0ff;
+        --accent: #7aa2ff;
+        --accent-2: #4ee7b0;
+        --warn: #ffcc66;
+        --danger: #ff6b6b;
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: rgba(0, 0, 0, 0.35);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(1200px 700px at 20% 0%, #182a65 0%, var(--bg) 55%) fixed;
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .skip {
+        position: absolute;
+        top: -50px;
+        left: 12px;
+        background: #000;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        z-index: 10;
+      }
+
+      .skip:focus {
+        top: 12px;
+      }
+
+      header {
+        padding: 34px 18px 10px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      header h1 {
+        margin: 0 0 6px;
+        font-size: 2rem;
+        letter-spacing: 0.2px;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 18px 44px;
+      }
+
+      nav {
+        position: sticky;
+        top: 14px;
+        align-self: start;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 12px 28px var(--shadow);
+        padding: 14px 14px 10px;
+      }
+
+      nav h2 {
+        margin: 0 0 10px;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      nav a {
+        display: block;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      nav a:hover {
+        background: rgba(122, 162, 255, 0.12);
+        border-color: rgba(122, 162, 255, 0.25);
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      .card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 16px 38px var(--shadow);
+        padding: 18px 18px 14px;
+        margin: 0 0 14px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+      }
+
+      .card h3 {
+        margin: 18px 0 8px;
+        font-size: 1.05rem;
+        color: #dfe6ff;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 0;
+      }
+
+      .pill {
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.18);
+        color: #eff4ff;
+        white-space: nowrap;
+      }
+
+      .note {
+        border-left: 4px solid var(--accent-2);
+        padding: 10px 12px;
+        background: rgba(78, 231, 176, 0.08);
+        border-radius: 12px;
+      }
+
+      .warn {
+        border-left: 4px solid var(--warn);
+        padding: 10px 12px;
+        background: rgba(255, 204, 102, 0.1);
+        border-radius: 12px;
+      }
+
+      .danger {
+        border-left: 4px solid var(--danger);
+        padding: 10px 12px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 12px;
+      }
+
+      .grid-2 {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .equation {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: rgba(0, 0, 0, 0.22);
+        font-family: var(--mono);
+        overflow: auto;
+      }
+
+      .steps {
+        margin: 8px 0 0;
+        padding-left: 1.1rem;
+      }
+
+      .steps li {
+        margin: 0.35rem 0;
+      }
+
+      .inline-math {
+        font-family: var(--mono);
+        padding: 0.1rem 0.35rem;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.18);
+        white-space: nowrap;
+      }
+
+      code,
+      pre {
+        font-family: var(--mono);
+      }
+
+      pre {
+        overflow: auto;
+        padding: 12px 12px;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 10px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        vertical-align: top;
+      }
+
+      th {
+        background: rgba(122, 162, 255, 0.12);
+        color: #f2f5ff;
+        font-weight: 650;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      details {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      details summary {
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      .tiny {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .footer {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-top: 8px;
+      }
+
+      .svg-wrap {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.18);
+        padding: 10px;
+        overflow: auto;
+      }
+
+      svg {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .kbd {
+        font-family: var(--mono);
+        font-size: 0.95em;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.22);
+        border-radius: 10px;
+        padding: 0.15rem 0.45rem;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 940px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          position: static;
+        }
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        :root {
+          --bg: #ffffff;
+          --panel: #ffffff;
+          --text: #000000;
+          --muted: #333333;
+          --border: rgba(0, 0, 0, 0.2);
+          --shadow: transparent;
+        }
+        body {
+          background: #fff !important;
+        }
+        nav {
+          display: none;
+        }
+        a {
+          color: #000;
+          text-decoration: underline;
+        }
+        .card {
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header>
+      <h1>Triangular (Trigonometric) Functions 12 — Complete Tutorial</h1>
+      <p>
+        A Grade 12, student-friendly guide to trigonometric (“triangular”) functions: radians &amp;
+        the unit circle, graphs &amp; transformations, identities &amp; equations, inverse trig, and
+        solving triangles (Law of Sines/Cosines) with practice problems.
+      </p>
+      <div class="pill-row" aria-label="Topic tags">
+        <span class="pill">radians</span>
+        <span class="pill">unit circle</span>
+        <span class="pill">graphs</span>
+        <span class="pill">identities</span>
+        <span class="pill">equations</span>
+        <span class="pill">inverse trig</span>
+        <span class="pill">Law of Sines</span>
+        <span class="pill">Law of Cosines</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#start">How to Use This</a></li>
+          <li><a href="#angles">Angles &amp; Radians</a></li>
+          <li><a href="#right-tri">Right-Triangle Trig</a></li>
+          <li><a href="#unit-circle">Unit Circle</a></li>
+          <li><a href="#special">Special Angles</a></li>
+          <li><a href="#graphs">Graphs &amp; Transformations</a></li>
+          <li><a href="#identities">Core Identities</a></li>
+          <li><a href="#equations">Solving Trig Equations</a></li>
+          <li><a href="#inverse">Inverse Trig</a></li>
+          <li><a href="#triangles">Solving Triangles</a></li>
+          <li><a href="#applications">Applications</a></li>
+          <li><a href="#practice">Practice Set</a></li>
+          <li><a href="#answers">Answer Key</a></li>
+          <li><a href="#cheatsheet">Cheat Sheet</a></li>
+        </ul>
+      </nav>
+
+      <main id="content">
+        <section class="card" id="start">
+          <h2>How to Use This Tutorial</h2>
+          <p>
+            Trigonometry is easier when you keep track of three things: <strong>angle measure</strong>
+            (degrees vs radians), <strong>where you are on the unit circle</strong> (signs by
+            quadrant), and <strong>which model fits</strong> (right triangle, unit circle, or triangle
+            laws).
+          </p>
+          <div class="grid-2">
+            <div class="note">
+              <h3 style="margin-top: 0">Study routine (fast)</h3>
+              <ol class="steps">
+                <li>Memorize special-angle values for <span class="inline-math">sin</span> and <span class="inline-math">cos</span>.</li>
+                <li>Use <span class="inline-math">tan = sin / cos</span> (don’t memorize a separate table).</li>
+                <li>Practice solving equations on an interval (e.g., <span class="inline-math">0 ≤ x &lt; 2π</span>).</li>
+                <li>Do mixed problems: graphs, identities, and triangle solving.</li>
+              </ol>
+            </div>
+            <div class="warn">
+              <h3 style="margin-top: 0">Common mistakes</h3>
+              <ul class="steps">
+                <li>Mixing degrees and radians on a calculator.</li>
+                <li>Forgetting the sign in Quadrant II/III/IV.</li>
+                <li>Solving <span class="inline-math">sin x = a</span> with only one angle (usually there are two per cycle).</li>
+                <li>Using Law of Sines in an <span class="inline-math">SAS</span> case (use Law of Cosines first).</li>
+              </ul>
+            </div>
+          </div>
+          <p class="tiny">
+            Calculator tip: set the mode explicitly. On most calculators:
+            <span class="kbd">MODE</span> → choose <span class="kbd">DEG</span> or <span class="kbd">RAD</span>.
+          </p>
+        </section>
+
+        <section class="card" id="angles">
+          <h2>1) Angles &amp; Radians</h2>
+
+          <h3>Degrees vs radians</h3>
+          <p>
+            A full turn is <span class="inline-math">360°</span> which equals <span class="inline-math">2π</span>
+            radians. Radians measure angles using arc length on a circle.
+          </p>
+          <div class="equation" aria-label="Degree-radian conversions">
+            180° = π rad
+            <br />
+            radians = degrees × (π / 180)
+            <br />
+            degrees = radians × (180 / π)
+          </div>
+
+          <h3>Arc length and sector area</h3>
+          <p>
+            These formulas require <strong>radians</strong>.
+          </p>
+          <div class="grid-2">
+            <div>
+              <div class="equation" aria-label="Arc length formula">s = rθ</div>
+              <p class="tiny">
+                <span class="inline-math">s</span> is arc length, <span class="inline-math">r</span> is radius,
+                <span class="inline-math">θ</span> is in radians.
+              </p>
+            </div>
+            <div>
+              <div class="equation" aria-label="Sector area formula">A = (1/2) r²θ</div>
+              <p class="tiny">
+                The sector is the “pizza slice” cut from the circle.
+              </p>
+            </div>
+          </div>
+
+          <h3>Angle direction and coterminal angles</h3>
+          <ul>
+            <li>Counterclockwise angles are positive; clockwise angles are negative.</li>
+            <li>Coterminal angles differ by multiples of <span class="inline-math">2π</span> (or <span class="inline-math">360°</span>).</li>
+          </ul>
+          <div class="equation" aria-label="Coterminal angle formula">θ and θ + 2kπ (k is any integer)</div>
+
+          <h3>Quick conversion table</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Degrees</th>
+                <th>Radians</th>
+                <th>Degrees</th>
+                <th>Radians</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>30°</td>
+                <td>π/6</td>
+                <td>180°</td>
+                <td>π</td>
+              </tr>
+              <tr>
+                <td>45°</td>
+                <td>π/4</td>
+                <td>270°</td>
+                <td>3π/2</td>
+              </tr>
+              <tr>
+                <td>60°</td>
+                <td>π/3</td>
+                <td>360°</td>
+                <td>2π</td>
+              </tr>
+              <tr>
+                <td>90°</td>
+                <td>π/2</td>
+                <td>720°</td>
+                <td>4π</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card" id="right-tri">
+          <h2>2) Right-Triangle Trig (SOH–CAH–TOA)</h2>
+          <p>
+            In a <strong>right triangle</strong>, pick an acute angle <span class="inline-math">θ</span>.
+            The sides are named relative to that angle:
+            <span class="inline-math">opposite</span>, <span class="inline-math">adjacent</span>,
+            <span class="inline-math">hypotenuse</span>.
+          </p>
+
+          <div class="svg-wrap" aria-label="Right triangle diagram">
+            <svg viewBox="0 0 520 220" role="img" aria-label="Right triangle labeled with opposite, adjacent, hypotenuse">
+              <defs>
+                <style>
+                  .l { stroke: rgba(255,255,255,0.85); stroke-width: 3; fill: none; }
+                  .t { fill: rgba(255,255,255,0.92); font: 16px ui-monospace, Menlo, Consolas, monospace; }
+                  .m { fill: rgba(183,192,255,0.95); font: 14px ui-sans-serif, system-ui; }
+                </style>
+              </defs>
+              <path class="l" d="M70 170 L360 170 L360 60 Z" />
+              <path class="l" d="M338 170 L338 148 L360 148" />
+              <text class="t" x="88" y="192">θ</text>
+              <path class="l" d="M82 170 A28 28 0 0 1 104 156" />
+              <text class="m" x="190" y="190">adjacent</text>
+              <text class="m" x="370" y="120" transform="rotate(-90 370 120)">opposite</text>
+              <text class="m" x="210" y="95" transform="rotate(-20 210 95)">hypotenuse</text>
+            </svg>
+          </div>
+
+          <h3>Definitions (ratios)</h3>
+          <div class="equation" aria-label="SOH CAH TOA definitions">
+            sin θ = opposite / hypotenuse
+            <br />
+            cos θ = adjacent / hypotenuse
+            <br />
+            tan θ = opposite / adjacent
+          </div>
+
+          <h3>Reciprocal trig functions</h3>
+          <div class="equation" aria-label="Reciprocal functions">
+            csc θ = 1 / sin θ
+            <br />
+            sec θ = 1 / cos θ
+            <br />
+            cot θ = 1 / tan θ
+          </div>
+
+          <h3>Example 1 (solve for a side)</h3>
+          <p>
+            A right triangle has hypotenuse 13 and angle <span class="inline-math">θ = 40°</span>. Find the side opposite <span class="inline-math">θ</span>.
+          </p>
+          <ol class="steps">
+            <li>Use <span class="inline-math">sin θ = opposite / hypotenuse</span>.</li>
+            <li><span class="inline-math">sin 40° = opposite / 13</span>.</li>
+            <li><span class="inline-math">opposite = 13 sin 40° ≈ 8.36</span>.</li>
+          </ol>
+          <p class="tiny">Round to the precision your course expects (often 3 s.f. or 1 decimal place).</p>
+
+          <h3>Example 2 (find an angle)</h3>
+          <p>
+            In a right triangle, <span class="inline-math">opposite = 7</span> and <span class="inline-math">adjacent = 5</span>. Find <span class="inline-math">θ</span>.
+          </p>
+          <ol class="steps">
+            <li><span class="inline-math">tan θ = opposite / adjacent = 7/5</span>.</li>
+            <li><span class="inline-math">θ = arctan(7/5) ≈ 54.46°</span>.</li>
+          </ol>
+          <div class="warn">
+            When using inverse trig in Grade 12, always state the <strong>mode</strong> (degrees or radians) and the <strong>interval</strong> if required.
+          </div>
+        </section>
+
+        <section class="card" id="unit-circle">
+          <h2>3) Unit Circle (the “function” view)</h2>
+          <p>
+            The unit circle is a circle of radius 1 centered at the origin. For an angle <span class="inline-math">θ</span>
+            in standard position, the point on the unit circle is:
+          </p>
+          <div class="equation" aria-label="Unit circle coordinate definition">
+            (x, y) = (cos θ, sin θ)
+          </div>
+          <p>
+            This connects triangles to functions because as <span class="inline-math">θ</span> changes, <span class="inline-math">sin θ</span> and <span class="inline-math">cos θ</span> change smoothly.
+          </p>
+
+          <div class="svg-wrap" aria-label="Unit circle diagram with quadrants and key angles">
+            <svg viewBox="-160 -160 320 320" role="img" aria-label="Unit circle with axes and quadrants">
+              <defs>
+                <style>
+                  .axis { stroke: rgba(255,255,255,0.55); stroke-width: 2; }
+                  .circ { stroke: rgba(122,162,255,0.95); stroke-width: 3; fill: rgba(122,162,255,0.06); }
+                  .tick { stroke: rgba(255,255,255,0.6); stroke-width: 2; }
+                  .pt { fill: rgba(78,231,176,0.95); }
+                  .label { fill: rgba(233,240,255,0.95); font: 12px ui-monospace, Menlo, Consolas, monospace; }
+                  .q { fill: rgba(183,192,255,0.7); font: 14px ui-sans-serif, system-ui; }
+                </style>
+              </defs>
+              <circle class="circ" cx="0" cy="0" r="120" />
+              <line class="axis" x1="-150" y1="0" x2="150" y2="0" />
+              <line class="axis" x1="0" y1="-150" x2="0" y2="150" />
+              <line class="tick" x1="120" y1="-6" x2="120" y2="6" />
+              <line class="tick" x1="-120" y1="-6" x2="-120" y2="6" />
+              <line class="tick" x1="-6" y1="120" x2="6" y2="120" />
+              <line class="tick" x1="-6" y1="-120" x2="6" y2="-120" />
+              <circle class="pt" cx="120" cy="0" r="4" />
+              <circle class="pt" cx="0" cy="120" r="4" />
+              <circle class="pt" cx="-120" cy="0" r="4" />
+              <circle class="pt" cx="0" cy="-120" r="4" />
+              <text class="label" x="126" y="4">(1,0)</text>
+              <text class="label" x="6" y="-126">(0,1)</text>
+              <text class="label" x="-154" y="4">(-1,0)</text>
+              <text class="label" x="6" y="134">(0,-1)</text>
+              <text class="q" x="60" y="-70">QI</text>
+              <text class="q" x="-90" y="-70">QII</text>
+              <text class="q" x="-90" y="90">QIII</text>
+              <text class="q" x="60" y="90">QIV</text>
+            </svg>
+          </div>
+
+          <h3>Signs by quadrant (ASTC)</h3>
+          <p>
+            A quick sign rule (often remembered by “ASTC”):
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Quadrant</th>
+                <th>Angle range</th>
+                <th>Positive trig functions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>I</td>
+                <td><span class="inline-math">0 &lt; θ &lt; π/2</span></td>
+                <td>All</td>
+              </tr>
+              <tr>
+                <td>II</td>
+                <td><span class="inline-math">π/2 &lt; θ &lt; π</span></td>
+                <td><span class="inline-math">sin</span></td>
+              </tr>
+              <tr>
+                <td>III</td>
+                <td><span class="inline-math">π &lt; θ &lt; 3π/2</span></td>
+                <td><span class="inline-math">tan</span></td>
+              </tr>
+              <tr>
+                <td>IV</td>
+                <td><span class="inline-math">3π/2 &lt; θ &lt; 2π</span></td>
+                <td><span class="inline-math">cos</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Reference angles</h3>
+          <p>
+            A <strong>reference angle</strong> is the acute angle between the terminal arm and the x-axis.
+            It lets you use the special-angle values and then apply the quadrant sign.
+          </p>
+          <div class="equation" aria-label="Reference angle rules">
+            QI: α = θ
+            <br />
+            QII: α = π − θ
+            <br />
+            QIII: α = θ − π
+            <br />
+            QIV: α = 2π − θ
+          </div>
+          <div class="note">
+            Once you find <span class="inline-math">α</span>, compute <span class="inline-math">sin α</span>, <span class="inline-math">cos α</span>, <span class="inline-math">tan α</span>
+            from special-angle triangles, then apply the correct sign for the quadrant of <span class="inline-math">θ</span>.
+          </div>
+        </section>
+
+        <section class="card" id="special">
+          <h2>4) Special Angles (exact values)</h2>
+          <p>
+            These are the backbone of Grade 12 trig. You should be able to recall them without a calculator.
+          </p>
+
+          <h3>The two special triangles</h3>
+          <div class="grid-2">
+            <div>
+              <h4 style="margin: 0 0 8px">45°–45°–90°</h4>
+              <p class="tiny">Side ratio: <span class="inline-math">1 : 1 : √2</span></p>
+              <div class="equation">sin 45° = √2/2, cos 45° = √2/2, tan 45° = 1</div>
+            </div>
+            <div>
+              <h4 style="margin: 0 0 8px">30°–60°–90°</h4>
+              <p class="tiny">Side ratio: <span class="inline-math">1 : √3 : 2</span> (opposite 30° is 1)</p>
+              <div class="equation">
+                sin 30° = 1/2, cos 30° = √3/2, tan 30° = √3/3
+                <br />
+                sin 60° = √3/2, cos 60° = 1/2, tan 60° = √3
+              </div>
+            </div>
+          </div>
+
+          <h3>Exact unit-circle values (0 to 2π)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>θ (degrees)</th>
+                <th>θ (radians)</th>
+                <th>sin θ</th>
+                <th>cos θ</th>
+                <th>tan θ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0°</td>
+                <td>0</td>
+                <td>0</td>
+                <td>1</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>30°</td>
+                <td>π/6</td>
+                <td>1/2</td>
+                <td>√3/2</td>
+                <td>√3/3</td>
+              </tr>
+              <tr>
+                <td>45°</td>
+                <td>π/4</td>
+                <td>√2/2</td>
+                <td>√2/2</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>60°</td>
+                <td>π/3</td>
+                <td>√3/2</td>
+                <td>1/2</td>
+                <td>√3</td>
+              </tr>
+              <tr>
+                <td>90°</td>
+                <td>π/2</td>
+                <td>1</td>
+                <td>0</td>
+                <td>undefined</td>
+              </tr>
+              <tr>
+                <td>120°</td>
+                <td>2π/3</td>
+                <td>√3/2</td>
+                <td>-1/2</td>
+                <td>-√3</td>
+              </tr>
+              <tr>
+                <td>135°</td>
+                <td>3π/4</td>
+                <td>√2/2</td>
+                <td>-√2/2</td>
+                <td>-1</td>
+              </tr>
+              <tr>
+                <td>150°</td>
+                <td>5π/6</td>
+                <td>1/2</td>
+                <td>-√3/2</td>
+                <td>-√3/3</td>
+              </tr>
+              <tr>
+                <td>180°</td>
+                <td>π</td>
+                <td>0</td>
+                <td>-1</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>210°</td>
+                <td>7π/6</td>
+                <td>-1/2</td>
+                <td>-√3/2</td>
+                <td>√3/3</td>
+              </tr>
+              <tr>
+                <td>225°</td>
+                <td>5π/4</td>
+                <td>-√2/2</td>
+                <td>-√2/2</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>240°</td>
+                <td>4π/3</td>
+                <td>-√3/2</td>
+                <td>-1/2</td>
+                <td>√3</td>
+              </tr>
+              <tr>
+                <td>270°</td>
+                <td>3π/2</td>
+                <td>-1</td>
+                <td>0</td>
+                <td>undefined</td>
+              </tr>
+              <tr>
+                <td>300°</td>
+                <td>5π/3</td>
+                <td>-√3/2</td>
+                <td>1/2</td>
+                <td>-√3</td>
+              </tr>
+              <tr>
+                <td>315°</td>
+                <td>7π/4</td>
+                <td>-√2/2</td>
+                <td>√2/2</td>
+                <td>-1</td>
+              </tr>
+              <tr>
+                <td>330°</td>
+                <td>11π/6</td>
+                <td>-1/2</td>
+                <td>√3/2</td>
+                <td>-√3/3</td>
+              </tr>
+              <tr>
+                <td>360°</td>
+                <td>2π</td>
+                <td>0</td>
+                <td>1</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="tiny">
+            “Undefined” for <span class="inline-math">tan θ</span> means division by zero because <span class="inline-math">tan θ = sin θ / cos θ</span>.
+          </p>
+        </section>
+
+        <section class="card" id="graphs">
+          <h2>5) Graphs &amp; Transformations</h2>
+          <p>
+            The basic trig graphs come from the unit circle. In Grade 12 you usually focus on the function form and transformations.
+          </p>
+
+          <h3>Base functions (key facts)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Function</th>
+                <th>Period</th>
+                <th>Range</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="inline-math">y = sin x</span></td>
+                <td><span class="inline-math">2π</span></td>
+                <td><span class="inline-math">[-1, 1]</span></td>
+                <td>Zeros at <span class="inline-math">x = kπ</span>.</td>
+              </tr>
+              <tr>
+                <td><span class="inline-math">y = cos x</span></td>
+                <td><span class="inline-math">2π</span></td>
+                <td><span class="inline-math">[-1, 1]</span></td>
+                <td>Max at <span class="inline-math">x = 0</span>.</td>
+              </tr>
+              <tr>
+                <td><span class="inline-math">y = tan x</span></td>
+                <td><span class="inline-math">π</span></td>
+                <td>All real numbers</td>
+                <td>Vertical asymptotes at <span class="inline-math">x = π/2 + kπ</span>.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Transformation form (sin/cos)</h3>
+          <p>Most courses use the form:</p>
+          <div class="equation" aria-label="Sinusoid transformation form">
+            y = a sin(b(x − c)) + d
+            <br />
+            y = a cos(b(x − c)) + d
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Meaning</th>
+                <th>How to compute</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="inline-math">a</span></td>
+                <td>Amplitude (vertical stretch/flip)</td>
+                <td><span class="inline-math">|a|</span> is amplitude; if <span class="inline-math">a &lt; 0</span> then reflect across midline.</td>
+              </tr>
+              <tr>
+                <td><span class="inline-math">b</span></td>
+                <td>Horizontal stretch (changes period)</td>
+                <td>Period <span class="inline-math">P = 2π / |b|</span>.</td>
+              </tr>
+              <tr>
+                <td><span class="inline-math">c</span></td>
+                <td>Phase shift (left/right)</td>
+                <td>Shift is <span class="inline-math">c</span> to the right.</td>
+              </tr>
+              <tr>
+                <td><span class="inline-math">d</span></td>
+                <td>Vertical shift (midline)</td>
+                <td>Midline is <span class="inline-math">y = d</span>.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Example (analyze a sinusoid)</h3>
+          <p>For <span class="inline-math">y = 2 sin(3(x − π/6)) − 1</span>:</p>
+          <ul>
+            <li>Amplitude <span class="inline-math">= 2</span>.</li>
+            <li>Period <span class="inline-math">P = 2π/3</span>.</li>
+            <li>Phase shift <span class="inline-math">= π/6</span> right.</li>
+            <li>Midline <span class="inline-math">y = −1</span>, range <span class="inline-math">[-3, 1]</span>.</li>
+          </ul>
+
+          <h3>Transformation form (tan)</h3>
+          <div class="equation" aria-label="Tangent transformation form">
+            y = a tan(b(x − c)) + d
+          </div>
+          <p class="tiny">
+            Period <span class="inline-math">P = π/|b|</span>. Asymptotes are shifted/scaled with <span class="inline-math">b</span> and <span class="inline-math">c</span>, then shifted vertically with <span class="inline-math">d</span>.
+          </p>
+        </section>
+
+        <section class="card" id="identities">
+          <h2>6) Core Identities (tools for simplifying &amp; proving)</h2>
+          <p>
+            An identity is an equation that is true for all values where both sides are defined.
+            The key skill is rewriting everything in terms of <span class="inline-math">sin</span> and <span class="inline-math">cos</span>.
+          </p>
+
+          <h3>Reciprocal and quotient identities</h3>
+          <div class="equation">
+            tan θ = sin θ / cos θ
+            <br />
+            cot θ = cos θ / sin θ
+            <br />
+            sec θ = 1 / cos θ
+            <br />
+            csc θ = 1 / sin θ
+          </div>
+
+          <h3>Pythagorean identities</h3>
+          <div class="equation">
+            sin²θ + cos²θ = 1
+            <br />
+            1 + tan²θ = sec²θ
+            <br />
+            1 + cot²θ = csc²θ
+          </div>
+          <p class="tiny">
+            The last two come from dividing <span class="inline-math">sin²θ + cos²θ = 1</span> by <span class="inline-math">cos²θ</span> or <span class="inline-math">sin²θ</span>.
+          </p>
+
+          <h3>Even/odd and cofunction identities</h3>
+          <div class="equation">
+            sin(−θ) = −sin θ, cos(−θ) = cos θ, tan(−θ) = −tan θ
+            <br />
+            sin(π/2 − θ) = cos θ
+            <br />
+            cos(π/2 − θ) = sin θ
+            <br />
+            tan(π/2 − θ) = cot θ
+          </div>
+
+          <h3>Sum and difference (if included in your course)</h3>
+          <div class="equation">
+            sin(A ± B) = sin A cos B ± cos A sin B
+            <br />
+            cos(A ± B) = cos A cos B ∓ sin A sin B
+          </div>
+          <div class="note">
+            Many Grade 12 courses focus mainly on reciprocal/quotient/Pythagorean identities and solving equations. If sum/difference identities are not in your syllabus, you can skip this box.
+          </div>
+
+          <h3>Example (prove an identity)</h3>
+          <p>Prove: <span class="inline-math">(1 − cos²θ) / sin²θ = 1</span> (where defined)</p>
+          <ol class="steps">
+            <li>Start with the left side: <span class="inline-math">(1 − cos²θ) / sin²θ</span>.</li>
+            <li>Use <span class="inline-math">sin²θ + cos²θ = 1</span> → <span class="inline-math">1 − cos²θ = sin²θ</span>.</li>
+            <li>Substitute: <span class="inline-math">sin²θ / sin²θ = 1</span> (as long as <span class="inline-math">sin θ ≠ 0</span>).</li>
+          </ol>
+        </section>
+
+        <section class="card" id="equations">
+          <h2>7) Solving Trig Equations (on an interval)</h2>
+          <p>
+            Most Grade 12 questions ask for solutions in an interval, such as <span class="inline-math">0 ≤ x &lt; 2π</span> or <span class="inline-math">0° ≤ x &lt; 360°</span>.
+          </p>
+
+          <h3>Type A: basic (unit circle)</h3>
+          <p>Solve <span class="inline-math">sin x = 1/2</span> for <span class="inline-math">0 ≤ x &lt; 2π</span>.</p>
+          <ol class="steps">
+            <li>Find the reference angle: <span class="inline-math">sin α = 1/2 → α = π/6</span>.</li>
+            <li><span class="inline-math">sin</span> is positive in Quadrants I and II.</li>
+            <li>Solutions: <span class="inline-math">x = π/6</span> and <span class="inline-math">x = 5π/6</span>.</li>
+          </ol>
+
+          <h3>Type B: using identities</h3>
+          <p>Solve <span class="inline-math">2 sin²x − 1 = 0</span> for <span class="inline-math">0 ≤ x &lt; 2π</span>.</p>
+          <ol class="steps">
+            <li><span class="inline-math">2 sin²x − 1 = 0</span> → <span class="inline-math">sin²x = 1/2</span>.</li>
+            <li><span class="inline-math">sin x = ± √(1/2) = ± √2/2</span>.</li>
+            <li>Reference angle is <span class="inline-math">π/4</span>.</li>
+            <li>List solutions where <span class="inline-math">sin x</span> is positive and negative:
+              <span class="inline-math">x = π/4, 3π/4, 5π/4, 7π/4</span>.</li>
+          </ol>
+
+          <h3>Type C: transformed trig (use a “core” angle)</h3>
+          <p>Solve <span class="inline-math">cos(2x) = 1/2</span> for <span class="inline-math">0 ≤ x &lt; 2π</span>.</p>
+          <ol class="steps">
+            <li>Let <span class="inline-math">u = 2x</span>. Then solve <span class="inline-math">cos u = 1/2</span>.</li>
+            <li>In <span class="inline-math">0 ≤ u &lt; 4π</span>, solutions are <span class="inline-math">u = π/3, 5π/3, 7π/3, 11π/3</span>.</li>
+            <li>Divide by 2: <span class="inline-math">x = π/6, 5π/6, 7π/6, 11π/6</span>.</li>
+          </ol>
+
+          <div class="warn">
+            When you substitute <span class="inline-math">u = bx</span>, remember the interval changes too (multiply the original interval by <span class="inline-math">b</span> before solving).
+          </div>
+        </section>
+
+        <section class="card" id="inverse">
+          <h2>8) Inverse Trig Functions</h2>
+          <p>
+            Inverse trig functions undo trig functions, but only after restricting the domain so that the function is one-to-one.
+          </p>
+
+          <h3>Principal values (common convention)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Function</th>
+                <th>Input range</th>
+                <th>Output (principal) range</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="inline-math">y = arcsin(x)</span></td>
+                <td><span class="inline-math">[-1, 1]</span></td>
+                <td><span class="inline-math">[-π/2, π/2]</span></td>
+              </tr>
+              <tr>
+                <td><span class="inline-math">y = arccos(x)</span></td>
+                <td><span class="inline-math">[-1, 1]</span></td>
+                <td><span class="inline-math">[0, π]</span></td>
+              </tr>
+              <tr>
+                <td><span class="inline-math">y = arctan(x)</span></td>
+                <td>All real numbers</td>
+                <td><span class="inline-math">(-π/2, π/2)</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Example 1</h3>
+          <p>Evaluate <span class="inline-math">arcsin(−√2/2)</span>.</p>
+          <ol class="steps">
+            <li>We need an angle in <span class="inline-math">[-π/2, π/2]</span> whose sine is <span class="inline-math">−√2/2</span>.</li>
+            <li>That angle is <span class="inline-math">−π/4</span>.</li>
+          </ol>
+
+          <h3>Example 2 (composition)</h3>
+          <p>Evaluate <span class="inline-math">sin(arccos(3/5))</span>.</p>
+          <ol class="steps">
+            <li>Let <span class="inline-math">θ = arccos(3/5)</span>. Then <span class="inline-math">cos θ = 3/5</span> and <span class="inline-math">θ ∈ [0, π]</span>.</li>
+            <li>Think of a triangle: adjacent = 3, hypotenuse = 5 ⇒ opposite = 4 (by Pythagoras).</li>
+            <li><span class="inline-math">sin θ = 4/5</span>. Therefore <span class="inline-math">sin(arccos(3/5)) = 4/5</span>.</li>
+          </ol>
+        </section>
+
+        <section class="card" id="triangles">
+          <h2>9) Solving Triangles (Law of Sines &amp; Law of Cosines)</h2>
+          <p>
+            When the triangle is not right-angled (an <strong>oblique triangle</strong>), use the triangle laws.
+            Use standard notation: sides <span class="inline-math">a, b, c</span> are opposite angles <span class="inline-math">A, B, C</span>.
+          </p>
+
+          <h3>Law of Sines</h3>
+          <div class="equation" aria-label="Law of Sines">
+            a / sin A = b / sin B = c / sin C
+          </div>
+          <p class="tiny">Best used for <span class="inline-math">ASA</span>, <span class="inline-math">AAS</span>, and sometimes <span class="inline-math">SSA</span> (ambiguous case).</p>
+
+          <h3>Law of Cosines</h3>
+          <div class="equation" aria-label="Law of Cosines">
+            a² = b² + c² − 2bc cos A
+            <br />
+            b² = a² + c² − 2ac cos B
+            <br />
+            c² = a² + b² − 2ab cos C
+          </div>
+          <p class="tiny">Best used for <span class="inline-math">SAS</span> and <span class="inline-math">SSS</span>.</p>
+
+          <h3>Example (SAS)</h3>
+          <p>
+            In triangle <span class="inline-math">ABC</span>, let <span class="inline-math">b = 7</span>, <span class="inline-math">c = 10</span>, and <span class="inline-math">A = 40°</span>. Find <span class="inline-math">a</span>.
+          </p>
+          <ol class="steps">
+            <li>Use Law of Cosines: <span class="inline-math">a² = b² + c² − 2bc cos A</span>.</li>
+            <li><span class="inline-math">a² = 7² + 10² − 2(7)(10)cos 40°</span>.</li>
+            <li><span class="inline-math">a ≈ √(49 + 100 − 140·0.7660) ≈ 6.55</span>.</li>
+          </ol>
+
+          <h3>Ambiguous case (SSA) idea</h3>
+          <p>
+            With Law of Sines, an <span class="inline-math">SSA</span> setup can create 0, 1, or 2 possible triangles because <span class="inline-math">sin θ = sin(180° − θ)</span>.
+          </p>
+          <div class="warn">
+            If your course tests the SSA ambiguous case, always check whether the computed angle could also be <span class="inline-math">180° − angle</span>, and whether the remaining angles stay positive.
+          </div>
+        </section>
+
+        <section class="card" id="applications">
+          <h2>10) Applications</h2>
+          <p>Trigonometry models real-world situations: heights, distances, navigation, waves, and periodic motion.</p>
+
+          <h3>Angle of elevation / depression</h3>
+          <p>
+            Angle of elevation is measured up from the horizontal. Angle of depression is measured down from the horizontal.
+            They often form alternate interior angles with parallel lines, so they are equal in many diagrams.
+          </p>
+          <div class="note">
+            If a question says “a person is 40 m from a building and looks up at 32°”, it’s usually a right triangle:
+            <span class="inline-math">tan 32° = height / 40</span>.
+          </div>
+
+          <h3>Simple harmonic motion (sinusoidal model)</h3>
+          <p>
+            Many periodic phenomena can be modeled by <span class="inline-math">y = a sin(b(x − c)) + d</span>.
+            The midline <span class="inline-math">y = d</span> is the average value, and the amplitude <span class="inline-math">|a|</span> is the maximum deviation from average.
+          </p>
+        </section>
+
+        <section class="card" id="practice">
+          <h2>Practice Set (Grade 12)</h2>
+          <p class="tiny">Try without a calculator first if an exact value is possible.</p>
+
+          <h3>A) Radians &amp; basics</h3>
+          <ol class="steps">
+            <li>Convert <span class="inline-math">210°</span> to radians.</li>
+            <li>Convert <span class="inline-math">7π/6</span> to degrees.</li>
+            <li>Find one positive coterminal angle for <span class="inline-math">−5π/3</span>.</li>
+            <li>A circle has radius 12 cm. Find arc length for <span class="inline-math">θ = 5π/6</span>.</li>
+          </ol>
+
+          <h3>B) Special angles &amp; unit circle</h3>
+          <ol class="steps" start="5">
+            <li>Find exact <span class="inline-math">sin(5π/6)</span>, <span class="inline-math">cos(5π/6)</span>, <span class="inline-math">tan(5π/6)</span>.</li>
+            <li>Find exact <span class="inline-math">csc(3π/4)</span> and <span class="inline-math">sec(7π/6)</span>.</li>
+            <li>Find <span class="inline-math">sin θ</span> and <span class="inline-math">tan θ</span> if <span class="inline-math">cos θ = −3/5</span> and <span class="inline-math">θ</span> is in Quadrant II.</li>
+          </ol>
+
+          <h3>C) Graphs &amp; transformations</h3>
+          <ol class="steps" start="8">
+            <li>For <span class="inline-math">y = −3 cos(2(x + π/4)) + 1</span>, state amplitude, period, phase shift, midline, and range.</li>
+            <li>Find the period of <span class="inline-math">y = tan(5x)</span>.</li>
+          </ol>
+
+          <h3>D) Identities &amp; equations</h3>
+          <ol class="steps" start="10">
+            <li>Simplify: <span class="inline-math">(1 − sin²θ) / cos²θ</span>.</li>
+            <li>Solve <span class="inline-math">sin x = −√3/2</span> on <span class="inline-math">0 ≤ x &lt; 2π</span>.</li>
+            <li>Solve <span class="inline-math">2 cos²x − 3 cos x + 1 = 0</span> on <span class="inline-math">0 ≤ x &lt; 2π</span>.</li>
+            <li>Solve <span class="inline-math">tan(3x) = 1</span> on <span class="inline-math">0 ≤ x &lt; 2π</span>.</li>
+          </ol>
+
+          <h3>E) Inverse trig</h3>
+          <ol class="steps" start="14">
+            <li>Evaluate <span class="inline-math">arccos(−1/2)</span>.</li>
+            <li>Evaluate <span class="inline-math">cos(arctan(4/3))</span>.</li>
+          </ol>
+
+          <h3>F) Solving triangles</h3>
+          <ol class="steps" start="16">
+            <li>(SAS) In triangle <span class="inline-math">ABC</span>, <span class="inline-math">b = 9</span>, <span class="inline-math">c = 11</span>, <span class="inline-math">A = 52°</span>. Find <span class="inline-math">a</span>.</li>
+            <li>(AAS) In triangle <span class="inline-math">ABC</span>, <span class="inline-math">A = 35°</span>, <span class="inline-math">B = 75°</span>, and <span class="inline-math">a = 12</span>. Find <span class="inline-math">b</span> and <span class="inline-math">c</span>.</li>
+            <li>(SSA) <span class="inline-math">A = 30°</span>, <span class="inline-math">a = 8</span>, <span class="inline-math">b = 10</span>. Determine how many triangles are possible and find <span class="inline-math">B</span> (approx.).</li>
+          </ol>
+        </section>
+
+        <section class="card" id="answers">
+          <h2>Answer Key</h2>
+          <details>
+            <summary>A) Radians &amp; basics</summary>
+            <ol class="steps">
+              <li><span class="inline-math">210° = 210 × (π/180) = 7π/6</span></li>
+              <li><span class="inline-math">7π/6 = 7 × 180/6 = 210°</span></li>
+              <li><span class="inline-math">−5π/3 + 2π = −5π/3 + 6π/3 = π/3</span></li>
+              <li><span class="inline-math">s = rθ = 12 × 5π/6 = 10π</span> cm</li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>B) Special angles &amp; unit circle</summary>
+            <ol class="steps">
+              <li>
+                <span class="inline-math">sin(5π/6)=1/2</span>,
+                <span class="inline-math">cos(5π/6)=−√3/2</span>,
+                <span class="inline-math">tan(5π/6)=−√3/3</span>
+              </li>
+              <li>
+                <span class="inline-math">csc(3π/4)=1/(√2/2)=√2</span>,
+                <span class="inline-math">sec(7π/6)=1/(−√3/2)=−2√3/3</span>
+              </li>
+              <li>
+                Quadrant II: <span class="inline-math">sin θ &gt; 0</span>, <span class="inline-math">tan θ &lt; 0</span>.
+                With <span class="inline-math">cos θ = −3/5</span>, use <span class="inline-math">sin²θ = 1 − cos²θ = 1 − 9/25 = 16/25</span>,
+                so <span class="inline-math">sin θ = 4/5</span>, and <span class="inline-math">tan θ = (4/5)/(−3/5)= −4/3</span>.
+              </li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>C) Graphs &amp; transformations</summary>
+            <ol class="steps">
+              <li>
+                <span class="inline-math">y = −3 cos(2(x + π/4)) + 1</span>:
+                amplitude <span class="inline-math">3</span>, period <span class="inline-math">P = 2π/2 = π</span>,
+                shift <span class="inline-math">π/4</span> left, midline <span class="inline-math">y = 1</span>,
+                range <span class="inline-math">[1 − 3, 1 + 3] = [−2, 4]</span>.
+              </li>
+              <li><span class="inline-math">y = tan(5x)</span> has period <span class="inline-math">π/5</span>.</li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>D) Identities &amp; equations</summary>
+            <ol class="steps">
+              <li>
+                <span class="inline-math">(1 − sin²θ)/cos²θ = cos²θ/cos²θ = 1</span> (where <span class="inline-math">cos θ ≠ 0</span>)
+              </li>
+              <li>
+                <span class="inline-math">sin x = −√3/2</span> → reference angle <span class="inline-math">π/3</span>, negative in QIII and QIV:
+                <span class="inline-math">x = 4π/3, 5π/3</span>.
+              </li>
+              <li>
+                Let <span class="inline-math">u = cos x</span>:
+                <span class="inline-math">2u² − 3u + 1 = 0</span> → <span class="inline-math">(2u − 1)(u − 1)=0</span>,
+                so <span class="inline-math">cos x = 1</span> or <span class="inline-math">cos x = 1/2</span>.
+                On <span class="inline-math">0 ≤ x &lt; 2π</span>: <span class="inline-math">x = 0</span>, and <span class="inline-math">x = π/3, 5π/3</span>.
+              </li>
+              <li>
+                <span class="inline-math">tan(3x)=1</span> → <span class="inline-math">3x = π/4 + kπ</span>.
+                In <span class="inline-math">0 ≤ x &lt; 2π</span>, solutions are
+                <span class="inline-math">x = π/12, 5π/12, 9π/12, 13π/12, 17π/12, 21π/12</span>
+                (i.e., add <span class="inline-math">π/3</span> each time).
+              </li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>E) Inverse trig</summary>
+            <ol class="steps">
+              <li><span class="inline-math">arccos(−1/2) = 2π/3</span> (principal range <span class="inline-math">[0,π]</span>)</li>
+              <li>
+                If <span class="inline-math">θ = arctan(4/3)</span>, then take a triangle with opposite 4, adjacent 3, hypotenuse 5.
+                So <span class="inline-math">cos θ = 3/5</span>, hence <span class="inline-math">cos(arctan(4/3)) = 3/5</span>.
+              </li>
+            </ol>
+          </details>
+
+          <details>
+            <summary>F) Solving triangles</summary>
+            <ol class="steps">
+              <li>
+                <span class="inline-math">a² = 9² + 11² − 2(9)(11)cos 52°</span> ⇒ <span class="inline-math">a ≈ 8.69</span>.
+              </li>
+              <li>
+                <span class="inline-math">C = 180° − 35° − 75° = 70°</span>.
+                By Law of Sines: <span class="inline-math">b = a·sin B / sin A = 12·sin 75°/sin 35° ≈ 20.2</span>,
+                <span class="inline-math">c = a·sin C / sin A = 12·sin 70°/sin 35° ≈ 19.6</span>.
+              </li>
+              <li>
+                Use Law of Sines: <span class="inline-math">sin B = (b sin A)/a = 10·sin 30°/8 = 0.625</span>.
+                So <span class="inline-math">B ≈ 38.68°</span> or <span class="inline-math">B ≈ 141.32°</span>.
+                Check: both can form a triangle because <span class="inline-math">30° + 141.32° &lt; 180°</span>.
+              </li>
+            </ol>
+          </details>
+        </section>
+
+        <section class="card" id="cheatsheet">
+          <h2>Cheat Sheet (quick review)</h2>
+          <div class="grid-2">
+            <div>
+              <h3 style="margin-top: 0">Must-know formulas</h3>
+              <div class="equation">
+                sin²θ + cos²θ = 1
+                <br />
+                tan θ = sin θ / cos θ
+                <br />
+                s = rθ, A = (1/2)r²θ (θ in radians)
+                <br />
+                Law of Sines: a/sin A = b/sin B = c/sin C
+                <br />
+                Law of Cosines: a² = b² + c² − 2bc cos A
+              </div>
+            </div>
+            <div>
+              <h3 style="margin-top: 0">Solving checklist</h3>
+              <ol class="steps">
+                <li>What model? Right triangle, unit circle, or triangle laws?</li>
+                <li>What mode? Degrees or radians?</li>
+                <li>What interval? (e.g., <span class="inline-math">0 ≤ x &lt; 2π</span>)</li>
+                <li>What quadrant/sign?</li>
+                <li>Do you need exact or approximate answers?</li>
+              </ol>
+            </div>
+          </div>
+          <p class="footer">
+            Created as a single, self-contained HTML tutorial (no external dependencies). Print-friendly.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
