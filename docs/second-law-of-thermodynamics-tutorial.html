@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Second Law of Thermodynamics — Detailed Tutorial (Origins to Modern View)</title>
+    <meta
+      name="description"
+      content="A detailed, student-friendly tutorial on the Second Law of Thermodynamics: historical origin (Carnot, Clausius, Kelvin, Boltzmann), equivalent statements, entropy, heat engines, refrigerators, statistical interpretation, examples, misconceptions, and practice problems with solutions."
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #101938;
+        --panel-2: #0f1733;
+        --text: #e8ecff;
+        --muted: #b7c0ff;
+        --accent: #7aa2ff;
+        --accent-2: #4ee7b0;
+        --warn: #ffcc66;
+        --danger: #ff6b6b;
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: rgba(0, 0, 0, 0.35);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(1200px 700px at 20% 0%, #182a65 0%, var(--bg) 55%) fixed;
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .skip {
+        position: absolute;
+        top: -60px;
+        left: 12px;
+        background: #000;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        z-index: 10;
+      }
+
+      .skip:focus {
+        top: 12px;
+      }
+
+      header {
+        padding: 34px 18px 10px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      header h1 {
+        margin: 0 0 6px;
+        font-size: 2rem;
+        letter-spacing: 0.2px;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 18px 44px;
+      }
+
+      nav {
+        position: sticky;
+        top: 14px;
+        align-self: start;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 12px 28px var(--shadow);
+        padding: 14px 14px 10px;
+      }
+
+      nav h2 {
+        margin: 0 0 10px;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      nav a {
+        display: block;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      nav a:hover {
+        background: rgba(122, 162, 255, 0.12);
+        border-color: rgba(122, 162, 255, 0.25);
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      .card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 16px 38px var(--shadow);
+        padding: 18px 18px 14px;
+        margin: 0 0 14px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+      }
+
+      .card h3 {
+        margin: 18px 0 8px;
+        font-size: 1.05rem;
+        color: #dfe6ff;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 0;
+      }
+
+      .pill {
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.18);
+        color: #eff4ff;
+        white-space: nowrap;
+      }
+
+      .note {
+        border-left: 4px solid var(--accent-2);
+        padding: 10px 12px;
+        background: rgba(78, 231, 176, 0.08);
+        border-radius: 12px;
+      }
+
+      .warn {
+        border-left: 4px solid var(--warn);
+        padding: 10px 12px;
+        background: rgba(255, 204, 102, 0.1);
+        border-radius: 12px;
+      }
+
+      .danger {
+        border-left: 4px solid var(--danger);
+        padding: 10px 12px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 12px;
+      }
+
+      code,
+      pre,
+      kbd {
+        font-family: var(--mono);
+      }
+
+      code {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 0.1rem 0.35rem;
+        border-radius: 10px;
+      }
+
+      pre {
+        overflow: auto;
+        padding: 12px 12px;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 10px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        vertical-align: top;
+      }
+
+      th {
+        color: #dfe6ff;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .tiny {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .footer {
+        color: var(--muted);
+        font-size: 0.95rem;
+        margin: 0;
+        padding-top: 10px;
+      }
+
+      .svgbox {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.16);
+      }
+
+      details {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: rgba(0, 0, 0, 0.15);
+        margin: 10px 0;
+      }
+
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      @media (max-width: 980px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        nav {
+          position: relative;
+          top: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header>
+      <h1>Second Law of Thermodynamics</h1>
+      <p>
+        A detailed tutorial on what the Second Law says, where it came from, and how to use it in problems.
+        <span class="tiny">(Updated 2025-12-27)</span>
+      </p>
+      <div class="pill-row" aria-label="Key ideas">
+        <span class="pill">Entropy</span>
+        <span class="pill">Irreversibility</span>
+        <span class="pill">Heat engines</span>
+        <span class="pill">Carnot limit</span>
+        <span class="pill">Statistical mechanics</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#overview">1) Big picture</a></li>
+          <li><a href="#origin">2) Origin & history</a></li>
+          <li><a href="#statements">3) Classic statements</a></li>
+          <li><a href="#entropy">4) Entropy & Clausius inequality</a></li>
+          <li><a href="#engines">5) Heat engines & Carnot efficiency</a></li>
+          <li><a href="#refrigerators">6) Refrigerators & heat pumps</a></li>
+          <li><a href="#statmech">7) Statistical interpretation</a></li>
+          <li><a href="#entropy-balance">8) Entropy balance & entropy generation</a></li>
+          <li><a href="#examples">9) Worked intuition examples</a></li>
+          <li><a href="#misconceptions">10) Misconceptions</a></li>
+          <li><a href="#practice">11) Practice problems</a></li>
+          <li><a href="#answers">12) Solutions</a></li>
+          <li><a href="#cheatsheet">Cheat sheet</a></li>
+          <li><a href="#glossary">Glossary</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </nav>
+
+      <main id="main">
+        <section class="card" id="overview">
+          <h2>1) Big picture: what the Second Law is really saying</h2>
+          <p>
+            The Second Law is a constraint on what processes can happen in nature and what machines can achieve.
+            It explains why there is an “arrow of time” in macroscopic phenomena: certain changes happen
+            spontaneously (like heat flowing from hot to cold), and the reverse does not happen by itself.
+          </p>
+
+          <div class="grid-2">
+            <div>
+              <h3>In one sentence</h3>
+              <p>
+                <strong>For an isolated system, total entropy never decreases.</strong>
+                In symbols: <code>&Delta;S<sub>universe</sub> &ge; 0</code>, where “universe” means “system + surroundings”.
+              </p>
+            </div>
+            <div>
+              <h3>Why it matters</h3>
+              <ul>
+                <li>Sets the maximum efficiency of engines (no 100% heat-to-work engine).</li>
+                <li>Explains spontaneous direction of processes (mixing, diffusion, frictional heating).</li>
+                <li>Defines the thermodynamic property <code>S</code> (entropy), used in engineering and physics.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="note">
+            <p style="margin: 0">
+              The First Law (energy conservation) tells you <em>how much</em> energy changes; the Second Law tells you
+              <em>which direction</em> changes can occur and what is <em>impossible</em>.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="origin">
+          <h2>2) Origin & history: from steam engines to entropy</h2>
+          <p>
+            The Second Law emerged from 19th-century attempts to understand and improve steam engines.
+            It was not discovered as an abstract principle first—it was distilled from practical questions:
+            “How much work can a heat engine produce from heat?” and “Why can’t we do better?”
+          </p>
+
+          <h3>2.1 Sadi Carnot (1824): reversible engines and the seed of the law</h3>
+          <p>
+            In <em>Reflections on the Motive Power of Fire</em> (1824), Carnot analyzed idealized heat engines.
+            Even before energy conservation was fully formulated, he recognized a key idea:
+            the <strong>best possible</strong> engine between two temperatures should be <strong>reversible</strong>.
+          </p>
+          <ul>
+            <li>
+              Carnot introduced the concept of an engine operating between a hot reservoir at <code>T<sub>H</sub></code>
+              and a cold reservoir at <code>T<sub>C</sub></code>.
+            </li>
+            <li>
+              He argued that no engine can be more efficient than a reversible one operating between the same temperatures.
+            </li>
+          </ul>
+
+          <div class="svgbox" role="img" aria-label="Heat engine diagram: heat in from hot reservoir, work out, heat out to cold reservoir">
+            <svg viewBox="0 0 640 220" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <style>
+                  .box{fill:rgba(255,255,255,0.06);stroke:rgba(255,255,255,0.18);stroke-width:2;rx:16;}
+                  .t{fill:#e8ecff;font: 14px ui-sans-serif, system-ui;}
+                  .m{fill:#b7c0ff;font: 13px ui-sans-serif, system-ui;}
+                  .a{stroke:#7aa2ff;stroke-width:4;fill:none;marker-end:url(#arrow);}
+                  .w{stroke:#4ee7b0;stroke-width:4;fill:none;marker-end:url(#arrow);}
+                </style>
+                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+                </marker>
+              </defs>
+              <rect class="box" x="20" y="25" width="170" height="70" />
+              <text class="t" x="35" y="52">Hot reservoir</text>
+              <text class="m" x="35" y="74">T<tspan baseline-shift="sub">H</tspan></text>
+
+              <rect class="box" x="250" y="55" width="140" height="110" />
+              <text class="t" x="268" y="92">Engine</text>
+              <text class="m" x="268" y="114">(cycle)</text>
+
+              <rect class="box" x="450" y="125" width="170" height="70" />
+              <text class="t" x="465" y="152">Cold reservoir</text>
+              <text class="m" x="465" y="174">T<tspan baseline-shift="sub">C</tspan></text>
+
+              <path class="a" d="M 190 60 C 215 60, 230 60, 250 78" />
+              <text class="m" x="205" y="50">Q<tspan baseline-shift="sub">H</tspan></text>
+
+              <path class="a" d="M 390 140 C 420 155, 440 160, 450 160" />
+              <text class="m" x="408" y="148">Q<tspan baseline-shift="sub">C</tspan></text>
+
+              <path class="w" d="M 320 55 C 320 25, 320 20, 320 10" />
+              <text class="m" x="332" y="22">W<tspan baseline-shift="sub">out</tspan></text>
+            </svg>
+          </div>
+
+          <h3>2.2 Clausius and Kelvin (1850s–1860s): formal statements</h3>
+          <p>
+            After the First Law (energy conservation) became established, Rudolf Clausius and William Thomson (Lord Kelvin)
+            sharpened Carnot’s insights into a general law of nature.
+          </p>
+          <ul>
+            <li>
+              <strong>Clausius (1850):</strong> introduced a statement about the direction of heat flow.
+              Later (1865) he coined the term <strong>entropy</strong> (<code>S</code>) and wrote
+              <code>dS = &delta;Q<sub>rev</sub>/T</code> for reversible heat transfer.
+            </li>
+            <li>
+              <strong>Kelvin (1851):</strong> framed the law as a limit on converting heat from a single reservoir into work.
+            </li>
+          </ul>
+
+          <h3>2.3 Boltzmann (late 1800s): the statistical meaning of entropy</h3>
+          <p>
+            Ludwig Boltzmann connected macroscopic entropy to microscopic behavior of atoms and molecules.
+            In the statistical view, entropy measures how many microscopic arrangements correspond to the same macroscopic state.
+            A famous formula (engraved on his tomb) is:
+            <code>S = k<sub>B</sub> ln &Omega;</code>
+            where <code>&Omega;</code> is the number of compatible microstates.
+          </p>
+
+          <div class="warn">
+            <p style="margin: 0">
+              The Second Law is not just a historical artifact of steam engines: it is a modern principle that appears in
+              chemistry (spontaneity), information theory (entropy-like measures), and cosmology (arrow of time).
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="statements">
+          <h2>3) Classic statements (and why they’re equivalent)</h2>
+          <p>
+            There are several common “word versions” of the Second Law. They look different, but they imply each other.
+            Here are the two most standard ones.
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Statement</th>
+                <th>Plain-language meaning</th>
+                <th>What it forbids</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Clausius statement</strong></td>
+                <td>Heat does not flow spontaneously from cold to hot.</td>
+                <td>A “self-acting” device whose only effect is moving heat from cold to hot.</td>
+              </tr>
+              <tr>
+                <td><strong>Kelvin–Planck statement</strong></td>
+                <td>No cyclic engine can convert all heat from a single reservoir into work.</td>
+                <td>A 100% efficient heat engine operating in a cycle with one heat bath.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>3.1 Equivalence sketch (idea-level)</h3>
+          <ul>
+            <li>
+              If you could move heat from cold to hot with no other effect (violating Clausius), you could combine that device
+              with a normal engine to get a single-reservoir engine producing net work (violating Kelvin–Planck).
+            </li>
+            <li>
+              If you could turn heat from one reservoir completely into work (violating Kelvin–Planck), you could drive a heat pump
+              that moves heat from cold to hot with no net work input (violating Clausius).
+            </li>
+          </ul>
+
+          <div class="note">
+            <p style="margin: 0">
+              You don’t usually need to prove equivalence in homework; you use whichever statement matches the situation:
+              heat flow problems often use Clausius, engine efficiency problems use Kelvin–Planck.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="entropy">
+          <h2>4) Entropy & the Clausius inequality</h2>
+          <p>
+            Entropy <code>S</code> is a state function (property) that lets us express the Second Law quantitatively.
+            The key move is to compare real (irreversible) processes to reversible ones.
+          </p>
+
+          <h3>4.1 Reversible vs irreversible (the core distinction)</h3>
+          <ul>
+            <li>
+              <strong>Reversible (ideal):</strong> can be undone with <em>no net change</em> to system + surroundings.
+              Requires no friction, no finite temperature differences for heat transfer, no unrestrained expansion, etc.
+            </li>
+            <li>
+              <strong>Irreversible (real):</strong> has dissipation; undoing it leaves net changes (e.g., frictional heating).
+            </li>
+          </ul>
+
+          <h3>4.2 Definition of entropy change (for a system)</h3>
+          <p>
+            For any process between equilibrium states 1 and 2, define entropy change using a reversible path:
+          </p>
+          <pre><code>&Delta;S = S_2 - S_1 = (&delta;Q_rev / T)</code></pre>
+          <p class="tiny">
+            The symbol <code></code> means an integral along a reversible path. This is not saying your real process is reversible;
+            it is a trick to compute a state-function change.
+          </p>
+
+          <h3>4.3 Clausius inequality (a compact Second Law statement)</h3>
+          <p>
+            For any cyclic process,
+            <code>(&delta;Q/T)  0</code>, with equality only if the cycle is reversible.
+            For a process between two states, a common form is:
+          </p>
+          <pre><code>&Delta;S  Q/T  (with equality if reversible)</code></pre>
+          <p class="tiny">
+            More precisely, you use <code>(&delta;Q/T)</code> for heat exchange with the boundary at temperature <code>T</code>.
+            In many intro problems, the boundary temperature is constant (e.g., a reservoir), which simplifies the integral.
+          </p>
+
+          <h3>4.4 Entropy of the universe</h3>
+          <p>
+            The “universe” is just system + surroundings (environment). For an isolated total,
+          </p>
+          <pre><code>&Delta;S_universe = &Delta;S_system + &Delta;S_surroundings  0</code></pre>
+          <p>
+            If <code>&Delta;S_universe = 0</code>, the process is reversible. If it is positive, the process is irreversible.
+          </p>
+        </section>
+
+        <section class="card" id="engines">
+          <h2>5) Heat engines & the Carnot efficiency limit</h2>
+          <p>
+            A heat engine is a cyclic device that absorbs heat <code>Q_H</code> from a hot reservoir, rejects heat <code>Q_C</code>
+            to a cold reservoir, and delivers work <code>W_out</code>.
+          </p>
+
+          <h3>5.1 Energy accounting (First Law for a cycle)</h3>
+          <pre><code>W_out = Q_H - Q_C</code></pre>
+          <p>
+            Thermal efficiency is defined as work out per heat in:
+            <code> = W_out / Q_H = 1 - Q_C/Q_H</code>.
+          </p>
+
+          <h3>5.2 The Carnot result (Second Law constraint)</h3>
+          <p>
+            For a reversible engine operating between two reservoirs at absolute temperatures <code>T_H</code> and <code>T_C</code>,
+            the entropy change of the total over one cycle is zero:
+          </p>
+          <pre><code>0 = &Delta;S_total = -Q_H/T_H + Q_C/T_C</code></pre>
+          <p>
+            So <code>Q_C/Q_H = T_C/T_H</code>, and the maximum possible efficiency is:
+          </p>
+          <pre><code>_max = _Carnot = 1 - (T_C / T_H)</code></pre>
+
+          <div class="warn">
+            <p style="margin: 0">
+              This is why “100% efficient heat engine” is impossible: to get  = 1 you would need <code>T_C = 0 K</code>.
+            </p>
+          </div>
+
+          <h3>5.3 A practical interpretation</h3>
+          <ul>
+            <li>To increase maximum efficiency: raise <code>T_H</code> or lower <code>T_C</code> (both have engineering limits).</li>
+            <li>Real engines are always <em>below</em> the Carnot limit because real processes generate entropy.</li>
+          </ul>
+        </section>
+
+        <section class="card" id="refrigerators">
+          <h2>6) Refrigerators & heat pumps (moving heat “uphill”)</h2>
+          <p>
+            Refrigerators and heat pumps move heat from a cold region to a hot region, but they require work input.
+            This is not a violation of the Second Law—work is the “payment” that makes it possible.
+          </p>
+
+          <h3>6.1 Definitions</h3>
+          <ul>
+            <li>
+              <strong>Refrigerator:</strong> goal is to remove heat from the cold space. Performance is measured by
+              <code>COP_R = Q_C / W_in</code>.
+            </li>
+            <li>
+              <strong>Heat pump:</strong> goal is to deliver heat to the warm space. Performance is measured by
+              <code>COP_HP = Q_H / W_in</code>.
+            </li>
+          </ul>
+
+          <h3>6.2 Carnot limits for COP</h3>
+          <p>
+            For a reversible device between reservoirs <code>T_H</code> and <code>T_C</code>:
+          </p>
+          <pre><code>COP_R,max = T_C / (T_H - T_C)
+COP_HP,max = T_H / (T_H - T_C)</code></pre>
+
+          <div class="note">
+            <p style="margin: 0">
+              Unlike efficiency, a COP can be greater than 1. That does not mean “free energy”; it means you move more heat than
+              the work you supply.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="statmech">
+          <h2>7) Statistical interpretation: why entropy tends to increase</h2>
+          <p>
+            At a microscopic level, systems have enormous numbers of possible microstates.
+            The Second Law becomes a statement about probability: macrostates with larger numbers of microstates are vastly more likely.
+          </p>
+
+          <h3>7.1 Microstates vs macrostates</h3>
+          <ul>
+            <li><strong>Microstate:</strong> the detailed positions and velocities of all particles.</li>
+            <li><strong>Macrostate:</strong> the bulk variables you measure (pressure, temperature, volume, etc.).</li>
+          </ul>
+
+          <h3>7.2 Boltzmann entropy (conceptual form)</h3>
+          <pre><code>S = k_B ln(&Omega;)</code></pre>
+          <ul>
+            <li><code>k_B</code> is Boltzmann’s constant (sets units).</li>
+            <li><code>&Omega;</code> counts compatible microstates (or more generally, measures phase-space volume).</li>
+          </ul>
+
+          <h3>7.3 “Why doesn’t entropy always increase for tiny systems?”</h3>
+          <p>
+            For small systems, fluctuations are noticeable: entropy can decrease temporarily.
+            For macroscopic systems, the probability of large decreases is astronomically small.
+            The Second Law is therefore “overwhelmingly probable” rather than logically absolute in the statistical view.
+          </p>
+
+          <div class="warn">
+            <p style="margin: 0">
+              This statistical perspective is consistent with time-reversible microscopic laws because the macroscopic arrow of time
+              depends on typical initial conditions and coarse-grained descriptions.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="entropy-balance">
+          <h2>8) Entropy balance & entropy generation (engineering form)</h2>
+          <p>
+            A very useful way to apply the Second Law is the entropy balance. For a closed system:
+          </p>
+          <pre><code>&Delta;S = (&delta;Q/T_b) + S_gen</code></pre>
+          <ul>
+            <li><code>T_b</code> is the boundary temperature where heat crosses the system boundary.</li>
+            <li><code>S_gen</code> is entropy generation due to irreversibilities (friction, mixing, finite T heat transfer, etc.).</li>
+            <li>Second Law requirement: <code>S_gen  0</code>.</li>
+          </ul>
+
+          <h3>8.1 For an isolated system</h3>
+          <p>
+            If the system is isolated, <code>(&delta;Q/T_b) = 0</code>, so <code>&Delta;S = S_gen  0</code>.
+          </p>
+
+          <h3>8.2 For steady-flow control volumes (preview)</h3>
+          <p class="tiny">
+            In thermodynamics courses, you’ll also see an entropy rate balance for open systems (turbines, compressors, nozzles).
+            The same idea remains: entropy transfer with heat and mass + entropy generation  accumulation.
+          </p>
+        </section>
+
+        <section class="card" id="examples">
+          <h2>9) Worked intuition examples (no heavy math)</h2>
+
+          <h3>9.1 Heat conduction: hot block touching a cold block</h3>
+          <p>
+            Heat flows from hot to cold until they reach the same temperature. The total energy is conserved (First Law), but
+            the energy becomes less “available” to do work. The entropy of the combined system increases.
+          </p>
+
+          <h3>9.2 Free expansion of a gas into vacuum</h3>
+          <p>
+            A gas in half a container expands into the full volume when a partition is removed.
+            There is no heat exchange and no boundary work in the idealized case, yet the entropy of the gas increases.
+            This is a classic example of irreversibility (it will not spontaneously un-mix back to half the container).
+          </p>
+
+          <h3>9.3 Mixing two different gases</h3>
+          <p>
+            Even if temperature stays the same, mixing increases the number of accessible microstates, so entropy increases.
+            Separating them again requires external work (e.g., a membrane and energy input).
+          </p>
+
+          <h3>9.4 Friction</h3>
+          <p>
+            Sliding a block to a stop converts organized mechanical energy into disorganized thermal motion in the surfaces.
+            The total energy is the same, but entropy increases because the energy is spread into many microscopic degrees of freedom.
+          </p>
+        </section>
+
+        <section class="card" id="misconceptions">
+          <h2>10) Misconceptions (quick corrections)</h2>
+          <ul>
+            <li>
+              <strong>“Entropy is disorder.”</strong>
+              Useful as a rough metaphor, but better: entropy measures how spread out energy is among accessible microstates.
+            </li>
+            <li>
+              <strong>“Entropy always increases in a system.”</strong>
+              Not necessarily. A system’s entropy can decrease if it exports enough entropy to the surroundings.
+              What must not decrease is <code>S_system + S_surroundings</code>.
+            </li>
+            <li>
+              <strong>“High entropy means high energy.”</strong>
+              Not the same. Entropy depends on energy <em>and</em> how that energy is distributed and constrained.
+            </li>
+            <li>
+              <strong>“The Second Law forbids local order.”</strong>
+              Local order (like ice crystals or living organisms) can form if entropy increases elsewhere (e.g., by releasing heat).
+            </li>
+          </ul>
+
+          <div class="danger">
+            <p style="margin: 0">
+              Never apply the Second Law by saying “entropy must increase” without specifying what you mean by “system” and
+              accounting for surroundings and heat transfer.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="practice">
+          <h2>11) Practice problems</h2>
+          <ol>
+            <li>
+              A heat engine operates between <code>T_H = 600 K</code> and <code>T_C = 300 K</code>.
+              What is the maximum possible efficiency?
+            </li>
+            <li>
+              A reversible engine absorbs <code>Q_H = 1000 J</code> from <code>T_H = 500 K</code> and rejects heat to <code>T_C = 300 K</code>.
+              Find <code>Q_C</code> and <code>W_out</code>.
+            </li>
+            <li>
+              A system receives <code>Q = 500 J</code> from a thermal reservoir at <code>250 K</code>.
+              What is the entropy change of the reservoir?
+            </li>
+            <li>
+              Two bodies: one at <code>400 K</code>, one at <code>300 K</code>. Heat <code>Q = 600 J</code> flows from hot to cold.
+              Compute <code>&Delta;S_universe</code> assuming each body is a large reservoir at constant temperature.
+            </li>
+            <li>
+              Explain (in 2–3 sentences) why a perfect, 100% efficient heat engine would violate the Kelvin–Planck statement.
+            </li>
+            <li>
+              A Carnot refrigerator operates between <code>T_H = 295 K</code> and <code>T_C = 255 K</code>.
+              Compute <code>COP_R,max</code>.
+            </li>
+            <li>
+              A process decreases a system’s entropy by <code>200 J/K</code>. Is this allowed by the Second Law?
+              State the condition on the surroundings.
+            </li>
+            <li>
+              In one sentence each, give one real-world source of <code>S_gen</code> in: (a) a turbine, (b) heat conduction.
+            </li>
+          </ol>
+        </section>
+
+        <section class="card" id="answers">
+          <h2>12) Solutions</h2>
+
+          <details>
+            <summary>1) Maximum efficiency</summary>
+            <p class="tiny" style="margin: 10px 0 0">
+              Carnot limit: <code>_max = 1 - T_C/T_H = 1 - 300/600 = 0.50</code>. So the max is <strong>50%</strong>.
+            </p>
+          </details>
+
+          <details>
+            <summary>2) Reversible engine heat/work</summary>
+            <p class="tiny" style="margin: 10px 0 0">
+              Reversible: <code>Q_C/Q_H = T_C/T_H = 300/500 = 0.6</code> so <code>Q_C = 600 J</code>.
+              Then <code>W_out = Q_H - Q_C = 400 J</code>.
+            </p>
+          </details>
+
+          <details>
+            <summary>3) Reservoir entropy change</summary>
+            <p class="tiny" style="margin: 10px 0 0">
+              Reservoir gives heat to the system, so it loses <code>Q</code>.
+              <code>&Delta;S_res = -Q/T = -500/250 = -2 J/K</code>.
+            </p>
+          </details>
+
+          <details>
+            <summary>4) Entropy of the universe for heat flow</summary>
+            <p class="tiny" style="margin: 10px 0 0">
+              Hot reservoir loses heat: <code>&Delta;S_hot = -600/400 = -1.5 J/K</code>.
+              Cold reservoir gains heat: <code>&Delta;S_cold = +600/300 = +2.0 J/K</code>.
+              Total: <code>&Delta;S_universe = 0.5 J/K &gt; 0</code> (irreversible).
+            </p>
+          </details>
+
+          <details>
+            <summary>5) Why 100% efficient engine violates Kelvin–Planck</summary>
+            <p class="tiny" style="margin: 10px 0 0">
+              A 100% efficient engine would take heat from a single reservoir and convert it entirely into work in a cycle,
+              with no heat rejection. That is exactly what the Kelvin–Planck statement forbids.
+            </p>
+          </details>
+
+          <details>
+            <summary>6) Carnot refrigerator COP</summary>
+            <p class="tiny" style="margin: 10px 0 0">
+              <code>COP_R,max = T_C/(T_H - T_C) = 255/(295-255) = 255/40 = 6.375</code>.
+            </p>
+          </details>
+
+          <details>
+            <summary>7) Can a system’s entropy decrease?</summary>
+            <p class="tiny" style="margin: 10px 0 0">
+              Yes, if the surroundings’ entropy increases by at least the same amount.
+              Condition: <code>&Delta;S_surroundings  200 J/K</code> so that <code>&Delta;S_universe  0</code>.
+            </p>
+          </details>
+
+          <details>
+            <summary>8) Examples of entropy generation</summary>
+            <p class="tiny" style="margin: 10px 0 0">
+              (a) Turbine: fluid friction / viscous dissipation, shocks, non-equilibrium mixing.
+              (b) Conduction: heat transfer across a finite temperature difference.
+            </p>
+          </details>
+
+          <p class="footer">
+            This tutorial is a single, self-contained HTML file (no external dependencies). It is suitable for printing,
+            sharing, or hosting on GitHub Pages.
+          </p>
+        </section>
+
+        <section class="card" id="cheatsheet">
+          <h2>Cheat sheet</h2>
+          <ul>
+            <li><strong>Second Law (universe):</strong> <code>&Delta;S_universe  0</code></li>
+            <li><strong>Reversible:</strong> <code>&Delta;S_universe = 0</code></li>
+            <li><strong>Entropy change definition:</strong> <code>&Delta;S = (&delta;Q_rev/T)</code></li>
+            <li><strong>Engine efficiency:</strong> <code> = 1 - Q_C/Q_H</code>, <code>_Carnot = 1 - T_C/T_H</code></li>
+            <li><strong>Refrigerator COP:</strong> <code>COP_R,max = T_C/(T_H-T_C)</code></li>
+            <li><strong>Entropy balance:</strong> <code>&Delta;S = (&delta;Q/T_b) + S_gen</code>, <code>S_gen  0</code></li>
+          </ul>
+        </section>
+
+        <section class="card" id="glossary">
+          <h2>Glossary</h2>
+          <ul>
+            <li><strong>Entropy (S):</strong> a state function measuring dispersal of energy / multiplicity of microstates (units J/K).</li>
+            <li><strong>Reservoir:</strong> a body so large its temperature stays essentially constant while exchanging heat.</li>
+            <li><strong>Reversible process:</strong> ideal limit with no entropy generation; can be reversed with no net effect.</li>
+            <li><strong>Irreversibility:</strong> real effects (friction, mixing, finite T heat transfer) that generate entropy.</li>
+            <li><strong>Carnot engine:</strong> ideal reversible engine that sets the maximum possible efficiency between two temperatures.</li>
+          </ul>
+        </section>
+
+        <section class="card" id="references">
+          <h2>References (good next textbooks)</h2>
+          <ul>
+            <li>
+              H.B. Callen, <em>Thermodynamics and an Introduction to Thermostatistics</em> (clear conceptual development).
+            </li>
+            <li>
+              Y.A. Cengel & M.A. Boles, <em>Thermodynamics: An Engineering Approach</em> (applications and many examples).
+            </li>
+            <li>
+              D.V. Schroeder, <em>An Introduction to Thermal Physics</em> (excellent bridge to statistical mechanics).
+            </li>
+            <li>
+              Original sources: Carnot (1824), Clausius (1850–1865), Kelvin (1851), Boltzmann (late 1800s).
+            </li>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
