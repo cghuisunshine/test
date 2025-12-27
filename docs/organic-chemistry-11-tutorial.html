@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Organic Chemistry 11 — Complete Tutorial</title>
+    <meta
+      name="description"
+      content="A detailed Grade 11 organic chemistry tutorial: bonding, functional groups, IUPAC naming, isomerism, reactions, mechanisms, polymers, lab techniques, and practice problems."
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #101938;
+        --panel-2: #0f1733;
+        --text: #e8ecff;
+        --muted: #b7c0ff;
+        --accent: #7aa2ff;
+        --accent-2: #4ee7b0;
+        --warn: #ffcc66;
+        --danger: #ff6b6b;
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: rgba(0, 0, 0, 0.35);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(1200px 700px at 20% 0%, #182a65 0%, var(--bg) 55%)
+          fixed;
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .skip {
+        position: absolute;
+        top: -50px;
+        left: 12px;
+        background: #000;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        z-index: 10;
+      }
+
+      .skip:focus {
+        top: 12px;
+      }
+
+      header {
+        padding: 34px 18px 10px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      header h1 {
+        margin: 0 0 6px;
+        font-size: 2rem;
+        letter-spacing: 0.2px;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 18px 44px;
+      }
+
+      nav {
+        position: sticky;
+        top: 14px;
+        align-self: start;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 12px 28px var(--shadow);
+        padding: 14px 14px 10px;
+      }
+
+      nav h2 {
+        margin: 0 0 10px;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      nav a {
+        display: block;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      nav a:hover {
+        background: rgba(122, 162, 255, 0.12);
+        border-color: rgba(122, 162, 255, 0.25);
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      .card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 16px 38px var(--shadow);
+        padding: 18px 18px 14px;
+        margin: 0 0 14px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+      }
+
+      .card h3 {
+        margin: 18px 0 8px;
+        font-size: 1.05rem;
+        color: #dfe6ff;
+      }
+
+      .card p,
+      .card li {
+        color: #eaf0ff;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 0;
+      }
+
+      .pill {
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.18);
+        color: #eff4ff;
+        white-space: nowrap;
+      }
+
+      .note {
+        border-left: 4px solid var(--accent-2);
+        padding: 10px 12px;
+        background: rgba(78, 231, 176, 0.08);
+        border-radius: 12px;
+      }
+
+      .warn {
+        border-left: 4px solid var(--warn);
+        padding: 10px 12px;
+        background: rgba(255, 204, 102, 0.1);
+        border-radius: 12px;
+      }
+
+      .danger {
+        border-left: 4px solid var(--danger);
+        padding: 10px 12px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 12px;
+      }
+
+      code,
+      pre {
+        font-family: var(--mono);
+      }
+
+      pre {
+        overflow: auto;
+        padding: 12px 12px;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .grid-2 {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 10px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        vertical-align: top;
+      }
+
+      th {
+        background: rgba(122, 162, 255, 0.12);
+        color: #f2f5ff;
+        font-weight: 650;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      details {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      details summary {
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      .tiny {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .footer {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-top: 8px;
+      }
+
+      @media (max-width: 940px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          position: static;
+        }
+      }
+
+      @media print {
+        :root {
+          --bg: #ffffff;
+          --panel: #ffffff;
+          --text: #000000;
+          --muted: #333333;
+          --border: rgba(0, 0, 0, 0.2);
+          --shadow: transparent;
+        }
+        body {
+          background: #fff !important;
+        }
+        nav {
+          display: none;
+        }
+        a {
+          color: #000;
+          text-decoration: underline;
+        }
+        .card {
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header>
+      <h1>Organic Chemistry 11 — Complete Tutorial</h1>
+      <p>
+        A detailed, student-friendly guide to the core topics typically covered in Grade 11 organic
+        chemistry: bonding, functional groups, IUPAC naming, isomerism, reaction types &amp;
+        mechanisms, polymers, and practical lab skills.
+      </p>
+      <div class="pill-row" aria-label="Topic tags">
+        <span class="pill">bonding</span>
+        <span class="pill">functional groups</span>
+        <span class="pill">IUPAC naming</span>
+        <span class="pill">isomerism</span>
+        <span class="pill">addition</span>
+        <span class="pill">substitution</span>
+        <span class="pill">elimination</span>
+        <span class="pill">polymers</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#how-to-study">1. How to study org chem</a></li>
+          <li><a href="#bonding">2. Bonding &amp; structure</a></li>
+          <li><a href="#hydrocarbons">3. Hydrocarbons</a></li>
+          <li><a href="#functional-groups">4. Functional groups</a></li>
+          <li><a href="#naming">5. IUPAC naming (Grade 11)</a></li>
+          <li><a href="#isomerism">6. Isomerism</a></li>
+          <li><a href="#reactions">7. Reaction types</a></li>
+          <li><a href="#core-reactions">8. Core reactions &amp; conditions</a></li>
+          <li><a href="#polymers">9. Polymers</a></li>
+          <li><a href="#lab-skills">10. Lab skills &amp; techniques</a></li>
+          <li><a href="#practice">11. Practice problems</a></li>
+          <li><a href="#glossary">12. Glossary</a></li>
+        </ul>
+        <p class="footer">
+          Tip: use your browser’s Find (<span class="pill">Ctrl</span>+<span class="pill">F</span>)
+          for quick lookups.
+        </p>
+      </nav>
+
+      <main id="content" tabindex="-1">
+        <section class="card" id="how-to-study">
+          <h2>1) How to study organic chemistry (efficiently)</h2>
+          <div class="grid-2">
+            <div>
+              <h3>What to focus on</h3>
+              <ul>
+                <li><strong>Patterns</strong>: functional groups behave in predictable ways.</li>
+                <li>
+                  <strong>Cause &amp; effect</strong>: polarity, bond strength, and stability explain
+                  reactions.
+                </li>
+                <li>
+                  <strong>Representation</strong>: learn to translate between names, formulas, and
+                  structures.
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3>Daily routine</h3>
+              <ul>
+                <li>10 minutes: naming practice (small, frequent).</li>
+                <li>10 minutes: reaction flashcards (reagent → product + condition).</li>
+                <li>10 minutes: mechanism sketches (arrows + why it happens).</li>
+              </ul>
+            </div>
+          </div>
+          <p class="note">
+            Organic chemistry is not “memorize everything.” It is “learn a few rules, then apply them
+            consistently.”
+          </p>
+        </section>
+
+        <section class="card" id="bonding">
+          <h2>2) Bonding &amp; structure</h2>
+          <h3>2.1 Carbon’s special role</h3>
+          <ul>
+            <li>
+              Carbon has <strong>4 valence electrons</strong> and forms <strong>4 covalent bonds</strong>.
+            </li>
+            <li>
+              Carbon forms long chains and rings because C–C bonds are strong and carbon atoms bond
+              to each other easily (<strong>catenation</strong>).
+            </li>
+            <li>
+              Carbon can form <strong>single</strong>, <strong>double</strong>, and <strong>triple</strong>
+              bonds, creating many structures.
+            </li>
+          </ul>
+
+          <h3>2.2 Lewis structures and line structures</h3>
+          <ul>
+            <li>
+              <strong>Lewis structure</strong>: shows all atoms and bonds (useful for beginners).
+            </li>
+            <li>
+              <strong>Condensed structural formula</strong>: e.g., <code>CH3CH2CH3</code>.
+            </li>
+            <li>
+              <strong>Skeletal (line) structure</strong>: carbon atoms are implied at line ends and
+              corners; hydrogens on carbon are implied.
+            </li>
+          </ul>
+
+          <h3>2.3 Polarity and intermolecular forces (IMFs)</h3>
+          <p>
+            Many Grade 11 questions boil down to “why does this boil higher?” or “why is it soluble
+            in water?”
+          </p>
+          <table aria-label="Intermolecular forces">
+            <thead>
+              <tr>
+                <th>Force</th>
+                <th>Where it comes from</th>
+                <th>Typical examples</th>
+                <th>Effect</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>London dispersion</td>
+                <td>Temporary dipoles (all molecules)</td>
+                <td>Alkanes, nonpolar molecules</td>
+                <td>Stronger with larger surface area and mass</td>
+              </tr>
+              <tr>
+                <td>Dipole–dipole</td>
+                <td>Permanent dipoles in polar molecules</td>
+                <td>Ketones, aldehydes, alkyl halides</td>
+                <td>Raises boiling point vs. similar nonpolar molecules</td>
+              </tr>
+              <tr>
+                <td>Hydrogen bonding</td>
+                <td>H bonded to N, O, or F interacting with lone pairs</td>
+                <td>Alcohols, carboxylic acids, amines (weaker)</td>
+                <td>Often gives high boiling point &amp; water solubility</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="warn">
+            “Like dissolves like”: polar substances dissolve in polar solvents (like water); nonpolar
+            substances dissolve in nonpolar solvents (like hexane).
+          </p>
+        </section>
+
+        <section class="card" id="hydrocarbons">
+          <h2>3) Hydrocarbons</h2>
+          <p>Hydrocarbons contain only carbon and hydrogen.</p>
+
+          <h3>3.1 Alkanes (single bonds)</h3>
+          <ul>
+            <li><strong>General formula</strong> (acyclic): <code>CnH2n+2</code></li>
+            <li><strong>Names</strong>: end in <strong>-ane</strong> (methane, ethane, propane…)</li>
+            <li><strong>Reactivity</strong>: relatively unreactive; combust; can undergo substitution with halogens.</li>
+          </ul>
+
+          <h3>3.2 Alkenes (at least one C=C)</h3>
+          <ul>
+            <li><strong>General formula</strong> (one double bond, acyclic): <code>CnH2n</code></li>
+            <li><strong>Names</strong>: end in <strong>-ene</strong> (ethene, propene…)</li>
+            <li><strong>Reactivity</strong>: the double bond is electron-rich → addition reactions are common.</li>
+          </ul>
+
+          <h3>3.3 Alkynes (at least one C≡C)</h3>
+          <ul>
+            <li><strong>General formula</strong> (one triple bond, acyclic): <code>CnH2n-2</code></li>
+            <li><strong>Names</strong>: end in <strong>-yne</strong> (ethyne/acetylene, propyne…)</li>
+            <li><strong>Reactivity</strong>: also undergo addition, often in multiple steps.</li>
+          </ul>
+
+          <h3>3.4 Cyclic hydrocarbons</h3>
+          <ul>
+            <li>Add the prefix <strong>cyclo-</strong> (cyclopropane, cyclohexane).</li>
+            <li>Cycloalkanes (single bonds) have formula <code>CnH2n</code>.</li>
+          </ul>
+        </section>
+
+        <section class="card" id="functional-groups">
+          <h2>4) Functional groups</h2>
+          <p>
+            A <strong>functional group</strong> is the part of a molecule that largely determines its
+            properties and reactions.
+          </p>
+          <table aria-label="Common Grade 11 functional groups">
+            <thead>
+              <tr>
+                <th>Functional group</th>
+                <th>Example (condensed)</th>
+                <th>IUPAC suffix/prefix</th>
+                <th>Key properties (Grade 11 level)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Alkane</td>
+                <td><code>CH3CH3</code></td>
+                <td><strong>-ane</strong></td>
+                <td>Nonpolar; low reactivity; combustion</td>
+              </tr>
+              <tr>
+                <td>Alkene</td>
+                <td><code>CH2=CH2</code></td>
+                <td><strong>-ene</strong></td>
+                <td>Addition reactions at C=C</td>
+              </tr>
+              <tr>
+                <td>Alkyne</td>
+                <td><code>HC≡CH</code></td>
+                <td><strong>-yne</strong></td>
+                <td>Addition reactions at C≡C</td>
+              </tr>
+              <tr>
+                <td>Alcohol</td>
+                <td><code>CH3CH2OH</code></td>
+                <td><strong>-ol</strong></td>
+                <td>Polar; H-bonding; can be oxidized</td>
+              </tr>
+              <tr>
+                <td>Alkyl halide</td>
+                <td><code>CH3CH2Cl</code></td>
+                <td><strong>chloro-</strong>, <strong>bromo-</strong>…</td>
+                <td>Polar C–X bond; substitution / elimination</td>
+              </tr>
+              <tr>
+                <td>Aldehyde</td>
+                <td><code>CH3CHO</code></td>
+                <td><strong>-al</strong></td>
+                <td>Polar carbonyl; oxidizes to carboxylic acid</td>
+              </tr>
+              <tr>
+                <td>Ketone</td>
+                <td><code>CH3COCH3</code></td>
+                <td><strong>-one</strong></td>
+                <td>Polar carbonyl; not easily oxidized further (Grade 11)</td>
+              </tr>
+              <tr>
+                <td>Carboxylic acid</td>
+                <td><code>CH3COOH</code></td>
+                <td><strong>-oic acid</strong></td>
+                <td>Acidic; strong H-bonding; forms esters</td>
+              </tr>
+              <tr>
+                <td>Ester</td>
+                <td><code>CH3COOCH2CH3</code></td>
+                <td><strong>-oate</strong></td>
+                <td>Often fruity odor; formed from acid + alcohol</td>
+              </tr>
+              <tr>
+                <td>Amine</td>
+                <td><code>CH3CH2NH2</code></td>
+                <td><strong>-amine</strong></td>
+                <td>Basic (weak); can H-bond; smells “fishy”</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">
+            Fast identification trick: scan for <code>-OH</code> (alcohol), <code>C=O</code> (carbonyl),
+            <code>-COOH</code> (carboxylic acid), and <code>-COO-</code> (ester).
+          </p>
+        </section>
+
+        <section class="card" id="naming">
+          <h2>5) IUPAC naming (Grade 11)</h2>
+          <h3>5.1 Step-by-step algorithm</h3>
+          <ol>
+            <li><strong>Find the longest carbon chain</strong> that includes the main functional group or multiple bond.</li>
+            <li><strong>Number the chain</strong> to give the lowest possible number to the main feature (double bond, functional group).</li>
+            <li><strong>Name substituents</strong> (branches) and their positions: methyl-, ethyl-, chloro-, etc.</li>
+            <li><strong>Use prefixes</strong> for repeats: di-, tri-, tetra-; list substituents alphabetically (ignore di/tri for alphabet).</li>
+            <li><strong>Assemble</strong>: positions-substituents + parent + suffix. Use commas between numbers, hyphens between numbers and words.</li>
+          </ol>
+
+          <h3>5.2 Parent chain roots (1–10 carbons)</h3>
+          <pre><code>1 meth-   2 eth-   3 prop-  4 but-   5 pent-
+6 hex-    7 hept-  8 oct-   9 non-   10 dec-</code></pre>
+
+          <h3>5.3 Examples</h3>
+          <ul>
+            <li><strong>CH3CH2CH3</strong> → propane</li>
+            <li><strong>CH3CH(CH3)CH2CH3</strong> → 2-methylbutane</li>
+            <li><strong>CH3CH2CH=CH2</strong> → but-1-ene</li>
+            <li><strong>CH3CH2OH</strong> → ethanol</li>
+            <li><strong>CH3COOH</strong> → ethanoic acid</li>
+          </ul>
+
+          <h3>5.4 Common naming pitfalls</h3>
+          <ul>
+            <li>
+              Don’t pick the “longest-looking” chain—pick the <strong>most carbons</strong> chain that
+              includes the key feature.
+            </li>
+            <li>
+              Number so the double bond or functional group gets the <strong>lowest number</strong>.
+            </li>
+            <li>Alphabetize substituents: ethyl before methyl.</li>
+          </ul>
+        </section>
+
+        <section class="card" id="isomerism">
+          <h2>6) Isomerism</h2>
+          <p>
+            <strong>Isomers</strong> have the same molecular formula but different arrangements of atoms.
+          </p>
+          <h3>6.1 Structural (constitutional) isomers</h3>
+          <ul>
+            <li>
+              Different connectivity (bonding pattern). Example: <code>C4H10</code> can be butane or
+              2-methylpropane.
+            </li>
+          </ul>
+
+          <h3>6.2 Stereoisomers (same bonds, different 3D arrangement)</h3>
+          <ul>
+            <li>
+              <strong>Geometric (cis/trans)</strong> in alkenes: restricted rotation about C=C can
+              lock groups into different positions.
+            </li>
+            <li>
+              Grade 11 rule of thumb: if each carbon of the double bond has two different groups,
+              you may have cis/trans isomers.
+            </li>
+          </ul>
+          <p class="note">
+            Isomers often have different boiling points, smells, or reactivity, even though their formulas match.
+          </p>
+        </section>
+
+        <section class="card" id="reactions">
+          <h2>7) Reaction types</h2>
+          <table aria-label="Common reaction types">
+            <thead>
+              <tr>
+                <th>Reaction type</th>
+                <th>What happens (simple)</th>
+                <th>Typical organic example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Addition</td>
+                <td>Atoms add across a double/triple bond</td>
+                <td>Alkene + H2 → alkane</td>
+              </tr>
+              <tr>
+                <td>Substitution</td>
+                <td>One atom/group is replaced by another</td>
+                <td>Alkane + Cl2 (UV) → chloroalkane + HCl</td>
+              </tr>
+              <tr>
+                <td>Elimination</td>
+                <td>Small molecule is removed to form double bond</td>
+                <td>Alcohol → alkene + water</td>
+              </tr>
+              <tr>
+                <td>Oxidation</td>
+                <td>Gain O / lose H / increase bonds to O</td>
+                <td>Alcohol → aldehyde/ketone → acid</td>
+              </tr>
+              <tr>
+                <td>Condensation</td>
+                <td>Two molecules join, releasing a small molecule (often water)</td>
+                <td>Acid + alcohol → ester + water</td>
+              </tr>
+              <tr>
+                <td>Hydrolysis</td>
+                <td>Breaking a bond using water (reverse of condensation)</td>
+                <td>Ester + water → acid + alcohol</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>7.1 A beginner-friendly idea of “mechanism”</h3>
+          <p>
+            A <strong>mechanism</strong> explains <em>how</em> a reaction happens step-by-step: which bonds
+            break, which form, and why. At Grade 11, focus on:
+          </p>
+          <ul>
+            <li><strong>Polarity</strong> (partial charges δ+ and δ−)</li>
+            <li><strong>Electron-rich</strong> areas (double bonds, lone pairs)</li>
+            <li><strong>Electron-poor</strong> areas (carbon attached to electronegative atoms)</li>
+          </ul>
+        </section>
+
+        <section class="card" id="core-reactions">
+          <h2>8) Core reactions &amp; conditions (Grade 11 toolkit)</h2>
+          <p class="tiny">
+            Note: exact conditions vary by curriculum. The goal here is recognizing the pattern:
+            reagent + functional group → predictable product.
+          </p>
+
+          <h3>8.1 Combustion (hydrocarbons and alcohols)</h3>
+          <ul>
+            <li><strong>Complete combustion</strong>: produces <code>CO2</code> and <code>H2O</code>.</li>
+            <li><strong>Incomplete</strong>: can produce <code>CO</code> and soot (<code>C</code>).</li>
+          </ul>
+          <pre><code>Example (alkane): C3H8 + 5 O2 → 3 CO2 + 4 H2O</code></pre>
+          <p class="warn">
+            Carbon monoxide (<code>CO</code>) is toxic. Never burn fuels without good ventilation.
+          </p>
+
+          <h3>8.2 Alkane substitution (halogenation)</h3>
+          <ul>
+            <li><strong>Reactants</strong>: alkane + <code>Cl2</code> or <code>Br2</code></li>
+            <li><strong>Conditions</strong>: UV light / sunlight</li>
+            <li><strong>Products</strong>: haloalkane + <code>HCl</code> or <code>HBr</code></li>
+          </ul>
+          <pre><code>CH4 + Cl2  —(UV)→  CH3Cl + HCl</code></pre>
+          <p class="note">
+            This is a substitution because a hydrogen is replaced by a halogen.
+          </p>
+
+          <h3>8.3 Alkene addition reactions</h3>
+          <h4>Hydrogenation</h4>
+          <ul>
+            <li><strong>Reactants</strong>: alkene + <code>H2</code></li>
+            <li><strong>Catalyst</strong>: Ni / Pt / Pd</li>
+            <li><strong>Product</strong>: alkane</li>
+          </ul>
+          <pre><code>CH2=CH2 + H2  —(Ni)→  CH3–CH3</code></pre>
+
+          <h4>Halogen addition (decolorizes bromine water)</h4>
+          <ul>
+            <li><strong>Reactants</strong>: alkene + <code>Br2</code></li>
+            <li><strong>Observation</strong>: orange/brown bromine water becomes colorless</li>
+            <li><strong>Product</strong>: dibromoalkane</li>
+          </ul>
+          <pre><code>CH2=CH2 + Br2 → BrCH2–CH2Br</code></pre>
+
+          <h4>Hydration (making alcohols)</h4>
+          <ul>
+            <li><strong>Reactants</strong>: alkene + <code>H2O</code></li>
+            <li><strong>Catalyst</strong>: acid (often <code>H+</code>)</li>
+            <li><strong>Product</strong>: alcohol</li>
+          </ul>
+          <pre><code>CH2=CH2 + H2O  —(H+)→  CH3CH2OH</code></pre>
+
+          <h3>8.4 Alcohol oxidation (a key Grade 11 pattern)</h3>
+          <p>
+            Oxidation often uses an oxidizing agent such as acidified potassium dichromate
+            (<code>K2Cr2O7/H+</code>).
+          </p>
+          <ul>
+            <li><strong>Primary alcohol</strong> → aldehyde → carboxylic acid (further oxidation)</li>
+            <li><strong>Secondary alcohol</strong> → ketone</li>
+            <li><strong>Tertiary alcohol</strong> → resistant to oxidation (Grade 11 level)</li>
+          </ul>
+          <pre><code>CH3CH2OH  →  CH3CHO  →  CH3COOH</code></pre>
+          <p class="danger">
+            In real labs, dichromate solutions are hazardous and require proper PPE and disposal.
+          </p>
+
+          <h3>8.5 Esterification (condensation)</h3>
+          <ul>
+            <li><strong>Reactants</strong>: carboxylic acid + alcohol</li>
+            <li><strong>Conditions</strong>: concentrated acid catalyst (often <code>H2SO4</code>), heat</li>
+            <li><strong>Products</strong>: ester + water</li>
+          </ul>
+          <pre><code>CH3COOH + CH3CH2OH  ⇌  CH3COOCH2CH3 + H2O</code></pre>
+          <p class="note">
+            Esters often have characteristic pleasant smells (fruity), which is why they’re used in flavors and perfumes.
+          </p>
+
+          <h3>8.6 Ester hydrolysis (reverse reaction)</h3>
+          <ul>
+            <li><strong>Reactants</strong>: ester + water</li>
+            <li><strong>Conditions</strong>: acid or base; heating speeds it up</li>
+            <li><strong>Products</strong>: carboxylic acid + alcohol</li>
+          </ul>
+        </section>
+
+        <section class="card" id="polymers">
+          <h2>9) Polymers</h2>
+          <p>
+            A <strong>polymer</strong> is a very large molecule made from repeating units called
+            <strong>monomers</strong>.
+          </p>
+
+          <h3>9.1 Addition polymerization (alkenes → plastics)</h3>
+          <ul>
+            <li>
+              Monomers (often alkenes) join without producing a small molecule byproduct.
+            </li>
+          </ul>
+          <pre><code>n CH2=CH2  →  (–CH2–CH2–)n   (poly(ethene) / polyethylene)</code></pre>
+
+          <h3>9.2 Condensation polymerization (two-functional monomers)</h3>
+          <ul>
+            <li>Monomers join while releasing a small molecule (often water).</li>
+            <li>Examples: polyesters, proteins (peptide bonds), nylon (advanced).</li>
+          </ul>
+
+          <p class="warn">
+            Real-world note: polymer properties depend on chain length, branching, and cross-linking
+            (why plastics can be flexible or rigid).
+          </p>
+        </section>
+
+        <section class="card" id="lab-skills">
+          <h2>10) Lab skills &amp; techniques</h2>
+          <h3>10.1 Distillation (separating liquids by boiling point)</h3>
+          <ul>
+            <li>
+              Heat a mixture; the lower boiling point component vaporizes first, then condenses and
+              is collected.
+            </li>
+            <li>
+              <strong>Fractional distillation</strong> is used when boiling points are close together.
+            </li>
+          </ul>
+
+          <h3>10.2 Reflux (heating without losing reactants)</h3>
+          <ul>
+            <li>
+              A condenser returns vapors to the flask, allowing prolonged heating (common in organic reactions).
+            </li>
+          </ul>
+
+          <h3>10.3 Chromatography (separating by attraction)</h3>
+          <ul>
+            <li>
+              Components move at different speeds based on their attraction to the stationary phase vs. the mobile phase.
+            </li>
+            <li>
+              <strong>Rf value</strong> (paper/TLC): <code>Rf = distance traveled by spot / distance traveled by solvent front</code>.
+            </li>
+          </ul>
+
+          <p class="danger">
+            Safety basics: goggles, lab coat, gloves when required, no tasting chemicals, waft odors, and use a fume hood for volatile substances.
+          </p>
+        </section>
+
+        <section class="card" id="practice">
+          <h2>11) Practice problems (with answers)</h2>
+          <p>
+            Try the questions first. Then open the answers to check your thinking.
+          </p>
+
+          <h3>11.1 Quick identification</h3>
+          <ol>
+            <li>Identify the functional group in <code>CH3CH2OH</code>.</li>
+            <li>Is <code>CH3CH2CH3</code> polar or nonpolar (overall)?</li>
+            <li>Which has a higher boiling point: ethanol (<code>CH3CH2OH</code>) or propane (<code>C3H8</code>)?</li>
+            <li>What observation indicates an alkene is present when using bromine water?</li>
+            <li>Name the compound <code>CH3CH(CH3)CH3</code>.</li>
+          </ol>
+          <details>
+            <summary>Answers (Quick identification)</summary>
+            <ol>
+              <li>Alcohol (hydroxyl group, –OH).</li>
+              <li>Nonpolar overall (hydrocarbon).</li>
+              <li>Ethanol, due to hydrogen bonding.</li>
+              <li>Orange/brown bromine water becomes colorless.</li>
+              <li>2-methylpropane (isobutane).</li>
+            </ol>
+          </details>
+
+          <h3>11.2 Naming practice</h3>
+          <ol>
+            <li>Name <code>CH3CH2CH2CH3</code>.</li>
+            <li>Name <code>CH3CH2CH=CHCH3</code> (assume the lowest number for the double bond).</li>
+            <li>Name <code>CH3CH(Cl)CH2CH3</code>.</li>
+            <li>Draw (or describe) the structure of 3-methylpentane.</li>
+            <li>Give the molecular formula for hexane.</li>
+          </ol>
+          <details>
+            <summary>Answers (Naming practice)</summary>
+            <ol>
+              <li>Butane.</li>
+              <li>Pent-2-ene.</li>
+              <li>2-chlorobutane.</li>
+              <li>Five-carbon chain with a methyl group on carbon 3: <code>CH3CH2CH(CH3)CH2CH3</code>.</li>
+              <li><code>C6H14</code>.</li>
+            </ol>
+          </details>
+
+          <h3>11.3 Reaction thinking</h3>
+          <ol>
+            <li>What type of reaction is hydrogenation of an alkene?</li>
+            <li>Write the products of complete combustion of butane (<code>C4H10</code>).</li>
+            <li>What reagents/conditions convert ethene to ethanol (Grade 11 level)?</li>
+            <li>Primary alcohol oxidation can produce which functional group first?</li>
+            <li>What are the products of esterification between ethanoic acid and methanol?</li>
+          </ol>
+          <details>
+            <summary>Answers (Reaction thinking)</summary>
+            <ol>
+              <li>Addition (H2 adds across the C=C).</li>
+              <li><code>CO2</code> and <code>H2O</code> (balanced: <code>2 C4H10 + 13 O2 → 8 CO2 + 10 H2O</code>).</li>
+              <li>Hydration: water with an acid catalyst (<code>H+</code>) (industrial variations exist).</li>
+              <li>An aldehyde.</li>
+              <li>Methyl ethanoate (<code>CH3COOCH3</code>) + water.</li>
+            </ol>
+          </details>
+        </section>
+
+        <section class="card" id="glossary">
+          <h2>12) Glossary (high-yield terms)</h2>
+          <ul>
+            <li><strong>Functional group</strong>: reactive part of a molecule that drives properties/reactions.</li>
+            <li><strong>Homologous series</strong>: family with same functional group and general formula.</li>
+            <li><strong>Isomers</strong>: same formula, different structures.</li>
+            <li><strong>Oxidation</strong>: gain O / lose H / increase bonds to O.</li>
+            <li><strong>Condensation</strong>: joining molecules while losing a small molecule (often water).</li>
+            <li><strong>Hydrolysis</strong>: breaking a bond using water (often reverse of condensation).</li>
+            <li><strong>Polymer</strong>: large molecule made of repeating monomer units.</li>
+          </ul>
+          <p class="footer">
+            If you want a version aligned to your exact class outcomes (specific reagents, exact naming
+            rules, and required mechanisms), tell me your curriculum or share a unit outline.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
