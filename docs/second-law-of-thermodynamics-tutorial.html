@@ -296,7 +296,7 @@
         <span class="tiny">(Updated 2025-12-27)</span>
       </p>
       <div class="pill-row" aria-label="Key ideas">
-        <span class="pill">Entropy</span>
+        <span class="pill">Entropy (S)</span>
         <span class="pill">Irreversibility</span>
         <span class="pill">Heat engines</span>
         <span class="pill">Carnot limit</span>
@@ -331,8 +331,8 @@
           <h2>1) Big picture: what the Second Law is really saying</h2>
           <p>
             The Second Law is a constraint on what processes can happen in nature and what machines can achieve.
-            It explains why there is an “arrow of time” in macroscopic phenomena: certain changes happen
-            spontaneously (like heat flowing from hot to cold), and the reverse does not happen by itself.
+            It explains why there is an “arrow of time” in macroscopic phenomena: certain changes happen spontaneously
+            (like heat flowing from hot to cold), and the reverse does not happen by itself.
           </p>
 
           <div class="grid-2">
@@ -526,29 +526,29 @@
           <p>
             For any process between equilibrium states 1 and 2, define entropy change using a reversible path:
           </p>
-          <pre><code>&Delta;S = S_2 - S_1 = (&delta;Q_rev / T)</code></pre>
+          <pre><code>&Delta;S = S_2 - S_1 = &int;(&delta;Q_rev / T)</code></pre>
           <p class="tiny">
-            The symbol <code></code> means an integral along a reversible path. This is not saying your real process is reversible;
-            it is a trick to compute a state-function change.
+            The integral sign means “integrate along a reversible path.” This is not saying your real process is reversible;
+            it is a way to compute a state-function change.
           </p>
 
           <h3>4.3 Clausius inequality (a compact Second Law statement)</h3>
           <p>
             For any cyclic process,
-            <code>(&delta;Q/T)  0</code>, with equality only if the cycle is reversible.
-            For a process between two states, a common form is:
+            <code>&#8750;(&delta;Q/T) &le; 0</code>, with equality only if the cycle is reversible.
+            A commonly used non-cyclic form is:
           </p>
-          <pre><code>&Delta;S  Q/T  (with equality if reversible)</code></pre>
+          <pre><code>&Delta;S &ge; &int;(&delta;Q/T_b)  (equality if reversible)</code></pre>
           <p class="tiny">
-            More precisely, you use <code>(&delta;Q/T)</code> for heat exchange with the boundary at temperature <code>T</code>.
-            In many intro problems, the boundary temperature is constant (e.g., a reservoir), which simplifies the integral.
+            Here <code>T_b</code> is the boundary temperature where heat crosses the system boundary.
+            If heat is exchanged only with a reservoir, then <code>T_b</code> is constant and the integral simplifies.
           </p>
 
           <h3>4.4 Entropy of the universe</h3>
           <p>
             The “universe” is just system + surroundings (environment). For an isolated total,
           </p>
-          <pre><code>&Delta;S_universe = &Delta;S_system + &Delta;S_surroundings  0</code></pre>
+          <pre><code>&Delta;S_universe = &Delta;S_system + &Delta;S_surroundings &ge; 0</code></pre>
           <p>
             If <code>&Delta;S_universe = 0</code>, the process is reversible. If it is positive, the process is irreversible.
           </p>
@@ -565,7 +565,7 @@
           <pre><code>W_out = Q_H - Q_C</code></pre>
           <p>
             Thermal efficiency is defined as work out per heat in:
-            <code> = W_out / Q_H = 1 - Q_C/Q_H</code>.
+            <code>&eta; = W_out / Q_H = 1 - Q_C/Q_H</code>.
           </p>
 
           <h3>5.2 The Carnot result (Second Law constraint)</h3>
@@ -577,11 +577,11 @@
           <p>
             So <code>Q_C/Q_H = T_C/T_H</code>, and the maximum possible efficiency is:
           </p>
-          <pre><code>_max = _Carnot = 1 - (T_C / T_H)</code></pre>
+          <pre><code>&eta;_max = &eta;_Carnot = 1 - (T_C / T_H)</code></pre>
 
           <div class="warn">
             <p style="margin: 0">
-              This is why “100% efficient heat engine” is impossible: to get  = 1 you would need <code>T_C = 0 K</code>.
+              This is why a “100% efficient heat engine” is impossible: to get <code>&eta; = 1</code> you would need <code>T_C = 0 K</code>.
             </p>
           </div>
 
@@ -666,22 +666,22 @@ COP_HP,max = T_H / (T_H - T_C)</code></pre>
           <p>
             A very useful way to apply the Second Law is the entropy balance. For a closed system:
           </p>
-          <pre><code>&Delta;S = (&delta;Q/T_b) + S_gen</code></pre>
+          <pre><code>&Delta;S = &int;(&delta;Q/T_b) + S_gen</code></pre>
           <ul>
             <li><code>T_b</code> is the boundary temperature where heat crosses the system boundary.</li>
-            <li><code>S_gen</code> is entropy generation due to irreversibilities (friction, mixing, finite T heat transfer, etc.).</li>
-            <li>Second Law requirement: <code>S_gen  0</code>.</li>
+            <li><code>S_gen</code> is entropy generation due to irreversibilities (friction, mixing, finite &Delta;T heat transfer, etc.).</li>
+            <li>Second Law requirement: <code>S_gen &ge; 0</code>.</li>
           </ul>
 
           <h3>8.1 For an isolated system</h3>
           <p>
-            If the system is isolated, <code>(&delta;Q/T_b) = 0</code>, so <code>&Delta;S = S_gen  0</code>.
+            If the system is isolated, <code>&int;(&delta;Q/T_b) = 0</code>, so <code>&Delta;S = S_gen &ge; 0</code>.
           </p>
 
           <h3>8.2 For steady-flow control volumes (preview)</h3>
           <p class="tiny">
             In thermodynamics courses, you’ll also see an entropy rate balance for open systems (turbines, compressors, nozzles).
-            The same idea remains: entropy transfer with heat and mass + entropy generation  accumulation.
+            The same idea remains: entropy transfer with heat and mass + entropy generation &ge; accumulation.
           </p>
         </section>
 
@@ -786,7 +786,7 @@ COP_HP,max = T_H / (T_H - T_C)</code></pre>
           <details>
             <summary>1) Maximum efficiency</summary>
             <p class="tiny" style="margin: 10px 0 0">
-              Carnot limit: <code>_max = 1 - T_C/T_H = 1 - 300/600 = 0.50</code>. So the max is <strong>50%</strong>.
+              Carnot limit: <code>&eta;_max = 1 - T_C/T_H = 1 - 300/600 = 0.50</code>. So the max is <strong>50%</strong>.
             </p>
           </details>
 
@@ -834,7 +834,7 @@ COP_HP,max = T_H / (T_H - T_C)</code></pre>
             <summary>7) Can a system’s entropy decrease?</summary>
             <p class="tiny" style="margin: 10px 0 0">
               Yes, if the surroundings’ entropy increases by at least the same amount.
-              Condition: <code>&Delta;S_surroundings  200 J/K</code> so that <code>&Delta;S_universe  0</code>.
+              Condition: <code>&Delta;S_surroundings &ge; 200 J/K</code> so that <code>&Delta;S_universe &ge; 0</code>.
             </p>
           </details>
 
@@ -855,12 +855,12 @@ COP_HP,max = T_H / (T_H - T_C)</code></pre>
         <section class="card" id="cheatsheet">
           <h2>Cheat sheet</h2>
           <ul>
-            <li><strong>Second Law (universe):</strong> <code>&Delta;S_universe  0</code></li>
+            <li><strong>Second Law (universe):</strong> <code>&Delta;S_universe &ge; 0</code></li>
             <li><strong>Reversible:</strong> <code>&Delta;S_universe = 0</code></li>
-            <li><strong>Entropy change definition:</strong> <code>&Delta;S = (&delta;Q_rev/T)</code></li>
-            <li><strong>Engine efficiency:</strong> <code> = 1 - Q_C/Q_H</code>, <code>_Carnot = 1 - T_C/T_H</code></li>
+            <li><strong>Entropy change definition:</strong> <code>&Delta;S = &int;(&delta;Q_rev/T)</code></li>
+            <li><strong>Engine efficiency:</strong> <code>&eta; = 1 - Q_C/Q_H</code>, <code>&eta;_Carnot = 1 - T_C/T_H</code></li>
             <li><strong>Refrigerator COP:</strong> <code>COP_R,max = T_C/(T_H-T_C)</code></li>
-            <li><strong>Entropy balance:</strong> <code>&Delta;S = (&delta;Q/T_b) + S_gen</code>, <code>S_gen  0</code></li>
+            <li><strong>Entropy balance:</strong> <code>&Delta;S = &int;(&delta;Q/T_b) + S_gen</code>, <code>S_gen &ge; 0</code></li>
           </ul>
         </section>
 
@@ -870,7 +870,7 @@ COP_HP,max = T_H / (T_H - T_C)</code></pre>
             <li><strong>Entropy (S):</strong> a state function measuring dispersal of energy / multiplicity of microstates (units J/K).</li>
             <li><strong>Reservoir:</strong> a body so large its temperature stays essentially constant while exchanging heat.</li>
             <li><strong>Reversible process:</strong> ideal limit with no entropy generation; can be reversed with no net effect.</li>
-            <li><strong>Irreversibility:</strong> real effects (friction, mixing, finite T heat transfer) that generate entropy.</li>
+            <li><strong>Irreversibility:</strong> real effects (friction, mixing, finite &Delta;T heat transfer) that generate entropy.</li>
             <li><strong>Carnot engine:</strong> ideal reversible engine that sets the maximum possible efficiency between two temperatures.</li>
           </ul>
         </section>
@@ -882,7 +882,7 @@ COP_HP,max = T_H / (T_H - T_C)</code></pre>
               H.B. Callen, <em>Thermodynamics and an Introduction to Thermostatistics</em> (clear conceptual development).
             </li>
             <li>
-              Y.A. Cengel & M.A. Boles, <em>Thermodynamics: An Engineering Approach</em> (applications and many examples).
+              Y.A. Cengel &amp; M.A. Boles, <em>Thermodynamics: An Engineering Approach</em> (applications and many examples).
             </li>
             <li>
               D.V. Schroeder, <em>An Introduction to Thermal Physics</em> (excellent bridge to statistical mechanics).
