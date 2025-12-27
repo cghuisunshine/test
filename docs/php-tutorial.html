@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PHP — Complete Tutorial (Beginner to Grade 12+)</title>
+    <meta
+      name="description"
+      content="A detailed, student-friendly PHP tutorial: setup, syntax, variables and types, arrays, functions, forms, sessions, file I/O, OOP, MySQL with prepared statements, and security best practices with exercises."
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #101938;
+        --panel-2: #0f1733;
+        --text: #e8ecff;
+        --muted: #b7c0ff;
+        --accent: #7aa2ff;
+        --accent-2: #4ee7b0;
+        --warn: #ffcc66;
+        --danger: #ff6b6b;
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: rgba(0, 0, 0, 0.35);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(1200px 700px at 20% 0%, #182a65 0%, var(--bg) 55%) fixed;
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .skip {
+        position: absolute;
+        top: -50px;
+        left: 12px;
+        background: #000;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        z-index: 10;
+      }
+
+      .skip:focus {
+        top: 12px;
+      }
+
+      header {
+        padding: 34px 18px 10px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      header h1 {
+        margin: 0 0 6px;
+        font-size: 2rem;
+        letter-spacing: 0.2px;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 18px 44px;
+      }
+
+      nav {
+        position: sticky;
+        top: 14px;
+        align-self: start;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 12px 28px var(--shadow);
+        padding: 14px 14px 10px;
+      }
+
+      nav h2 {
+        margin: 0 0 10px;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      nav a {
+        display: block;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      nav a:hover {
+        background: rgba(122, 162, 255, 0.12);
+        border-color: rgba(122, 162, 255, 0.25);
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      .card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 16px 38px var(--shadow);
+        padding: 18px 18px 14px;
+        margin: 0 0 14px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+      }
+
+      .card h3 {
+        margin: 18px 0 8px;
+        font-size: 1.05rem;
+        color: #dfe6ff;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 10px 0 0;
+      }
+
+      .pill {
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.18);
+        color: #eff4ff;
+        white-space: nowrap;
+      }
+
+      .note {
+        border-left: 4px solid var(--accent-2);
+        padding: 10px 12px;
+        background: rgba(78, 231, 176, 0.08);
+        border-radius: 12px;
+      }
+
+      .warn {
+        border-left: 4px solid var(--warn);
+        padding: 10px 12px;
+        background: rgba(255, 204, 102, 0.1);
+        border-radius: 12px;
+      }
+
+      .danger {
+        border-left: 4px solid var(--danger);
+        padding: 10px 12px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 12px;
+      }
+
+      code,
+      pre,
+      kbd {
+        font-family: var(--mono);
+      }
+
+      pre {
+        overflow: auto;
+        padding: 12px 12px;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      kbd {
+        font-size: 0.95em;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(0, 0, 0, 0.22);
+        border-radius: 10px;
+        padding: 0.15rem 0.45rem;
+        white-space: nowrap;
+      }
+
+      .grid-2 {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 10px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        vertical-align: top;
+      }
+
+      th {
+        background: rgba(122, 162, 255, 0.12);
+        color: #f2f5ff;
+        font-weight: 650;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      details {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      details summary {
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      .tiny {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      .footer {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-top: 8px;
+      }
+
+      @media (max-width: 940px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          position: static;
+        }
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        :root {
+          --bg: #ffffff;
+          --panel: #ffffff;
+          --text: #000000;
+          --muted: #333333;
+          --border: rgba(0, 0, 0, 0.2);
+          --shadow: transparent;
+        }
+        body {
+          background: #fff !important;
+        }
+        nav {
+          display: none;
+        }
+        a {
+          color: #000;
+          text-decoration: underline;
+        }
+        .card {
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header>
+      <h1>PHP — Complete Tutorial</h1>
+      <p>
+        A detailed, beginner-friendly guide to building dynamic websites with PHP: syntax, variables,
+        arrays, functions, forms, sessions, files, OOP basics, database access, and essential security
+        habits.
+      </p>
+      <div class="pill-row" aria-label="Topic tags">
+        <span class="pill">syntax</span>
+        <span class="pill">arrays</span>
+        <span class="pill">functions</span>
+        <span class="pill">forms</span>
+        <span class="pill">sessions</span>
+        <span class="pill">PDO</span>
+        <span class="pill">security</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#start">How PHP Works</a></li>
+          <li><a href="#setup">Setup &amp; Running</a></li>
+          <li><a href="#basics">Syntax Basics</a></li>
+          <li><a href="#types">Variables &amp; Types</a></li>
+          <li><a href="#strings">Strings</a></li>
+          <li><a href="#control">Control Flow</a></li>
+          <li><a href="#arrays">Arrays</a></li>
+          <li><a href="#functions">Functions</a></li>
+          <li><a href="#superglobals">Superglobals</a></li>
+          <li><a href="#forms">Forms (GET/POST)</a></li>
+          <li><a href="#sessions">Sessions &amp; Cookies</a></li>
+          <li><a href="#files">Files &amp; Uploads</a></li>
+          <li><a href="#oop">OOP Basics</a></li>
+          <li><a href="#pdo">Databases (PDO)</a></li>
+          <li><a href="#security">Security Checklist</a></li>
+          <li><a href="#practice">Practice</a></li>
+          <li><a href="#answers">Answers</a></li>
+        </ul>
+      </nav>
+
+      <main id="content">
+        <section class="card" id="start">
+          <h2>1) How PHP Works</h2>
+          <p>
+            PHP is a <strong>server-side</strong> programming language. That means PHP code runs on the
+            server, generates HTML (and sometimes JSON), and the browser receives the output.
+          </p>
+          <div class="grid-2">
+            <div class="note">
+              <h3 style="margin-top: 0">Mental model</h3>
+              <ol>
+                <li>Browser requests a URL (e.g., <code>/profile.php</code>).</li>
+                <li>Web server runs the PHP file.</li>
+                <li>PHP produces HTML.</li>
+                <li>Browser renders the HTML.</li>
+              </ol>
+            </div>
+            <div class="warn">
+              <h3 style="margin-top: 0">Key idea</h3>
+              <p style="margin: 0">
+                Users never “download your PHP code”. They only see the output. If PHP code appears in
+                the browser, the server is misconfigured.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" id="setup">
+          <h2>2) Setup &amp; Running</h2>
+          <p>
+            You can run PHP locally either with a full web stack (Apache/Nginx + PHP) or with PHP’s built-in dev server.
+          </p>
+
+          <h3>Option A: Built-in dev server (recommended for learning)</h3>
+          <pre><code># In your project folder
+php -S localhost:8000</code></pre>
+          <p class="tiny">
+            Then open <code>http://localhost:8000</code>. Put a file like <code>index.php</code> in the folder.
+          </p>
+
+          <h3>Option B: XAMPP / MAMP / WAMP</h3>
+          <p class="tiny">
+            These bundles install a local Apache server + PHP (and often MySQL). Place your project in the “htdocs” folder
+            (location depends on the bundle), then browse to your local site.
+          </p>
+        </section>
+
+        <section class="card" id="basics">
+          <h2>3) Syntax Basics</h2>
+          <h3>Hello world</h3>
+          <pre><code>&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;?php echo "Hello, PHP!"; ?&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+          <h3>PHP tags</h3>
+          <ul>
+            <li><code>&lt;?php ... ?&gt;</code> is the standard tag.</li>
+            <li>Statements usually end with <code>;</code>.</li>
+            <li>Comments: <code>//</code>, <code>#</code>, or <code>/* ... */</code>.</li>
+          </ul>
+
+          <h3>Echo vs print</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Keyword</th>
+                <th>What it does</th>
+                <th>Typical use</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>echo</code></td>
+                <td>Outputs one or more strings</td>
+                <td>Most common for HTML output</td>
+              </tr>
+              <tr>
+                <td><code>print</code></td>
+                <td>Outputs a string (returns 1)</td>
+                <td>Rare; <code>echo</code> is more common</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card" id="types">
+          <h2>4) Variables &amp; Types</h2>
+          <p>
+            Variables start with <code>$</code>. PHP is dynamically typed: variables can change type.
+          </p>
+          <pre><code>&lt;?php
+$name = "Asha";   // string
+$age = 16;        // int
+$height = 1.65;   // float
+$isStudent = true; // bool
+
+echo $name;
+?&gt;</code></pre>
+
+          <h3>Common types</h3>
+          <ul>
+            <li><strong>string</strong>, <strong>int</strong>, <strong>float</strong>, <strong>bool</strong></li>
+            <li><strong>array</strong>, <strong>object</strong>, <strong>null</strong></li>
+          </ul>
+
+          <h3>Type + value inspection</h3>
+          <pre><code>&lt;?php
+$x = "42";
+var_dump($x); // string(2) "42"
+?&gt;</code></pre>
+
+          <div class="warn">
+            <p style="margin: 0">
+              Don’t use <code>var_dump()</code> on production pages. It can leak sensitive information.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="strings">
+          <h2>5) Strings</h2>
+          <h3>Single vs double quotes</h3>
+          <pre><code>&lt;?php
+$name = "Kai";
+echo 'Hello $name';   // prints: Hello $name
+echo "Hello $name";   // prints: Hello Kai
+?&gt;</code></pre>
+          <p class="tiny">Double quotes allow variable interpolation and escape sequences like <code>\n</code>.</p>
+
+          <h3>Concatenation</h3>
+          <pre><code>&lt;?php
+$first = "Ada";
+$last = "Lovelace";
+echo $first . " " . $last;
+?&gt;</code></pre>
+
+          <h3>Helpful string functions</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Function</th>
+                <th>Example</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>strlen</code></td>
+                <td><code>strlen("abc")</code></td>
+                <td><code>3</code></td>
+              </tr>
+              <tr>
+                <td><code>strtolower</code></td>
+                <td><code>strtolower("Hi")</code></td>
+                <td><code>"hi"</code></td>
+              </tr>
+              <tr>
+                <td><code>trim</code></td>
+                <td><code>trim(" hi ")</code></td>
+                <td><code>"hi"</code></td>
+              </tr>
+              <tr>
+                <td><code>substr</code></td>
+                <td><code>substr("hello", 1, 3)</code></td>
+                <td><code>"ell"</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card" id="control">
+          <h2>6) Control Flow</h2>
+          <h3>If / else</h3>
+          <pre><code>&lt;?php
+$score = 78;
+if ($score &gt;= 80) {
+  echo "A";
+} elseif ($score &gt;= 70) {
+  echo "B";
+} else {
+  echo "Needs improvement";
+}
+?&gt;</code></pre>
+
+          <h3>Loops</h3>
+          <div class="grid-2">
+            <div>
+              <h4 style="margin: 0 0 8px">for</h4>
+              <pre><code>&lt;?php
+for ($i = 1; $i &lt;= 5; $i++) {
+  echo $i;
+}
+?&gt;</code></pre>
+            </div>
+            <div>
+              <h4 style="margin: 0 0 8px">while</h4>
+              <pre><code>&lt;?php
+$i = 1;
+while ($i &lt;= 5) {
+  echo $i;
+  $i++;
+}
+?&gt;</code></pre>
+            </div>
+          </div>
+          <h3>Switch</h3>
+          <pre><code>&lt;?php
+$day = "Mon";
+switch ($day) {
+  case "Mon":
+    echo "Start";
+    break;
+  case "Fri":
+    echo "Almost weekend";
+    break;
+  default:
+    echo "Regular day";
+}
+?&gt;</code></pre>
+        </section>
+
+        <section class="card" id="arrays">
+          <h2>7) Arrays</h2>
+          <p>PHP arrays can be <strong>indexed</strong> (list-like) or <strong>associative</strong> (key/value).</p>
+
+          <h3>Indexed arrays</h3>
+          <pre><code>&lt;?php
+$colors = ["red", "green", "blue"];
+echo $colors[0]; // red
+?&gt;</code></pre>
+
+          <h3>Associative arrays</h3>
+          <pre><code>&lt;?php
+$student = [
+  "name" =&gt; "Lina",
+  "grade" =&gt; 12,
+  "club" =&gt; "Robotics",
+];
+echo $student["name"];
+?&gt;</code></pre>
+
+          <h3>foreach (most useful loop for arrays)</h3>
+          <pre><code>&lt;?php
+foreach ($student as $key =&gt; $value) {
+  echo $key . ": " . $value . "&lt;br&gt;";
+}
+?&gt;</code></pre>
+
+          <h3>Common array helpers</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Goal</th>
+                <th>Function</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Add to end</td>
+                <td><code>$arr[] = ...</code> / <code>array_push</code></td>
+                <td><code>$colors[] = "purple";</code></td>
+              </tr>
+              <tr>
+                <td>Count items</td>
+                <td><code>count</code></td>
+                <td><code>count($colors)</code></td>
+              </tr>
+              <tr>
+                <td>Sort</td>
+                <td><code>sort</code> / <code>rsort</code></td>
+                <td><code>sort($colors)</code></td>
+              </tr>
+              <tr>
+                <td>Get keys</td>
+                <td><code>array_keys</code></td>
+                <td><code>array_keys($student)</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card" id="functions">
+          <h2>8) Functions</h2>
+          <h3>Define and call</h3>
+          <pre><code>&lt;?php
+function greet(string $name): string {
+  return "Hello, " . $name;
+}
+
+echo greet("Sam");
+?&gt;</code></pre>
+          <p class="tiny">
+            Type hints (<code>string</code>, <code>int</code>, etc.) help readability, but PHP can still accept different
+            types unless you enable strict typing.
+          </p>
+
+          <h3>Default parameters</h3>
+          <pre><code>&lt;?php
+function power(int $base, int $exp = 2): int {
+  return $base ** $exp;
+}
+
+echo power(5);    // 25
+echo power(2, 3); // 8
+?&gt;</code></pre>
+
+          <h3>Useful built-ins</h3>
+          <ul>
+            <li><code>date</code>, <code>json_encode</code>, <code>json_decode</code></li>
+            <li><code>filter_var</code> (validation)</li>
+            <li><code>password_hash</code>, <code>password_verify</code> (passwords)</li>
+          </ul>
+        </section>
+
+        <section class="card" id="superglobals">
+          <h2>9) Superglobals</h2>
+          <p>
+            Superglobals are built-in arrays available everywhere. They commonly carry request data.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Contains</th>
+                <th>Example use</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>$_GET</code></td>
+                <td>Query parameters</td>
+                <td><code>/page.php?name=Kai</code></td>
+              </tr>
+              <tr>
+                <td><code>$_POST</code></td>
+                <td>Form body parameters</td>
+                <td>Login forms</td>
+              </tr>
+              <tr>
+                <td><code>$_SERVER</code></td>
+                <td>Request/server metadata</td>
+                <td><code>$_SERVER["REQUEST_METHOD"]</code></td>
+              </tr>
+              <tr>
+                <td><code>$_SESSION</code></td>
+                <td>Session storage</td>
+                <td>Remember logged-in user</td>
+              </tr>
+              <tr>
+                <td><code>$_COOKIE</code></td>
+                <td>Cookies sent by browser</td>
+                <td>Theme preference</td>
+              </tr>
+              <tr>
+                <td><code>$_FILES</code></td>
+                <td>Uploaded files</td>
+                <td>Profile photo upload</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="danger">
+            <p style="margin: 0">
+              Never trust user input. Treat everything from <code>$_GET</code>, <code>$_POST</code>, and <code>$_COOKIE</code> as untrusted.
+              Always validate and escape.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="forms">
+          <h2>10) Forms (GET/POST)</h2>
+          <p>
+            Forms send user input to a server endpoint (often another PHP file). Use <code>method="post"</code> for sensitive data.
+          </p>
+
+          <h3>Example: simple POST form + handler</h3>
+          <div class="grid-2">
+            <div>
+              <h4 style="margin: 0 0 8px">form.html</h4>
+              <pre><code>&lt;form action="submit.php" method="post"&gt;
+  &lt;label&gt;Name: &lt;input name="name" /&gt;&lt;/label&gt;
+  &lt;button type="submit"&gt;Send&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+            </div>
+            <div>
+              <h4 style="margin: 0 0 8px">submit.php</h4>
+              <pre><code>&lt;?php
+function h(string $s): string {
+  return htmlspecialchars($s, ENT_QUOTES, "UTF-8");
+}
+
+$name = $_POST["name"] ?? "";
+$name = trim($name);
+
+if ($name === "") {
+  echo "Name is required.";
+  exit;
+}
+
+echo "Hello " . h($name);
+?&gt;</code></pre>
+            </div>
+          </div>
+          <div class="note">
+            <p style="margin: 0">
+              <code>htmlspecialchars()</code> prevents XSS by escaping special characters before outputting into HTML.
+            </p>
+          </div>
+
+          <h3>GET example</h3>
+          <pre><code>&lt;?php
+$q = $_GET["q"] ?? "";
+echo "You searched for: " . htmlspecialchars($q, ENT_QUOTES, "UTF-8");
+?&gt;</code></pre>
+        </section>
+
+        <section class="card" id="sessions">
+          <h2>11) Sessions &amp; Cookies</h2>
+
+          <h3>Sessions (server-side)</h3>
+          <pre><code>&lt;?php
+session_start();
+
+// Set a value
+$_SESSION["username"] = "Kai";
+
+// Read it later
+echo $_SESSION["username"] ?? "Guest";
+?&gt;</code></pre>
+          <p class="tiny">Sessions usually use a session cookie to link the browser to server-side session data.</p>
+
+          <h3>Cookies (client-side)</h3>
+          <pre><code>&lt;?php
+setcookie("theme", "dark", [
+  "expires" =&gt; time() + 60 * 60 * 24 * 30,
+  "path" =&gt; "/",
+  "secure" =&gt; true,
+  "httponly" =&gt; true,
+  "samesite" =&gt; "Lax",
+]);
+?&gt;</code></pre>
+          <div class="warn">
+            <p style="margin: 0">
+              Cookies can be modified by the client. Never store secrets (like passwords) in cookies.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="files">
+          <h2>12) Files &amp; Uploads</h2>
+
+          <h3>Reading and writing files</h3>
+          <pre><code>&lt;?php
+$path = __DIR__ . "/notes.txt";
+file_put_contents($path, "Hello\n", FILE_APPEND);
+$contents = file_get_contents($path);
+echo nl2br(htmlspecialchars($contents, ENT_QUOTES, "UTF-8"));
+?&gt;</code></pre>
+          <p class="tiny">
+            Use <code>__DIR__</code> to build safe paths. Escape output if you display file contents in HTML.
+          </p>
+
+          <h3>Uploads (basic pattern)</h3>
+          <pre><code>&lt;!-- upload.html --&gt;
+&lt;form action="upload.php" method="post" enctype="multipart/form-data"&gt;
+  &lt;input type="file" name="photo" /&gt;
+  &lt;button type="submit"&gt;Upload&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+          <pre><code>&lt;?php
+// upload.php
+if (!isset($_FILES["photo"])) { exit("No file"); }
+
+$f = $_FILES["photo"];
+if ($f["error"] !== UPLOAD_ERR_OK) { exit("Upload failed"); }
+
+// Always validate type/size and choose your own filename.
+if ($f["size"] &gt; 2_000_000) { exit("Too large"); }
+
+$targetDir = __DIR__ . "/uploads";
+if (!is_dir($targetDir)) { mkdir($targetDir); }
+
+$target = $targetDir . "/" . bin2hex(random_bytes(16)) . ".bin";
+move_uploaded_file($f["tmp_name"], $target);
+
+echo "Uploaded.";
+?&gt;</code></pre>
+          <div class="danger">
+            <p style="margin: 0">
+              Uploads are a common attack vector. Never trust the original filename, and never allow arbitrary uploads into a web-executable folder.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="oop">
+          <h2>13) OOP Basics</h2>
+          <p>
+            Object-oriented programming (OOP) helps organize larger projects. In PHP, classes define objects with properties and methods.
+          </p>
+
+          <h3>Class example</h3>
+          <pre><code>&lt;?php
+class Student {
+  public string $name;
+  private int $grade;
+
+  public function __construct(string $name, int $grade) {
+    $this-&gt;name = $name;
+    $this-&gt;grade = $grade;
+  }
+
+  public function getGrade(): int {
+    return $this-&gt;grade;
+  }
+}
+
+$s = new Student("Lina", 12);
+echo $s-&gt;name;
+echo $s-&gt;getGrade();
+?&gt;</code></pre>
+
+          <h3>Inheritance (quick idea)</h3>
+          <pre><code>&lt;?php
+class User { public function role(): string { return "user"; } }
+class Admin extends User { public function role(): string { return "admin"; } }
+?&gt;</code></pre>
+          <p class="tiny">Use inheritance when one class is truly a “special case” of another. Otherwise consider composition.</p>
+        </section>
+
+        <section class="card" id="pdo">
+          <h2>14) Databases (PDO + Prepared Statements)</h2>
+          <p>
+            For SQL databases, PHP commonly uses PDO. The most important rule: use prepared statements to prevent SQL injection.
+          </p>
+
+          <h3>Connect to MySQL</h3>
+          <pre><code>&lt;?php
+$dsn = "mysql:host=localhost;dbname=school;charset=utf8mb4";
+$user = "root";
+$pass = "";
+
+$pdo = new PDO($dsn, $user, $pass, [
+  PDO::ATTR_ERRMODE =&gt; PDO::ERRMODE_EXCEPTION,
+  PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC,
+]);
+?&gt;</code></pre>
+
+          <h3>Safe query (prepared statement)</h3>
+          <pre><code>&lt;?php
+$id = $_GET["id"] ?? "0";
+
+$stmt = $pdo-&gt;prepare("SELECT id, name, grade FROM students WHERE id = :id");
+$stmt-&gt;execute(["id" =&gt; $id]);
+$row = $stmt-&gt;fetch();
+
+if (!$row) {
+  echo "Not found";
+  exit;
+}
+
+echo htmlspecialchars($row["name"], ENT_QUOTES, "UTF-8");
+?&gt;</code></pre>
+
+          <div class="warn">
+            <p style="margin: 0">
+              Never build SQL like <code>"... WHERE id = " . $_GET["id"]</code>. Even if you “trust” the value.
+            </p>
+          </div>
+        </section>
+
+        <section class="card" id="security">
+          <h2>15) Security Checklist (Essential Habits)</h2>
+
+          <h3>Output escaping (XSS prevention)</h3>
+          <p>Any time you output user-controlled data into HTML, escape it:</p>
+          <pre><code>&lt;?php
+function h(string $s): string {
+  return htmlspecialchars($s, ENT_QUOTES, "UTF-8");
+}
+echo h($userInput);
+?&gt;</code></pre>
+
+          <h3>Input validation</h3>
+          <pre><code>&lt;?php
+$email = $_POST["email"] ?? "";
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+  exit("Invalid email");
+}
+?&gt;</code></pre>
+
+          <h3>Password storage</h3>
+          <pre><code>&lt;?php
+$hash = password_hash($password, PASSWORD_DEFAULT);
+if (password_verify($passwordAttempt, $hash)) {
+  echo "OK";
+}
+?&gt;</code></pre>
+
+          <h3>CSRF protection (idea)</h3>
+          <p class="tiny">
+            For forms that change server state (creating posts, updating profiles), add a CSRF token:
+            store a random token in <code>$_SESSION</code> and include it as a hidden form field, then verify it on submit.
+          </p>
+        </section>
+
+        <section class="card" id="practice">
+          <h2>Practice</h2>
+          <h3>A) Basics</h3>
+          <ol>
+            <li>Write PHP that prints the numbers 1 to 10 on separate lines.</li>
+            <li>Create an array of 5 cities and print the third one.</li>
+            <li>Given <code>$a = "12"</code> and <code>$b = 3</code>, what is <code>$a + $b</code> in PHP?</li>
+          </ol>
+
+          <h3>B) Functions</h3>
+          <ol start="4">
+            <li>Write a function <code>isEven</code> that returns true if a number is even.</li>
+            <li>Write a function <code>safeUpper</code> that trims a string and returns it in uppercase.</li>
+          </ol>
+
+          <h3>C) Forms &amp; safety</h3>
+          <ol start="6">
+            <li>Why is <code>htmlspecialchars</code> used before echoing user input into HTML?</li>
+            <li>What is the main benefit of prepared statements?</li>
+          </ol>
+        </section>
+
+        <section class="card" id="answers">
+          <h2>Answers</h2>
+          <details>
+            <summary>A) Basics</summary>
+            <ol>
+              <li>
+                <pre><code>&lt;?php
+for ($i = 1; $i &lt;= 10; $i++) {
+  echo $i . "&lt;br&gt;";
+}
+?&gt;</code></pre>
+              </li>
+              <li>
+                <pre><code>&lt;?php
+$cities = ["Tokyo", "Nairobi", "Lima", "Oslo", "Seoul"];
+echo $cities[2]; // Lima
+?&gt;</code></pre>
+              </li>
+              <li><code>$a + $b</code> is <code>15</code> because PHP converts numeric strings when using <code>+</code>.</li>
+            </ol>
+          </details>
+          <details>
+            <summary>B) Functions</summary>
+            <ol>
+              <li>
+                <pre><code>&lt;?php
+function isEven(int $n): bool {
+  return $n % 2 === 0;
+}
+?&gt;</code></pre>
+              </li>
+              <li>
+                <pre><code>&lt;?php
+function safeUpper(string $s): string {
+  return strtoupper(trim($s));
+}
+?&gt;</code></pre>
+              </li>
+            </ol>
+          </details>
+          <details>
+            <summary>C) Forms &amp; safety</summary>
+            <ol>
+              <li>To prevent XSS by escaping HTML special characters so user input can’t inject tags/scripts.</li>
+              <li>They prevent SQL injection and separate SQL code from data values.</li>
+            </ol>
+          </details>
+          <p class="footer">
+            This tutorial is a single, self-contained HTML file (no external dependencies). Use it for reading, printing, or hosting on GitHub Pages.
+          </p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
