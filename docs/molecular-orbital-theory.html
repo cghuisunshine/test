@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Molecular Orbital Theory (MOT) — A Detailed Tutorial</title>
+  <meta name="description" content="A detailed, beginner-to-intermediate tutorial on Molecular Orbital Theory (MOT) in chemistry, including its historical origin, key ideas, diatomic MO diagrams, examples, and practice problems." />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111a33;
+      --panel-2: #0f1730;
+      --text: #e9eefc;
+      --muted: #b8c2e3;
+      --faint: #7f8ab3;
+      --link: #8ab4ff;
+      --accent: #7bf1c8;
+      --accent-2: #ffd37b;
+      --danger: #ff7b9c;
+      --ok: #7bff9c;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      --radius: 14px;
+      --focus: 0 0 0 3px rgba(138,180,255,.35);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f7fb;
+        --panel: #ffffff;
+        --panel-2: #fbfbff;
+        --text: #10131f;
+        --muted: #2f3a60;
+        --faint: #5f6b92;
+        --link: #2455d6;
+        --accent: #0a7f61;
+        --accent-2: #8a5c00;
+        --danger: #c81e4a;
+        --ok: #057a2d;
+        --border: rgba(16,19,31,.12);
+        --shadow: 0 12px 30px rgba(0,0,0,.08);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: radial-gradient(1200px 700px at 15% 0%, rgba(123,241,200,.13), transparent 55%),
+                  radial-gradient(900px 600px at 80% 10%, rgba(138,180,255,.18), transparent 55%),
+                  radial-gradient(1000px 800px at 55% 105%, rgba(255,211,123,.16), transparent 50%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .skip {
+      position: absolute;
+      left: -999px;
+      top: 10px;
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 10px;
+      z-index: 999;
+    }
+    .skip:focus { left: 10px; outline: none; box-shadow: var(--focus); }
+
+    header {
+      padding: 46px 20px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+    }
+
+    .title {
+      background: linear-gradient(135deg, rgba(123,241,200,.14), rgba(138,180,255,.14));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 22px 18px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 3.6vw, 42px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 70ch;
+    }
+
+    .meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--faint);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 64px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    nav {
+      position: sticky;
+      top: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    nav h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .toc {
+      margin: 0;
+      padding-left: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .toc li { margin: 7px 0; }
+
+    .content {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    section { margin: 0 0 26px; }
+    section:last-child { margin-bottom: 0; }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      letter-spacing: -0.01em;
+    }
+    h3 { margin: 18px 0 8px; font-size: 18px; }
+
+    p { margin: 10px 0; color: var(--text); }
+
+    .note, .warn, .ok {
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+
+    .note strong { color: var(--accent); }
+    .warn strong { color: var(--danger); }
+    .ok strong { color: var(--ok); }
+
+    .callout-title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 0 0 6px;
+      font-weight: 650;
+    }
+
+    .kbd {
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+    }
+
+    code, pre {
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    pre {
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      overflow: auto;
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 820px) { .two { grid-template-columns: 1fr; } }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel-2);
+      padding: 14px;
+    }
+
+    .card h3 { margin-top: 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    th { color: var(--muted); font-weight: 650; background: rgba(255,255,255,.03); }
+    tr:last-child td { border-bottom: 0; }
+
+    details {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.02);
+      margin: 12px 0;
+    }
+    summary {
+      cursor: pointer;
+      color: var(--muted);
+      font-weight: 650;
+    }
+    details[open] summary { margin-bottom: 8px; }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+    }
+
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .controls label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      min-width: 180px;
+    }
+
+    input, select, button {
+      font: inherit;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.12);
+      color: var(--text);
+    }
+
+    button {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(123,241,200,.18), rgba(138,180,255,.18));
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 650;
+    }
+    button:hover { filter: brightness(1.05); }
+    button:focus { outline: none; box-shadow: var(--focus); }
+
+    .result {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(0,0,0,.10);
+    }
+
+    .mono { font-family: var(--mono); }
+
+    .small { font-size: 13px; color: var(--muted); }
+
+    .footer {
+      margin-top: 26px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      color: var(--faint);
+      font-size: 13px;
+    }
+
+    .backtop {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+
+    .figure {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.02);
+      padding: 12px;
+      margin: 12px 0;
+    }
+
+    .figure-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .figure-title h4 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .dot.b { background: rgba(123,241,200,.7); }
+    .dot.a { background: rgba(255,123,156,.7); }
+
+    svg { max-width: 100%; height: auto; }
+
+    @media print {
+      body { background: white; color: black; }
+      nav { display: none; }
+      .content, .title { box-shadow: none; }
+      a { color: black; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header>
+    <div class="hero">
+      <div class="title">
+        <h1>Molecular Orbital Theory (MOT)</h1>
+        <p class="subtitle">
+          A beginner-to-intermediate tutorial on how atomic orbitals combine to form molecular orbitals, how to build MO diagrams,
+          and how MOT predicts bond order, magnetism, spectra, and reactivity.
+        </p>
+        <div class="meta">
+          <span class="pill"><span class="badge">Level</span> Intro → Intermediate</span>
+          <span class="pill"><span class="badge">Focus</span> Diatomics + key extensions</span>
+          <span class="pill"><span class="badge">Includes</span> Origins + interactive tools</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Quick Outcomes</h3>
+        <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+          <li>Explain bonding/antibonding MOs and nodes.</li>
+          <li>Build MO diagrams for common diatomics.</li>
+          <li>Predict bond order and paramagnetism/diamagnetism.</li>
+          <li>Connect HOMO/LUMO to reactivity.</li>
+        </ul>
+        <div class="note" style="margin-top: 12px">
+          <div class="callout-title"><strong>Definition</strong> <span class="kbd">MOT</span></div>
+          <p style="margin:0; color: var(--muted)">Molecular Orbital Theory treats electrons as delocalized over the whole molecule in molecular orbitals (MOs), not confined to individual bonds.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="grid">
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ol class="toc">
+          <li><a href="#what-is-mot">What MOT is</a></li>
+          <li><a href="#origin">Origin & history</a></li>
+          <li><a href="#core-ideas">Core ideas</a></li>
+          <li><a href="#building">How to build MOs</a></li>
+          <li><a href="#filling">How to fill MOs</a></li>
+          <li><a href="#diatomics">Diatomic MO diagrams</a></li>
+          <li><a href="#heteronuclear">Heteronuclear diatomics</a></li>
+          <li><a href="#polyatomic">Polyatomic extension</a></li>
+          <li><a href="#spectra">Spectroscopy links</a></li>
+          <li><a href="#reactivity">Reactivity: HOMO/LUMO</a></li>
+          <li><a href="#tools">Interactive tools</a></li>
+          <li><a href="#pitfalls">Common pitfalls</a></li>
+          <li><a href="#practice">Practice problems</a></li>
+          <li><a href="#glossary">Glossary</a></li>
+          <li><a href="#reading">Further reading</a></li>
+        </ol>
+        <p class="small" style="margin: 12px 0 0">
+          Tip: use your browser’s find (<span class="kbd">Ctrl</span>+<span class="kbd">F</span>) for keywords like “bond order”, “paramagnetism”, or a molecule name.
+        </p>
+      </nav>
+
+      <article class="content" aria-label="MOT tutorial">
+        <section id="what-is-mot">
+          <h2>1) What Molecular Orbital Theory is</h2>
+          <p>
+            In MOT, a molecule’s electrons occupy <em>molecular orbitals</em> that extend over the entire molecule.
+            These orbitals are quantum states (wavefunctions) and have energies, shapes, and symmetries.
+          </p>
+          <div class="two">
+            <div class="card">
+              <h3>What it explains well</h3>
+              <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+                <li>Why <span class="mono">O₂</span> is paramagnetic (has unpaired electrons).</li>
+                <li>Trends in bond strength and bond length via bond order.</li>
+                <li>Delocalization (e.g., conjugated systems) in a natural way.</li>
+                <li>Connections to spectroscopy (electronic transitions).</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>What it’s not</h3>
+              <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+                <li>Not “electrons orbiting like planets”. Orbitals are probability amplitudes.</li>
+                <li>Not limited to diatomics (diatomic diagrams are just the teaching gateway).</li>
+                <li>Not always solvable analytically; many molecules need computational methods.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="note">
+            <div class="callout-title"><strong>Big idea</strong> <span class="badge">delocalization</span></div>
+            <p style="margin:0; color: var(--muted)">
+              Valence Bond Theory (VBT) emphasizes localized bonds; MOT emphasizes delocalized orbitals. Both are useful lenses.
+            </p>
+          </div>
+        </section>
+
+        <section id="origin">
+          <h2>2) Origin & history (why MOT was invented)</h2>
+          <p>
+            MOT grew out of early 20th‑century quantum mechanics. Chemists needed a theory that could describe bonding using wavefunctions,
+            and that could also explain magnetic and spectral observations that were difficult for purely localized bonding pictures.
+          </p>
+
+          <div class="figure" role="group" aria-label="Timeline of MO theory">
+            <div class="figure-title">
+              <h4>Short timeline</h4>
+              <span class="small">Dates are approximate milestones</span>
+            </div>
+            <table>
+              <thead>
+                <tr><th>Period</th><th>Key contributions (high level)</th><th>Why it matters for MOT</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1920s</strong></td>
+                  <td>Wave mechanics emerges (Schrödinger); quantum numbers and atomic orbitals formalized.</td>
+                  <td>Provides the mathematical language (wavefunctions, orbitals) that later combine into MOs.</td>
+                </tr>
+                <tr>
+                  <td><strong>1927–1932</strong></td>
+                  <td>F. Hund and R. S. Mulliken develop early molecular orbital ideas; Mulliken popularizes MO descriptions.</td>
+                  <td>Introduces the concept of orbitals belonging to the molecule rather than to atoms.</td>
+                </tr>
+                <tr>
+                  <td><strong>1930s</strong></td>
+                  <td>Linear Combination of Atomic Orbitals (LCAO) becomes a practical approximation.</td>
+                  <td>Gives a workable recipe: build MOs as sums/differences of AOs.</td>
+                </tr>
+                <tr>
+                  <td><strong>1931+</strong></td>
+                  <td>Hückel’s method for π systems (conjugated hydrocarbons).</td>
+                  <td>Extends the MO mindset to polyatomic delocalization and aromaticity.</td>
+                </tr>
+                <tr>
+                  <td><strong>Mid‑20th century</strong></td>
+                  <td>Computational chemistry and spectroscopy grow; MO language becomes standard.</td>
+                  <td>Connects MO energies and shapes to measurable spectra and reactivity trends.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <details>
+            <summary>Why “O₂ is paramagnetic” became a famous MOT victory</summary>
+            <p>
+              Oxygen gas is attracted into a magnetic field, implying unpaired electrons.
+              A simple localized double-bond picture often suggests all electrons are paired.
+              MOT’s <span class="mono">π*</span> antibonding orbitals naturally predict two unpaired electrons in <span class="mono">O₂</span>.
+            </p>
+          </details>
+        </section>
+
+        <section id="core-ideas">
+          <h2>3) Core ideas you must know</h2>
+
+          <h3>3.1 Wavefunctions, phase, and interference</h3>
+          <p>
+            Orbitals are wavefunctions. When you combine two waves, they can add (constructive interference) or cancel (destructive interference).
+            In chemistry language, we talk about the <em>phase</em> (sign) of a wavefunction lobe.
+          </p>
+
+          <div class="two">
+            <div class="note">
+              <div class="callout-title"><strong>Bonding MO</strong> <span class="badge">lower energy</span></div>
+              <p style="margin:0; color: var(--muted)">
+                In‑phase overlap increases electron density between nuclei → electrostatic stabilization → typically lower energy.
+              </p>
+            </div>
+            <div class="warn">
+              <div class="callout-title"><strong>Antibonding MO</strong> <span class="badge">higher energy</span></div>
+              <p style="margin:0; color: var(--muted)">
+                Out‑of‑phase overlap creates a node between nuclei → reduced electron density between nuclei → destabilization.
+              </p>
+            </div>
+          </div>
+
+          <h3>3.2 Nodes</h3>
+          <p>
+            A <em>node</em> is a surface (or line) where the wavefunction is exactly zero. More nodes usually mean higher energy.
+            Antibonding orbitals have (at least) one extra node between nuclei compared to their bonding partners.
+          </p>
+
+          <h3>3.3 Symmetry and “only like mixes with like”</h3>
+          <p>
+            Atomic orbitals combine effectively when they have compatible symmetry (same behavior under relevant symmetry operations) and similar energies.
+            Big energy mismatches or poor overlap lead to weak mixing.
+          </p>
+          <details>
+            <summary>Rule of thumb: what makes good MO mixing?</summary>
+            <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+              <li><strong>Energy match:</strong> closer AO energies mix more strongly.</li>
+              <li><strong>Overlap:</strong> orbitals must overlap in space.</li>
+              <li><strong>Symmetry match:</strong> the combined wavefunction must be allowed by symmetry.</li>
+            </ul>
+          </details>
+        </section>
+
+        <section id="building">
+          <h2>4) How to build molecular orbitals (LCAO recipe)</h2>
+          <p>
+            The simplest approximation writes a molecular orbital as a linear combination of atomic orbitals:
+          </p>
+          <pre aria-label="LCAO equation">MO = c_A · AO_A + c_B · AO_B</pre>
+          <p>
+            For two identical atoms (a homonuclear diatomic), the two most important combinations are:
+          </p>
+          <pre aria-label="Bonding and antibonding combinations">Bonding:     ψ(+) = AO_A + AO_B
+Antibonding:  ψ(−) = AO_A − AO_B</pre>
+
+          <h3>4.1 σ and π labels</h3>
+          <p>
+            In diatomics, orbitals are labeled by how they behave around the bond axis:
+          </p>
+          <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+            <li><strong>σ (sigma):</strong> electron density is cylindrically symmetric around the bond axis.</li>
+            <li><strong>π (pi):</strong> has a nodal plane that contains the bond axis; density sits above/below (or left/right) the axis.</li>
+          </ul>
+
+          <h3>4.2 Bonding/antibonding notation</h3>
+          <p>
+            Antibonding orbitals are marked with an asterisk: <span class="mono">σ*</span>, <span class="mono">π*</span>.
+            In homonuclear diatomics, you may also see parity labels <span class="mono">g</span> (gerade) and <span class="mono">u</span> (ungerade).
+          </p>
+
+          <details>
+            <summary>What do g/u mean?</summary>
+            <p>
+              For a homonuclear diatomic, inversion through the center of the bond either preserves the sign of the wavefunction (<span class="mono">g</span>)
+              or flips it (<span class="mono">u</span>). These labels matter for spectroscopy and selection rules.
+            </p>
+          </details>
+        </section>
+
+        <section id="filling">
+          <h2>5) How to fill MOs (electron configuration)</h2>
+          <p>
+            Filling MOs uses the same three ideas as atomic electron configurations:
+          </p>
+          <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+            <li><strong>Aufbau:</strong> fill lowest energy orbitals first.</li>
+            <li><strong>Pauli:</strong> max 2 electrons per orbital with opposite spins.</li>
+            <li><strong>Hund:</strong> for degenerate orbitals (like a pair of π orbitals), maximize unpaired electrons before pairing.</li>
+          </ul>
+
+          <h3>5.1 Bond order</h3>
+          <p>
+            A powerful MOT output is <strong>bond order</strong>:
+          </p>
+          <pre aria-label="Bond order formula">Bond order = (N_bonding − N_antibonding) / 2</pre>
+          <p>
+            Higher bond order usually means shorter, stronger bonds.
+          </p>
+
+          <h3>5.2 Magnetism</h3>
+          <p>
+            <strong>Paramagnetic</strong> molecules have one or more unpaired electrons.
+            <strong>Diamagnetic</strong> molecules have all electrons paired.
+          </p>
+
+          <div class="note">
+            <div class="callout-title"><strong>Fast check</strong> <span class="badge">diatomics</span></div>
+            <p style="margin:0; color: var(--muted)">
+              If your MO configuration leaves single electrons in degenerate <span class="mono">π*</span> orbitals (classic case: <span class="mono">O₂</span>),
+              the molecule is paramagnetic.
+            </p>
+          </div>
+        </section>
+
+        <section id="diatomics">
+          <h2>6) Diatomic MO diagrams (the classic MOT practice arena)</h2>
+          <p>
+            Most introductory courses build MO diagrams for second‑row homonuclear diatomics (Li₂ → Ne₂) using valence orbitals (2s and 2p).
+            The two most common energy orderings differ by whether <span class="mono">σ(2p)</span> sits above or below <span class="mono">π(2p)</span>.
+          </p>
+
+          <div class="two">
+            <div class="card">
+              <h3>Ordering A (B₂, C₂, N₂)</h3>
+              <p class="small" style="margin-top: 0">Strong s–p mixing pushes <span class="mono">σ(2p)</span> up.</p>
+              <pre aria-label="Ordering A">σ2s &lt; σ*2s &lt; π2p &lt; σ2p &lt; π*2p &lt; σ*2p</pre>
+            </div>
+            <div class="card">
+              <h3>Ordering B (O₂, F₂, Ne₂)</h3>
+              <p class="small" style="margin-top: 0">Weaker s–p mixing leaves <span class="mono">σ(2p)</span> lower.</p>
+              <pre aria-label="Ordering B">σ2s &lt; σ*2s &lt; σ2p &lt; π2p &lt; π*2p &lt; σ*2p</pre>
+            </div>
+          </div>
+
+          <details>
+            <summary>Why does the ordering change?</summary>
+            <p>
+              The relative energies of 2s and 2p orbitals change across the period.
+              When 2s and 2p are closer in energy (earlier elements), they mix more strongly.
+              This interaction can raise the energy of <span class="mono">σ(2p)</span> relative to <span class="mono">π(2p)</span>.
+            </p>
+          </details>
+
+          <div class="figure" role="group" aria-label="Illustrative MO diagram for O2">
+            <div class="figure-title">
+              <h4>Illustration: O₂ valence MO diagram (ordering B)</h4>
+              <div class="legend">
+                <span><span class="dot b"></span>bonding</span>
+                <span><span class="dot a"></span>antibonding</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 860 330" role="img" aria-label="Simplified O2 MO diagram">
+              <defs>
+                <style>
+                  .ax { stroke: rgba(127,138,179,.9); stroke-width: 2; }
+                  .lvl { stroke-width: 6; stroke-linecap: round; }
+                  .lbl { font: 13px ui-monospace, Menlo, Consolas, monospace; fill: currentColor; }
+                  .mut { fill: rgba(184,194,227,.95); }
+                  .e { font: 12px ui-sans-serif, system-ui; fill: rgba(184,194,227,.95); }
+                </style>
+              </defs>
+              <!-- columns: AO (left), MO (center), AO (right) -->
+              <line class="ax" x1="75" y1="30" x2="75" y2="300" />
+              <line class="ax" x1="785" y1="30" x2="785" y2="300" />
+              <line class="ax" x1="430" y1="30" x2="430" y2="300" />
+
+              <text class="e" x="50" y="25">O (AO)</text>
+              <text class="e" x="405" y="25">O₂ (MO)</text>
+              <text class="e" x="760" y="25">O (AO)</text>
+
+              <!-- AO levels: 2s and 2p (schematic) -->
+              <line class="lvl" x1="30" y1="250" x2="120" y2="250" stroke="rgba(184,194,227,.7)" />
+              <text class="lbl mut" x="20" y="245">2s</text>
+              <line class="lvl" x1="30" y1="140" x2="120" y2="140" stroke="rgba(184,194,227,.7)" />
+              <text class="lbl mut" x="20" y="135">2p</text>
+
+              <line class="lvl" x1="740" y1="250" x2="830" y2="250" stroke="rgba(184,194,227,.7)" />
+              <text class="lbl mut" x="834" y="255">2s</text>
+              <line class="lvl" x1="740" y1="140" x2="830" y2="140" stroke="rgba(184,194,227,.7)" />
+              <text class="lbl mut" x="834" y="145">2p</text>
+
+              <!-- MO levels (ordering B) -->
+              <line class="lvl" x1="360" y1="270" x2="500" y2="270" stroke="rgba(123,241,200,.8)" />
+              <text class="lbl" x="515" y="275">σ2s</text>
+
+              <line class="lvl" x1="360" y1="230" x2="500" y2="230" stroke="rgba(255,123,156,.8)" />
+              <text class="lbl" x="515" y="235">σ*2s</text>
+
+              <line class="lvl" x1="360" y1="170" x2="500" y2="170" stroke="rgba(123,241,200,.8)" />
+              <text class="lbl" x="515" y="175">σ2p</text>
+
+              <line class="lvl" x1="330" y1="135" x2="410" y2="135" stroke="rgba(123,241,200,.8)" />
+              <line class="lvl" x1="450" y1="135" x2="530" y2="135" stroke="rgba(123,241,200,.8)" />
+              <text class="lbl" x="545" y="140">π2p</text>
+
+              <line class="lvl" x1="330" y1="85" x2="410" y2="85" stroke="rgba(255,123,156,.8)" />
+              <line class="lvl" x1="450" y1="85" x2="530" y2="85" stroke="rgba(255,123,156,.8)" />
+              <text class="lbl" x="545" y="90">π*2p</text>
+
+              <line class="lvl" x1="360" y1="50" x2="500" y2="50" stroke="rgba(255,123,156,.8)" />
+              <text class="lbl" x="515" y="55">σ*2p</text>
+
+              <!-- connectors (schematic) -->
+              <line x1="120" y1="250" x2="360" y2="270" stroke="rgba(127,138,179,.35)" />
+              <line x1="120" y1="250" x2="360" y2="230" stroke="rgba(127,138,179,.35)" />
+              <line x1="740" y1="250" x2="500" y2="270" stroke="rgba(127,138,179,.35)" />
+              <line x1="740" y1="250" x2="500" y2="230" stroke="rgba(127,138,179,.35)" />
+
+              <line x1="120" y1="140" x2="360" y2="170" stroke="rgba(127,138,179,.35)" />
+              <line x1="120" y1="140" x2="330" y2="135" stroke="rgba(127,138,179,.35)" />
+              <line x1="120" y1="140" x2="330" y2="85" stroke="rgba(127,138,179,.35)" />
+              <line x1="120" y1="140" x2="360" y2="50" stroke="rgba(127,138,179,.35)" />
+
+              <line x1="740" y1="140" x2="500" y2="170" stroke="rgba(127,138,179,.35)" />
+              <line x1="740" y1="140" x2="530" y2="135" stroke="rgba(127,138,179,.35)" />
+              <line x1="740" y1="140" x2="530" y2="85" stroke="rgba(127,138,179,.35)" />
+              <line x1="740" y1="140" x2="500" y2="50" stroke="rgba(127,138,179,.35)" />
+
+              <!-- electron hint -->
+              <text class="e" x="40" y="310">(simplified; core 1s omitted)</text>
+            </svg>
+            <p class="small" style="margin: 10px 0 0">
+              This diagram is schematic (not to scale). The key qualitative result is that <span class="mono">O₂</span> places two unpaired electrons in degenerate <span class="mono">π*2p</span> orbitals → paramagnetic.
+            </p>
+          </div>
+
+          <h3>6.1 Worked mini‑examples (valence MOs)</h3>
+          <div class="two">
+            <div class="card">
+              <h3>Example: N₂</h3>
+              <p class="small" style="margin-top:0">10 valence electrons (5 from each N).</p>
+              <p>
+                Fill bonding MOs more than antibonding → high bond order.
+              </p>
+              <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+                <li>Bond order: 3 (consistent with a strong triple bond).</li>
+                <li>Magnetism: diamagnetic (all paired).</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Example: O₂</h3>
+              <p class="small" style="margin-top:0">12 valence electrons (6 from each O).</p>
+              <p>
+                Two electrons enter <span class="mono">π*2p</span> separately (Hund’s rule).
+              </p>
+              <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+                <li>Bond order: 2 (double bond strength trend).</li>
+                <li>Magnetism: paramagnetic (two unpaired).</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="heteronuclear">
+          <h2>7) Heteronuclear diatomics (different atoms)</h2>
+          <p>
+            When atoms differ, their AO energies differ. The more electronegative atom typically has lower-energy valence AOs.
+            As a result, bonding MOs are often weighted toward (have larger coefficients on) the more electronegative atom.
+          </p>
+
+          <div class="note">
+            <div class="callout-title"><strong>Interpretation</strong> <span class="badge">coefficients</span></div>
+            <p style="margin:0; color: var(--muted)">
+              In LCAO form, the MO coefficients (<span class="mono">c_A</span>, <span class="mono">c_B</span>) tell you where the electron density “lives”.
+              Lower-energy AOs contribute more to lower-energy (bonding) MOs.
+            </p>
+          </div>
+
+          <h3>7.1 Common examples</h3>
+          <div class="two">
+            <div class="card">
+              <h3>CO</h3>
+              <p>
+                Carbon and oxygen have different electronegativities.
+                MO descriptions help rationalize bond order, dipole moments, and why CO is a strong ligand (σ donation and π backbonding language).
+              </p>
+            </div>
+            <div class="card">
+              <h3>NO</h3>
+              <p>
+                Has an odd number of valence electrons → one electron remains unpaired → paramagnetic.
+                MOT cleanly handles radicals by filling MOs.
+              </p>
+            </div>
+          </div>
+
+          <details>
+            <summary>How the “bond order” idea carries over</summary>
+            <p>
+              The same formula works: count electrons in bonding vs antibonding MOs.
+              The difference is that “bonding” and “antibonding” can be less clear-cut when mixing involves many orbitals;
+              computational MO coefficients help quantify it.
+            </p>
+          </details>
+        </section>
+
+        <section id="polyatomic">
+          <h2>8) Polyatomic extension (why MOT matters beyond diatomics)</h2>
+          <p>
+            In larger molecules, orbitals can delocalize over many atoms.
+            MOT naturally explains conjugation, aromaticity, and electron distribution that affects reactivity.
+          </p>
+
+          <div class="two">
+            <div class="card">
+              <h3>π systems & conjugation</h3>
+              <p>
+                When adjacent p orbitals overlap (as in alkenes and aromatic rings), π MOs spread over multiple atoms.
+                Delocalization lowers energy and can stabilize molecules.
+              </p>
+              <details>
+                <summary>Hückel MO method (very short summary)</summary>
+                <p>
+                  Hückel theory is an approximate MO model for planar conjugated hydrocarbons.
+                  It keeps only π orbitals, assumes a simple coupling between neighbors, and predicts MO energies and node patterns.
+                </p>
+              </details>
+            </div>
+            <div class="card">
+              <h3>Frontier orbitals</h3>
+              <p>
+                In many reactions, the highest occupied MO (HOMO) and lowest unoccupied MO (LUMO) dominate interactions.
+                This helps predict nucleophile/electrophile behavior and pericyclic trends.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="spectra">
+          <h2>9) Spectroscopy links (what experiments see)</h2>
+          <p>
+            MO energy gaps relate to absorption/emission energies. A common introductory idea is that UV‑Vis absorption can correspond to
+            promoting an electron from a bonding (or nonbonding) MO to an antibonding MO.
+          </p>
+
+          <div class="note">
+            <div class="callout-title"><strong>Example patterns</strong></div>
+            <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+              <li><span class="mono">π → π*</span> transitions: common in conjugated systems; increasing conjugation lowers the gap → longer wavelength.</li>
+              <li><span class="mono">n → π*</span> transitions: from nonbonding lone-pair orbitals; often lower intensity.</li>
+            </ul>
+          </div>
+
+          <details>
+            <summary>Selection rules (why some transitions are “forbidden”)</summary>
+            <p>
+              Transition intensity depends on symmetry and spin rules.
+              In simple terms: the overlap of initial and final states and the molecule’s symmetry can make some transitions very weak.
+            </p>
+          </details>
+        </section>
+
+        <section id="reactivity">
+          <h2>10) Reactivity: HOMO/LUMO as a practical shortcut</h2>
+          <p>
+            A useful MOT rule of thumb: reactions often occur where electron donation from a filled orbital (HOMO) can overlap with an accepting orbital (LUMO).
+            Energy alignment and symmetry/overlap still matter.
+          </p>
+
+          <div class="two">
+            <div class="card">
+              <h3>Nucleophiles vs electrophiles</h3>
+              <p>
+                A nucleophile typically has a relatively high-energy HOMO (ready to donate).
+                An electrophile has a relatively low-energy LUMO (ready to accept).
+              </p>
+            </div>
+            <div class="card">
+              <h3>Why nodes matter</h3>
+              <p>
+                If the interacting lobes have opposite phase where they meet, the overlap is poor and interaction is weakened.
+                This is a MO-flavored way to talk about “orbital alignment”.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="tools">
+          <h2>11) Interactive tools (bond order and diatomic builder)</h2>
+          <p class="small" style="margin-top: 0">
+            These tools are intentionally simplified for learning (valence-only for common second-row homonuclear diatomics).
+          </p>
+
+          <div class="two">
+            <div class="card">
+              <h3>11.1 Bond order & magnetism calculator</h3>
+              <div class="controls flex" style="margin-top: 10px">
+                <label>
+                  Bonding electrons (N<sub>bonding</sub>)
+                  <input id="bonding" type="number" min="0" step="1" value="8" />
+                </label>
+                <label>
+                  Antibonding electrons (N<sub>antibonding</sub>)
+                  <input id="antibonding" type="number" min="0" step="1" value="4" />
+                </label>
+                <label style="min-width: 240px">
+                  Unpaired electrons (optional)
+                  <input id="unpaired" type="number" min="0" step="1" placeholder="leave blank if unknown" />
+                </label>
+                <div style="align-self: end">
+                  <button id="calc">Calculate</button>
+                </div>
+              </div>
+              <div class="result" style="margin-top: 12px" aria-live="polite">
+                <div><strong>Bond order:</strong> <span id="bo" class="mono">—</span></div>
+                <div><strong>Magnetism:</strong> <span id="mag">—</span></div>
+                <div class="small" id="magNote"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>11.2 Diatomic MO builder (Li₂ → Ne₂)</h3>
+              <div class="controls flex" style="margin-top: 10px">
+                <label>
+                  Molecule
+                  <select id="mol">
+                    <option value="Li2">Li₂</option>
+                    <option value="Be2">Be₂</option>
+                    <option value="B2">B₂</option>
+                    <option value="C2">C₂</option>
+                    <option value="N2">N₂</option>
+                    <option value="O2" selected>O₂</option>
+                    <option value="F2">F₂</option>
+                    <option value="Ne2">Ne₂</option>
+                  </select>
+                </label>
+                <label>
+                  Orbital ordering
+                  <select id="ordering">
+                    <option value="auto" selected>Auto (common convention)</option>
+                    <option value="A">Ordering A: π2p below σ2p</option>
+                    <option value="B">Ordering B: σ2p below π2p</option>
+                  </select>
+                </label>
+                <div style="align-self: end">
+                  <button id="build">Build</button>
+                </div>
+              </div>
+
+              <div class="result" style="margin-top: 12px">
+                <div class="flex" style="justify-content: space-between">
+                  <div><strong>Valence electrons:</strong> <span id="ve" class="mono">—</span></div>
+                  <div><strong>Predicted:</strong> <span id="pred">—</span></div>
+                </div>
+                <div style="margin-top: 10px">
+                  <div class="small"><strong>Configuration (valence-only):</strong></div>
+                  <pre id="cfg" style="margin: 8px 0 0" aria-label="MO configuration">—</pre>
+                </div>
+                <div class="small" id="orderExplain" style="margin-top: 8px"></div>
+              </div>
+
+              <details>
+                <summary>What this builder assumes</summary>
+                <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+                  <li>Core orbitals are omitted (focus on valence).</li>
+                  <li>Standard textbook ordering for second-row homonuclear diatomics.</li>
+                  <li>Hund’s rule applied to degenerate π orbitals.</li>
+                  <li>Real molecules can deviate slightly; use computational chemistry for precision.</li>
+                </ul>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section id="pitfalls">
+          <h2>12) Common pitfalls (and how to avoid them)</h2>
+          <div class="two">
+            <div class="warn">
+              <div class="callout-title"><strong>Pitfall</strong> “Bond order = number of lines in a Lewis structure”</div>
+              <p style="margin:0; color: var(--muted)">
+                Lewis structures are useful bookkeeping tools, but MOT bond order comes from MO occupancy.
+                For some molecules (especially radicals or electron-deficient systems), the Lewis picture can mislead.
+              </p>
+            </div>
+            <div class="warn">
+              <div class="callout-title"><strong>Pitfall</strong> Forgetting the ordering switch for B₂–N₂ vs O₂–Ne₂</div>
+              <p style="margin:0; color: var(--muted)">
+                If your answer for <span class="mono">O₂</span> comes out diamagnetic, you probably used the wrong ordering or filled π orbitals incorrectly.
+              </p>
+            </div>
+          </div>
+
+          <div class="ok">
+            <div class="callout-title"><strong>Checklist</strong> <span class="badge">before you finalize</span></div>
+            <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+              <li>Count total valence electrons correctly (and include charge if present).</li>
+              <li>Choose the correct ordering convention for the molecule.</li>
+              <li>Apply Hund’s rule to degenerate π orbitals.</li>
+              <li>Compute bond order and check if it matches qualitative expectations.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="practice">
+          <h2>13) Practice problems (with answers)</h2>
+
+          <div class="card">
+            <h3>Problem 1: Predict bond order and magnetism of <span class="mono">B₂</span></h3>
+            <p>
+              Use Ordering A. Each B contributes 3 valence electrons (total 6).
+            </p>
+            <details>
+              <summary>Answer</summary>
+              <p>
+                Fill: <span class="mono">σ2s² σ*2s² π2p²</span> (with one electron in each π orbital).
+                Bonding electrons = 4 (σ2s² + π2p²), antibonding = 2 (σ*2s²).
+              </p>
+              <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+                <li>Bond order = (4 − 2)/2 = 1</li>
+                <li>Two unpaired electrons in π → paramagnetic</li>
+              </ul>
+            </details>
+          </div>
+
+          <div class="card" style="margin-top: 12px">
+            <h3>Problem 2: Why is <span class="mono">He₂</span> not stable (in simple MOT)?</h3>
+            <p>
+              Each He has 2 electrons (total 4). Consider 1s MOs: <span class="mono">σ1s</span> and <span class="mono">σ*1s</span>.
+            </p>
+            <details>
+              <summary>Answer</summary>
+              <p>
+                Configuration: <span class="mono">σ1s² σ*1s²</span>. Bonding electrons = 2, antibonding = 2.
+                Bond order = (2 − 2)/2 = 0, so there is no net bond in this simple picture.
+              </p>
+            </details>
+          </div>
+
+          <div class="card" style="margin-top: 12px">
+            <h3>Problem 3: Compare <span class="mono">O₂</span> and <span class="mono">O₂⁻</span></h3>
+            <p>
+              What happens to bond order and magnetism when you add one electron to oxygen?
+            </p>
+            <details>
+              <summary>Answer</summary>
+              <p>
+                In MOT, the added electron enters the lowest available orbital, which for <span class="mono">O₂</span> is <span class="mono">π*2p</span>.
+                That increases antibonding occupancy by 1.
+              </p>
+              <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+                <li>Bond order decreases by 0.5 (because antibonding increases by 1).</li>
+                <li>Magnetism changes: <span class="mono">O₂</span> has 2 unpaired; <span class="mono">O₂⁻</span> has 1 unpaired (superoxide).</li>
+              </ul>
+            </details>
+          </div>
+        </section>
+
+        <section id="glossary">
+          <h2>14) Glossary</h2>
+          <table>
+            <thead><tr><th>Term</th><th>Meaning (short)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>AO</strong></td><td>Atomic orbital: electron wavefunction centered on an atom.</td></tr>
+              <tr><td><strong>MO</strong></td><td>Molecular orbital: electron wavefunction spread over the molecule.</td></tr>
+              <tr><td><strong>LCAO</strong></td><td>Linear combination of atomic orbitals: approximate way to build MOs.</td></tr>
+              <tr><td><strong>Bonding / antibonding</strong></td><td>MOs that stabilize / destabilize by changing electron density between nuclei.</td></tr>
+              <tr><td><strong>σ / π</strong></td><td>MO symmetry types relative to the bond axis.</td></tr>
+              <tr><td><strong>HOMO / LUMO</strong></td><td>Highest occupied / lowest unoccupied MO; key for reactivity.</td></tr>
+              <tr><td><strong>Bond order</strong></td><td>(Bonding − antibonding)/2; correlates with bond strength/length.</td></tr>
+              <tr><td><strong>Paramagnetic / diamagnetic</strong></td><td>Has / does not have unpaired electrons.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="reading">
+          <h2>15) Further reading</h2>
+          <p>
+            If you want a deeper treatment, look for: general chemistry texts with MO chapters, physical chemistry (quantum) chapters on LCAO,
+            and inorganic/organometallic texts for ligand-field and MO applications.
+          </p>
+          <ul style="margin: 8px 0 0; padding-left: 18px; color: var(--muted)">
+            <li>General Chemistry: MO theory sections (diatomics, bond order, magnetism).</li>
+            <li>Physical Chemistry (quantum): LCAO-MO method, symmetry, and approximations.</li>
+            <li>Organic Chemistry: conjugation and frontier molecular orbitals (FMO).</li>
+            <li>Inorganic Chemistry: MO for heteronuclear diatomics, ligand interactions, and spectroscopy.</li>
+          </ul>
+
+          <div class="footer">
+            <p style="margin: 0">
+              Built as a single self-contained HTML file (no external assets). You can host it anywhere or open it directly in a browser.
+            </p>
+            <a class="backtop" href="#main">Back to top</a>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      function clampInt(value, min) {
+        if (Number.isNaN(value)) return null;
+        return Math.max(min, Math.trunc(value));
+      }
+
+      function formatHalfSteps(num) {
+        // bond orders often end in .5
+        const rounded = Math.round(num * 2) / 2;
+        return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+      }
+
+      // --- Tool 11.1: Bond order calculator ---
+      const bondingInput = document.getElementById("bonding");
+      const antibondingInput = document.getElementById("antibonding");
+      const unpairedInput = document.getElementById("unpaired");
+      const calcBtn = document.getElementById("calc");
+      const boOut = document.getElementById("bo");
+      const magOut = document.getElementById("mag");
+      const magNote = document.getElementById("magNote");
+
+      function calcBondOrder() {
+        const nb = clampInt(parseFloat(bondingInput.value), 0);
+        const nab = clampInt(parseFloat(antibondingInput.value), 0);
+        if (nb === null || nab === null) {
+          boOut.textContent = "—";
+          magOut.textContent = "—";
+          magNote.textContent = "Enter valid integers.";
+          return;
+        }
+
+        const bondOrder = (nb - nab) / 2;
+        boOut.textContent = formatHalfSteps(bondOrder);
+
+        const unpairedRaw = unpairedInput.value.trim();
+        if (!unpairedRaw) {
+          magOut.textContent = "Unknown (need unpaired e⁻ count)";
+          magNote.textContent = "Bond order computed; magnetism needs number of unpaired electrons.";
+          return;
+        }
+
+        const unpaired = clampInt(parseFloat(unpairedRaw), 0);
+        if (unpaired === null) {
+          magOut.textContent = "—";
+          magNote.textContent = "Unpaired electrons must be an integer.";
+          return;
+        }
+
+        magOut.textContent = unpaired === 0 ? "Diamagnetic" : "Paramagnetic";
+        magNote.textContent = unpaired === 0
+          ? "All electrons paired."
+          : `Contains ${unpaired} unpaired electron${unpaired === 1 ? "" : "s"}.`;
+      }
+
+      calcBtn.addEventListener("click", calcBondOrder);
+      calcBondOrder();
+
+      // --- Tool 11.2: Diatomic MO builder (second-row homonuclear) ---
+      const molSel = document.getElementById("mol");
+      const ordSel = document.getElementById("ordering");
+      const buildBtn = document.getElementById("build");
+      const veOut = document.getElementById("ve");
+      const predOut = document.getElementById("pred");
+      const cfgOut = document.getElementById("cfg");
+      const orderExplain = document.getElementById("orderExplain");
+
+      const molecules = {
+        Li2: { name: "Li₂", valenceElectrons: 2 },
+        Be2: { name: "Be₂", valenceElectrons: 4 },
+        B2: { name: "B₂", valenceElectrons: 6 },
+        C2: { name: "C₂", valenceElectrons: 8 },
+        N2: { name: "N₂", valenceElectrons: 10 },
+        O2: { name: "O₂", valenceElectrons: 12 },
+        F2: { name: "F₂", valenceElectrons: 14 },
+        Ne2: { name: "Ne₂", valenceElectrons: 16 }
+      };
+
+      function getOrdering(molKey, requested) {
+        if (requested === "A" || requested === "B") return requested;
+        // Auto convention for second-row homonuclear diatomics
+        // B2, C2, N2 typically use A; O2, F2, Ne2 use B.
+        if (molKey === "B2" || molKey === "C2" || molKey === "N2") return "A";
+        return "B";
+      }
+
+      function orbitalsFor(ordering) {
+        // Each orbital entry has:
+        // - label: shown in config
+        // - type: bonding or antibonding
+        // - capacity: number of electrons in that MO set (degenerate orbitals are represented as "set" with capacity 4)
+        // - degeneracy: number of orbitals in the set (1 for sigma, 2 for pi)
+        // - kind: sigma/pi
+        const commonPrefix = [
+          { label: "σ2s", type: "bonding", capacity: 2, degeneracy: 1, kind: "sigma" },
+          { label: "σ*2s", type: "antibonding", capacity: 2, degeneracy: 1, kind: "sigma" }
+        ];
+
+        const tailA = [
+          { label: "π2p", type: "bonding", capacity: 4, degeneracy: 2, kind: "pi" },
+          { label: "σ2p", type: "bonding", capacity: 2, degeneracy: 1, kind: "sigma" },
+          { label: "π*2p", type: "antibonding", capacity: 4, degeneracy: 2, kind: "pi" },
+          { label: "σ*2p", type: "antibonding", capacity: 2, degeneracy: 1, kind: "sigma" }
+        ];
+
+        const tailB = [
+          { label: "σ2p", type: "bonding", capacity: 2, degeneracy: 1, kind: "sigma" },
+          { label: "π2p", type: "bonding", capacity: 4, degeneracy: 2, kind: "pi" },
+          { label: "π*2p", type: "antibonding", capacity: 4, degeneracy: 2, kind: "pi" },
+          { label: "σ*2p", type: "antibonding", capacity: 2, degeneracy: 1, kind: "sigma" }
+        ];
+
+        return ordering === "A" ? commonPrefix.concat(tailA) : commonPrefix.concat(tailB);
+      }
+
+      function fillOrbitals(valenceElectrons, ordering, molKey) {
+        const orbitals = orbitalsFor(ordering);
+
+        // Special case: Li2 and Be2 are often taught with only 2s-derived MOs (2p unused).
+        // We'll still include the 2p levels, but they simply remain empty.
+
+        let remaining = valenceElectrons;
+        const filled = orbitals.map(o => ({ ...o, electrons: 0, unpaired: 0 }));
+
+        for (const o of filled) {
+          if (remaining <= 0) break;
+          const add = Math.min(o.capacity, remaining);
+          o.electrons = add;
+          remaining -= add;
+
+          // Determine unpaired electrons for display/magnetism.
+          // - For sigma (degeneracy 1): unpaired is 1 if exactly 1 electron.
+          // - For pi (degeneracy 2): follow Hund's rule within the set.
+          if (o.degeneracy === 1) {
+            o.unpaired = o.electrons === 1 ? 1 : 0;
+          } else {
+            // Two orbitals, each can take 2 e−.
+            // Fill singly: up to 2 unpaired, then start pairing.
+            if (o.electrons <= 2) {
+              o.unpaired = o.electrons;
+            } else if (o.electrons === 3) {
+              o.unpaired = 1;
+            } else {
+              o.unpaired = 0;
+            }
+          }
+        }
+
+        let bonding = 0;
+        let antibonding = 0;
+        let unpaired = 0;
+
+        for (const o of filled) {
+          if (o.type === "bonding") bonding += o.electrons;
+          else antibonding += o.electrons;
+          unpaired += o.unpaired;
+        }
+
+        const bondOrder = (bonding - antibonding) / 2;
+        const magnetism = unpaired === 0 ? "Diamagnetic" : "Paramagnetic";
+
+        const config = filled
+          .filter(o => o.electrons > 0)
+          .map(o => `${o.label}${toSuperscript(o.electrons)}`)
+          .join(" ");
+
+        const explain = ordering === "A"
+          ? "Ordering A used: π2p lies below σ2p (common for B₂–N₂)."
+          : "Ordering B used: σ2p lies below π2p (common for O₂–Ne₂).";
+
+        return {
+          bonding,
+          antibonding,
+          unpaired,
+          bondOrder,
+          magnetism,
+          config: config || "(no electrons?)",
+          explain
+        };
+      }
+
+      function toSuperscript(n) {
+        const map = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+        return String(n).split("").map(ch => map[ch] || ch).join("");
+      }
+
+      function build() {
+        const molKey = molSel.value;
+        const mol = molecules[molKey];
+        const ordering = getOrdering(molKey, ordSel.value);
+
+        const filled = fillOrbitals(mol.valenceElectrons, ordering, molKey);
+
+        veOut.textContent = String(mol.valenceElectrons);
+        predOut.textContent = `${filled.magnetism}, bond order ${formatHalfSteps(filled.bondOrder)}`;
+        cfgOut.textContent = filled.config;
+        orderExplain.textContent = filled.explain;
+
+        // Also synchronize the simple calculator fields with this build
+        bondingInput.value = String(filled.bonding);
+        antibondingInput.value = String(filled.antibonding);
+        unpairedInput.value = String(filled.unpaired);
+        calcBondOrder();
+      }
+
+      buildBtn.addEventListener("click", build);
+      build();
+    })();
+  </script>
+</body>
+</html>
