@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>第(3)问解答核对（m=8 或 26）</title>
+  <title>第(3)问：标准解法 + 对图片解答逐段点评</title>
   <style>
     :root{
       --bg:#0b1020;
@@ -13,6 +13,8 @@
       --line:rgba(255,255,255,.12);
       --accent:#7aa2ff;
       --accent2:#7dffcc;
+      --warn:#ffd08a;
+      --bad:#ff8aa1;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
@@ -23,9 +25,9 @@
                  radial-gradient(900px 600px at 85% 30%, rgba(125,255,204,.18), transparent 55%),
                  var(--bg);
       color:var(--text);
-      line-height:1.65;
+      line-height:1.7;
     }
-    .wrap{max-width:920px; margin:0 auto; padding:28px 16px 56px;}
+    .wrap{max-width:980px; margin:0 auto; padding:28px 16px 56px;}
     header{
       border:1px solid var(--line);
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
@@ -35,6 +37,22 @@
     }
     h1{margin:0 0 6px; font-size:22px; letter-spacing:.2px;}
     .sub{margin:0; color:var(--muted); font-size:14px;}
+    .pill{
+      display:inline-block;
+      font-weight:700;
+      padding:2px 10px;
+      border-radius:999px;
+      font-size:12px;
+      margin-left:8px;
+      vertical-align:middle;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .pill.ok{border-color:rgba(125,255,204,.35); background:rgba(125,255,204,.10); color:var(--accent2);}
+    .pill.warn{border-color:rgba(255,208,138,.35); background:rgba(255,208,138,.10); color:var(--warn);}
+    .pill.bad{border-color:rgba(255,138,161,.35); background:rgba(255,138,161,.10); color:var(--bad);}
+
     .note{
       margin-top:14px;
       border-left:4px solid var(--accent);
@@ -44,22 +62,24 @@
       color:var(--muted);
       font-size:14px;
     }
-
     .grid{display:grid; gap:14px; margin-top:16px;}
-    @media (min-width:860px){
+    @media (min-width:980px){
       .grid{grid-template-columns: 1fr 1fr;}
     }
+
     section{
       border:1px solid var(--line);
       background:rgba(255,255,255,.04);
       border-radius:16px;
       padding:16px 16px 14px;
+      margin-top:14px;
     }
     h2{margin:0 0 10px; font-size:18px;}
     h3{margin:16px 0 8px; font-size:16px; color:#d9e1ff;}
     p{margin:8px 0;}
     ul{margin:8px 0 8px 22px;}
     li{margin:6px 0;}
+
     .math{
       font-family:var(--mono);
       background:rgba(0,0,0,.25);
@@ -70,37 +90,23 @@
       white-space:pre-wrap;
       word-break:break-word;
     }
-    .ok{
-      display:inline-block;
-      font-weight:700;
-      color:var(--accent2);
-      border:1px solid rgba(125,255,204,.35);
-      background:rgba(125,255,204,.10);
-      padding:2px 8px;
-      border-radius:999px;
-      font-size:12px;
-      vertical-align:middle;
-      margin-left:6px;
-    }
-    .warn{
-      display:inline-block;
-      font-weight:700;
-      color:#ffd08a;
-      border:1px solid rgba(255,208,138,.35);
-      background:rgba(255,208,138,.10);
-      padding:2px 8px;
-      border-radius:999px;
-      font-size:12px;
-      vertical-align:middle;
-      margin-left:6px;
-    }
-    .footer{
-      margin-top:16px;
+    .callout{
+      border-left:4px solid var(--accent2);
+      background:rgba(125,255,204,.08);
+      padding:10px 12px;
+      border-radius:10px;
       color:var(--muted);
-      font-size:13px;
-      border-top:1px solid var(--line);
-      padding-top:14px;
+      margin:10px 0 0;
     }
+    .crit{
+      border-left:4px solid var(--warn);
+      background:rgba(255,208,138,.08);
+      padding:10px 12px;
+      border-radius:10px;
+      color:var(--muted);
+      margin:10px 0 0;
+    }
+    .crit strong{color:#fff;}
     .kbd{
       font-family:var(--mono);
       font-size:12px;
@@ -111,114 +117,204 @@
       background:rgba(255,255,255,.04);
       color:var(--muted);
     }
-    .copyhint{
-      margin-top:10px;
-      font-size:12px;
+    .toc a{
+      color:var(--text);
+      text-decoration:none;
+      border-bottom:1px dotted rgba(233,236,255,.4);
+    }
+    .toc a:hover{border-bottom-color:rgba(233,236,255,.9);}
+    footer{
+      margin-top:18px;
       color:var(--muted);
+      font-size:13px;
+      border-top:1px solid var(--line);
+      padding-top:14px;
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>第(3)问：图片解答是否有问题？（核对 + 解释）</h1>
-      <p class="sub">目标：验证图片给出的结论是否正确，并说明为什么过程看起来“绕”。</p>
+      <h1>第(3)问：我的完整解法（先给出） + 对图片解答逐段找问题（再点评）</h1>
+      <p class="sub">
+        结构：先把标准推导过程完整放进网页，然后逐段对照图片里的做法指出“容易误导/不严谨/缺少说明”的地方。
+      </p>
       <div class="note">
-        结论先说：图片最终答案 <b>m=8 或 m=26</b> 是正确的。
-        我们用“代入验算 + 顶点跨越不可能”两步把它钉死。
-      </div>
-      <div class="copyhint">
-        小提示：你可以在页面里双击选中整段公式区（代码风格框）快速复制。
+        重要结论：图片最终答案 <b>m=8 或 m=26</b> 是对的。下面的“问题”主要是 <b>表达与论证严谨性</b>（不影响最终答案，但影响你复现和考试书写）。
       </div>
     </header>
 
-    <div class="grid">
-      <section>
-        <h2>1) 已知桥拱函数（来自第1问）</h2>
-        <p>桥拱是开口向下的抛物线：</p>
-        <div class="math">f(x) = - (1/18) · (x - 18)^2</div>
-        <p>关键信息：</p>
-        <ul>
-          <li>顶点在 <span class="math" style="display:inline-block;padding:2px 6px;">(18, 0)</span>，最大值为 0。</li>
-          <li>对称轴是 <span class="math" style="display:inline-block;padding:2px 6px;">x = 18</span>。</li>
-          <li>当 <b>x&lt;18</b> 时函数单调递增；当 <b>x&gt;18</b> 时函数单调递减。</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>2) 第(3)问到底在求什么？</h2>
-        <p>点：</p>
-        <div class="math">E(m, y1),  F(m+2, y2) 在桥拱上
-⇒ y1 = f(m), y2 = f(m+2)</div>
-        <p>曲线 G 是桥拱上从 x=m 到 x=m+2 的那一段（含端点）。</p>
-        <p>定义：</p>
-        <div class="math">t = (G 上 y 的最大值) − (G 上 y 的最小值)</div>
-        <p>题目给：<b>t = 2</b>，求 <b>m</b>。</p>
-      </section>
-    </div>
-
-    <section style="margin-top:14px;">
-      <h2>3) 核对图片答案：用代入验算“秒杀”对错</h2>
-
-      <h3>验算 m = 8</h3>
-      <p>区间是 <span class="math" style="display:inline-block;padding:2px 6px;">[8, 10]</span>（在顶点 18 左侧，单调递增）。</p>
-      <div class="math">f(8)  = - (1/18) · (8-18)^2  = - (1/18) · 100 = -100/18
-f(10) = - (1/18) · (10-18)^2 = - (1/18) · 64  = -64/18
-
-左侧单调递增 ⇒ 最大值 = f(10), 最小值 = f(8)
-t = f(10) - f(8) = (-64/18) - (-100/18) = 36/18 = 2</div>
-      <p><b>t=2 成立</b><span class="ok">OK</span></p>
-
-      <h3>验算 m = 26</h3>
-      <p>区间是 <span class="math" style="display:inline-block;padding:2px 6px;">[26, 28]</span>（在顶点 18 右侧，单调递减）。</p>
-      <div class="math">f(26) = - (1/18) · (26-18)^2 = - (1/18) · 64  = -64/18
-f(28) = - (1/18) · (28-18)^2 = - (1/18) · 100 = -100/18
-
-右侧单调递减 ⇒ 最大值 = f(26), 最小值 = f(28)
-t = f(26) - f(28) = (-64/18) - (-100/18) = 36/18 = 2</div>
-      <p><b>t=2 成立</b><span class="ok">OK</span></p>
-
-      <p class="note" style="border-left-color:var(--accent2);background:rgba(125,255,204,.08);">
-        既然两组都严格满足 t=2，那么图片给出的最终答案 <b>m=8 或 m=26</b> 必然正确。
-      </p>
+    <section class="toc">
+      <h2>目录</h2>
+      <ul>
+        <li><a href="#my-solution">A. 我之前的解答过程（标准版）</a></li>
+        <li><a href="#image-critique">B. 逐段分析图片解答中存在的问题（按段落/分情况对应）</a></li>
+      </ul>
     </section>
 
-    <section style="margin-top:14px;">
-      <h2>4) 为什么不会漏掉“跨过顶点”的情况？（解释最关键的判无解）</h2>
-      <p>如果区间 <span class="math" style="display:inline-block;padding:2px 6px;">[m, m+2]</span> 包含顶点 <b>x=18</b>，则：</p>
+    <!-- ===================== A. My solution ===================== -->
+    <section id="my-solution">
+      <h2>A. 我之前的解答过程（标准版）<span class="pill ok">先给完整推导</span></h2>
+
+      <h3>0) 已知桥拱函数</h3>
+      <div class="math">f(x) = -\\frac{1}{18}(x-18)^2</div>
       <ul>
-        <li>最大值一定是顶点处的 <b>0</b>。</li>
-        <li>最小值出现在离 18 更远的端点处（因为开口向下，离顶点越远越低）。</li>
+        <li>顶点在 (18,0)，最大值为 0。</li>
+        <li>当 x&lt;18 时单调递增；当 x&gt;18 时单调递减。</li>
       </ul>
 
-      <p>当包含顶点时，m 必须满足 <b>16 ≤ m ≤ 18</b>。这时区间长度只有 2，离 18 最远也就 2 个单位。</p>
-      <p>因此最小值最低只能到：</p>
-      <div class="math">f(16) = - (1/18) · (16-18)^2 = - (1/18) · 4 = -4/18</div>
-      <p>于是：</p>
-      <div class="math">t ≤ 0 - (-4/18) = 4/18 < 2</div>
-      <p>
-        所以：<b>只要区间跨过顶点，就不可能出现 t=2</b>，因此这类情况必无解。
-        <span class="ok">OK</span>
-      </p>
+      <h3>1) 第(3)问把“t”翻译成数学语言</h3>
+      <p>点 E(m,y1)、F(m+2,y2) 在拱上，所以 y1=f(m)、y2=f(m+2)。</p>
+      <p>曲线 G 是 x∈[m,m+2] 这一段拱线。</p>
+      <div class="math">t = \\max_{x\\in[m,m+2]} f(x)\;-\;\\min_{x\\in[m,m+2]} f(x)</div>
+      <p>已知 t=2，求 m。</p>
+
+      <h3>2) 为什么必须先判断“区间是否包含顶点”</h3>
+      <p>因为 f(x) 的最大值发生在顶点 x=18。若区间包含 18，则最大值为 0；不包含则最大/最小在端点。</p>
+
+      <h3>3) 先排除“跨过顶点”的情况（无解）</h3>
+      <p>若 [m,m+2] 包含 18，则 16 ≤ m ≤ 18。</p>
+      <p>此时最大值=0，最小值发生在离 18 更远的端点，离 18 的距离 ≤2，所以最低只能到 f(16)=-4/18。</p>
+      <div class="math">t \\le 0 - (-4/18) = 4/18 &lt; 2</div>
+      <p>所以：<b>区间跨过顶点时不可能出现 t=2</b>，因此这类情况必无解。</p>
+
+      <h3>4) 区间在顶点左侧（m ≤ 16）</h3>
+      <p>左侧单调递增 ⇒ 最大值在 x=m+2，最小值在 x=m：</p>
+      <div class="math">t = f(m+2) - f(m)</div>
+      <div class="math">f(m) = -\\frac{1}{18}(m-18)^2
+f(m+2)= -\\frac{1}{18}(m-16)^2
+
+t = \\frac{1}{18}\\Big[(m-18)^2-(m-16)^2\\Big]
+  = \\frac{1}{18}\\Big(68-4m\\Big)</div>
+      <p>令 t=2：</p>
+      <div class="math">\\frac{68-4m}{18}=2
+\\Rightarrow 68-4m=36
+\\Rightarrow m=8</div>
+      <p>并且 8 ≤ 16 满足本情况。</p>
+      <p><b>得到解：m=8</b> <span class="pill ok">OK</span></p>
+
+      <h3>5) 区间在顶点右侧（m ≥ 18）</h3>
+      <p>右侧单调递减 ⇒ 最大值在 x=m，最小值在 x=m+2：</p>
+      <div class="math">t = f(m) - f(m+2)</div>
+      <div class="math">t = \\frac{1}{18}\\Big[(m-16)^2-(m-18)^2\\Big]
+  = \\frac{1}{18}\\Big(4m-68\\Big)</div>
+      <p>令 t=2：</p>
+      <div class="math">\\frac{4m-68}{18}=2
+\\Rightarrow 4m-68=36
+\\Rightarrow m=26</div>
+      <p>并且 26 ≥ 18 满足本情况。</p>
+      <p><b>得到解：m=26</b> <span class="pill ok">OK</span></p>
+
+      <div class="callout">
+        <b>最终答案：</b> m=8 或 m=26。
+      </div>
+    </section>
+
+    <!-- ===================== B. Critique ===================== -->
+    <section id="image-critique">
+      <h2>B. 逐段分析图片中解答存在的问题（不影响答案，但影响严谨与可读性）<span class="pill warn">重点在“哪里容易错/漏”</span></h2>
 
       <p class="note">
-        这也解释了你在图片里看到的“算出某些 m 然后又舍去”的现象：
-        它们往往来自跨顶点或不满足分段范围的代数解，最终都必须被排除。
+        说明：我无法直接“引用图片每一句原话”，但你的截图里能清楚看到它的结构：
+        先写 f(x)，然后分几种 m 的范围（例如 16≤m&lt;17、17≤m&lt;18、m≥18 等），
+        分别列 t 的表达式，再解方程得到若干 m，然后用“范围不符”舍去，最后总结 m=8 或 26。
+        下面按这种分段逐一点评。
       </p>
+
+      <section>
+        <h3>段落1：把 y1、y2 写成 f(m)、f(m+2)（这一段是对的） <span class="pill ok">OK</span></h3>
+        <p>图片里先设 E(m,y1)、F(m+2,y2) 并写出：</p>
+        <div class="math">y1 = f(m),\quad y2 = f(m+2)</div>
+        <p>这一步没有问题，是必须的“翻译”。</p>
+
+        <div class="crit">
+          <strong>但它缺少一句关键解释：</strong>
+          t 不是简单的 |y1-y2|；t 是 “区间 [m,m+2] 上 y 的最大值与最小值差”。
+          只有在函数在该区间 <b>单调</b> 时，才等价于端点差（或其相反数）。
+          建议在这里加一句：
+          <span class="kbd">“先判断区间是否跨过顶点，若不跨过则单调，极值在端点”</span>。
+        </div>
+      </section>
+
+      <section>
+        <h3>段落2：分情况开始（图片最大的问题：分得太细但核心逻辑没先说清） <span class="pill warn">易误解</span></h3>
+        <p>你图里把 m 的范围拆成多段（能看到类似 16≤m&lt;17、17≤m&lt;18、m≥18……）。</p>
+
+        <div class="crit">
+          <strong>问题1：没有先用一句话把“为什么分情况”讲清楚。</strong><br/>
+          正确的分情况原因只有一个：<b>区间 [m,m+2] 与顶点 x=18 的相对位置</b>。
+          一句话就够：<span class="kbd">“若区间包含 18，最大值为 0；否则函数单调，极值在端点”</span>。<br/><br/>
+          图片的做法是“直接分段代算”，读者如果没意识到“顶点决定极值”，很容易迷路。
+        </div>
+
+        <div class="crit">
+          <strong>问题2：分段过细导致产生很多“代数解→再舍去”。</strong><br/>
+          它把跨顶点的情形拆成更小区间（如 16≤m&lt;17、17≤m&lt;18），
+          结果算出一些看似合理但其实根本不可能的解（比如会出现 m=12、m=-24、m=22 之类中间结果），
+          再用“不符合范围”把它扔掉。<br/>
+          这不是“错”，但会让人误以为“真有可能”，而且考试时容易写乱。
+        </div>
+      </section>
+
+      <section>
+        <h3>段落3：跨顶点情形的处理（图片的“隐含缺口”：没先证明必无解） <span class="pill warn">论证缺口</span></h3>
+        <p>图片在跨顶点的情形里，似乎用“最大值=0、最小值在某端点”去列方程，再解出 m 后舍去。</p>
+
+        <div class="crit">
+          <strong>关键问题：</strong>它没有先给出一个“一锤定音”的不等式说明跨顶点必无解。<br/>
+          其实只要一句不等式就能秒杀：<br/>
+          <span class="math" style="display:block;margin-top:8px;">若 16\le m\le 18，则 t\le 4/18&lt;2，所以跨顶点无解。</span>
+          有了这句，后面就不需要把跨顶点拆成 16≤m&lt;17、17≤m&lt;18 去逐段代算了。<br/><br/>
+          <strong>风险：</strong>如果你照图片写但在“最小值取哪端点”上判断错一次，就可能导出“假解”，还不一定能及时发现。
+        </div>
+      </section>
+
+      <section>
+        <h3>段落4：不跨顶点（左侧/右侧）的两段推导（图片结论对，但表达不够直接） <span class="pill ok">结论正确</span></h3>
+        <p>图片最后得到 m=8 和 m=26，本质上对应：</p>
+        <ul>
+          <li><b>m≤16（左侧单调递增）：</b> t = f(m+2) − f(m) = 2 ⇒ m=8</li>
+          <li><b>m≥18（右侧单调递减）：</b> t = f(m) − f(m+2) = 2 ⇒ m=26</li>
+        </ul>
+
+        <div class="crit">
+          <strong>图片常见的“表达问题”：</strong><br/>
+          它会先画图/写“如图可知最大值/最小值……”，但没有明确标出“单调性”或者“端点取极值”的依据。<br/>
+          建议写法（更考试友好）是直接一句话：<br/>
+          <span class="kbd">“当 m≤16，区间在顶点左侧，f 单调递增 ⇒ max=f(m+2), min=f(m)”</span><br/>
+          <span class="kbd">“当 m≥18，区间在顶点右侧，f 单调递减 ⇒ max=f(m), min=f(m+2)”</span><br/>
+          然后立刻列 t 的式子解出 m。
+        </div>
+      </section>
+
+      <section>
+        <h3>段落5：图片“总结”段（没错，但容易给人错误感觉） <span class="pill warn">易造成误解</span></h3>
+        <p>图片最后的“解题感想/总结”大意是“分情况讨论，求函数最值”之类。</p>
+
+        <div class="crit">
+          <strong>建议把总结写得更精确：</strong><br/>
+          这题的核心不是“随便分情况”，而是：<br/>
+          <span class="kbd">1) 看区间是否包含顶点</span> →
+          <span class="kbd">2) 若包含顶点，先用上界判定 t 不可能达到 2（无解）</span> →
+          <span class="kbd">3) 若不包含顶点，用单调性端点取极值列方程</span>。<br/><br/>
+          这样总结一读就懂，也不容易在别题里“乱分情况”。
+        </div>
+      </section>
+
+      <div class="callout">
+        <b>一句话结论：</b>图片答案正确（m=8 或 26），主要问题在于：
+        <b>没有先用“顶点是否在区间内 + 单调性”把逻辑讲清</b>，
+        导致分段过细、产生许多中间“假解→再舍去”，可读性差且容易误学。
+      </div>
     </section>
 
-    <section class="footer">
-      <h2 style="margin-top:0;">5) 最终结论</h2>
-      <p>图片第(3)问的解答 <b>没有问题</b>；最终答案是：</p>
-      <div class="math" style="font-size:16px;">m = 8  或  m = 26</div>
+    <footer>
       <p>
-        如果你想把“过程写得更像标准满分答案”，最清爽的结构是：
-        <span class="kbd">① 判断区间是否包含顶点</span> →
-        <span class="kbd">② 若不包含，按单调性端点取极值</span> →
-        <span class="kbd">③ 列 t=2 解 m</span> →
-        <span class="kbd">④ 检查分段条件</span>。
+        如果你愿意，我也可以把“图片解答”改写成一份更标准的【考试满分版】排版：
+        只用 3 个情况（<span class="kbd">m≤16</span>、<span class="kbd">16≤m≤18</span>、<span class="kbd">m≥18</span>），
+        并把“跨顶点必无解”的不等式写成一句话，整题会非常干净。
       </p>
-    </section>
+    </footer>
   </div>
 </body>
 </html>
