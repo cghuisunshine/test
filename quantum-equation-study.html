@@ -1,0 +1,1129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quantum Equation: The Schrödinger Equation — Study Page</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#101a33;
+      --text:#e9eefc;
+      --muted:#a9b4d6;
+      --accent:#7aa2ff;
+      --border:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:linear-gradient(180deg, var(--bg), #070a14);
+      color:var(--text);
+    }
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .app{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      min-height:100vh;
+    }
+    .sidebar{
+      border-right:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+    }
+    .side-inner{padding:14px 12px 18px}
+    .brand{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 10px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(0,0,0,.18);
+    }
+    .brand h1{
+      margin:0;
+      font-size:14px;
+      line-height:1.25;
+      letter-spacing:.2px;
+    }
+    .brand .sub{color:var(--muted); font-size:12px; margin-top:4px}
+    .search{
+      margin-top:12px;
+      padding:10px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(0,0,0,.18);
+    }
+    .search label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    .search input{
+      width:100%;
+      padding:10px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      outline:none;
+    }
+    .search input:focus{border-color:rgba(122,162,255,.6); box-shadow:0 0 0 3px rgba(122,162,255,.15)}
+    .toc{
+      margin-top:12px;
+      padding:10px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(0,0,0,.18);
+    }
+    .toc .title{font-size:12px; color:var(--muted); margin:0 0 8px}
+    .toc ul{list-style:none; padding:0; margin:0}
+    .toc li{margin:6px 0}
+    .toc a{
+      display:block;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid transparent;
+      color:var(--text);
+    }
+    .toc a:hover{border-color:rgba(255,255,255,.12); background:rgba(255,255,255,.04); text-decoration:none}
+    .toc .muted{color:var(--muted)}
+    .toc .hidden{display:none !important}
+    .toc .indent{padding-left:18px}
+    .toc .indent2{padding-left:34px}
+
+    .main{
+      padding:18px 18px 44px;
+      min-width:0;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:5;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content:flex-start;
+      padding:12px;
+      margin:-18px -18px 14px;
+      border-bottom:1px solid var(--border);
+      background:rgba(8,12,24,.82);
+      backdrop-filter: blur(10px);
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:9px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .btn:hover{border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.07)}
+    .btn:active{transform:translateY(1px)}
+    .pill{
+      margin-left:auto;
+      font-size:12px;
+      color:var(--muted);
+      padding:7px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+
+    .content{
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .lead{
+      padding:14px 14px 10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(0,0,0,.18);
+    }
+    .lead h2{margin:0 0 6px; font-size:20px}
+    .lead p{margin:8px 0; color:var(--muted)}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid var(--border);
+      border-radius:6px;
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      white-space:nowrap;
+    }
+
+    details.section{
+      margin-top:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(0,0,0,.16);
+      overflow:hidden;
+    }
+    details.section > summary{
+      cursor:pointer;
+      padding:14px 14px;
+      list-style:none;
+      font-weight:700;
+      letter-spacing:.2px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    details.section > summary::-webkit-details-marker{display:none}
+    details.section > summary .tag{
+      font-weight:700;
+      color:rgba(122,162,255,.95);
+      border:1px solid rgba(122,162,255,.35);
+      background:rgba(122,162,255,.10);
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:12px;
+      margin-top:1px;
+      flex:0 0 auto;
+    }
+    details.section > summary .sumtext{min-width:0}
+    details.section > summary .sumtext .subtitle{display:block; font-weight:500; color:var(--muted); font-size:12px; margin-top:2px}
+    details.section[open] > summary{border-bottom:1px solid var(--border); background:rgba(255,255,255,.03)}
+    .sec-body{padding:14px}
+    .sec-body p{margin:10px 0}
+    .sec-body ul{margin:8px 0 8px 20px}
+    .sec-body ol{margin:8px 0 8px 20px}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .box{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:rgba(255,255,255,.03);
+      padding:12px;
+    }
+    .box .boxtitle{
+      margin:0 0 8px;
+      font-size:13px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+    .def{border-left:3px solid rgba(122,162,255,.7)}
+    .eqn{border-left:3px solid rgba(124,255,194,.55)}
+    .ex{border-left:3px solid rgba(255,209,102,.65)}
+    .trap{border-left:3px solid rgba(255,120,142,.7)}
+    pre[data-copy]{
+      margin:10px 0 0;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.28);
+      overflow:auto;
+      font-size:13px;
+      line-height:1.45;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      white-space:pre;
+      position:relative;
+    }
+    pre[data-copy]::after{
+      content:"Double-click to copy";
+      position:absolute;
+      right:10px;
+      top:8px;
+      font-size:11px;
+      color:rgba(233,238,252,.55);
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.12);
+      padding:2px 6px;
+      border-radius:999px;
+    }
+    .steps{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 10px 10px 16px;
+      background:rgba(255,255,255,.02);
+    }
+
+    .hl{
+      outline: 2px solid rgba(122,162,255,.45);
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(8,12,24,.88);
+      color:var(--text);
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+      z-index:50;
+      white-space:nowrap;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+    .small{font-size:13px; color:var(--muted)}
+    .checklist li{margin:6px 0}
+    .hr{height:1px; background:var(--border); margin:14px 0}
+
+    /* Sidebar toggle */
+    body.sidebar-hidden .app{grid-template-columns: 0 1fr}
+    body.sidebar-hidden .sidebar{display:none}
+
+    /* Print */
+    @media print{
+      .sidebar, .topbar, .toast{display:none !important}
+      body{background:#fff; color:#000}
+      .main{padding:0}
+      details.section{break-inside:avoid; background:#fff; border-color:#bbb}
+      details.section > summary{background:#fff}
+      pre[data-copy]{background:#f6f6f6; border-color:#ccc}
+      pre[data-copy]::after{display:none}
+      a{color:#000; text-decoration:underline}
+    }
+  </style>
+</head>
+<body>
+  <!--
+PART A — CANONICAL TUTORIAL (MARKDOWN)
+
+# Quantum “Equation”: The Schrödinger Equation (Nonrelativistic Quantum Mechanics)
+
+## A) Big Picture
+The central dynamical equation of nonrelativistic quantum mechanics is the Schrödinger equation. It plays the role that Newton’s second law plays in classical mechanics: given an initial state and a Hamiltonian (energy operator), it predicts how the quantum state changes with time.
+
+There are two standard forms:
+- Time-dependent Schrödinger equation (TDSE): governs time evolution.
+- Time-independent Schrödinger equation (TISE): an eigenvalue problem used for stationary states and energy quantization.
+
+## B) Assumptions and Validity (When It Applies)
+The usual Schrödinger equation applies when:
+- Speeds are much less than the speed of light (nonrelativistic).
+- Particle creation/annihilation is negligible (single-particle or fixed-particle-number).
+- The system is well-modeled by a potential energy function V(x,t).
+- Spin, relativity, and fields can be ignored or added separately (Pauli/Dirac/QFT are refinements).
+
+Common modeling choice (1D for clarity):
+- One particle of mass m in potential V(x,t).
+
+## C) Core Objects and Definitions
+**Wavefunction**
+- A complex function ψ(x,t) whose squared magnitude gives probability density:
+  ρ(x,t) = |ψ(x,t)|^2
+
+**Normalization**
+- Total probability is 1:
+  ∫ |ψ(x,t)|^2 dx = 1
+
+**Operators**
+- Momentum operator in position space:
+  p̂ = -iħ ∂/∂x
+- Energy operator (for time dependence):
+  Ê = iħ ∂/∂t
+
+**Hamiltonian**
+- For a particle in a potential:
+  Ĥ = p̂^2/(2m) + V(x,t) = -(ħ^2/(2m)) ∂^2/∂x^2 + V(x,t)
+
+## D) Schrödinger Equations + Derivations (Step Justification)
+**Time-dependent Schrödinger equation (TDSE)**
+iħ ∂ψ/∂t = Ĥ ψ
+
+In 1D with potential V(x,t):
+iħ ∂ψ/∂t = [-(ħ^2/(2m)) ∂^2/∂x^2 + V(x,t)] ψ
+
+**Heuristic derivation idea**
+1) Use de Broglie/plane wave: ψ ~ exp(i(kx - ωt))
+2) Associate p = ħk and E = ħω
+3) Replace classical E and p with operators:
+   E → iħ ∂/∂t, p → -iħ ∂/∂x
+4) For classical energy E = p^2/(2m) + V, impose the operator equation on ψ:
+   iħ ∂ψ/∂t = [-(ħ^2/(2m)) ∂^2/∂x^2 + V] ψ
+
+**Time-independent Schrödinger equation (TISE)**
+If V is time-independent, seek separable solutions:
+ψ(x,t) = φ(x) e^(-iEt/ħ)
+
+Plugging into TDSE yields the eigenvalue equation:
+Ĥ φ = E φ
+i.e.
+-(ħ^2/(2m)) d^2φ/dx^2 + V(x)φ = Eφ
+
+**Probability conservation**
+Define probability current (1D):
+j = (ħ/(2mi))(ψ* ∂ψ/∂x - ψ ∂ψ*/∂x)
+
+Then TDSE implies continuity equation:
+∂ρ/∂t + ∂j/∂x = 0
+So normalization is preserved if j vanishes at boundaries or ψ decays at infinity.
+
+## E) How to Solve Problems (Strategy)
+1) Identify V(x) and region(s).
+2) If V is time-independent, use TISE: solve ODE eigenvalue problem.
+3) Apply boundary conditions:
+   - ψ continuous everywhere.
+   - dψ/dx continuous where V is finite (discontinuity can occur for infinite jumps).
+4) Impose normalization and physical acceptability (finite, single-valued).
+5) Use symmetry (even/odd), dimensionless variables, and known spectra where possible.
+6) For piecewise-constant potentials, solve in each region and match at boundaries.
+
+## F) Worked Examples (Increasing Difficulty)
+**Example 1: Infinite square well (0 < x < L)**
+V(x)=0 inside, V=∞ outside ⇒ ψ(0)=ψ(L)=0.
+Inside: -(ħ^2/(2m)) φ'' = E φ ⇒ φ'' + k^2 φ = 0, k^2=2mE/ħ^2.
+General: φ = A sin(kx)+B cos(kx).
+Boundary φ(0)=0 ⇒ B=0.
+Boundary φ(L)=0 ⇒ sin(kL)=0 ⇒ kL = nπ, n=1,2,3,...
+E_n = (n^2 π^2 ħ^2)/(2m L^2)
+Normalized eigenfunctions:
+φ_n(x)= sqrt(2/L) sin(nπ x/L)
+
+**Example 2: Finite step potential (qualitative scattering)**
+V(x)=0 for x<0, V0 for x>0, E>V0.
+Region I: φ'' + k1^2 φ=0 with k1=sqrt(2mE)/ħ.
+Region II: φ'' + k2^2 φ=0 with k2=sqrt(2m(E-V0))/ħ.
+Write waves:
+φ_I = e^{ik1 x} + R e^{-ik1 x},  φ_II = T e^{ik2 x}.
+Match φ and φ' at x=0 to get reflection R and transmission T.
+Key idea: even without “force”, mismatch of k causes partial reflection.
+
+**Example 3: Stationary states and measurement**
+If ψ(x,t)=φ_n(x)e^{-iE_n t/ħ}, then probability density is time-independent:
+|ψ|^2 = |φ_n|^2.
+Measuring energy in this state yields E_n with probability 1.
+In a superposition ψ = c1 φ1 e^{-iE1 t/ħ} + c2 φ2 e^{-iE2 t/ħ}, the density typically oscillates in time because of interference terms.
+
+## G) Common Mistakes and Misconceptions
+- Mistake: Forgetting boundary conditions at infinite walls (ψ must be zero).
+- Mistake: Confusing ψ with |ψ|^2 (probability density).
+- Mistake: Treating “E” in TISE as always kinetic energy; it’s total energy eigenvalue.
+- Trap: Not matching ψ' across finite potential steps/barriers.
+- Misconception: “The particle travels as a wave in space.” ψ is a probability amplitude; measurement outcomes are probabilistic.
+- Misconception: “Energy is always quantized.” Quantization depends on boundary conditions and bound states; free particle has continuous spectrum.
+
+## H) Exam/Problem-Solving Checklist
+- Write the correct equation (TDSE vs TISE).
+- Draw V(x), mark regions, compute k or κ in each region.
+- Solve general form in each region, then apply matching.
+- Enforce physical conditions (finite, normalizable for bound states).
+- Normalize and interpret probabilities.
+- Sanity check units and limiting cases (V0→0, L→∞, etc.).
+  -->
+
+  <script type="application/json" id="studyPageStructure">
+  {
+    "title": "Quantum Equation: The Schrödinger Equation",
+    "subject": "physics",
+    "sections": [
+      {
+        "id": "a-big-picture",
+        "label": "A",
+        "title": "Big Picture",
+        "subtitle": "What the Schrödinger equation does"
+      },
+      {
+        "id": "b-validity",
+        "label": "B",
+        "title": "Assumptions & Validity",
+        "subtitle": "When the standard form applies"
+      },
+      {
+        "id": "c-definitions",
+        "label": "C",
+        "title": "Core Definitions",
+        "subtitle": "Wavefunction, operators, Hamiltonian",
+        "children": [
+          { "id": "c-wavefunction", "title": "Wavefunction & Probability" },
+          { "id": "c-operators", "title": "Operators in Position Space" },
+          { "id": "c-hamiltonian", "title": "Hamiltonian for a Particle" }
+        ]
+      },
+      {
+        "id": "d-equations-derivations",
+        "label": "D",
+        "title": "Equations & Derivations",
+        "subtitle": "TDSE, TISE, and probability conservation",
+        "children": [
+          { "id": "d-tdse", "title": "Time-Dependent Schrödinger Equation" },
+          { "id": "d-heuristic", "title": "Heuristic Operator Substitution" },
+          { "id": "d-tise", "title": "Time-Independent Schrödinger Equation" },
+          { "id": "d-continuity", "title": "Continuity Equation (Conservation of Probability)" }
+        ]
+      },
+      {
+        "id": "e-solving-strategy",
+        "label": "E",
+        "title": "How to Solve Problems",
+        "subtitle": "Boundary conditions and workflows"
+      },
+      {
+        "id": "f-examples",
+        "label": "F",
+        "title": "Worked Examples",
+        "subtitle": "From quantization to scattering",
+        "children": [
+          { "id": "f-example-1", "title": "Infinite Square Well" },
+          { "id": "f-example-2", "title": "Potential Step (Scattering)" },
+          { "id": "f-example-3", "title": "Stationary States vs Superpositions" }
+        ]
+      },
+      {
+        "id": "g-mistakes-misconceptions",
+        "label": "G",
+        "title": "Common Mistakes & Misconceptions",
+        "subtitle": "Traps, why they happen, how to avoid"
+      },
+      {
+        "id": "h-exam-checklist",
+        "label": "H",
+        "title": "Exam Checklist",
+        "subtitle": "Fast, tactical steps"
+      }
+    ]
+  }
+  </script>
+
+  <div class="app">
+    <aside class="sidebar" aria-label="Sidebar">
+      <div class="side-inner">
+        <div class="brand">
+          <div>
+            <h1>Quantum “Equation” Study Page</h1>
+            <div class="sub">Focus: Schrödinger equation (nonrelativistic QM)</div>
+          </div>
+        </div>
+
+        <div class="search">
+          <label for="q">Search headings</label>
+          <input id="q" type="search" placeholder="e.g., TISE, boundary, probability" autocomplete="off" />
+          <div class="small" style="margin-top:8px">
+            Tip: Double-click any equation block to copy.
+          </div>
+        </div>
+
+        <nav class="toc" aria-label="Table of contents">
+          <p class="title">Contents</p>
+          <ul id="tocList"></ul>
+          <p id="tocEmpty" class="small muted" style="display:none; margin:10px 0 0;">No matches.</p>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar" role="toolbar" aria-label="Controls">
+        <button class="btn" id="btnToggleSidebar" type="button">Toggle Sidebar</button>
+        <button class="btn" id="btnExpand" type="button">Expand All</button>
+        <button class="btn" id="btnCollapse" type="button">Collapse All</button>
+        <button class="btn" id="btnPrint" type="button">Print</button>
+        <div class="pill">Sections use <span class="kbd">details</span>/<span class="kbd">summary</span></div>
+      </div>
+
+      <div class="content">
+        <section class="lead" id="top">
+          <h2>Schrödinger Equation (the core quantum dynamics)</h2>
+          <p>
+            “Quantum equation” often refers to the Schrödinger equation: it predicts how the quantum state evolves.
+            This page emphasizes <strong>when it applies</strong>, <strong>what each symbol means</strong>, and <strong>how to solve typical problems</strong>.
+          </p>
+        </section>
+
+        <details class="section" id="a-big-picture" open>
+          <summary>
+            <span class="tag">A</span>
+            <span class="sumtext">
+              Big Picture
+              <span class="subtitle">What the Schrödinger equation does</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <p>
+              In nonrelativistic quantum mechanics, the state of a system is encoded by a complex wavefunction <span class="kbd">ψ</span>.
+              The Schrödinger equation is the dynamical rule: given an initial state and a Hamiltonian (energy operator), it determines the state at later times.
+            </p>
+            <div class="grid">
+              <div class="box eqn">
+                <p class="boxtitle">Equation/Theorem — Time-dependent Schrödinger equation (TDSE)</p>
+                <pre data-copy>iħ ∂ψ/∂t = Ĥ ψ</pre>
+                <p class="small">Analogy: plays a role similar to Newton’s 2nd law (but for probability amplitudes).</p>
+              </div>
+              <div class="box eqn">
+                <p class="boxtitle">Equation/Theorem — Time-independent Schrödinger equation (TISE)</p>
+                <pre data-copy>Ĥ φ = E φ</pre>
+                <p class="small">An eigenvalue problem used for bound states, quantization, and stationary solutions.</p>
+              </div>
+            </div>
+            <p class="small">
+              Note: Other “quantum equations” exist (Heisenberg picture, Dirac equation, quantum field theory), but the Schrödinger equation is the standard starting point for nonrelativistic systems.
+            </p>
+          </div>
+        </details>
+
+        <details class="section" id="b-validity">
+          <summary>
+            <span class="tag">B</span>
+            <span class="sumtext">
+              Assumptions &amp; Validity
+              <span class="subtitle">When the standard form applies</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <div class="box def">
+              <p class="boxtitle">Definition — “Nonrelativistic Schrödinger model”</p>
+              <p>
+                A common model: one particle of mass <span class="kbd">m</span> moving in a potential <span class="kbd">V(x,t)</span>, with Hamiltonian
+                <span class="kbd">Ĥ = p̂²/(2m) + V</span>.
+              </p>
+            </div>
+
+            <p><strong>Typically valid when:</strong></p>
+            <ul>
+              <li>Speeds are much smaller than <span class="kbd">c</span> (relativistic effects negligible).</li>
+              <li>Particle number is fixed (no creation/annihilation; no QFT needed).</li>
+              <li>Spin can be ignored or added separately (Pauli equation extends Schrödinger with spin).</li>
+              <li>Potential <span class="kbd">V</span> is an adequate effective description of interactions.</li>
+            </ul>
+
+            <div class="box trap">
+              <p class="boxtitle">Common Trap — Overusing it</p>
+              <p>
+                If energies approach <span class="kbd">mc²</span>, if fields must be quantized, or if spin/relativity dominates, the Schrödinger equation can give qualitatively wrong predictions.
+              </p>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="c-definitions">
+          <summary>
+            <span class="tag">C</span>
+            <span class="sumtext">
+              Core Definitions
+              <span class="subtitle">Wavefunction, operators, Hamiltonian</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <div class="grid">
+              <div class="box def" id="c-wavefunction">
+                <p class="boxtitle">Definition — Wavefunction &amp; probability</p>
+                <p>
+                  The wavefunction <span class="kbd">ψ(x,t)</span> is a complex probability amplitude.
+                  The probability density of finding the particle near position <span class="kbd">x</span> at time <span class="kbd">t</span> is
+                  <span class="kbd">ρ(x,t) = |ψ(x,t)|²</span>.
+                </p>
+                <pre data-copy>Normalization (1D):
+∫_{-∞}^{∞} |ψ(x,t)|² dx = 1</pre>
+              </div>
+
+              <div class="box def" id="c-operators">
+                <p class="boxtitle">Definition — Operators in position space</p>
+                <p>In the position representation (1D):</p>
+                <pre data-copy>Momentum operator:
+p̂ = -iħ ∂/∂x
+
+Energy/time operator correspondence:
+Ê = iħ ∂/∂t</pre>
+                <p class="small">These match plane waves ψ ~ e^{i(kx-ωt)} with p=ħk and E=ħω.</p>
+              </div>
+            </div>
+
+            <div class="box def" id="c-hamiltonian">
+              <p class="boxtitle">Definition — Hamiltonian for a particle in a potential</p>
+              <pre data-copy>Ĥ = p̂²/(2m) + V(x,t)
+   = -(ħ²/(2m)) ∂²/∂x² + V(x,t)</pre>
+              <p class="small">
+                The Hamiltonian is the generator of time evolution: it is the operator that appears in the TDSE.
+              </p>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="d-equations-derivations">
+          <summary>
+            <span class="tag">D</span>
+            <span class="sumtext">
+              Equations &amp; Derivations
+              <span class="subtitle">TDSE, TISE, and probability conservation</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <div class="box eqn" id="d-tdse">
+              <p class="boxtitle">Equation/Theorem — TDSE in 1D</p>
+              <pre data-copy>iħ ∂ψ/∂t = [-(ħ²/(2m)) ∂²/∂x² + V(x,t)] ψ</pre>
+              <p class="small">This is a linear PDE; linearity is why superposition is fundamental.</p>
+            </div>
+
+            <div class="box" id="d-heuristic">
+              <p class="boxtitle">Derivation (Heuristic) — Operator substitution from E = p²/(2m) + V</p>
+              <ol class="steps">
+                <li>Start with a plane-wave form (free particle): <span class="kbd">ψ ~ exp(i(kx − ωt))</span>.</li>
+                <li>Use de Broglie relations: <span class="kbd">p = ħk</span>, <span class="kbd">E = ħω</span>.</li>
+                <li>Notice that derivatives reproduce factors of <span class="kbd">k</span> and <span class="kbd">ω</span>:
+                  <span class="kbd">∂/∂x ↦ ik</span>, <span class="kbd">∂/∂t ↦ −iω</span>.</li>
+                <li>Promote to operator rules acting on general <span class="kbd">ψ</span>:
+                  <span class="kbd">p → p̂ = −iħ ∂/∂x</span>, <span class="kbd">E → iħ ∂/∂t</span>.</li>
+                <li>Impose the classical energy relation on <span class="kbd">ψ</span>:
+                  <span class="kbd">iħ ∂ψ/∂t = [p̂²/(2m) + V] ψ</span>.</li>
+              </ol>
+              <div class="box trap" style="margin-top:12px">
+                <p class="boxtitle">Common Trap — Treating this as a rigorous proof</p>
+                <p>
+                  This is a motivation. A deeper foundation comes from quantum postulates and symmetry/unitarity requirements (time evolution must preserve total probability).
+                </p>
+              </div>
+            </div>
+
+            <div class="box eqn" id="d-tise">
+              <p class="boxtitle">Equation/Theorem — TISE via separation of variables (time-independent V)</p>
+              <p class="small">
+                If <span class="kbd">V(x)</span> does not depend on time, seek solutions <span class="kbd">ψ(x,t) = φ(x)e^{-iEt/ħ}</span>.
+                Substituting into TDSE yields:
+              </p>
+              <pre data-copy>Ĥ φ = E φ
+
+In 1D:
+-(ħ²/(2m)) d²φ/dx² + V(x)φ = Eφ</pre>
+              <p class="small">For bound states, boundary conditions + normalizability select discrete energies.</p>
+            </div>
+
+            <div class="box" id="d-continuity">
+              <p class="boxtitle">Derivation — Conservation of probability (continuity equation)</p>
+              <ol class="steps">
+                <li>Define density: <span class="kbd">ρ = |ψ|² = ψ*ψ</span>.</li>
+                <li>Differentiate: <span class="kbd">∂ρ/∂t = (∂ψ*/∂t)ψ + ψ*(∂ψ/∂t)</span>.</li>
+                <li>Use TDSE and its complex conjugate to replace <span class="kbd">∂ψ/∂t</span> and <span class="kbd">∂ψ*/∂t</span>.</li>
+                <li>Algebra rearranges the result into a total spatial derivative: <span class="kbd">∂ρ/∂t + ∂j/∂x = 0</span>.</li>
+              </ol>
+              <div class="grid" style="margin-top:12px">
+                <div class="box eqn">
+                  <p class="boxtitle">Equation/Theorem — Probability current (1D)</p>
+                  <pre data-copy>j = (ħ/(2mi)) (ψ* ∂ψ/∂x − ψ ∂ψ*/∂x)</pre>
+                </div>
+                <div class="box trap">
+                  <p class="boxtitle">Common Trap — Ignoring boundary behavior</p>
+                  <p class="small">
+                    Normalization stays constant when boundary terms vanish (e.g., ψ→0 at ±∞, or no flux through boundaries in a box).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="e-solving-strategy">
+          <summary>
+            <span class="tag">E</span>
+            <span class="sumtext">
+              How to Solve Problems
+              <span class="subtitle">Boundary conditions and workflows</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <p><strong>Standard workflow (time-independent potentials):</strong></p>
+            <ol class="steps">
+              <li>Write <span class="kbd">V(x)</span> and sketch it. Mark regions where V is simple.</li>
+              <li>Use TISE in each region. For constant V, solutions are exponentials or sines/cosines.</li>
+              <li>Apply matching conditions:
+                <ul>
+                  <li><span class="kbd">ψ</span> is continuous everywhere.</li>
+                  <li><span class="kbd">dψ/dx</span> is continuous where <span class="kbd">V</span> is finite (can fail at infinite jumps).</li>
+                </ul>
+              </li>
+              <li>Enforce physical acceptability: finite, single-valued; normalizable for bound states.</li>
+              <li>Normalize and compute probabilities/expectation values as requested.</li>
+            </ol>
+
+            <div class="grid" style="margin-top:12px">
+              <div class="box def">
+                <p class="boxtitle">Definition — Bound vs scattering states</p>
+                <p class="small">
+                  Bound states: normalizable, typically discrete energies (quantized).
+                  Scattering states: not square-normalizable in infinite space, typically continuous energies.
+                </p>
+              </div>
+              <div class="box trap">
+                <p class="boxtitle">Common Trap — “Energy is always quantized”</p>
+                <p class="small">
+                  Quantization arises from boundary conditions/normalizability. A free particle has a continuous energy spectrum.
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="f-examples">
+          <summary>
+            <span class="tag">F</span>
+            <span class="sumtext">
+              Worked Examples
+              <span class="subtitle">From quantization to scattering</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <div class="box ex" id="f-example-1">
+              <p class="boxtitle">Example 1 — Infinite square well (0 &lt; x &lt; L)</p>
+              <p class="small">Potential: <span class="kbd">V=0</span> inside; <span class="kbd">V=∞</span> outside. Therefore <span class="kbd">ψ(0)=ψ(L)=0</span>.</p>
+              <ol class="steps">
+                <li>Inside the well, TISE becomes <span class="kbd">-(ħ²/(2m)) φ'' = Eφ</span> or <span class="kbd">φ'' + k²φ = 0</span> with <span class="kbd">k² = 2mE/ħ²</span>.</li>
+                <li>General solution: <span class="kbd">φ(x)=A sin(kx)+B cos(kx)</span>.</li>
+                <li>Boundary <span class="kbd">φ(0)=0</span> gives <span class="kbd">B=0</span>.</li>
+                <li>Boundary <span class="kbd">φ(L)=0</span> gives <span class="kbd">sin(kL)=0 → kL=nπ</span> for integers <span class="kbd">n=1,2,3,...</span>.</li>
+              </ol>
+              <pre data-copy>k_n = nπ/L
+E_n = (ħ² k_n²)/(2m) = (n² π² ħ²)/(2m L²)
+φ_n(x) = √(2/L) sin(nπ x/L)  (normalized)</pre>
+              <div class="box trap" style="margin-top:12px">
+                <p class="boxtitle">Common Trap</p>
+                <ul class="small">
+                  <li>Using <span class="kbd">n=0</span> (it yields the zero wavefunction, not a physical state).</li>
+                  <li>Forgetting normalization (<span class="kbd">√(2/L)</span> matters for probabilities).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="box ex" id="f-example-2" style="margin-top:12px">
+              <p class="boxtitle">Example 2 — Potential step (scattering, E &gt; V0)</p>
+              <p class="small">
+                Potential: <span class="kbd">V(x)=0</span> for <span class="kbd">x&lt;0</span>, and <span class="kbd">V(x)=V0</span> for <span class="kbd">x&gt;0</span>.
+                Even though the potential is constant in each region, a wave can partially reflect at the discontinuity.
+              </p>
+              <div class="grid">
+                <div class="box eqn">
+                  <p class="boxtitle">Region I (x&lt;0)</p>
+                  <pre data-copy>k1 = √(2mE)/ħ
+φ_I(x) = e^{ik1 x} + R e^{-ik1 x}</pre>
+                </div>
+                <div class="box eqn">
+                  <p class="boxtitle">Region II (x&gt;0)</p>
+                  <pre data-copy>k2 = √(2m(E−V0))/ħ
+φ_II(x) = T e^{ik2 x}</pre>
+                </div>
+              </div>
+              <ol class="steps" style="margin-top:12px">
+                <li>Match <span class="kbd">φ</span> at <span class="kbd">x=0</span>: <span class="kbd">1 + R = T</span>.</li>
+                <li>Match <span class="kbd">φ'</span> at <span class="kbd">x=0</span> (finite step): <span class="kbd">ik1(1 − R) = ik2 T</span>.</li>
+                <li>Solve for amplitudes <span class="kbd">R</span> and <span class="kbd">T</span>.</li>
+              </ol>
+              <pre data-copy>R = (k1 − k2)/(k1 + k2)
+T = 2k1/(k1 + k2)</pre>
+              <div class="box trap" style="margin-top:12px">
+                <p class="boxtitle">Common Trap — Mixing amplitudes with probabilities</p>
+                <p class="small">
+                  Reflection/transmission probabilities involve current (group velocity). In 1D:
+                  <span class="kbd">𝓡 = |R|²</span>, <span class="kbd">𝓣 = (k2/k1)|T|²</span> (for this step setup).
+                </p>
+              </div>
+            </div>
+
+            <div class="box ex" id="f-example-3" style="margin-top:12px">
+              <p class="boxtitle">Example 3 — Stationary states vs superpositions</p>
+              <p>
+                If <span class="kbd">ψ(x,t) = φ_n(x)e^{-iE_n t/ħ}</span>, then the probability density is time-independent:
+                <span class="kbd">|ψ|² = |φ_n|²</span>.
+              </p>
+              <div class="box eqn">
+                <p class="boxtitle">Equation/Theorem — Superposition time dependence</p>
+                <pre data-copy>ψ(x,t) = c1 φ1(x)e^{-iE1 t/ħ} + c2 φ2(x)e^{-iE2 t/ħ}
+
+|ψ|² = |c1|²|φ1|² + |c2|²|φ2|²
+     + 2 Re[ c1 c2* φ1 φ2* e^{-i(E1−E2)t/ħ} ]</pre>
+              </div>
+              <div class="box trap" style="margin-top:12px">
+                <p class="boxtitle">Why this matters</p>
+                <p class="small">
+                  Many “time-dependent” probability patterns come from interference terms (energy differences), not from time-dependent potentials.
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="g-mistakes-misconceptions">
+          <summary>
+            <span class="tag">G</span>
+            <span class="sumtext">
+              Common Mistakes &amp; Misconceptions
+              <span class="subtitle">Traps, why they happen, how to avoid</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <div class="grid">
+              <div class="box trap">
+                <p class="boxtitle">Common Mistake — Confusing ψ with |ψ|²</p>
+                <p class="small">
+                  <span class="kbd">ψ</span> can be negative/complex; probabilities come from <span class="kbd">|ψ|²</span>. Phase matters for interference, not for direct “probability sign.”
+                </p>
+              </div>
+              <div class="box trap">
+                <p class="boxtitle">Common Mistake — Wrong matching conditions</p>
+                <p class="small">
+                  For finite potential steps/barriers, match both <span class="kbd">ψ</span> and <span class="kbd">dψ/dx</span>.
+                  Forgetting <span class="kbd">ψ'</span> continuity is a frequent source of wrong coefficients.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid" style="margin-top:12px">
+              <div class="box trap">
+                <p class="boxtitle">Misconception — “The particle is literally a wave in space”</p>
+                <p class="small">
+                  The wavefunction is a probability amplitude. “Wave-like” effects appear in how probabilities combine (superposition/interference).
+                </p>
+              </div>
+              <div class="box trap">
+                <p class="boxtitle">Misconception — “Energy is always quantized”</p>
+                <p class="small">
+                  Quantization is typical for bound states with restrictive boundaries. Free particles and many scattering setups have continuous energies.
+                </p>
+              </div>
+            </div>
+
+            <div class="box trap" style="margin-top:12px">
+              <p class="boxtitle">Sanity checks that catch many errors</p>
+              <ul class="small">
+                <li>Units: <span class="kbd">ħ²/(2mL²)</span> has energy units.</li>
+                <li>Limits: If <span class="kbd">V0 → 0</span>, step reflection should vanish (<span class="kbd">R→0</span>).</li>
+                <li>Normalization: probabilities should sum to 1 where appropriate.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="h-exam-checklist">
+          <summary>
+            <span class="tag">H</span>
+            <span class="sumtext">
+              Exam Checklist
+              <span class="subtitle">Fast, tactical steps</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <div class="box">
+              <p class="boxtitle">Checklist</p>
+              <ul class="checklist">
+                <li>Decide: TDSE or TISE? (Is <span class="kbd">V</span> time-dependent?)</li>
+                <li>Sketch <span class="kbd">V(x)</span>, split into regions; compute <span class="kbd">k = √(2m(E−V))/ħ</span> or <span class="kbd">κ = √(2m(V−E))/ħ</span>.</li>
+                <li>Write the most general solution in each region (oscillatory vs exponential).</li>
+                <li>Apply boundary + matching conditions (<span class="kbd">ψ</span> and <span class="kbd">ψ'</span> for finite jumps).</li>
+                <li>Enforce physical acceptability (finite, normalizable for bound states).</li>
+                <li>Normalize (when required) and compute requested probabilities/expectations.</li>
+                <li>Do one limiting-case check (e.g., barrier height/width → 0).</li>
+              </ul>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="box eqn">
+              <p class="boxtitle">Copyable quick-reference</p>
+              <pre data-copy>TDSE (1D):
+iħ ∂ψ/∂t = [-(ħ²/(2m)) ∂²/∂x² + V(x,t)] ψ
+
+TISE (1D, time-independent V):
+-(ħ²/(2m)) d²φ/dx² + V(x)φ = Eφ
+
+Normalization:
+∫ |ψ|² dx = 1</pre>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="exports">
+          <summary>
+            <span class="tag">Export</span>
+            <span class="sumtext">
+              Structure JSON (for reuse)
+              <span class="subtitle">Same data as in the embedded script tag</span>
+            </span>
+          </summary>
+          <div class="sec-body">
+            <div class="box">
+              <p class="boxtitle">JSON</p>
+              <pre data-copy id="jsonCopy"></pre>
+              <p class="small">Tip: Use this outline to regenerate a different layout while preserving section IDs.</p>
+            </div>
+          </div>
+        </details>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function(){
+      const structureEl = document.getElementById('studyPageStructure');
+      const tocList = document.getElementById('tocList');
+      const tocEmpty = document.getElementById('tocEmpty');
+      const search = document.getElementById('q');
+
+      const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+      const btnExpand = document.getElementById('btnExpand');
+      const btnCollapse = document.getElementById('btnCollapse');
+      const btnPrint = document.getElementById('btnPrint');
+
+      const toast = document.getElementById('toast');
+      const jsonCopy = document.getElementById('jsonCopy');
+
+      const detailsSections = Array.from(document.querySelectorAll('details.section'));
+      const summaryById = new Map(detailsSections.map(d => [d.id, d.querySelector(':scope > summary')]).filter(([id, s]) => id && s));
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add('show');
+        window.clearTimeout(showToast._t);
+        showToast._t = window.setTimeout(() => toast.classList.remove('show'), 1200);
+      }
+
+      function parseStructure(){
+        try{
+          return JSON.parse(structureEl.textContent);
+        }catch(e){
+          return null;
+        }
+      }
+
+      function mkLink(id, text, indentClass){
+        const li = document.createElement('li');
+        li.dataset.text = (text || '').toLowerCase();
+        li.dataset.target = id;
+
+        const a = document.createElement('a');
+        a.href = '#' + id;
+        a.textContent = text;
+
+        if (indentClass) a.classList.add(indentClass);
+
+        a.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.open = true;
+          el.scrollIntoView({behavior:'smooth', block:'start'});
+          history.replaceState(null, '', '#' + id);
+        });
+
+        li.appendChild(a);
+        return li;
+      }
+
+      function buildTOC(){
+        const structure = parseStructure();
+        tocList.innerHTML = '';
+        if (!structure || !Array.isArray(structure.sections)){
+          // fallback: infer from DOM
+          detailsSections.forEach(d => {
+            const sum = d.querySelector(':scope > summary .sumtext');
+            const title = sum ? sum.childNodes[0].textContent.trim() : d.id;
+            tocList.appendChild(mkLink(d.id, title));
+          });
+          return;
+        }
+
+        for (const s of structure.sections){
+          const topText = (s.label ? (s.label + ') ') : '') + s.title;
+          tocList.appendChild(mkLink(s.id, topText));
+
+          if (Array.isArray(s.children)){
+            for (const c of s.children){
+              tocList.appendChild(mkLink(c.id, c.title, 'indent'));
+            }
+          }
+        }
+      }
+
+      function clearHighlights(){
+        for (const s of summaryById.values()) s.classList.remove('hl');
+      }
+
+      function filterTOC(q){
+        const query = q.trim().toLowerCase();
+        const items = Array.from(tocList.querySelectorAll('li'));
+        clearHighlights();
+
+        if (!query){
+          items.forEach(li => li.classList.remove('hidden'));
+          tocEmpty.style.display = 'none';
+          return;
+        }
+
+        let any = false;
+        items.forEach(li => {
+          const text = li.dataset.text || '';
+          const id = li.dataset.target;
+          const match = text.includes(query);
+
+          li.classList.toggle('hidden', !match);
+          if (match){
+            any = true;
+            const sum = summaryById.get(id);
+            if (sum) sum.classList.add('hl');
+          }
+        });
+
+        tocEmpty.style.display = any ? 'none' : 'block';
+      }
+
+      function setAll(open){
+        detailsSections.forEach(d => d.open = !!open);
+      }
+
+      // Copy on double click for any [data-copy]
+      document.addEventListener('dblclick', async (ev) => {
+        const target = ev.target.closest && ev.target.closest('[data-copy]');
+        if (!target) return;
+        const text = (target.innerText || '').trim();
+        if (!text) return;
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Copied');
+        }catch(e){
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          try{ document.execCommand('copy'); showToast('Copied'); } catch(_) {}
+          ta.remove();
+        }
+      });
+
+      // Controls
+      btnToggleSidebar.addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-hidden');
+      });
+      btnExpand.addEventListener('click', () => setAll(true));
+      btnCollapse.addEventListener('click', () => setAll(false));
+      btnPrint.addEventListener('click', () => window.print());
+
+      // Build
+      buildTOC();
+      const structure = parseStructure();
+      if (structure && jsonCopy) jsonCopy.textContent = JSON.stringify(structure, null, 2);
+
+      // Search
+      search.addEventListener('input', () => filterTOC(search.value));
+
+      // If user loads with #hash, open and scroll
+      if (location.hash){
+        const id = location.hash.replace('#','');
+        const el = document.getElementById(id);
+        if (el && el.matches('details.section')){
+          el.open = true;
+          setTimeout(() => el.scrollIntoView({behavior:'smooth', block:'start'}), 50);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
