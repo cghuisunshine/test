@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bond Order in Chemistry — Lewis & MO Theory (Detailed Guide)</title>
+    <meta
+      name="description"
+      content="A detailed, student-friendly guide to bond order: definition, how to calculate using Lewis structures and molecular orbital (MO) theory, fractional bond order via resonance, worked examples, trends, and practice problems."
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #101938;
+        --panel-2: #0f1733;
+        --text: #e8ecff;
+        --muted: #b7c0ff;
+        --accent: #7aa2ff;
+        --accent-2: #4ee7b0;
+        --warn: #ffcc66;
+        --danger: #ff6b6b;
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: rgba(0, 0, 0, 0.35);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: radial-gradient(1200px 700px at 20% 0%, #182a65 0%, var(--bg) 55%)
+          fixed;
+        color: var(--text);
+        font-family: var(--sans);
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      code,
+      pre {
+        font-family: var(--mono);
+      }
+
+      .skip {
+        position: absolute;
+        top: -50px;
+        left: 12px;
+        background: #000;
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        z-index: 10;
+      }
+
+      .skip:focus {
+        top: 12px;
+      }
+
+      header {
+        padding: 34px 18px 10px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      header h1 {
+        margin: 0 0 6px;
+        font-size: 2rem;
+        letter-spacing: 0.2px;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 78ch;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 18px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 18px 44px;
+      }
+
+      nav {
+        position: sticky;
+        top: 14px;
+        align-self: start;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 12px 28px var(--shadow);
+        padding: 14px 14px 10px;
+      }
+
+      nav h2 {
+        margin: 0 0 10px;
+        font-size: 0.95rem;
+        letter-spacing: 0.3px;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      nav a {
+        display: block;
+        padding: 10px 10px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      nav a:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: var(--border);
+        text-decoration: none;
+      }
+
+      main {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 12px 28px var(--shadow);
+        padding: 18px 18px 8px;
+        min-width: 0;
+      }
+
+      section {
+        padding: 12px 8px 18px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      section:first-of-type {
+        border-top: none;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+        letter-spacing: 0.2px;
+      }
+
+      h3 {
+        margin: 16px 0 8px;
+        font-size: 1.08rem;
+        color: var(--muted);
+      }
+
+      .callout {
+        background: rgba(122, 162, 255, 0.1);
+        border: 1px solid rgba(122, 162, 255, 0.22);
+        border-radius: 14px;
+        padding: 12px 12px;
+        margin: 12px 0;
+      }
+
+      .callout strong {
+        color: var(--text);
+      }
+
+      .warn {
+        background: rgba(255, 204, 102, 0.12);
+        border-color: rgba(255, 204, 102, 0.26);
+      }
+
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        min-width: 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
+
+      th,
+      td {
+        padding: 10px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        vertical-align: top;
+      }
+
+      th {
+        text-align: left;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      pre {
+        margin: 10px 0;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        overflow: auto;
+      }
+
+      details {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.03);
+        margin: 10px 0;
+      }
+
+      summary {
+        cursor: pointer;
+        color: var(--accent-2);
+        font-weight: 600;
+      }
+
+      footer {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 18px 40px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        nav {
+          position: relative;
+          top: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header>
+      <h1>Bond Order in Chemistry</h1>
+      <p>
+        Bond order is a compact way to describe how strongly two atoms are connected: higher bond
+        order usually means a shorter, stronger bond. This page shows how to calculate bond order
+        using both Lewis structures (including resonance) and molecular orbital (MO) theory, with
+        worked examples and practice.
+      </p>
+    </header>
+
+    <div class="layout">
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#definition">1) Definition</a></li>
+          <li><a href="#why">2) Why it matters</a></li>
+          <li><a href="#lewis">3) Bond order from Lewis</a></li>
+          <li><a href="#resonance">4) Fractional bond order (resonance)</a></li>
+          <li><a href="#mo">5) Bond order from MO theory</a></li>
+          <li><a href="#examples">6) Worked examples</a></li>
+          <li><a href="#trends">7) Trends & interpretations</a></li>
+          <li><a href="#pitfalls">8) Common pitfalls</a></li>
+          <li><a href="#practice">9) Practice problems</a></li>
+        </ul>
+      </nav>
+
+      <main id="content" tabindex="-1">
+        <section id="definition">
+          <h2>1) Definition</h2>
+          <p>
+            <strong>Bond order</strong> is the number of bonding “connections” between two atoms.
+            In simple Lewis drawings, it often matches what you draw:
+          </p>
+          <ul>
+            <li>single bond → bond order 1</li>
+            <li>double bond → bond order 2</li>
+            <li>triple bond → bond order 3</li>
+          </ul>
+          <div class="callout">
+            <strong>Important:</strong> bond order can be <em>fractional</em> (like 1.5) when
+            electrons are delocalized (resonance) or when MO theory predicts partial bonding.
+          </div>
+        </section>
+
+        <section id="why">
+          <h2>2) Why it matters</h2>
+          <div class="grid2">
+            <div class="panel">
+              <h3>Bond strength (bond energy)</h3>
+              <p>
+                Higher bond order usually means a larger bond energy (harder to break). For the
+                same pair of atoms, triple bonds are typically stronger than double bonds, which are
+                stronger than single bonds.
+              </p>
+            </div>
+            <div class="panel">
+              <h3>Bond length</h3>
+              <p>
+                Higher bond order usually means a shorter bond length because more electron density
+                is concentrated between the nuclei.
+              </p>
+            </div>
+          </div>
+          <div class="callout warn">
+            <strong>Caveat:</strong> bond order is not the only factor. Atom size, electronegativity
+            differences (ionic character), and the surrounding molecular environment can change
+            bond lengths and energies.
+          </div>
+        </section>
+
+        <section id="lewis">
+          <h2>3) Bond order from Lewis structures</h2>
+          <p>
+            For many introductory problems (especially for discrete molecules/ions with clear
+            single/double/triple bonds), you can estimate bond order directly from a Lewis
+            structure.
+          </p>
+          <h3>Procedure (Lewis approach)</h3>
+          <ol>
+            <li>Draw a reasonable Lewis structure (or set of resonance structures).</li>
+            <li>Count the number of bonds between the two atoms of interest.</li>
+            <li>If resonance applies, average over equivalent positions (next section).</li>
+          </ol>
+
+          <h3>Example</h3>
+          <pre><code>O=O   → bond order = 2
+N≡N   → bond order = 3
+H–H   → bond order = 1</code></pre>
+
+          <div class="callout">
+            <strong>What Lewis bond order is really saying:</strong> it’s a bookkeeping shortcut
+            for shared electron pairs. It works best when electrons are localized and the structure
+            is dominated by a single bonding pattern.
+          </div>
+        </section>
+
+        <section id="resonance">
+          <h2>4) Fractional bond order (resonance)</h2>
+          <p>
+            When a molecule has multiple valid resonance structures, the real electron distribution
+            is a <strong>resonance hybrid</strong>. Bonds that alternate between single and double
+            in different resonance forms often end up with a bond order between 1 and 2.
+          </p>
+
+          <h3>How to compute a resonance-averaged bond order</h3>
+          <p>
+            For a set of equivalent bonds, add up the bond orders in each resonance form and divide
+            by the number of resonance forms (or, more generally, use weighted averaging if forms
+            are not equally important).
+          </p>
+
+          <table aria-label="Resonance bond order examples">
+            <thead>
+              <tr>
+                <th>System</th>
+                <th>Equivalent bonds</th>
+                <th>Resulting bond order</th>
+                <th>Why</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>benzene (C–C)</td>
+                <td>6</td>
+                <td>1.5</td>
+                <td>alternating single/double in two main resonance forms</td>
+              </tr>
+              <tr>
+                <td>nitrate, NO<sub>3</sub><sup>−</sup> (N–O)</td>
+                <td>3</td>
+                <td>4/3 ≈ 1.33</td>
+                <td>one N=O and two N–O in each form, rotated among O atoms</td>
+              </tr>
+              <tr>
+                <td>carbonate, CO<sub>3</sub><sup>2−</sup> (C–O)</td>
+                <td>3</td>
+                <td>4/3 ≈ 1.33</td>
+                <td>same “one double + two single” pattern over 3 positions</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout warn">
+            <strong>Note:</strong> resonance-averaged bond order is a model. Experimental bond
+            orders can be extracted from bond lengths and spectroscopic data, and may deviate from
+            simple fractions.
+          </div>
+        </section>
+
+        <section id="mo">
+          <h2>5) Bond order from molecular orbital (MO) theory</h2>
+          <p>
+            MO theory treats electrons as occupying molecular orbitals spread over the molecule.
+            For diatomic molecules (and many simple cases), it gives a powerful quantitative
+            definition of bond order:
+          </p>
+          <div class="callout">
+            <strong>MO bond order formula:</strong>
+            <span style="font-family: var(--mono)"
+              >bond order = (N<sub>bonding</sub> − N<sub>antibonding</sub>) / 2</span
+            >
+          </div>
+
+          <h3>What counts as bonding vs antibonding?</h3>
+          <ul>
+            <li>
+              <strong>Bonding MOs</strong> place electron density between nuclei (stabilize).
+            </li>
+            <li>
+              <strong>Antibonding MOs</strong> reduce density between nuclei (destabilize), often
+              labeled with an asterisk, e.g., <code>σ*</code>, <code>π*</code>.
+            </li>
+          </ul>
+
+          <h3>Procedure (MO approach, typical diatomic problems)</h3>
+          <ol>
+            <li>Count total electrons (often valence electrons for simplified MO diagrams).</li>
+            <li>Fill MOs from low to high energy, using Pauli exclusion and Hund’s rule.</li>
+            <li>Count electrons in bonding MOs and antibonding MOs.</li>
+            <li>Apply the formula above.</li>
+          </ol>
+
+          <div class="callout warn">
+            <strong>MO ordering warning (2nd-period homonuclear diatomics):</strong> the relative
+            order of <code>σ(2p)</code> and <code>π(2p)</code> differs for B<sub>2</sub>, C<sub>2</sub>,
+            N<sub>2</sub> vs O<sub>2</sub>, F<sub>2</sub>. Always use the ordering your course expects.
+          </div>
+        </section>
+
+        <section id="examples">
+          <h2>6) Worked examples</h2>
+
+          <h3>Example A: H<sub>2</sub> vs He<sub>2</sub></h3>
+          <div class="grid2">
+            <div class="panel">
+              <p><strong>H<sub>2</sub></strong> has 2 electrons.</p>
+              <pre><code>σ(1s): 2 e− (bonding)
+σ*(1s): 0 e− (antibonding)
+Bond order = (2 − 0)/2 = 1</code></pre>
+              <p>Conclusion: stable single bond.</p>
+            </div>
+            <div class="panel">
+              <p><strong>He<sub>2</sub></strong> has 4 electrons.</p>
+              <pre><code>σ(1s): 2 e− (bonding)
+σ*(1s): 2 e− (antibonding)
+Bond order = (2 − 2)/2 = 0</code></pre>
+              <p>Conclusion: no net bond (not stable as a molecule under normal conditions).</p>
+            </div>
+          </div>
+
+          <h3>Example B: O<sub>2</sub> and its ions (bond order and magnetism)</h3>
+          <p>
+            O<sub>2</sub> is a classic case where MO theory explains experimental observations:
+            it is <strong>paramagnetic</strong> (attracted to a magnet) because it has unpaired
+            electrons in <code>π*</code> orbitals.
+          </p>
+          <table aria-label="O2 bond order table">
+            <thead>
+              <tr>
+                <th>Species</th>
+                <th>Change in electrons</th>
+                <th>Where electron is added/removed</th>
+                <th>Bond order trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>O<sub>2</sub></td>
+                <td>baseline</td>
+                <td><code>π*</code> partly filled</td>
+                <td>bond order 2</td>
+              </tr>
+              <tr>
+                <td>O<sub>2</sub><sup>+</sup></td>
+                <td>−1 e<sup>−</sup></td>
+                <td>remove from <code>π*</code></td>
+                <td>bond order increases (stronger/shorter)</td>
+              </tr>
+              <tr>
+                <td>O<sub>2</sub><sup>−</sup></td>
+                <td>+1 e<sup>−</sup></td>
+                <td>add to <code>π*</code></td>
+                <td>bond order decreases (weaker/longer)</td>
+              </tr>
+              <tr>
+                <td>O<sub>2</sub><sup>2−</sup></td>
+                <td>+2 e<sup>−</sup></td>
+                <td>fill <code>π*</code></td>
+                <td>bond order 1 (peroxide)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Example C: NO (heteronuclear diatomic)</h3>
+          <p>
+            NO has an odd number of electrons, so it is a radical. A common simplified MO treatment
+            gives a bond order of about 2.5 and predicts paramagnetism (one unpaired electron).
+          </p>
+          <div class="callout">
+            <strong>Takeaway:</strong> fractional bond orders naturally appear in MO theory, not
+            just resonance.
+          </div>
+
+          <h3>Example D: Benzene (resonance)</h3>
+          <p>
+            In benzene, each C–C bond is equivalent. Lewis resonance forms alternate single and
+            double bonds, so each bond averages to 1.5. Experimentally, all C–C bond lengths are
+            the same and intermediate between typical single and double bonds.
+          </p>
+        </section>
+
+        <section id="trends">
+          <h2>7) Trends & interpretations</h2>
+          <div class="grid2">
+            <div class="panel">
+              <h3>Relationship summary</h3>
+              <ul>
+                <li>bond order ↑ → bond length ↓ (usually)</li>
+                <li>bond order ↑ → bond energy ↑ (usually)</li>
+                <li>antibonding electrons ↑ → bond order ↓</li>
+              </ul>
+            </div>
+            <div class="panel">
+              <h3>Quick reference</h3>
+              <table aria-label="Bond order quick reference">
+                <thead>
+                  <tr>
+                    <th>Bond order</th>
+                    <th>Typical description</th>
+                    <th>Relative length</th>
+                    <th>Relative strength</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>0</td>
+                    <td>no net bond</td>
+                    <td>—</td>
+                    <td>—</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>single</td>
+                    <td>longer</td>
+                    <td>weaker</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>double</td>
+                    <td>shorter</td>
+                    <td>stronger</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>triple</td>
+                    <td>shortest</td>
+                    <td>strongest</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="pitfalls">
+          <h2>8) Common pitfalls</h2>
+          <ul>
+            <li>
+              <strong>Mixing models blindly:</strong> Lewis bond orders are bookkeeping; MO bond
+              orders come from orbital occupancy. They often agree, but not always (e.g.,
+              O<sub>2</sub> magnetism).
+            </li>
+            <li>
+              <strong>Resonance weighting:</strong> not all resonance structures contribute equally
+              if some have higher formal charges or break octets; an unweighted average can be an
+              oversimplification.
+            </li>
+            <li>
+              <strong>Coordinate bonds:</strong> a dative bond is still a bond; in many contexts it
+              counts as bond order 1, but real bonding can have partial ionic character.
+            </li>
+            <li>
+              <strong>“Hypervalent” species:</strong> expanded-octet drawings can be misleading; MO
+              or modern bonding descriptions may distribute electron density differently than a
+              simple “extra bonds” picture.
+            </li>
+            <li>
+              <strong>Bond order vs formal charge:</strong> formal charge helps pick good Lewis
+              structures; it is not the same as bond order.
+            </li>
+          </ul>
+        </section>
+
+        <section id="practice">
+          <h2>9) Practice problems</h2>
+          <p>Try these without looking, then open the solution.</p>
+
+          <details>
+            <summary>Problem 1: What is the bond order of each N–O bond in NO3−?</summary>
+            <p>
+              There are 3 equivalent N–O bonds. Each resonance form has one N=O (bond order 2) and
+              two N–O (bond order 1), so the total across the three bonds is 2 + 1 + 1 = 4.
+              Average: 4/3 ≈ 1.33 for each N–O bond.
+            </p>
+          </details>
+
+          <details>
+            <summary>Problem 2: Use MO theory to predict whether He2+ has a bond. What is its bond order?</summary>
+            <p>
+              He2+ has 3 electrons total. Fill: σ(1s) gets 2 (bonding) and σ*(1s) gets 1
+              (antibonding). Bond order = (2 − 1)/2 = 0.5, so it has a weak net bond.
+            </p>
+          </details>
+
+          <details>
+            <summary>Problem 3: Compare the bond order of O2, O2−, and O2+.</summary>
+            <p>
+              In the common MO picture, extra electrons go into antibonding π* orbitals. Adding an
+              electron (O2−) decreases bond order by 0.5 relative to O2; removing an electron (O2+)
+              increases bond order by 0.5. So O2+ &gt; O2 &gt; O2−.
+            </p>
+          </details>
+
+          <details>
+            <summary>Problem 4: What is the average C–C bond order in benzene?</summary>
+            <p>
+              Benzene’s C–C bonds are equivalent due to resonance. In a simple resonance average,
+              each C–C bond has bond order 1.5.
+            </p>
+          </details>
+        </section>
+      </main>
+    </div>
+
+    <footer>
+      <p>
+        Tip: If you’re doing a course problem, use the model your course specifies (Lewis vs MO),
+        show your electron counting clearly, and state assumptions (especially MO ordering rules).
+      </p>
+    </footer>
+  </body>
+</html>
