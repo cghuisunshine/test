@@ -254,7 +254,7 @@
           monospace;
       }
 
-      pre.equation {
+      .equation {
         margin: 12px 0;
         padding: 12px 12px;
         border: 1px solid rgba(122, 162, 255, 0.25);
@@ -383,7 +383,7 @@
           border-color: #ddd !important;
           background: white !important;
         }
-        pre.equation {
+        .equation {
           border-color: #bbb !important;
           background: #fafafa !important;
         }
@@ -455,7 +455,7 @@
                   <span class="kicker">bra</span> <span class="math">\( \langle \phi| \)</span> is the Hermitian adjoint
                   of <span class="math">\( |\phi\rangle \)</span>:
                 </div>
-                <pre class="equation math">\[\langle \phi| = (|\phi\rangle)^\dagger.\]</pre>
+                <div class="equation math">\[\langle \phi| = (|\phi\rangle)^\dagger.\]</div>
                 <div class="copyHint">Double-click the equation to copy TeX</div>
               </div>
 
@@ -465,11 +465,11 @@
                   <p class="muted">
                     Physics convention: linear in the second slot and conjugate-linear in the first.
                   </p>
-                  <pre class="equation math">\[
+                  <div class="equation math">\[
 \langle \phi|(a\psi+\chi)\rangle = a\langle \phi|\psi\rangle+\langle \phi|\chi\rangle,\quad
 \langle \phi|\psi\rangle = \langle \psi|\phi\rangle^*,\quad
 \langle \psi|\psi\rangle\ge 0.
-\]</pre>
+\]</div>
                   <p>
                     <span class="kicker">Intuition View:</span> conjugation is what makes “length squared”
                     <span class="math">\( \langle \psi|\psi\rangle \)</span> real and nonnegative.
@@ -480,11 +480,11 @@
               <details class="section" open id="b-norm-normalization-orthogonality">
                 <summary>Norm, normalization, orthogonality <span class="hint">length and perpendicularity</span></summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[
+                  <div class="equation math">\[
 \|\psi\|=\sqrt{\langle \psi|\psi\rangle},\quad
 \text{normalized: }\langle \psi|\psi\rangle=1,\quad
 \text{orthogonal: }\langle \phi|\psi\rangle=0.
-\]</pre>
+\]</div>
                   <p>
                     <span class="kicker">Intuition View:</span> normalized means total probability is 1; orthogonal means
                     zero overlap.
@@ -506,7 +506,7 @@
               <details class="section" open id="c-core-identity">
                 <summary>Core identity <span class="hint">definition in one line</span></summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\langle \phi|\psi\rangle = (|\phi\rangle)^\dagger|\psi\rangle.\]</pre>
+                  <div class="equation math">\[\langle \phi|\psi\rangle = (|\phi\rangle)^\dagger|\psi\rangle.\]</div>
                   <p>
                     <span class="kicker">Intuition View:</span> “take the conjugate-transposed version of φ, then dot it
                     with ψ.”
@@ -517,7 +517,7 @@
               <details class="section" open id="c-component-form">
                 <summary>Component form (finite dimension) <span class="hint">sum of conjugate products</span></summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\langle \phi|\psi\rangle = \sum_i \phi_i^*\,\psi_i\quad(\text{orthonormal basis }|i\rangle).\]</pre>
+                  <div class="equation math">\[\langle \phi|\psi\rangle = \sum_i \phi_i^*\,\psi_i\quad(\text{orthonormal basis }|i\rangle).\]</div>
                   <div class="box trap">
                     <div class="label">Common Trap</div>
                     <div>
@@ -531,7 +531,7 @@
               <details class="section" open id="c-position-space">
                 <summary>Wavefunction overlap (continuous) <span class="hint">integral of φ*ψ</span></summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\langle \phi|\psi\rangle = \int \phi(x)^*\,\psi(x)\,dx,\quad \psi(x)=\langle x|\psi\rangle.\]</pre>
+                  <div class="equation math">\[\langle \phi|\psi\rangle = \int \phi(x)^*\,\psi(x)\,dx,\quad \psi(x)=\langle x|\psi\rangle.\]</div>
                   <p class="muted">
                     Assumptions: <span class="math">\( \int |x\rangle\langle x|dx = I \)</span> and
                     <span class="math">\( \langle x|x'\rangle = \delta(x-x') \)</span>.
@@ -542,11 +542,11 @@
               <details class="section" open id="c-born-rule">
                 <summary>Born rule for a projector outcome |φ⟩ <span class="hint">probability from overlap</span></summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[
+                  <div class="equation math">\[
 P_\phi = |\phi\rangle\langle \phi|,\quad
 p(\phi|\psi)=\langle \psi|P_\phi|\psi\rangle = |\langle \phi|\psi\rangle|^2
 \quad(\langle \phi|\phi\rangle=1).
-\]</pre>
+\]</div>
                   <p>
                     <span class="kicker">Intuition View:</span> amplitude is “how much φ is inside ψ”; squaring gives the
                     probability of getting “φ” when you measure that yes/no question.
@@ -557,7 +557,7 @@ p(\phi|\psi)=\langle \psi|P_\phi|\psi\rangle = |\langle \phi|\psi\rangle|^2
               <details class="section" open id="c-completeness">
                 <summary>Completeness &amp; probabilities sum to 1 <span class="hint">resolution of identity</span></summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\sum_i |i\rangle\langle i| = I \quad\Rightarrow\quad \sum_i |\langle i|\psi\rangle|^2 = 1\ \ (\langle \psi|\psi\rangle=1).\]</pre>
+                  <div class="equation math">\[\sum_i |i\rangle\langle i| = I \quad\Rightarrow\quad \sum_i |\langle i|\psi\rangle|^2 = 1\ \ (\langle \psi|\psi\rangle=1).\]</div>
                 </div>
               </details>
             </div>
@@ -576,17 +576,17 @@ p(\phi|\psi)=\langle \psi|P_\phi|\psi\rangle = |\langle \phi|\psi\rangle|^2
                   <div class="steps">
                     <div class="step">
                       <div class="kicker">Step 1 (insert identity)</div>
-                      <pre class="equation math">\[1=\langle \psi|\psi\rangle = \langle \psi|I|\psi\rangle.\]</pre>
+                      <div class="equation math">\[1=\langle \psi|\psi\rangle = \langle \psi|I|\psi\rangle.\]</div>
                     </div>
                     <div class="step">
                       <div class="kicker">Step 2 (use completeness)</div>
-                      <pre class="equation math">\[\langle \psi|I|\psi\rangle = \left\langle \psi\left|\sum_i |i\rangle\langle i|\right|\psi\right\rangle
-= \sum_i \langle \psi|i\rangle\langle i|\psi\rangle.\]</pre>
+                      <div class="equation math">\[\langle \psi|I|\psi\rangle = \left\langle \psi\left|\sum_i |i\rangle\langle i|\right|\psi\right\rangle
+= \sum_i \langle \psi|i\rangle\langle i|\psi\rangle.\]</div>
                     </div>
                     <div class="step">
                       <div class="kicker">Step 3 (conjugate symmetry)</div>
-                      <pre class="equation math">\[\langle \psi|i\rangle = \langle i|\psi\rangle^* \quad\Rightarrow\quad
-\sum_i \langle i|\psi\rangle^*\langle i|\psi\rangle = \sum_i |\langle i|\psi\rangle|^2.\]</pre>
+                      <div class="equation math">\[\langle \psi|i\rangle = \langle i|\psi\rangle^* \quad\Rightarrow\quad
+\sum_i \langle i|\psi\rangle^*\langle i|\psi\rangle = \sum_i |\langle i|\psi\rangle|^2.\]</div>
                     </div>
                   </div>
                   <p>
@@ -599,7 +599,7 @@ p(\phi|\psi)=\langle \psi|P_\phi|\psi\rangle = |\langle \phi|\psi\rangle|^2
               <details class="section" open id="d-cauchy-schwarz">
                 <summary>Key bound: Cauchy–Schwarz <span class="hint">why probabilities ≤ 1</span></summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[|\langle \phi|\psi\rangle| \le \|\phi\|\,\|\psi\|.\]</pre>
+                  <div class="equation math">\[|\langle \phi|\psi\rangle| \le \|\phi\|\,\|\psi\|.\]</div>
                   <p>
                     <span class="kicker">Intuition View:</span> overlap can’t exceed perfect alignment; for normalized
                     states this means <span class="math">\( |\langle \phi|\psi\rangle|\le 1 \)</span>.
@@ -619,14 +619,14 @@ p(\phi|\psi)=\langle \psi|P_\phi|\psi\rangle = |\langle \phi|\psi\rangle|^2
                   <span class="math">\( |\psi\rangle=(|0\rangle+|1\rangle)/\sqrt{2} \)</span>,
                   <span class="math">\( |\phi\rangle=|0\rangle \)</span>.
                 </div>
-                <pre class="equation math">\[
+                <div class="equation math">\[
 \langle \phi|\psi\rangle
 = \langle 0|\frac{|0\rangle+|1\rangle}{\sqrt{2}}
 = \frac{\langle 0|0\rangle+\langle 0|1\rangle}{\sqrt{2}}
 = \frac{1}{\sqrt{2}},
 \quad
 p=\left|\langle \phi|\psi\rangle\right|^2=\frac{1}{2}.
-\]</pre>
+\]</div>
                 <div class="muted"><span class="kicker">Intuition View:</span> ψ is “half |0⟩, half |1⟩.”</div>
               </div>
 
@@ -635,13 +635,13 @@ p=\left|\langle \phi|\psi\rangle\right|^2=\frac{1}{2}.
                 <div>
                   If <span class="math">\( |\psi'\rangle=e^{i\theta}|\psi\rangle \)</span> then probabilities don’t change:
                 </div>
-                <pre class="equation math">\[\left|\langle \phi|\psi'\rangle\right|^2=\left|e^{i\theta}\langle \phi|\psi\rangle\right|^2=\left|\langle \phi|\psi\rangle\right|^2.\]</pre>
+                <div class="equation math">\[\left|\langle \phi|\psi'\rangle\right|^2=\left|e^{i\theta}\langle \phi|\psi\rangle\right|^2=\left|\langle \phi|\psi\rangle\right|^2.\]</div>
               </div>
 
               <div class="box example">
                 <div class="label">Example 3 — Continuous overlap</div>
                 <div>Given normalized wavefunctions <span class="math">\( \phi(x),\psi(x) \)</span>:</div>
-                <pre class="equation math">\[\langle \phi|\psi\rangle = \int_{-\infty}^{\infty} \phi(x)^*\,\psi(x)\,dx.\]</pre>
+                <div class="equation math">\[\langle \phi|\psi\rangle = \int_{-\infty}^{\infty} \phi(x)^*\,\psi(x)\,dx.\]</div>
                 <div class="muted">
                   <span class="kicker">Intuition View:</span> if the “clouds” are separated in x, the overlap is small.
                 </div>
@@ -790,12 +790,12 @@ p=\left|\langle \phi|\psi\rangle\right|^2=\frac{1}{2}.
       }
 
       function prepareCopyAndMath() {
-        const candidates = document.querySelectorAll(".math, pre.equation, pre.theorem");
+        const candidates = document.querySelectorAll(".math, .equation, .theorem");
         for (const el of candidates) {
           const raw = el.textContent || "";
           const fixed = fixTeXEscapes(raw);
           el.dataset.copy = fixed;
-          if (el.classList.contains("math") || el.tagName === "PRE") {
+          if (el.classList.contains("math") || el.classList.contains("equation") || el.classList.contains("theorem")) {
             el.textContent = fixed;
           }
         }
@@ -888,7 +888,7 @@ p=\left|\langle \phi|\psi\rangle\right|^2=\frac{1}{2}.
       }
 
       document.addEventListener("dblclick", (e) => {
-        const target = e.target && e.target.closest ? e.target.closest(".math, pre.equation, pre.theorem") : null;
+        const target = e.target && e.target.closest ? e.target.closest(".math, .equation, .theorem") : null;
         if (!target) return;
         copyText(target.dataset.copy || target.textContent || "");
       });
