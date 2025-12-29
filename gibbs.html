@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gibbs Free Energy — Study Page</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#111827;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#60a5fa;
+      --border:#233044;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.55;background:var(--bg);color:var(--text)}
+    code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+
+    .topbar{position:sticky;top:0;z-index:50;display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(17,24,39,.92);border-bottom:1px solid var(--border)}
+    .brand{min-width:0}
+    .brand .title{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .brand .subtitle{color:var(--muted);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .btn{appearance:none;border:1px solid var(--border);background:rgba(15,23,42,.9);color:var(--text);padding:8px 10px;border-radius:999px;font-size:.9rem;cursor:pointer}
+    .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+    .layout{min-height:calc(100vh - 52px);display:flex}
+    .sidebar{width:320px;max-width:88vw;border-right:1px solid var(--border);background:rgba(15,23,42,.75);padding:12px;overflow:auto}
+    .sidebar.hidden{display:none}
+    .search label{display:block;color:var(--muted);font-size:.86rem;margin:6px 2px}
+    .search .row{display:flex;gap:8px;align-items:center}
+    .search input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(17,24,39,.75);color:var(--text);outline:none}
+    .search button{border-radius:12px;padding:10px 12px;border:1px solid var(--border);background:rgba(17,24,39,.75);color:var(--text);cursor:pointer}
+
+    .toc h2{font-size:1rem;margin:10px 2px 8px}
+    .toc ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+    .toc a{display:block;text-decoration:none;padding:9px 10px;border:1px solid rgba(35,48,68,.85);border-radius:12px;background:rgba(17,24,39,.55);color:var(--text)}
+    .toc a.active{border-color:rgba(96,165,250,.95)}
+    .toc li.hidden{display:none}
+
+    .main{flex:1;min-width:0;overflow:auto;padding:14px 14px 48px}
+    .wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+
+    details.section{border:1px solid var(--border);background:rgba(17,24,39,.66);border-radius:16px;overflow:hidden}
+    details.section > summary{cursor:pointer;list-style:none;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(35,48,68,.55);user-select:none}
+    details.section > summary::-webkit-details-marker{display:none}
+    .sum-left{display:flex;align-items:center;gap:10px;min-width:0}
+    .badge{flex:0 0 auto;font-size:.78rem;border:1px solid rgba(96,165,250,.55);color:var(--accent);padding:2px 8px;border-radius:999px}
+    .sum-title{font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .section-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px}
+    .section-body h3{margin:8px 0 0 0;font-size:1.02rem}
+    .section-body h4{margin:6px 0 0 0;font-size:.98rem}
+    .muted{color:var(--muted)}
+
+    .box{border:1px solid rgba(35,48,68,.85);border-radius:14px;background:rgba(15,23,42,.70);padding:10px 12px}
+    .boxtitle{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:6px}
+    .pill{font-size:.75rem;padding:2px 8px;border-radius:999px;border:1px solid rgba(148,163,184,.35);color:var(--muted)}
+    .definition{border-color:rgba(52,211,153,.35)}
+    .equation{border-color:rgba(96,165,250,.35)}
+    .derivation{border-color:rgba(167,139,250,.35)}
+    .example{border-color:rgba(251,191,36,.35)}
+    .trap{border-color:rgba(248,113,113,.40)}
+    .checklist{border-color:rgba(96,165,250,.35)}
+    pre[data-copy]{margin:8px 0 0 0;padding:10px;border-radius:12px;border:1px dashed rgba(148,163,184,.35);background:rgba(2,6,23,.55);overflow:auto;white-space:pre-wrap;word-break:break-word}
+    .math{font-variant-ligatures:none}
+    .kvs{display:grid;grid-template-columns:180px 1fr;gap:6px 10px}
+    .k{color:var(--muted)}
+    .v{min-width:0}
+
+    .hl{box-shadow:0 0 0 2px rgba(96,165,250,.22) inset;border-radius:10px}
+
+    .callout{border-left:3px solid rgba(96,165,250,.6);padding-left:10px}
+    .tight p{margin:.35rem 0}
+    ul{margin:.35rem 0 .35rem 1.2rem}
+    ol{margin:.35rem 0 .35rem 1.2rem}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 900px){ .two{grid-template-columns:1fr} }
+    @media (max-width: 860px){ .sidebar{width:300px} }
+
+    @media print{
+      .topbar,.sidebar{display:none !important}
+      body{background:#fff;color:#000}
+      details.section{break-inside:avoid}
+      pre[data-copy]{border:1px solid #999;background:#fff}
+    }
+  </style>
+
+  <!--
+  ====================================================
+  PART A — CANONICAL TUTORIAL (MARKDOWN)
+  ====================================================
+
+  # Gibbs Free Energy (G)
+
+  ## GLOBAL RULES (apply everywhere)
+  - For every “why” question: explain twice:
+    - Math View: equations, limiting cases, scaling, units, and proofs
+    - Intuition View: physical picture and plain-language reasoning
+  - When introducing an equation: state assumptions + where it comes from (short roadmap here; full derivation in Section D).
+
+  ## A) Big Picture & Origin
+  **What it is:** Gibbs free energy \(G\) is a thermodynamic potential designed for systems that exchange heat and do pressure–volume work with an environment held at (approximately) constant temperature \(T\) and pressure \(P\).
+  - Math View: \(G = H - TS = U + PV - TS\). At fixed \(T,P\), the equilibrium state minimizes \(G\).
+  - Intuition View: It measures “how much change can still happen” when nature is constrained by constant temperature and pressure (typical lab conditions).
+
+  **Why it was introduced historically:** To predict chemical and phase equilibrium under laboratory conditions without tracking every microscopic detail.
+  - Math View: It is the Legendre transform of \(U(S,V,\{n_i\})\) that replaces natural variables \((S,V)\) with \((T,P)\).
+  - Intuition View: In the lab we control \(T\) and \(P\), not \(S\) and \(V\). \(G\) is the energy bookkeeping that matches what we can hold fixed.
+
+  **What problem it solves:** Predicts spontaneity direction and equilibrium composition at constant \(T,P\), and relates directly to measurable quantities like equilibrium constants and cell potentials.
+  - Math View: For a process at fixed \(T,P\) with only \(PV\) work, spontaneity corresponds to \(\Delta G < 0\), equilibrium to \(\Delta G = 0\).
+  - Intuition View: A negative \(\Delta G\) means the “drive” to rearrange matter (increase total entropy of universe) is strong enough under those constraints.
+
+  **What earlier ideas it extends/unifies:** Links the First Law (energy) and Second Law (entropy) into a single criterion under constant \(T,P\).
+  - Math View: Derived from \(dU = TdS - PdV + \sum_i \mu_i\,dn_i\) and \(dS_{\text{univ}} \ge 0\).
+  - Intuition View: Energy conservation alone cannot tell direction; entropy alone ignores energy costs. \(G\) combines both.
+
+  ## B) Core Concepts & Definitions
+  ### Internal energy \(U\)
+  - Definition: Total energy content; state function.
+  - Meaning: Microscopic kinetic + potential energies.
+  - Units: J (or J/mol in molar form).
+  - Validity: Equilibrium states; simple compressible system when using \(TdS-PdV\).
+
+  ### Enthalpy \(H\)
+  - Definition: \(H = U + PV\).
+  - Meaning: Convenient for constant-pressure heating; includes “flow work”.
+  - Units: J.
+  - Validity: Any state function; especially useful when pressure is controlled.
+
+  ### Entropy \(S\)
+  - Definition: State function; in reversible heat transfer \(dS = \delta q_{\text{rev}}/T\).
+  - Meaning: Measures dispersal of energy / number of accessible microstates.
+  - Units: J/K.
+  - Validity: State function for equilibrium; Second Law: \(dS_{\text{univ}} \ge 0\).
+
+  ### Gibbs free energy \(G\)
+  - Definition: \(G = H - TS = U + PV - TS\).
+  - Meaning: “Available” energy to drive change at constant \(T,P\).
+  - Units: J; molar \(g\) in J/mol.
+  - Validity: Most powerful as a criterion for spontaneity/equilibrium at fixed \(T,P\) with only \(PV\) work.
+
+  ### Chemical potential \(\mu_i\)
+  - Definition: \(\mu_i = \left(\frac{\partial G}{\partial n_i}\right)_{T,P,n_{j\ne i}}\).
+  - Meaning: Free-energy “cost” of adding species \(i\); drives diffusion and reaction.
+  - Units: J/mol.
+  - Validity: Mixtures at equilibrium; depends on \(T,P,\) composition.
+
+  ### Reaction extent \(\xi\)
+  - Definition: \(dn_i = \nu_i\,d\xi\) for stoichiometric coefficients \(\nu_i\).
+  - Meaning: Tracks progress of reaction with one parameter.
+  - Units: mol.
+
+  ## C) Equations, Laws, or Theorems
+  ### (1) Definition
+  \[
+  G = H - TS = U + PV - TS
+  \]
+  Symbols: \(U\) internal energy, \(H\) enthalpy, \(P\) pressure, \(V\) volume, \(T\) temperature, \(S\) entropy.
+  Conditions: State functions for equilibrium states; \(T\) in K.
+  Interpretation: Balances enthalpic “energy” and entropic “spreading” (weighted by \(T\)).
+  Roadmap: Legendre transforms from the fundamental equation \(U(S,V,\{n_i\})\).
+  Sanity: Units J; \(TS\) has units J because \(T\)[K]·\(S\)[J/K] = J. Special case: at \(T=0\), \(G=H\).
+
+  ### (2) Differential form (simple compressible system, only PV work)
+  \[
+  dG = -S\,dT + V\,dP + \sum_i \mu_i\,dn_i
+  \]
+  Conditions: Closed or open system; equilibrium; only \(PV\) work included; \(\mu_i\) well-defined.
+  Interpretation: At constant \(T,P\), \(dG = \sum_i \mu_i\,dn_i\). For fixed composition, \(dG = -S\,dT + V\,dP\).
+  Roadmap: Start with \(dU = TdS - PdV + \sum_i \mu_i dn_i\), define \(G = U+PV-TS\), differentiate.
+
+  ### (3) Spontaneity at constant T,P (PV-work only)
+  \[
+  \Delta G \le 0 \quad (\text{spontaneous});\qquad \Delta G = 0 \quad (\text{equilibrium})
+  \]
+  Conditions: System in contact with \(T,P\) reservoirs; only \(PV\) work; no other generalized work.
+  Interpretation: Nature moves “downhill” in \(G\) until a minimum.
+  Roadmap: Combine First+Second Laws; show \(\Delta G = -T\Delta S_{\text{univ}}\) at constant \(T,P\).
+
+  ### (4) Reaction free energy and reaction quotient
+  \[
+  \Delta_r G = \Delta_r G^\circ + RT\ln Q
+  \]
+  Symbols: \(R\) gas constant, \(Q\) reaction quotient built from activities \(a_i\), \(\circ\) standard state.
+  Conditions: Ideal or nonideal handled via activities; \(T\) constant.
+  Interpretation: Direction depends on \(Q\) relative to equilibrium constant \(K\).
+  Roadmap: Use \(\mu_i = \mu_i^\circ + RT\ln a_i\), then \(\Delta_r G = \sum_i \nu_i\mu_i\).
+
+  ### (5) Equilibrium constant relation
+  \[
+  \Delta_r G^\circ = -RT\ln K
+  \]
+  Conditions: Same standard state used in defining \(K\); temperature \(T\).
+  Interpretation: Thermodynamics sets \(K\); large \(K\) implies strongly negative \(\Delta_r G^\circ\).
+  Sanity: If \(\Delta_r G^\circ < 0\), then \(\ln K>0\) so \(K>1\).
+
+  ### (6) Maximum non-PV work at constant T,P (reversible)
+  \[
+  w_{\text{nonPV,max}} = -\Delta G
+  \]
+  Conditions: Constant \(T,P\); reversible; separate out \(PV\) work; includes electrical work, etc.
+  Interpretation: \(G\) is the “currency” for useful work under these constraints.
+
+  ### (7) Temperature dependence (Gibbs–Helmholtz forms)
+  \[
+  \left(\frac{\partial (\Delta G/T)}{\partial T}\right)_P = -\frac{\Delta H}{T^2},\qquad
+  \left(\frac{\partial \Delta G}{\partial T}\right)_P = -\Delta S
+  \]
+  Conditions: Pressure held; composition fixed appropriately.
+  Interpretation: Slope of \(\Delta G(T)\) is set by entropy; curvature tied to heat capacity via \(\Delta H(T)\).
+
+  ## D) Derivations or Proofs
+  ### D1) Derive dG
+  Assumptions: simple compressible system; equilibrium; only PV work; reversible differential for fundamental relation.
+  Steps:
+  1. Fundamental relation: \(dU = TdS - PdV + \sum_i \mu_i dn_i\).
+  2. Define \(G = U + PV - TS\).
+  3. Differentiate: \(dG = dU + P\,dV + V\,dP - T\,dS - S\,dT\).
+  4. Substitute \(dU\): \(dG = (TdS - PdV + \sum_i \mu_i dn_i) + P\,dV + V\,dP - T\,dS - S\,dT\).
+  5. Cancel \(TdS\) and \(\pm PdV\): \(dG = -S\,dT + V\,dP + \sum_i \mu_i dn_i\).
+  Checks: units match; at constant \(T,P\), \(dG = \sum_i \mu_i dn_i\).
+  Intuition View: Switching from \(U(S,V)\) to \(G(T,P)\) trades “entropy and volume bookkeeping” for “temperature and pressure bookkeeping”.
+
+  ### D2) Spontaneity criterion at constant T,P: ΔG = −TΔSuniv
+  Assumptions: system + surroundings (reservoirs) form an isolated universe; surroundings at constant \(T,P\); only PV work.
+  Steps (sketch to full):
+  1. Second Law: \(\Delta S_{\text{univ}} = \Delta S_{\text{sys}} + \Delta S_{\text{surr}} \ge 0\).
+  2. At constant \(T\) reservoir: \(\Delta S_{\text{surr}} = -\frac{q_{\text{sys}}}{T}\).
+  3. First Law with PV work only: \(\Delta U = q_{\text{sys}} + w_{\text{PV}} = q_{\text{sys}} - P\Delta V\) (constant external \(P\)).
+  4. Rearrange: \(q_{\text{sys}} = \Delta U + P\Delta V\).
+  5. Plug into \(\Delta S_{\text{surr}}\): \(\Delta S_{\text{surr}} = -(\Delta U + P\Delta V)/T\).
+  6. Then \(T\Delta S_{\text{univ}} = T\Delta S_{\text{sys}} - \Delta U - P\Delta V\).
+  7. Recognize \(\Delta G = \Delta U + P\Delta V - T\Delta S_{\text{sys}}\) at constant \(T,P\).
+  8. Therefore \(\Delta G = -T\Delta S_{\text{univ}} \le 0\) for spontaneous.
+  Checks: if \(\Delta S_{\text{univ}}>0\), then \(\Delta G<0\).
+  Intuition View: \(G\) is just a repackaging of “total entropy of the universe increases” into a quantity you can compute from system properties when \(T,P\) are fixed.
+
+  ### D3) Derive ΔrG = ΔrG° + RT ln Q and ΔrG° = −RT ln K
+  Assumptions: mixture described by activities \(a_i\); chemical potentials \(\mu_i\) exist; temperature fixed.
+  Steps:
+  1. Chemical potential form: \(\mu_i = \mu_i^\circ + RT\ln a_i\).
+  2. Reaction free energy: \(\Delta_r G = \sum_i \nu_i \mu_i\).
+  3. Substitute: \(\Delta_r G = \sum_i \nu_i\mu_i^\circ + RT\sum_i \nu_i \ln a_i\).
+  4. Define \(\Delta_r G^\circ = \sum_i \nu_i\mu_i^\circ\).
+  5. Combine logs: \(\sum_i \nu_i \ln a_i = \ln\left(\prod_i a_i^{\nu_i}\right) = \ln Q\).
+  6. Hence \(\Delta_r G = \Delta_r G^\circ + RT\ln Q\).
+  7. At equilibrium: \(\Delta_r G = 0\) and \(Q=K\), so \(\Delta_r G^\circ = -RT\ln K\).
+  Checks: dimensionless inside ln (activities).
+  Intuition View: \(Q\) tells “how product-heavy” the current mixture is; the \(RT\ln Q\) term is the entropy-of-mixing/logarithmic penalty that shifts the driving force as composition changes.
+
+  ## E) Worked Examples
+  ### Example 1 (easy): Find equilibrium temperature from ΔH and ΔS
+  Data: \(\Delta H = +6.01\text{ kJ/mol}\), \(\Delta S = +22.0\text{ J/(mol·K)}\).
+  Goal: temperature where \(\Delta G=0\).
+  Math View:
+  1. Use \(\Delta G = \Delta H - T\Delta S\).
+  2. Set 0 = ΔH − TΔS → \(T = \Delta H/\Delta S\).
+  3. Convert units: \(6.01\text{ kJ/mol}=6010\text{ J/mol}\).
+  4. \(T=6010/22.0 \approx 273\text{ K}\).
+  Intuition View: Above 273 K the entropy gain “wins” enough to overcome enthalpy cost, so melting becomes favorable.
+  Common mistake: forgetting kJ→J, or using °C in formulas.
+
+  ### Example 2 (medium): Compute K from ΔG°
+  Data: \(\Delta_r G^\circ = -5.70\text{ kJ/mol}\) at \(T=298\text{ K}\).
+  Math View:
+  1. \(K=\exp(-\Delta_r G^\circ/RT)\).
+  2. Convert: \(-5.70\text{ kJ/mol}=-5700\text{ J/mol}\).
+  3. \(RT \approx (8.314)(298)=2477\text{ J/mol}\).
+  4. \(-\Delta G^\circ/RT = 5700/2477 \approx 2.30\) so \(K\approx e^{2.30}\approx 10.0\).
+  Intuition View: A modestly negative ΔG° corresponds to a roughly “ten-to-one” equilibrium bias because ln K scales the driving force.
+
+  ### Example 3 (harder): Direction under nonstandard conditions using Q
+  Reaction: \(aA + bB \rightleftharpoons cC + dD\).
+  Given: \(\Delta_r G^\circ = +3.0\text{ kJ/mol}\), \(T=298\text{ K}\), and current \(Q=0.010\).
+  Math View:
+  1. \(\Delta_r G = \Delta_r G^\circ + RT\ln Q\).
+  2. \(RT \approx 2477\text{ J/mol}\), \(\ln(0.010)=-4.605\).
+  3. \(RT\ln Q \approx 2477(-4.605)=-11400\text{ J/mol}=-11.4\text{ kJ/mol}\).
+  4. \(\Delta_r G \approx 3.0 - 11.4 = -8.4\text{ kJ/mol}\) so forward direction is spontaneous.
+  Intuition View: Even if the standard driving force is unfavorable, having “very few products” (tiny Q) makes producing products entropically and chemically favorable right now.
+  Common mistake: confusing Q with K, or using concentrations directly when activities/partial pressures are required.
+
+  ### Example 4 (application): Electrochemistry link
+  For a cell: \( \Delta G^\circ = -nF E^\circ \).
+  If \(n=2\), \(E^\circ=1.10\text{ V}\):
+  Math View: \(\Delta G^\circ = -(2)(96485)(1.10)\approx -212\text{ kJ/mol}\), then \(K=\exp(-\Delta G^\circ/RT)\) is enormous.
+  Intuition View: A strong positive cell potential means a huge driving force; equilibrium lies overwhelmingly toward products.
+
+  ## F) Common Questions & Misconceptions
+  1) “If ΔG<0, is the reaction fast?”
+  - Math View: ΔG is thermodynamic; rate depends on activation free energy ΔG‡ and kinetics.
+  - Intuition View: ΔG tells where the hill ends; kinetics tells how tall the hill is.
+
+  2) “Does a catalyst change ΔG or K?”
+  - Math View: Catalyst changes pathway and rate constants, not state functions; ΔG and K unchanged.
+  - Intuition View: It lowers the barrier, not the start/end heights.
+
+  3) “Why does temperature matter so much?”
+  - Math View: \(\Delta G=\Delta H - T\Delta S\); increasing T magnifies entropy term.
+  - Intuition View: At higher T, “disorder preference” is priced higher.
+
+  4) “What is the difference between ΔG and ΔG°?”
+  - Math View: ΔG includes current composition via \(RT\ln Q\); ΔG° is the reference (standard state).
+  - Intuition View: ΔG° is a baseline score; ΔG is the live score given current mixture.
+
+  5) “Can ΔG be positive at equilibrium?”
+  - Math View: For the reaction as written, at equilibrium \(\Delta_r G=0\). Individual species may have positive μ.
+  - Intuition View: Equilibrium is balance point; no net push either way.
+
+  ## G) Exam Strategy (Short & Focused)
+  - Common tasks: compute ΔG from ΔH,ΔS; compute K from ΔG°; determine direction from Q; connect ΔG° to E°.
+  - What examiners check: correct conditions (constant T,P), correct use of standard state, unit discipline, log handling.
+  - Trigger words:
+    - “equilibrium constant” → use \(\Delta G^\circ=-RT\ln K\)
+    - “nonstandard” → use \(\Delta G=\Delta G^\circ+RT\ln Q\)
+    - “maximum useful work” → \(-\Delta G\) at constant T,P
+  - Traps: mixing kJ and J; using °C; forgetting Q uses activities/partial pressures; claiming ΔG<0 implies fast.
+
+  ## H) Summary & Connections
+  - Summary: \(G\) is the potential that decreases at constant \(T,P\) for PV-only work; equilibrium minimizes \(G\).
+  - Connections: Helmholtz free energy \(A=U-TS\) (constant \(T,V\)); chemical potential; phase equilibrium; electrochemistry.
+  - Applications: predicting spontaneity, equilibrium composition, solubility, biochemical energetics, battery feasibility.
+  - Where it appears: general chemistry thermo, physical chemistry, materials, biochem, electrochem, phase diagrams.
+  -->
+
+  <script id="studyPageStructure" type="application/json">
+{
+  "title": "Gibbs Free Energy",
+  "subject": "chemistry",
+  "sections": [
+    {
+      "id": "origin",
+      "title": "Big Picture & Origin",
+      "subsections": [
+        {"id":"origin-what", "title":"What G Is"},
+        {"id":"origin-why", "title":"Why It Was Introduced"},
+        {"id":"origin-problem", "title":"What Problem It Solves"},
+        {"id":"origin-links", "title":"What It Unifies"}
+      ],
+      "keyConcepts": ["thermodynamic potential", "Legendre transform", "constant T,P criterion"],
+      "keyEquationsOrTheorems": ["G = H − TS", "equilibrium minimizes G (T,P fixed)"]
+    },
+    {
+      "id": "concepts",
+      "title": "Core Concepts & Definitions",
+      "subsections": [
+        {"id":"concepts-UHS", "title":"U, H, S"},
+        {"id":"concepts-G", "title":"Gibbs Free Energy G"},
+        {"id":"concepts-mu", "title":"Chemical Potential μ"},
+        {"id":"concepts-xi", "title":"Extent of Reaction ξ"}
+      ],
+      "keyConcepts": ["state function", "entropy", "enthalpy", "chemical potential", "activities"],
+      "keyEquationsOrTheorems": ["μi = (∂G/∂ni)T,P", "dn_i = ν_i dξ"]
+    },
+    {
+      "id": "equations",
+      "title": "Equations, Laws, or Theorems",
+      "subsections": [
+        {"id":"eq-def", "title":"Definitions and Forms"},
+        {"id":"eq-diff", "title":"Differential Form dG"},
+        {"id":"eq-spont", "title":"Spontaneity at Constant T,P"},
+        {"id":"eq-QK", "title":"Q, K, and ΔrG"},
+        {"id":"eq-work", "title":"Maximum Useful Work"},
+        {"id":"eq-Tdep", "title":"Temperature Dependence"}
+      ],
+      "keyConcepts": ["spontaneity vs equilibrium", "reaction quotient", "standard state"],
+      "keyEquationsOrTheorems": ["dG = −S dT + V dP + Σ μi dni", "ΔrG = ΔrG° + RT ln Q", "ΔrG° = −RT ln K", "w_nonPV,max = −ΔG"]
+    },
+    {
+      "id": "derivations",
+      "title": "Derivations or Proofs",
+      "subsections": [
+        {"id":"der-dG", "title":"Derive dG"},
+        {"id":"der-criterion", "title":"Derive ΔG = −TΔSuniv (T,P fixed)"},
+        {"id":"der-QK", "title":"Derive ΔrG = ΔrG° + RT ln Q and ΔrG° = −RT ln K"}
+      ],
+      "keyConcepts": ["First Law", "Second Law", "chemical potential"],
+      "keyEquationsOrTheorems": ["ΔG = −TΔSuniv (under stated conditions)"]
+    },
+    {
+      "id": "examples",
+      "title": "Worked Examples",
+      "subsections": [
+        {"id":"ex-Teq", "title":"Find T Where ΔG=0"},
+        {"id":"ex-K", "title":"Compute K from ΔG°"},
+        {"id":"ex-direction", "title":"Direction from Q"},
+        {"id":"ex-electro", "title":"Electrochemistry Link"}
+      ],
+      "keyConcepts": ["unit discipline", "logarithms", "Q vs K"],
+      "keyEquationsOrTheorems": ["ΔG = ΔH − TΔS", "K = exp(−ΔG°/RT)", "ΔG = ΔG° + RT ln Q", "ΔG° = −nFE°"]
+    },
+    {
+      "id": "misconceptions",
+      "title": "Common Questions & Misconceptions",
+      "subsections": [
+        {"id":"mis-speed", "title":"Thermodynamics vs Kinetics"},
+        {"id":"mis-catalyst", "title":"Catalysts and ΔG"},
+        {"id":"mis-standard", "title":"ΔG vs ΔG°"},
+        {"id":"mis-temp", "title":"Why Temperature Matters"}
+      ],
+      "keyConcepts": ["state function", "activation energy/free energy", "standard states"],
+      "keyEquationsOrTheorems": ["ΔG° = −RT ln K", "ΔG = ΔG° + RT ln Q"]
+    },
+    {
+      "id": "exam",
+      "title": "Exam Strategy",
+      "subsections": [
+        {"id":"exam-triggers", "title":"Trigger Words"},
+        {"id":"exam-checklist", "title":"Mental Checklist"},
+        {"id":"exam-traps", "title":"Common Traps"}
+      ],
+      "keyConcepts": ["conditions of validity", "dimensional analysis"],
+      "keyEquationsOrTheorems": ["choose correct ΔG relation for context"]
+    },
+    {
+      "id": "summary",
+      "title": "Summary & Connections",
+      "subsections": [
+        {"id":"sum-core", "title":"One-Paragraph Summary"},
+        {"id":"sum-connections", "title":"Connections"},
+        {"id":"sum-apps", "title":"Applications"}
+      ],
+      "keyConcepts": ["Helmholtz free energy", "chemical equilibrium", "phase equilibrium", "electrochemistry"],
+      "keyEquationsOrTheorems": ["A = U − TS", "G = H − TS"]
+    }
+  ]
+}
+  </script>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]'], ['$$','$$']]
+      },
+      options: {
+        skipHtmlTags: ['script','noscript','style','textarea']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="title">Gibbs Free Energy</div>
+      <div class="subtitle">Thermodynamics at constant temperature and pressure (chemistry focus)</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="btnToggleSidebar" type="button">Toggle Sidebar</button>
+      <button class="btn" id="btnExpandAll" type="button">Expand All</button>
+      <button class="btn" id="btnCollapseAll" type="button">Collapse All</button>
+      <button class="btn" id="btnPrint" type="button">Print</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar" aria-label="Table of contents">
+      <div class="search">
+        <label for="q">Search headings</label>
+        <div class="row">
+          <input id="q" type="search" placeholder="Search..." autocomplete="off" />
+          <button id="btnClear" type="button" aria-label="Clear search">✕</button>
+        </div>
+      </div>
+      <nav class="toc" aria-label="Contents">
+        <h2>Contents</h2>
+        <ul id="tocList">
+          <li data-toc-item><a data-toc-link href="#origin">A) Big Picture &amp; Origin</a></li>
+          <li data-toc-item><a data-toc-link href="#concepts">B) Core Concepts &amp; Definitions</a></li>
+          <li data-toc-item><a data-toc-link href="#equations">C) Equations, Laws, or Theorems</a></li>
+          <li data-toc-item><a data-toc-link href="#derivations">D) Derivations or Proofs</a></li>
+          <li data-toc-item><a data-toc-link href="#examples">E) Worked Examples</a></li>
+          <li data-toc-item><a data-toc-link href="#misconceptions">F) Common Questions &amp; Misconceptions</a></li>
+          <li data-toc-item><a data-toc-link href="#exam">G) Exam Strategy</a></li>
+          <li data-toc-item><a data-toc-link href="#summary">H) Summary &amp; Connections</a></li>
+        </ul>
+        <div class="muted" style="font-size:.86rem;margin:10px 2px">Tip: double-click equation blocks to copy TeX.</div>
+      </nav>
+    </aside>
+
+    <main class="main" id="main">
+      <div class="wrap">
+
+        <details class="section" id="origin" data-title="Big Picture & Origin" open>
+          <summary>
+            <span class="sum-left"><span class="badge">A</span><span class="sum-title">Big Picture &amp; Origin</span></span>
+            <span class="pill">Why G exists</span>
+          </summary>
+          <div class="section-body">
+            <div class="box tight">
+              <div class="boxtitle">Big idea <span class="pill">constant T,P</span></div>
+              <p><b>Gibbs free energy</b> <span class="math">\(G\)</span> is the thermodynamic potential that is most useful when the surroundings effectively hold <span class="math">\(T\)</span> and <span class="math">\(P\)</span> constant (typical chemistry lab conditions).</p>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>Define <span class="math">\(G = H - TS = U + PV - TS\)</span>. For a system that can exchange heat with a temperature reservoir and do only <span class="math">\(PV\)</span> work against a pressure reservoir, spontaneous change at fixed <span class="math">\(T,P\)</span> satisfies <span class="math">\(\Delta G \le 0\)</span>, and equilibrium satisfies <span class="math">\(\Delta G = 0\)</span>.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>At constant temperature and pressure, nature “wants” the total entropy of system + surroundings to increase. <span class="math">\(G\)</span> is a re-packaging of that rule into a quantity you can compute using system properties and tabulated data.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box tight">
+              <div class="boxtitle">Historical motivation <span class="pill">equilibrium prediction</span></div>
+              <p><b>What problem it solved:</b> predicting chemical equilibrium, phase equilibrium, and useful work under realistic constraints.</p>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>Thermodynamics starts naturally with <span class="math">\(U(S,V,\{n_i\})\)</span>. But experiments often control <span class="math">\(T\)</span> and <span class="math">\(P\)</span>, not <span class="math">\(S\)</span> and <span class="math">\(V\)</span>. Using a Legendre transform produces a potential with natural variables <span class="math">\((T,P,\{n_i\})\)</span>, namely <span class="math">\(G\)</span>.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>Instead of tracking “how much heat in a reversible sense” (<span class="math">\(S\)</span>) and the system’s volume, we switch to the knobs we can hold steady: temperature and pressure.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box tight">
+              <div class="boxtitle">What it extends/unifies <span class="pill">1st + 2nd laws</span></div>
+              <p><b>Key unification:</b> energy conservation (First Law) plus entropy production (Second Law) become one downhill criterion at fixed <span class="math">\(T,P\)</span>.</p>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>Under stated conditions, <span class="math">\(\Delta G = -T\Delta S_{\text{univ}}\)</span>. Since <span class="math">\(\Delta S_{\text{univ}}\ge 0\)</span>, we get <span class="math">\(\Delta G \le 0\)</span> for spontaneous change.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>“Downhill in <span class="math">\(G\)</span>” is another way to say “the universe’s entropy increases,” but written in a lab-friendly form.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="concepts" data-title="Core Concepts & Definitions">
+          <summary>
+            <span class="sum-left"><span class="badge">B</span><span class="sum-title">Core Concepts &amp; Definitions</span></span>
+            <span class="pill">what each symbol means</span>
+          </summary>
+          <div class="section-body">
+            <div class="box definition">
+              <div class="boxtitle">Definition: Gibbs free energy <span class="pill">state function</span></div>
+              <div class="kvs">
+                <div class="k">Precise definition</div>
+                <div class="v"><span class="math">\(G \equiv H - TS = U + PV - TS\)</span>.</div>
+                <div class="k">Plain-language</div>
+                <div class="v">A bookkeeping function that measures how “driving force” changes when temperature and pressure are held fixed.</div>
+                <div class="k">Logical/physical meaning</div>
+                <div class="v">At constant <span class="math">\(T,P\)</span> (and only <span class="math">\(PV\)</span> work), equilibrium corresponds to minimizing <span class="math">\(G\)</span>.</div>
+                <div class="k">Units</div>
+                <div class="v">J (or J/mol for molar Gibbs free energy).</div>
+                <div class="k">Validity conditions</div>
+                <div class="v">Most powerful as a criterion for processes at fixed <span class="math">\(T,P\)</span>; assumes you include only <span class="math">\(PV\)</span> work unless stated otherwise.</div>
+              </div>
+            </div>
+
+            <div class="box definition">
+              <div class="boxtitle">Definition: chemical potential <span class="pill">drives reaction &amp; diffusion</span></div>
+              <div class="kvs">
+                <div class="k">Precise definition</div>
+                <div class="v"><span class="math">\(\mu_i \equiv \left(\frac{\partial G}{\partial n_i}\right)_{T,P,n_{j\ne i}}\)</span>.</div>
+                <div class="k">Plain-language</div>
+                <div class="v">The free-energy “price” per mole of species <span class="math">\(i\)</span>.</div>
+                <div class="k">Physical meaning</div>
+                <div class="v">Species move or react in ways that tend to reduce the appropriate potential differences in <span class="math">\(\mu_i\)</span>.</div>
+                <div class="k">Units</div>
+                <div class="v">J/mol.</div>
+                <div class="k">Validity</div>
+                <div class="v">Well-defined for equilibrium states; in mixtures depends on composition via activities.</div>
+              </div>
+            </div>
+
+            <div class="box definition">
+              <div class="boxtitle">Definition: extent of reaction <span class="pill">one progress variable</span></div>
+              <div class="kvs">
+                <div class="k">Precise definition</div>
+                <div class="v">For reaction stoichiometry <span class="math">\(\sum_i \nu_i A_i = 0\)</span>, define <span class="math">\(dn_i = \nu_i\,d\xi\)</span>.</div>
+                <div class="k">Plain-language</div>
+                <div class="v">A single knob that measures how far the reaction has proceeded.</div>
+                <div class="k">Units</div>
+                <div class="v">mol.</div>
+                <div class="k">Why it helps</div>
+                <div class="v">It lets you write <span class="math">\(dG = \Delta_r G\,d\xi\)</span> at constant <span class="math">\(T,P\)</span>, linking reaction direction to the sign of <span class="math">\(\Delta_r G\)</span>.</div>
+              </div>
+            </div>
+
+            <div class="box tight">
+              <div class="boxtitle">“Why does the entropy term have T in it?” <span class="pill">why ×2</span></div>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>Entropy has units J/K, so to subtract it from an energy you must multiply by <span class="math">\(T\)</span> (K) to get J. Also, the reservoir relation <span class="math">\(\Delta S_{\text{surr}}=-q/T\)</span> makes <span class="math">\(T\)</span> the conversion factor between heat flow and entropy change.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>At higher temperature, the “preference” for spreading energy (entropy) matters more. The same entropy gain is a bigger deal at high <span class="math">\(T\)</span>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="section" id="equations" data-title="Equations, Laws, or Theorems">
+          <summary>
+            <span class="sum-left"><span class="badge">C</span><span class="sum-title">Equations, Laws, or Theorems</span></span>
+            <span class="pill">how to use G</span>
+          </summary>
+          <div class="section-body">
+
+            <div class="box equation">
+              <div class="boxtitle">Core definition <span class="pill">state function</span></div>
+              <div class="muted">Assumptions: equilibrium state functions; <span class="math">\(T\)</span> in kelvin.</div>
+              <pre class="equation math" data-copy data-tex="\\[G = H - TS = U + PV - TS\\]">\[G = H - TS = U + PV - TS\]</pre>
+              <div class="kvs" style="margin-top:8px">
+                <div class="k">Interpretation</div>
+                <div class="v">Balances enthalpy (energetic cost/benefit) against entropy (dispersal) weighted by <span class="math">\(T\)</span>.</div>
+                <div class="k">Sanity checks</div>
+                <div class="v">Units: <span class="math">\(TS\)</span> is J; special case <span class="math">\(T\to 0\)</span> gives <span class="math">\(G\to H\)</span>.</div>
+              </div>
+            </div>
+
+            <div class="box equation">
+              <div class="boxtitle">Differential form <span class="pill">simple compressible system</span></div>
+              <div class="muted">Assumptions: only pressure–volume work; equilibrium; chemical potentials exist.</div>
+              <pre class="equation math" data-copy data-tex="\\[dG = -S\\,dT + V\\,dP + \\sum_i \\mu_i\\,dn_i\\]">\[dG = -S\,dT + V\,dP + \sum_i \mu_i\,dn_i\]</pre>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>At constant <span class="math">\(T,P\)</span>, <span class="math">\(dG=\sum_i \mu_i\,dn_i\)</span>. For fixed composition, <span class="math">\(\left(\partial G/\partial T\right)_P=-S\)</span> and <span class="math">\(\left(\partial G/\partial P\right)_T=V\)</span>.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>If you heat the system, <span class="math">\(G\)</span> drops at a rate set by how much entropy it has. If you compress it (higher <span class="math">\(P\)</span>), <span class="math">\(G\)</span> rises proportionally to its volume.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box equation">
+              <div class="boxtitle">Spontaneity at constant T,P <span class="pill">criterion</span></div>
+              <div class="muted">Assumptions: system exchanges heat with a <span class="math">\(T\)</span> reservoir and does only <span class="math">\(PV\)</span> work against a <span class="math">\(P\)</span> reservoir.</div>
+              <pre class="equation math" data-copy data-tex="\\[\\Delta G \\le 0\\ \\text{(spontaneous)},\\qquad \\Delta G = 0\\ \\text{(equilibrium)}\\]">\[\Delta G \le 0\ \text{(spontaneous)},\qquad \Delta G = 0\ \text{(equilibrium)}\]</pre>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>Under these conditions, <span class="math">\(\Delta G = -T\Delta S_{\text{univ}}\)</span>. Since <span class="math">\(\Delta S_{\text{univ}}\ge 0\)</span>, spontaneous change implies <span class="math">\(\Delta G\le 0\)</span>.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>The system can lower <span class="math">\(G\)</span> by either reducing enthalpy (release heat) or by increasing entropy enough that the surroundings “approve” the change at that temperature.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box equation">
+              <div class="boxtitle">Composition dependence: Q and K <span class="pill">equilibrium</span></div>
+              <div class="muted">Assumptions: activities used (ideal gases/solutions are special cases); same standard state throughout.</div>
+              <pre class="equation math" data-copy data-tex="\\[\\Delta_r G = \\Delta_r G^\\circ + RT\\ln Q\\]">\[\Delta_r G = \Delta_r G^\circ + RT\ln Q\]</pre>
+              <pre class="equation math" data-copy data-tex="\\[\\Delta_r G^\\circ = -RT\\ln K\\]">\[\Delta_r G^\circ = -RT\ln K\]</pre>
+              <div class="kvs" style="margin-top:8px">
+                <div class="k">Symbols</div>
+                <div class="v"><span class="math">\(Q=\prod_i a_i^{\nu_i}\)</span> (dimensionless), <span class="math">\(R\)</span> gas constant, <span class="math">\(T\)</span> in K.</div>
+                <div class="k">Direction test</div>
+                <div class="v">If <span class="math">\(Q&lt;K\)</span> then <span class="math">\(\Delta_r G&lt;0\)</span> (forward). If <span class="math">\(Q&gt;K\)</span> then <span class="math">\(\Delta_r G&gt;0\)</span> (reverse).</div>
+              </div>
+            </div>
+
+            <div class="box equation">
+              <div class="boxtitle">Maximum useful (non-PV) work <span class="pill">reversible</span></div>
+              <div class="muted">Assumptions: constant <span class="math">\(T,P\)</span>; reversible; separate out <span class="math">\(PV\)</span> work.</div>
+              <pre class="equation math" data-copy data-tex="\\[w_{\\text{nonPV,max}} = -\\Delta G\\]">\[w_{\text{nonPV,max}} = -\Delta G\]</pre>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>For reversible processes, the Second Law is an equality, so the drop in <span class="math">\(G\)</span> is exactly the maximum work available beyond expansion/compression work.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p><span class="math">\(PV\)</span> work is “spent” just pushing the atmosphere back. The remaining drop in free energy is what you can turn into electrical work, shaft work, etc.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box equation">
+              <div class="boxtitle">Temperature dependence <span class="pill">Gibbs–Helmholtz</span></div>
+              <div class="muted">Assumptions: pressure held; composition fixed appropriately; equilibrium state functions.</div>
+              <pre class="equation math" data-copy data-tex="\\[\\left(\\frac{\\partial \\Delta G}{\\partial T}\\right)_P = -\\Delta S\\]">\[\left(\frac{\partial \Delta G}{\partial T}\right)_P = -\Delta S\]</pre>
+              <pre class="equation math" data-copy data-tex="\\[\\left(\\frac{\\partial (\\Delta G/T)}{\\partial T}\\right)_P = -\\frac{\\Delta H}{T^2}\\]">\[\left(\frac{\partial (\Delta G/T)}{\partial T}\right)_P = -\frac{\Delta H}{T^2}\]</pre>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>The slope of <span class="math">\(\Delta G(T)\)</span> is minus entropy change; this is a unit-consistent statement because <span class="math">\(S\)</span> is J/K, matching J per K.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>If a process increases entropy, raising <span class="math">\(T\)</span> makes it more favorable (more negative <span class="math">\(\Delta G\)</span>).</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </details>
+
+        <details class="section" id="derivations" data-title="Derivations or Proofs">
+          <summary>
+            <span class="sum-left"><span class="badge">D</span><span class="sum-title">Derivations or Proofs</span></span>
+            <span class="pill">step-by-step</span>
+          </summary>
+          <div class="section-body">
+
+            <div class="box derivation">
+              <div class="boxtitle">D1) Derive the differential form of G <span class="pill">Legendre transform</span></div>
+              <div class="muted">Assumptions: simple compressible system; only <span class="math">\(PV\)</span> work; equilibrium; reversible differential form used for the fundamental equation.</div>
+              <ol>
+                <li>
+                  <b>Start from the fundamental relation (definition-level result).</b>
+                  <div class="muted">For a simple compressible system with composition changes:</div>
+                  <pre class="math" data-copy data-tex="\\[dU = T\\,dS - P\\,dV + \\sum_i \\mu_i\\,dn_i\\]">\[dU = T\,dS - P\,dV + \sum_i \mu_i\,dn_i\]</pre>
+                  <div class="two">
+                    <div class="callout"><p><b>Math View</b> This is a differential statement of the First Law plus the definition of temperature and pressure as conjugate variables.</p></div>
+                    <div class="callout"><p><b>Intuition View</b> Energy changes via heat-like entropy changes, expansion work, and adding/removing matter.</p></div>
+                  </div>
+                </li>
+                <li>
+                  <b>Define Gibbs free energy.</b>
+                  <pre class="math" data-copy data-tex="\\[G \\equiv U + PV - TS\\]">\[G \equiv U + PV - TS\]</pre>
+                  <div class="muted">This is a Legendre transform that swaps natural variables from <span class="math">\(S,V\)</span> to <span class="math">\(T,P\)</span>.</div>
+                </li>
+                <li>
+                  <b>Differentiate using the product rule.</b>
+                  <pre class="math" data-copy data-tex="\\[dG = dU + P\\,dV + V\\,dP - T\\,dS - S\\,dT\\]">\[dG = dU + P\,dV + V\,dP - T\,dS - S\,dT\]</pre>
+                </li>
+                <li>
+                  <b>Substitute the expression for</b> <span class="math">\(dU\)</span> <b>and simplify.</b>
+                  <pre class="math" data-copy data-tex="\\[dG = (T\\,dS - P\\,dV + \\sum_i \\mu_i\\,dn_i) + P\\,dV + V\\,dP - T\\,dS - S\\,dT\\]">\[dG = (T\,dS - P\,dV + \sum_i \mu_i\,dn_i) + P\,dV + V\,dP - T\,dS - S\,dT\]</pre>
+                  <div class="muted">Cancel like terms: <span class="math">\(T\,dS\)</span> cancels, and <span class="math">\(-P\,dV\)</span> cancels with <span class="math">\( +P\,dV\)</span>.</div>
+                </li>
+                <li>
+                  <b>Final result.</b>
+                  <pre class="math" data-copy data-tex="\\[dG = -S\\,dT + V\\,dP + \\sum_i \\mu_i\\,dn_i\\]">\[dG = -S\,dT + V\,dP + \sum_i \mu_i\,dn_i\]</pre>
+                </li>
+              </ol>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Quick check</b></p>
+                  <p>Units: <span class="math">\(S\,dT\)</span> is (J/K)(K)=J; <span class="math">\(V\,dP\)</span> is (m³)(Pa)=J; <span class="math">\(\mu\,dn\)</span> is (J/mol)(mol)=J.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>Changing temperature changes the weight of entropy, changing pressure changes the “cost” of volume, and changing composition changes free energy through chemical potentials.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box derivation">
+              <div class="boxtitle">D2) Show that ΔG = −TΔS_univ at constant T,P (PV-only) <span class="pill">criterion</span></div>
+              <div class="muted">Assumptions: surroundings act as large reservoirs at constant <span class="math">\(T\)</span> and constant external <span class="math">\(P\)</span>; only <span class="math">\(PV\)</span> work; “universe” = system + surroundings is isolated.</div>
+
+              <ol>
+                <li>
+                  <b>Start from the Second Law for the universe.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta S_{\\text{univ}} = \\Delta S_{\\text{sys}} + \\Delta S_{\\text{surr}} \\ge 0\\]">\[\Delta S_{\text{univ}} = \Delta S_{\text{sys}} + \Delta S_{\text{surr}} \ge 0\]</pre>
+                </li>
+                <li>
+                  <b>Relate surroundings entropy change to heat at constant</b> <span class="math">\(T\)</span>.
+                  <div class="muted">Because the surroundings are a thermal reservoir at temperature <span class="math">\(T\)</span>:</div>
+                  <pre class="math" data-copy data-tex="\\[\\Delta S_{\\text{surr}} = -\\frac{q_{\\text{sys}}}{T}\\]">\[\Delta S_{\text{surr}} = -\frac{q_{\text{sys}}}{T}\]</pre>
+                  <div class="two">
+                    <div class="callout"><p><b>Math View</b> Reservoir entropy change is <span class="math">\(\Delta S = q/T\)</span>; sign is opposite because heat leaving system enters surroundings.</p></div>
+                    <div class="callout"><p><b>Intuition View</b> If the system releases heat, the surroundings gain entropy; if the system absorbs heat, the surroundings lose entropy.</p></div>
+                  </div>
+                </li>
+                <li>
+                  <b>Use the First Law with only</b> <span class="math">\(PV\)</span> <b>work against constant external pressure.</b>
+                  <div class="muted">Sign convention: work done by system is negative in the energy balance.</div>
+                  <pre class="math" data-copy data-tex="\\[\\Delta U = q_{\\text{sys}} + w_{\\text{PV}}\\quad\\text{with}\\quad w_{\\text{PV}} = -P\\Delta V\\]">\[\Delta U = q_{\text{sys}} + w_{\text{PV}}\quad\text{with}\quad w_{\text{PV}} = -P\Delta V\]</pre>
+                  <div class="muted">So <span class="math">\(q_{\text{sys}} = \Delta U + P\Delta V\)</span>.</div>
+                </li>
+                <li>
+                  <b>Substitute into</b> <span class="math">\(\Delta S_{\text{surr}}\)</span>.
+                  <pre class="math" data-copy data-tex="\\[\\Delta S_{\\text{surr}} = -\\frac{\\Delta U + P\\Delta V}{T}\\]">\[\Delta S_{\text{surr}} = -\frac{\Delta U + P\Delta V}{T}\]</pre>
+                </li>
+                <li>
+                  <b>Compute</b> <span class="math">\(T\Delta S_{\text{univ}}\)</span>.
+                  <pre class="math" data-copy data-tex="\\[T\\Delta S_{\\text{univ}} = T\\Delta S_{\\text{sys}} - (\\Delta U + P\\Delta V)\\]">\[T\Delta S_{\text{univ}} = T\Delta S_{\text{sys}} - (\Delta U + P\Delta V)\]</pre>
+                </li>
+                <li>
+                  <b>Recognize</b> <span class="math">\(\Delta G\)</span> <b>at constant</b> <span class="math">\(T,P\)</span>.
+                  <div class="muted">From <span class="math">\(G=U+PV-TS\)</span>, if <span class="math">\(T,P\)</span> are constant:</div>
+                  <pre class="math" data-copy data-tex="\\[\\Delta G = \\Delta U + P\\Delta V - T\\Delta S_{\\text{sys}}\\]">\[\Delta G = \Delta U + P\Delta V - T\Delta S_{\text{sys}}\]</pre>
+                </li>
+                <li>
+                  <b>Combine results.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta G = -T\\Delta S_{\\text{univ}} \\le 0\\]">\[\Delta G = -T\Delta S_{\text{univ}} \le 0\]</pre>
+                </li>
+              </ol>
+
+              <div class="two">
+                <div class="callout">
+                  <p><b>Quick check</b></p>
+                  <p>If the universe entropy increases (<span class="math">\(\Delta S_{\text{univ}}>0\)</span>), then <span class="math">\(\Delta G<0\)</span> as required for spontaneity.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>You can treat the surroundings as a “bank” that charges entropy <span class="math">\((q/T)\)</span> for heat exchange. <span class="math">\(G\)</span> is the net balance: enthalpy-like energy plus expansion cost minus entropy credit.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box derivation">
+              <div class="boxtitle">D3) Derive ΔrG = ΔrG° + RT ln Q and ΔrG° = −RT ln K <span class="pill">activities</span></div>
+              <div class="muted">Assumptions: activities <span class="math">\(a_i\)</span> describe nonideality; chemical potentials exist; temperature fixed.</div>
+              <ol>
+                <li>
+                  <b>Use the standard chemical potential form.</b>
+                  <pre class="math" data-copy data-tex="\\[\\mu_i = \\mu_i^\\circ + RT\\ln a_i\\]">\[\mu_i = \mu_i^\circ + RT\ln a_i\]</pre>
+                </li>
+                <li>
+                  <b>Define reaction Gibbs free energy (as written).</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta_r G = \\sum_i \\nu_i\\mu_i\\]">\[\Delta_r G = \sum_i \nu_i\mu_i\]</pre>
+                </li>
+                <li>
+                  <b>Substitute and separate standard and composition terms.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta_r G = \\sum_i \\nu_i\\mu_i^\\circ + RT\\sum_i \\nu_i\\ln a_i\\]">\[\Delta_r G = \sum_i \nu_i\mu_i^\circ + RT\sum_i \nu_i\ln a_i\]</pre>
+                </li>
+                <li>
+                  <b>Define the standard reaction free energy.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta_r G^\\circ \\equiv \\sum_i \\nu_i\\mu_i^\\circ\\]">\[\Delta_r G^\circ \equiv \sum_i \nu_i\mu_i^\circ\]</pre>
+                </li>
+                <li>
+                  <b>Combine logs into a single log (reaction quotient).</b>
+                  <pre class="math" data-copy data-tex="\\[\\sum_i \\nu_i\\ln a_i = \\ln\\left(\\prod_i a_i^{\\nu_i}\\right) \\equiv \\ln Q\\]">\[\sum_i \nu_i\ln a_i = \ln\left(\prod_i a_i^{\nu_i}\right) \equiv \ln Q\]</pre>
+                </li>
+                <li>
+                  <b>Obtain the working equation.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta_r G = \\Delta_r G^\\circ + RT\\ln Q\\]">\[\Delta_r G = \Delta_r G^\circ + RT\ln Q\]</pre>
+                </li>
+                <li>
+                  <b>At equilibrium, set</b> <span class="math">\(\Delta_r G=0\)</span> <b>and</b> <span class="math">\(Q=K\)</span>.
+                  <pre class="math" data-copy data-tex="\\[0 = \\Delta_r G^\\circ + RT\\ln K\\quad\\Rightarrow\\quad \\Delta_r G^\\circ = -RT\\ln K\\]">\[0 = \Delta_r G^\circ + RT\ln K\quad\Rightarrow\quad \Delta_r G^\circ = -RT\ln K\]</pre>
+                </li>
+              </ol>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Quick check</b></p>
+                  <p><span class="math">\(\ln\)</span> requires dimensionless input, so activities (not raw concentrations) are the correct objects.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p><span class="math">\(Q\)</span> measures how product-heavy the mixture is. As products accumulate, the <span class="math">\(RT\ln Q\)</span> term increases and cancels the standard driving force at equilibrium.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </details>
+
+        <details class="section" id="examples" data-title="Worked Examples">
+          <summary>
+            <span class="sum-left"><span class="badge">E</span><span class="sum-title">Worked Examples</span></span>
+            <span class="pill">increasing difficulty</span>
+          </summary>
+          <div class="section-body">
+
+            <div class="box example" id="ex-Teq">
+              <div class="boxtitle">Example 1: Find the temperature where ΔG = 0 <span class="pill">phase equilibrium idea</span></div>
+              <div class="muted">Given: <span class="math">\(\Delta H = +6.01\text{ kJ/mol}\)</span>, <span class="math">\(\Delta S = +22.0\text{ J/(mol·K)}\)</span>. Assume <span class="math">\(\Delta H,\Delta S\)</span> are roughly constant over the temperature range.</div>
+              <ol>
+                <li>
+                  <b>Start from the definition.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta G = \\Delta H - T\\Delta S\\]">\[\Delta G = \Delta H - T\Delta S\]</pre>
+                  <div class="two">
+                    <div class="callout"><p><b>Math View</b> This is algebraic rearrangement of <span class="math">\(G=H-TS\)</span> for changes at fixed <span class="math">\(T\)</span>.</p></div>
+                    <div class="callout"><p><b>Intuition View</b> Enthalpy “pushes back” if it costs energy; entropy “pulls forward” if disorder increases.</p></div>
+                  </div>
+                </li>
+                <li>
+                  <b>Set equilibrium condition</b> <span class="math">\(\Delta G=0\)</span>.
+                  <pre class="math" data-copy data-tex="\\[0 = \\Delta H - T\\Delta S\\quad\\Rightarrow\\quad T = \\frac{\\Delta H}{\\Delta S}\\]">\[0 = \Delta H - T\Delta S\quad\Rightarrow\quad T = \frac{\Delta H}{\Delta S}\]</pre>
+                </li>
+                <li>
+                  <b>Convert units and compute.</b>
+                  <div class="muted">Convert <span class="math">\(6.01\text{ kJ/mol} = 6010\text{ J/mol}\)</span>.</div>
+                  <pre class="math" data-copy data-tex="\\[T = \\frac{6010}{22.0}\\approx 273\\text{ K}\\]">\[T = \frac{6010}{22.0}\approx 273\text{ K}\]</pre>
+                </li>
+              </ol>
+              <div class="box trap" style="margin-top:10px">
+                <div class="boxtitle">Common mistakes <span class="pill">trap</span></div>
+                <ul>
+                  <li>Using <span class="math">\(T\)</span> in °C instead of K.</li>
+                  <li>Forgetting kJ → J conversion, giving <span class="math">\(T\)</span> off by <span class="math">\(10^3\)</span>.</li>
+                  <li>Assuming <span class="math">\(\Delta H,\Delta S\)</span> constant when the question explicitly says they vary with <span class="math">\(T\)</span>.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="box example" id="ex-K">
+              <div class="boxtitle">Example 2: Compute K from ΔG° <span class="pill">equilibrium constant</span></div>
+              <div class="muted">Given: <span class="math">\(\Delta_r G^\circ = -5.70\text{ kJ/mol}\)</span> at <span class="math">\(T=298\text{ K}\)</span>. Use <span class="math">\(R=8.314\text{ J/(mol·K)}\)</span>.</div>
+              <ol>
+                <li>
+                  <b>Use the equilibrium relation.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta_r G^\\circ = -RT\\ln K\\quad\\Rightarrow\\quad K=\\exp\\left(-\\frac{\\Delta_r G^\\circ}{RT}\\right)\\]">\[\Delta_r G^\circ = -RT\ln K\quad\Rightarrow\quad K=\exp\left(-\frac{\Delta_r G^\circ}{RT}\right)\]</pre>
+                  <div class="two">
+                    <div class="callout"><p><b>Math View</b> Solve for <span class="math">\(K\)</span> by exponentiating; keep units consistent.</p></div>
+                    <div class="callout"><p><b>Intuition View</b> <span class="math">\(\ln K\)</span> scales linearly with the driving force measured in thermal units <span class="math">\(RT\)</span>.</p></div>
+                  </div>
+                </li>
+                <li>
+                  <b>Convert units and compute the exponent.</b>
+                  <div class="muted"><span class="math">\(-5.70\text{ kJ/mol}=-5700\text{ J/mol}\)</span> and <span class="math">\(RT\approx 8.314\times 298\approx 2477\text{ J/mol}\)</span>.</div>
+                  <pre class="math" data-copy data-tex="\\[-\\frac{\\Delta_r G^\\circ}{RT} = \\frac{5700}{2477} \\approx 2.30\\]">\[-\frac{\Delta_r G^\circ}{RT} = \frac{5700}{2477} \approx 2.30\]</pre>
+                </li>
+                <li>
+                  <b>Exponentiate.</b>
+                  <pre class="math" data-copy data-tex="\\[K \\approx e^{2.30}\\approx 10.0\\]">\[K \approx e^{2.30}\approx 10.0\]</pre>
+                </li>
+              </ol>
+              <div class="box trap" style="margin-top:10px">
+                <div class="boxtitle">Common mistakes <span class="pill">trap</span></div>
+                <ul>
+                  <li>Using base-10 log: the formula uses natural log <span class="math">\(\ln\)</span>.</li>
+                  <li>Plugging <span class="math">\(R=0.08206\)</span> without matching units (L·atm vs J).</li>
+                  <li>Forgetting that <span class="math">\(K\)</span> is dimensionless (activities).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="box example" id="ex-direction">
+              <div class="boxtitle">Example 3: Decide direction using Q <span class="pill">nonstandard conditions</span></div>
+              <div class="muted">Given: <span class="math">\(\Delta_r G^\circ = +3.0\text{ kJ/mol}\)</span>, <span class="math">\(T=298\text{ K}\)</span>, current <span class="math">\(Q=0.010\)</span>.</div>
+              <ol>
+                <li>
+                  <b>Use the nonstandard relation.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta_r G = \\Delta_r G^\\circ + RT\\ln Q\\]">\[\Delta_r G = \Delta_r G^\circ + RT\ln Q\]</pre>
+                </li>
+                <li>
+                  <b>Compute the composition term.</b>
+                  <div class="muted"><span class="math">\(\ln(0.010)=-4.605\)</span>, and <span class="math">\(RT\approx 2477\text{ J/mol}\)</span>.</div>
+                  <pre class="math" data-copy data-tex="\\[RT\\ln Q \\approx 2477(-4.605) \\approx -1.14\\times 10^4\\text{ J/mol} = -11.4\\text{ kJ/mol}\\]">\[RT\ln Q \approx 2477(-4.605) \approx -1.14\times 10^4\text{ J/mol} = -11.4\text{ kJ/mol}\]</pre>
+                </li>
+                <li>
+                  <b>Combine with</b> <span class="math">\(\Delta_r G^\circ\)</span>.
+                  <pre class="math" data-copy data-tex="\\[\\Delta_r G \\approx 3.0 - 11.4 = -8.4\\text{ kJ/mol}\\]">\[\Delta_r G \approx 3.0 - 11.4 = -8.4\text{ kJ/mol}\]</pre>
+                  <div class="two">
+                    <div class="callout"><p><b>Math View</b> Negative <span class="math">\(\Delta_r G\)</span> means forward direction is spontaneous at this composition.</p></div>
+                    <div class="callout"><p><b>Intuition View</b> The mixture is so reactant-heavy that making products is strongly favored, overcoming an unfavorable standard baseline.</p></div>
+                  </div>
+                </li>
+              </ol>
+              <div class="box trap" style="margin-top:10px">
+                <div class="boxtitle">Common mistakes <span class="pill">trap</span></div>
+                <ul>
+                  <li>Comparing <span class="math">\(Q\)</span> to 1 instead of to <span class="math">\(K\)</span>.</li>
+                  <li>Using raw concentrations when the problem indicates nonideal behavior (activities needed).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="box example" id="ex-electro">
+              <div class="boxtitle">Example 4: Connect to electrochemistry <span class="pill">cell potential</span></div>
+              <div class="muted">Given: <span class="math">\(n=2\)</span>, <span class="math">\(E^\circ=1.10\text{ V}\)</span>, <span class="math">\(F=96485\text{ C/mol}\)</span>, <span class="math">\(T=298\text{ K}\)</span>.</div>
+              <ol>
+                <li>
+                  <b>Compute standard free energy change.</b>
+                  <pre class="math" data-copy data-tex="\\[\\Delta G^\\circ = -nFE^\\circ\\]">\[\Delta G^\circ = -nFE^\circ\]</pre>
+                  <pre class="math" data-copy data-tex="\\[\\Delta G^\\circ \\approx -(2)(96485)(1.10)\\approx -2.12\\times 10^5\\text{ J/mol} = -212\\text{ kJ/mol}\\]">\[\Delta G^\circ \approx -(2)(96485)(1.10)\approx -2.12\times 10^5\text{ J/mol} = -212\text{ kJ/mol}\]</pre>
+                </li>
+                <li>
+                  <b>Estimate</b> <span class="math">\(K\)</span>.
+                  <pre class="math" data-copy data-tex="\\[K=\\exp\\left(-\\frac{\\Delta G^\\circ}{RT}\\right) \\approx \\exp\\left(\\frac{2.12\\times 10^5}{2477}\\right)\\]">\[K=\exp\left(-\frac{\Delta G^\circ}{RT}\right) \approx \exp\left(\frac{2.12\times 10^5}{2477}\right)\]</pre>
+                  <div class="two">
+                    <div class="callout"><p><b>Math View</b> The exponent is ~85, so <span class="math">\(K\)</span> is astronomically large.</p></div>
+                    <div class="callout"><p><b>Intuition View</b> A strong positive cell voltage corresponds to an enormous thermodynamic push toward products.</p></div>
+                  </div>
+                </li>
+              </ol>
+            </div>
+
+          </div>
+        </details>
+
+        <details class="section" id="misconceptions" data-title="Common Questions & Misconceptions">
+          <summary>
+            <span class="sum-left"><span class="badge">F</span><span class="sum-title">Common Questions &amp; Misconceptions</span></span>
+            <span class="pill">fix the usual confusions</span>
+          </summary>
+          <div class="section-body">
+
+            <div class="box trap" id="mis-speed">
+              <div class="boxtitle">Common Trap: “ΔG &lt; 0 means the reaction is fast.” <span class="pill">thermo vs kinetics</span></div>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p><span class="math">\(\Delta G\)</span> concerns initial and final equilibrium states (a state function). Rates depend on the activation barrier, often expressed via an activation free energy <span class="math">\(\Delta G^\ddagger\)</span>, with rate constants like <span class="math">\(k \propto e^{-\Delta G^\ddagger/RT}\)</span> (transition-state theory).</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p><span class="math">\(\Delta G\)</span> tells where the process ends up (downhill overall), but the speed depends on how tall the hill is in between.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box trap" id="mis-catalyst">
+              <div class="boxtitle">Common Trap: “A catalyst makes ΔG more negative / changes K.” <span class="pill">state function</span></div>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p>Catalysts change the pathway and thus <span class="math">\(\Delta G^\ddagger\)</span>, but not the state functions <span class="math">\(\Delta G\)</span> or <span class="math">\(\Delta G^\circ\)</span>. Since <span class="math">\(\Delta G^\circ=-RT\ln K\)</span>, <span class="math">\(K\)</span> is unchanged.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>It lowers the barrier, not the start and end energies. You reach equilibrium faster, but the equilibrium position is the same.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box trap" id="mis-standard">
+              <div class="boxtitle">Common Trap: “ΔG° tells the direction for my mixture.” <span class="pill">Q matters</span></div>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p><span class="math">\(\Delta_r G = \Delta_r G^\circ + RT\ln Q\)</span>. Even if <span class="math">\(\Delta_r G^\circ>0\)</span>, sufficiently small <span class="math">\(Q\)</span> can make <span class="math">\(\Delta_r G<0\)</span> (forward spontaneous), and vice versa.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>Standard conditions are just a reference scoreboard. Your current mixture composition can strongly favor one direction.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="box trap" id="mis-temp">
+              <div class="boxtitle">Common Trap: “Temperature only affects rates, not spontaneity.” <span class="pill">TΔS</span></div>
+              <div class="two">
+                <div class="callout">
+                  <p><b>Math View</b></p>
+                  <p><span class="math">\(\Delta G = \Delta H - T\Delta S\)</span>. Changing <span class="math">\(T\)</span> directly changes the sign and magnitude of <span class="math">\(\Delta G\)</span> when <span class="math">\(\Delta S\neq 0\)</span>.</p>
+                </div>
+                <div class="callout">
+                  <p><b>Intuition View</b></p>
+                  <p>At higher temperature, nature “cares more” about entropy; processes that increase entropy become more favorable.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </details>
+
+        <details class="section" id="exam" data-title="Exam Strategy">
+          <summary>
+            <span class="sum-left"><span class="badge">G</span><span class="sum-title">Exam Strategy (Short &amp; Focused)</span></span>
+            <span class="pill">what to do under time pressure</span>
+          </summary>
+          <div class="section-body">
+
+            <div class="box checklist">
+              <div class="boxtitle">Fast method selection <span class="pill">trigger words</span></div>
+              <ul>
+                <li><b>“Equilibrium constant K”</b> → use <span class="math">\(\Delta_r G^\circ = -RT\ln K\)</span>.</li>
+                <li><b>“Nonstandard / current conditions / reaction quotient”</b> → use <span class="math">\(\Delta_r G = \Delta_r G^\circ + RT\ln Q\)</span>.</li>
+                <li><b>“Spontaneous at constant T and P”</b> → sign test <span class="math">\(\Delta G\)</span> (with validity conditions).</li>
+                <li><b>“Maximum useful work / electrical work”</b> → <span class="math">\(w_{\text{nonPV,max}}=-\Delta G\)</span> (reversible, constant <span class="math">\(T,P\)</span>).</li>
+                <li><b>“Temperature where equilibrium occurs”</b> → set <span class="math">\(\Delta G=0\)</span> in <span class="math">\(\Delta G=\Delta H-T\Delta S\)</span> (if allowed to treat ΔH,ΔS constant).</li>
+              </ul>
+            </div>
+
+            <div class="box checklist">
+              <div class="boxtitle">Mental checklist <span class="pill">avoid traps</span></div>
+              <ul>
+                <li><b>Conditions:</b> Is the question explicitly constant <span class="math">\(T,P\)</span>? Any non-<span class="math">\(PV\)</span> work?</li>
+                <li><b>Units:</b> Put <span class="math">\(T\)</span> in K; convert kJ↔J; keep <span class="math">\(R\)</span> consistent.</li>
+                <li><b>Standard vs current:</b> Are you asked for <span class="math">\(\Delta G^\circ\)</span> or <span class="math">\(\Delta G\)</span>?</li>
+                <li><b>Logs:</b> Use <span class="math">\(\ln\)</span>, not <span class="math">\(\log_{10}\)</span> unless stated.</li>
+                <li><b>Q/K:</b> Ensure <span class="math">\(Q\)</span> built from activities/partial pressures as required.</li>
+              </ul>
+            </div>
+
+            <div class="box trap">
+              <div class="boxtitle">Common exam traps <span class="pill">classic</span></div>
+              <ul>
+                <li>Using °C instead of K in any expression involving <span class="math">\(T\)</span>.</li>
+                <li>Mixing <span class="math">\(R=8.314\)</span> J/(mol·K) with ΔG in kJ/mol.</li>
+                <li>Claiming “negative ΔG means fast” (confusing thermo with kinetics).</li>
+                <li>Forgetting that activities make <span class="math">\(Q\)</span> and <span class="math">\(K\)</span> dimensionless.</li>
+              </ul>
+            </div>
+
+          </div>
+        </details>
+
+        <details class="section" id="summary" data-title="Summary & Connections">
+          <summary>
+            <span class="sum-left"><span class="badge">H</span><span class="sum-title">Summary &amp; Connections</span></span>
+            <span class="pill">big takeaway</span>
+          </summary>
+          <div class="section-body">
+
+            <div class="box tight">
+              <div class="boxtitle">One-paragraph summary <span class="pill">memorize</span></div>
+              <p>Gibbs free energy is defined by <span class="math">\(G=H-TS\)</span>. For systems exchanging heat and doing only <span class="math">\(PV\)</span> work with an environment at constant temperature and pressure, spontaneous change decreases <span class="math">\(G\)</span> (<span class="math">\(\Delta G\le 0\)</span>), and equilibrium occurs at a minimum of <span class="math">\(G\)</span> (<span class="math">\(\Delta G=0\)</span>). In chemistry, composition enters through chemical potentials, giving <span class="math">\(\Delta_r G=\Delta_r G^\circ+RT\ln Q\)</span> and <span class="math">\(\Delta_r G^\circ=-RT\ln K\)</span>, which connect thermodynamics directly to equilibrium constants.</p>
+            </div>
+
+            <div class="box tight">
+              <div class="boxtitle">Connections <span class="pill">other potentials</span></div>
+              <ul>
+                <li><b>Helmholtz free energy</b> <span class="math">\(A=U-TS\)</span>: natural for constant <span class="math">\(T,V\)</span> (e.g., some physics/stat mech contexts).</li>
+                <li><b>Chemical potential</b> <span class="math">\(\mu_i\)</span>: slopes of <span class="math">\(G\)</span> vs composition; drives diffusion and reactions.</li>
+                <li><b>Phase equilibrium</b>: equality of chemical potentials across phases; temperature where <span class="math">\(\Delta G=0\)</span> marks coexistence for a phase change at given <span class="math">\(P\)</span>.</li>
+                <li><b>Electrochemistry</b>: <span class="math">\(\Delta G^\circ=-nFE^\circ\)</span> connects cell voltage to equilibrium and work.</li>
+              </ul>
+            </div>
+
+            <div class="box tight">
+              <div class="boxtitle">Real-world applications <span class="pill">where you see it</span></div>
+              <ul>
+                <li>Predicting whether reactions proceed and where equilibrium lies (industrial synthesis, buffers, solubility).</li>
+                <li>Battery and fuel-cell feasibility and maximum electrical work.</li>
+                <li>Biochemical energetics (ATP hydrolysis as a free-energy currency).</li>
+                <li>Material stability and phase diagrams (why certain phases form at given <span class="math">\(T,P\)</span>).</li>
+              </ul>
+            </div>
+
+          </div>
+        </details>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const sidebar = document.getElementById('sidebar');
+      const q = document.getElementById('q');
+      const btnClear = document.getElementById('btnClear');
+      const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+      const btnExpandAll = document.getElementById('btnExpandAll');
+      const btnCollapseAll = document.getElementById('btnCollapseAll');
+      const btnPrint = document.getElementById('btnPrint');
+      const sections = Array.from(document.querySelectorAll('details.section'));
+
+      function smoothScrollTo(el){
+        const y = el.getBoundingClientRect().top + window.scrollY - 74;
+        window.scrollTo({top:y, behavior:'smooth'});
+      }
+
+      function setActiveLink(hash){
+        document.querySelectorAll('[data-toc-link]').forEach(a => a.classList.toggle('active', a.getAttribute('href') === hash));
+      }
+
+      function openIfDetails(target){
+        const det = target.closest('details.section');
+        if(det && !det.open) det.open = true;
+      }
+
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('[data-toc-link]');
+        if(!a) return;
+        const href = a.getAttribute('href');
+        if(!href || !href.startsWith('#')) return;
+        const target = document.querySelector(href);
+        if(!target) return;
+        e.preventDefault();
+        openIfDetails(target);
+        setActiveLink(href);
+        history.replaceState(null, '', href);
+        smoothScrollTo(target);
+      });
+
+      btnToggleSidebar?.addEventListener('click', () => sidebar?.classList.toggle('hidden'));
+      btnExpandAll?.addEventListener('click', () => sections.forEach(d => d.open = true));
+      btnCollapseAll?.addEventListener('click', () => sections.forEach(d => d.open = false));
+      btnPrint?.addEventListener('click', () => window.print());
+
+      function clearHighlights(){
+        document.querySelectorAll('.hl').forEach(el => el.classList.remove('hl'));
+      }
+
+      function applySearch(term){
+        const t = (term || '').trim().toLowerCase();
+        clearHighlights();
+        document.querySelectorAll('[data-toc-item]').forEach(li => li.classList.remove('hidden'));
+        if(!t) return;
+
+        document.querySelectorAll('[data-toc-item]').forEach(li => {
+          const a = li.querySelector('a');
+          const txt = (a ? a.textContent : '').toLowerCase();
+          if(!txt.includes(t)) li.classList.add('hidden');
+        });
+
+        const candidates = [];
+        document.querySelectorAll('details.section').forEach(d => {
+          const title = (d.getAttribute('data-title') || '').toLowerCase();
+          const summary = d.querySelector('summary');
+          if(title.includes(t) && summary) candidates.push(summary);
+          d.querySelectorAll('h3,h4').forEach(h => {
+            if((h.textContent || '').toLowerCase().includes(t)) candidates.push(h);
+          });
+        });
+        candidates.forEach(el => el.classList.add('hl'));
+      }
+
+      q?.addEventListener('input', () => applySearch(q.value));
+      btnClear?.addEventListener('click', () => {
+        if(!q) return;
+        q.value = '';
+        applySearch('');
+        q.focus();
+      });
+
+      async function copyText(text){
+        try{
+          await navigator.clipboard.writeText(text);
+          return true;
+        }catch(_){
+          return false;
+        }
+      }
+
+      function fallbackCopy(text){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand('copy'); }catch(_){ }
+        document.body.removeChild(ta);
+      }
+
+      document.addEventListener('dblclick', async (e) => {
+        const el = e.target.closest('[data-copy]');
+        if(!el) return;
+        const text = (el.getAttribute('data-tex') || el.innerText || '').trim();
+        if(!text) return;
+        const ok = await copyText(text);
+        if(!ok) fallbackCopy(text);
+      });
+
+      function fixOverEscapedTeX(s){
+        if(!s) return s;
+        // Replace \\command or \\{ etc with \command or \{, but preserve intentional \\ line breaks (usually followed by whitespace/newline)
+        return s.replace(/\\\\(?=[A-Za-z{}()[\]^_.,;:+\-*/=<>|])/g, '\\');
+      }
+
+      function preprocessMath(){
+        document.querySelectorAll('.math').forEach(el => {
+          if(el.hasAttribute('data-tex')) el.setAttribute('data-tex', fixOverEscapedTeX(el.getAttribute('data-tex')));
+          el.textContent = fixOverEscapedTeX(el.textContent);
+        });
+      }
+
+      async function typesetMath(){
+        preprocessMath();
+        if(window.MathJax && MathJax.startup && MathJax.startup.promise){
+          try{
+            await MathJax.startup.promise;
+            await MathJax.typesetPromise();
+          }catch(_){ }
+        }
+      }
+
+      // Typeset after load to ensure MathJax is ready
+      window.addEventListener('load', () => { typesetMath(); });
+    })();
+  </script>
+</body>
+</html>
