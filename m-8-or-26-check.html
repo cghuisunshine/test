@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>第(3)问解答核对（m=8 或 26）</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#121a33;
+      --text:#e9ecff;
+      --muted:#b8c0ff;
+      --line:rgba(255,255,255,.12);
+      --accent:#7aa2ff;
+      --accent2:#7dffcc;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:radial-gradient(1200px 700px at 15% 10%, rgba(122,162,255,.25), transparent 60%),
+                 radial-gradient(900px 600px at 85% 30%, rgba(125,255,204,.18), transparent 55%),
+                 var(--bg);
+      color:var(--text);
+      line-height:1.65;
+    }
+    .wrap{max-width:920px; margin:0 auto; padding:28px 16px 56px;}
+    header{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius:18px;
+      padding:22px 18px;
+      box-shadow:0 12px 40px rgba(0,0,0,.35);
+    }
+    h1{margin:0 0 6px; font-size:22px; letter-spacing:.2px;}
+    .sub{margin:0; color:var(--muted); font-size:14px;}
+    .note{
+      margin-top:14px;
+      border-left:4px solid var(--accent);
+      padding:10px 12px;
+      background:rgba(122,162,255,.08);
+      border-radius:10px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .grid{display:grid; gap:14px; margin-top:16px;}
+    @media (min-width:860px){
+      .grid{grid-template-columns: 1fr 1fr;}
+    }
+    section{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      border-radius:16px;
+      padding:16px 16px 14px;
+    }
+    h2{margin:0 0 10px; font-size:18px;}
+    h3{margin:16px 0 8px; font-size:16px; color:#d9e1ff;}
+    p{margin:8px 0;}
+    ul{margin:8px 0 8px 22px;}
+    li{margin:6px 0;}
+    .math{
+      font-family:var(--mono);
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--line);
+      padding:10px 12px;
+      border-radius:12px;
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .ok{
+      display:inline-block;
+      font-weight:700;
+      color:var(--accent2);
+      border:1px solid rgba(125,255,204,.35);
+      background:rgba(125,255,204,.10);
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:12px;
+      vertical-align:middle;
+      margin-left:6px;
+    }
+    .warn{
+      display:inline-block;
+      font-weight:700;
+      color:#ffd08a;
+      border:1px solid rgba(255,208,138,.35);
+      background:rgba(255,208,138,.10);
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:12px;
+      vertical-align:middle;
+      margin-left:6px;
+    }
+    .footer{
+      margin-top:16px;
+      color:var(--muted);
+      font-size:13px;
+      border-top:1px solid var(--line);
+      padding-top:14px;
+    }
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid var(--line);
+      border-bottom-width:2px;
+      border-radius:8px;
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .copyhint{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>第(3)问：图片解答是否有问题？（核对 + 解释）</h1>
+      <p class="sub">目标：验证图片给出的结论是否正确，并说明为什么过程看起来“绕”。</p>
+      <div class="note">
+        结论先说：图片最终答案 <b>m=8 或 m=26</b> 是正确的。
+        我们用“代入验算 + 顶点跨越不可能”两步把它钉死。
+      </div>
+      <div class="copyhint">
+        小提示：你可以在页面里双击选中整段公式区（代码风格框）快速复制。
+      </div>
+    </header>
+
+    <div class="grid">
+      <section>
+        <h2>1) 已知桥拱函数（来自第1问）</h2>
+        <p>桥拱是开口向下的抛物线：</p>
+        <div class="math">f(x) = - (1/18) · (x - 18)^2</div>
+        <p>关键信息：</p>
+        <ul>
+          <li>顶点在 <span class="math" style="display:inline-block;padding:2px 6px;">(18, 0)</span>，最大值为 0。</li>
+          <li>对称轴是 <span class="math" style="display:inline-block;padding:2px 6px;">x = 18</span>。</li>
+          <li>当 <b>x&lt;18</b> 时函数单调递增；当 <b>x&gt;18</b> 时函数单调递减。</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>2) 第(3)问到底在求什么？</h2>
+        <p>点：</p>
+        <div class="math">E(m, y1),  F(m+2, y2) 在桥拱上
+⇒ y1 = f(m), y2 = f(m+2)</div>
+        <p>曲线 G 是桥拱上从 x=m 到 x=m+2 的那一段（含端点）。</p>
+        <p>定义：</p>
+        <div class="math">t = (G 上 y 的最大值) − (G 上 y 的最小值)</div>
+        <p>题目给：<b>t = 2</b>，求 <b>m</b>。</p>
+      </section>
+    </div>
+
+    <section style="margin-top:14px;">
+      <h2>3) 核对图片答案：用代入验算“秒杀”对错</h2>
+
+      <h3>验算 m = 8</h3>
+      <p>区间是 <span class="math" style="display:inline-block;padding:2px 6px;">[8, 10]</span>（在顶点 18 左侧，单调递增）。</p>
+      <div class="math">f(8)  = - (1/18) · (8-18)^2  = - (1/18) · 100 = -100/18
+f(10) = - (1/18) · (10-18)^2 = - (1/18) · 64  = -64/18
+
+左侧单调递增 ⇒ 最大值 = f(10), 最小值 = f(8)
+t = f(10) - f(8) = (-64/18) - (-100/18) = 36/18 = 2</div>
+      <p><b>t=2 成立</b><span class="ok">OK</span></p>
+
+      <h3>验算 m = 26</h3>
+      <p>区间是 <span class="math" style="display:inline-block;padding:2px 6px;">[26, 28]</span>（在顶点 18 右侧，单调递减）。</p>
+      <div class="math">f(26) = - (1/18) · (26-18)^2 = - (1/18) · 64  = -64/18
+f(28) = - (1/18) · (28-18)^2 = - (1/18) · 100 = -100/18
+
+右侧单调递减 ⇒ 最大值 = f(26), 最小值 = f(28)
+t = f(26) - f(28) = (-64/18) - (-100/18) = 36/18 = 2</div>
+      <p><b>t=2 成立</b><span class="ok">OK</span></p>
+
+      <p class="note" style="border-left-color:var(--accent2);background:rgba(125,255,204,.08);">
+        既然两组都严格满足 t=2，那么图片给出的最终答案 <b>m=8 或 m=26</b> 必然正确。
+      </p>
+    </section>
+
+    <section style="margin-top:14px;">
+      <h2>4) 为什么不会漏掉“跨过顶点”的情况？（解释最关键的判无解）</h2>
+      <p>如果区间 <span class="math" style="display:inline-block;padding:2px 6px;">[m, m+2]</span> 包含顶点 <b>x=18</b>，则：</p>
+      <ul>
+        <li>最大值一定是顶点处的 <b>0</b>。</li>
+        <li>最小值出现在离 18 更远的端点处（因为开口向下，离顶点越远越低）。</li>
+      </ul>
+
+      <p>当包含顶点时，m 必须满足 <b>16 ≤ m ≤ 18</b>。这时区间长度只有 2，离 18 最远也就 2 个单位。</p>
+      <p>因此最小值最低只能到：</p>
+      <div class="math">f(16) = - (1/18) · (16-18)^2 = - (1/18) · 4 = -4/18</div>
+      <p>于是：</p>
+      <div class="math">t ≤ 0 - (-4/18) = 4/18 < 2</div>
+      <p>
+        所以：<b>只要区间跨过顶点，就不可能出现 t=2</b>，因此这类情况必无解。
+        <span class="ok">OK</span>
+      </p>
+
+      <p class="note">
+        这也解释了你在图片里看到的“算出某些 m 然后又舍去”的现象：
+        它们往往来自跨顶点或不满足分段范围的代数解，最终都必须被排除。
+      </p>
+    </section>
+
+    <section class="footer">
+      <h2 style="margin-top:0;">5) 最终结论</h2>
+      <p>图片第(3)问的解答 <b>没有问题</b>；最终答案是：</p>
+      <div class="math" style="font-size:16px;">m = 8  或  m = 26</div>
+      <p>
+        如果你想把“过程写得更像标准满分答案”，最清爽的结构是：
+        <span class="kbd">① 判断区间是否包含顶点</span> →
+        <span class="kbd">② 若不包含，按单调性端点取极值</span> →
+        <span class="kbd">③ 列 t=2 解 m</span> →
+        <span class="kbd">④ 检查分段条件</span>。
+      </p>
+    </section>
+  </div>
+</body>
+</html>
