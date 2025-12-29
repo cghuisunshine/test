@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QM Notes — Expectation Values & Meaning of Integration</title>
+
+  <!-- MathJax for rendering LaTeX -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)'], ['$', '$']], displayMath: [['\\[','\\]']] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#0b0f19;color:#e7ecff;margin:0;padding:24px;line-height:1.6}
+    section{max-width:900px;margin:0 auto 20px auto;background:#121a2a;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:18px}
+    h1,h2{color:#7aa2ff}
+    .box{background:#0a0e18;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;margin:12px 0}
+  </style>
+</head>
+<body>
+
+<section>
+  <h1>Quantum Mechanics — Expectation Values & Integration</h1>
+  <p>A self-contained note derived from an original handwritten question.</p>
+</section>
+
+<section>
+  <h2>Original Question</h2>
+  <div class="box"><strong>Is this correct?</strong></div>
+</section>
+
+<section>
+  <h2>Extracted From the Handwritten Image</h2>
+  \[
+    \hat H\psi = E\psi
+  \]
+  \[
+    \Rightarrow \; \psi\cdot \hat H\psi = \psi\cdot E\psi = E|\psi|^2
+  \]
+  \[
+    \langle \psi|\hat H|\psi\rangle = E|\psi|^2
+  \]
+</section>
+
+<section>
+  <h2>Is It Correct?</h2>
+  <div class="box">
+    No. The final expression confuses ordinary multiplication with a quantum inner product
+    and omits the normalization factor.
+  </div>
+
+  \[
+    \langle \psi|\hat H|\psi\rangle = \int \psi^*(x)\,\hat H\psi(x)\,dx
+  \]
+
+  \[
+    \hat H\psi = E\psi \;\Rightarrow\; \langle \psi|\hat H|\psi\rangle = E\langle \psi|\psi\rangle
+  \]
+
+  \[
+    \text{If } \langle \psi|\psi\rangle = 1, \quad \langle \psi|\hat H|\psi\rangle = E
+  \]
+</section>
+
+<section>
+  <h2>Meaning of Integration</h2>
+
+  <p>Integration means adding up infinitely many tiny contributions across a continuous variable.</p>
+
+  \[
+    P(a\le x\le b)=\int_a^b |\psi(x)|^2\,dx
+  \]
+
+  \[
+    \langle A\rangle = \int \psi^*(x)\,\hat A\psi(x)\,dx
+  \]
+
+  <p>These integrals represent continuous versions of weighted averages.</p>
+</section>
+
+</body>
+</html>
