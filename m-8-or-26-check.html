@@ -4,6 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>第(3)问：标准解法 + 对图片解答逐段点评</title>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+      },
+      startup: {
+        typeset: false,
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      },
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <style>
     :root{
       --bg:#0b1020;
@@ -157,7 +172,7 @@
       <h2>A. 我之前的解答过程（标准版）<span class="pill ok">先给完整推导</span></h2>
 
       <h3>0) 已知桥拱函数</h3>
-      <div class="math">f(x) = -\\frac{1}{18}(x-18)^2</div>
+      <div class="math">\\[f(x) = -\\frac{1}{18}(x-18)^2\\]</div>
       <ul>
         <li>顶点在 (18,0)，最大值为 0。</li>
         <li>当 x&lt;18 时单调递增；当 x&gt;18 时单调递减。</li>
@@ -166,7 +181,7 @@
       <h3>1) 第(3)问把“t”翻译成数学语言</h3>
       <p>点 E(m,y1)、F(m+2,y2) 在拱上，所以 y1=f(m)、y2=f(m+2)。</p>
       <p>曲线 G 是 x∈[m,m+2] 这一段拱线。</p>
-      <div class="math">t = \\max_{x\\in[m,m+2]} f(x)\;-\;\\min_{x\\in[m,m+2]} f(x)</div>
+      <div class="math">\\[t = \\max_{x\\in[m,m+2]} f(x)\\; - \\;\\min_{x\\in[m,m+2]} f(x)\\]</div>
       <p>已知 t=2，求 m。</p>
 
       <h3>2) 为什么必须先判断“区间是否包含顶点”</h3>
@@ -175,33 +190,48 @@
       <h3>3) 先排除“跨过顶点”的情况（无解）</h3>
       <p>若 [m,m+2] 包含 18，则 16 ≤ m ≤ 18。</p>
       <p>此时最大值=0，最小值发生在离 18 更远的端点，离 18 的距离 ≤2，所以最低只能到 f(16)=-4/18。</p>
-      <div class="math">t \\le 0 - (-4/18) = 4/18 &lt; 2</div>
+      <div class="math">\\[t \\le 0 - (-4/18) = 4/18 &lt; 2\\]</div>
       <p>所以：<b>区间跨过顶点时不可能出现 t=2</b>，因此这类情况必无解。</p>
 
       <h3>4) 区间在顶点左侧（m ≤ 16）</h3>
       <p>左侧单调递增 ⇒ 最大值在 x=m+2，最小值在 x=m：</p>
-      <div class="math">t = f(m+2) - f(m)</div>
-      <div class="math">f(m) = -\\frac{1}{18}(m-18)^2
-f(m+2)= -\\frac{1}{18}(m-16)^2
-
-t = \\frac{1}{18}\\Big[(m-18)^2-(m-16)^2\\Big]
-  = \\frac{1}{18}\\Big(68-4m\\Big)</div>
+      <div class="math">\\[t = f(m+2) - f(m)\\]</div>
+      <div class="math">\\[
+\\begin{aligned}
+f(m) &= -\\frac{1}{18}(m-18)^2\\\\
+f(m+2) &= -\\frac{1}{18}(m-16)^2\\\\
+t &= \\frac{1}{18}\\Big[(m-18)^2-(m-16)^2\\Big]\\\\
+&= \\frac{1}{18}\\Big(68-4m\\Big)
+\\end{aligned}
+\\]</div>
       <p>令 t=2：</p>
-      <div class="math">\\frac{68-4m}{18}=2
-\\Rightarrow 68-4m=36
-\\Rightarrow m=8</div>
+      <div class="math">\\[
+\\begin{aligned}
+\\frac{68-4m}{18} &= 2\\\\
+\\Rightarrow 68-4m &= 36\\\\
+\\Rightarrow m &= 8
+\\end{aligned}
+\\]</div>
       <p>并且 8 ≤ 16 满足本情况。</p>
       <p><b>得到解：m=8</b> <span class="pill ok">OK</span></p>
 
       <h3>5) 区间在顶点右侧（m ≥ 18）</h3>
       <p>右侧单调递减 ⇒ 最大值在 x=m，最小值在 x=m+2：</p>
-      <div class="math">t = f(m) - f(m+2)</div>
-      <div class="math">t = \\frac{1}{18}\\Big[(m-16)^2-(m-18)^2\\Big]
-  = \\frac{1}{18}\\Big(4m-68\\Big)</div>
+      <div class="math">\\[t = f(m) - f(m+2)\\]</div>
+      <div class="math">\\[
+\\begin{aligned}
+t &= \\frac{1}{18}\\Big[(m-16)^2-(m-18)^2\\Big]\\\\
+&= \\frac{1}{18}\\Big(4m-68\\Big)
+\\end{aligned}
+\\]</div>
       <p>令 t=2：</p>
-      <div class="math">\\frac{4m-68}{18}=2
-\\Rightarrow 4m-68=36
-\\Rightarrow m=26</div>
+      <div class="math">\\[
+\\begin{aligned}
+\\frac{4m-68}{18} &= 2\\\\
+\\Rightarrow 4m-68 &= 36\\\\
+\\Rightarrow m &= 26
+\\end{aligned}
+\\]</div>
       <p>并且 26 ≥ 18 满足本情况。</p>
       <p><b>得到解：m=26</b> <span class="pill ok">OK</span></p>
 
@@ -224,7 +254,7 @@ t = \\frac{1}{18}\\Big[(m-18)^2-(m-16)^2\\Big]
       <section>
         <h3>段落1：把 y1、y2 写成 f(m)、f(m+2)（这一段是对的） <span class="pill ok">OK</span></h3>
         <p>图片里先设 E(m,y1)、F(m+2,y2) 并写出：</p>
-        <div class="math">y1 = f(m),\quad y2 = f(m+2)</div>
+        <div class="math">\\[y_1 = f(m),\\quad y_2 = f(m+2)\\]</div>
         <p>这一步没有问题，是必须的“翻译”。</p>
 
         <div class="crit">
@@ -263,7 +293,7 @@ t = \\frac{1}{18}\\Big[(m-18)^2-(m-16)^2\\Big]
         <div class="crit">
           <strong>关键问题：</strong>它没有先给出一个“一锤定音”的不等式说明跨顶点必无解。<br/>
           其实只要一句不等式就能秒杀：<br/>
-          <span class="math" style="display:block;margin-top:8px;">若 16\le m\le 18，则 t\le 4/18&lt;2，所以跨顶点无解。</span>
+          <span class="math" style="display:block;margin-top:8px;">若 \\(16\\le m\\le 18\\)，则 \\(t\\le 4/18&lt;2\\)，所以跨顶点无解。</span>
           有了这句，后面就不需要把跨顶点拆成 16≤m&lt;17、17≤m&lt;18 去逐段代算了。<br/><br/>
           <strong>风险：</strong>如果你照图片写但在“最小值取哪端点”上判断错一次，就可能导出“假解”，还不一定能及时发现。
         </div>
@@ -316,5 +346,31 @@ t = \\frac{1}{18}\\Big[(m-18)^2-(m-16)^2\\Big]
       </p>
     </footer>
   </div>
+  <script>
+    (function () {
+      const mathElements = document.querySelectorAll('.math');
+      for (const el of mathElements) {
+        const current = el.textContent;
+        const fixed = current.replace(/\\\\/g, '\\');
+        if (fixed !== current) el.textContent = fixed;
+      }
+
+      const tryTypeset = () => {
+        if (!window.MathJax?.startup?.promise || !window.MathJax?.typesetPromise) return false;
+        window.MathJax.startup.promise
+          .then(() => window.MathJax.typesetPromise())
+          .catch(() => {});
+        return true;
+      };
+
+      if (tryTypeset()) return;
+
+      let tries = 0;
+      const timer = setInterval(() => {
+        tries += 1;
+        if (tryTypeset() || tries > 200) clearInterval(timer);
+      }, 25);
+    })();
+  </script>
 </body>
 </html>
