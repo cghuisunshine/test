@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>⟨φ|ψ⟩: Inner Product & Overlap Amplitude</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #121a33;
+        --text: #e8ecff;
+        --muted: #a9b3d6;
+        --accent: #7aa2ff;
+        --border: rgba(255, 255, 255, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: radial-gradient(1000px 600px at 20% 0%, rgba(122, 162, 255, 0.15), transparent),
+          radial-gradient(900px 600px at 80% 20%, rgba(155, 120, 255, 0.12), transparent),
+          var(--bg);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+          "top top"
+          "side main";
+        min-height: 100%;
+      }
+
+      header.topbar {
+        grid-area: top;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(11, 16, 32, 0.75);
+        backdrop-filter: blur(10px);
+      }
+
+      .topbar .title {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .topbar .title .h1 {
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .topbar .title .meta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .btns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(18, 26, 51, 0.85);
+        color: var(--text);
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      button:hover {
+        border-color: rgba(122, 162, 255, 0.6);
+      }
+
+      aside.sidebar {
+        grid-area: side;
+        border-right: 1px solid var(--border);
+        background: rgba(18, 26, 51, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 12px;
+        overflow: auto;
+      }
+
+      .sidebar .search {
+        position: sticky;
+        top: 0;
+        padding: 6px 0 10px;
+        background: rgba(18, 26, 51, 0.95);
+        backdrop-filter: blur(10px);
+      }
+
+      .sidebar input[type="search"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(11, 16, 32, 0.6);
+        color: var(--text);
+        outline: none;
+      }
+
+      .sidebar input[type="search"]::placeholder {
+        color: rgba(169, 179, 214, 0.8);
+      }
+
+      nav#toc {
+        margin-top: 10px;
+      }
+
+      #tocList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 6px;
+      }
+
+      #tocList li {
+        margin: 0;
+      }
+
+      #tocList a {
+        display: block;
+        text-decoration: none;
+        padding: 8px 10px;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        color: var(--muted);
+      }
+
+      #tocList a:hover {
+        border-color: var(--border);
+        color: var(--text);
+      }
+
+      #tocList a.match {
+        border-color: rgba(122, 162, 255, 0.55);
+        color: var(--text);
+      }
+
+      #tocList a.hidden {
+        display: none;
+      }
+
+      main.content {
+        grid-area: main;
+        padding: 18px 18px 80px;
+        overflow: auto;
+      }
+
+      article {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      .lede {
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(18, 26, 51, 0.65);
+        color: var(--muted);
+      }
+
+      details.section {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(18, 26, 51, 0.55);
+        margin: 14px 0;
+        overflow: clip;
+      }
+
+      details.section > summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 12px 14px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      details.section > summary::-webkit-details-marker {
+        display: none;
+      }
+
+      details.section > summary .hint {
+        font-weight: 600;
+        font-size: 12px;
+        color: rgba(169, 179, 214, 0.9);
+      }
+
+      details.section > summary.matched {
+        outline: 2px solid rgba(122, 162, 255, 0.55);
+        outline-offset: -2px;
+      }
+
+      .sectionBody {
+        padding: 14px;
+      }
+
+      h3,
+      h4 {
+        margin: 18px 0 8px;
+      }
+
+      p {
+        margin: 10px 0;
+      }
+
+      ul,
+      ol {
+        margin: 8px 0 8px 22px;
+      }
+
+      code,
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+          monospace;
+      }
+
+      pre.equation {
+        margin: 12px 0;
+        padding: 12px 12px;
+        border: 1px solid rgba(122, 162, 255, 0.25);
+        border-radius: 12px;
+        background: rgba(11, 16, 32, 0.55);
+        overflow: auto;
+      }
+
+      .box {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin: 12px 0;
+        background: rgba(11, 16, 32, 0.45);
+      }
+
+      .box .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        margin-bottom: 8px;
+      }
+
+      .box.definition .label {
+        color: #b6ffea;
+      }
+      .box.example .label {
+        color: #ffd38f;
+      }
+      .box.trap .label {
+        color: #ff9fb3;
+      }
+      .box.strategy .label {
+        color: #cbb6ff;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .kicker {
+        font-weight: 800;
+      }
+
+      .steps {
+        display: grid;
+        gap: 10px;
+        margin: 10px 0;
+      }
+
+      .step {
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px dashed rgba(255, 255, 255, 0.18);
+        background: rgba(18, 26, 51, 0.35);
+      }
+
+      .copyHint {
+        font-size: 12px;
+        color: rgba(169, 179, 214, 0.9);
+        margin-top: 6px;
+      }
+
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        background: rgba(18, 26, 51, 0.92);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 13px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+        z-index: 999;
+      }
+
+      body.sidebar-collapsed .app {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "top"
+          "main";
+      }
+
+      body.sidebar-collapsed aside.sidebar {
+        display: none;
+      }
+
+      @media (max-width: 900px) {
+        .app {
+          grid-template-columns: 1fr;
+          grid-template-areas:
+            "top"
+            "side"
+            "main";
+        }
+
+        aside.sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+          max-height: 38vh;
+        }
+      }
+
+      @media print {
+        header.topbar,
+        aside.sidebar,
+        #toast {
+          display: none !important;
+        }
+        body {
+          background: white !important;
+          color: black !important;
+        }
+        main.content {
+          padding: 0 !important;
+        }
+        details.section {
+          break-inside: avoid;
+          border-color: #ddd !important;
+          background: white !important;
+        }
+        pre.equation {
+          border-color: #bbb !important;
+          background: #fafafa !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="title">
+          <div class="h1">⟨φ|ψ⟩: Inner Product & Overlap Amplitude</div>
+          <div class="meta">Subject: physics · Double-click equations to copy</div>
+        </div>
+        <div class="btns">
+          <button id="toggleSidebarBtn" type="button">Toggle Sidebar</button>
+          <button id="expandAllBtn" type="button">Expand All</button>
+          <button id="collapseAllBtn" type="button">Collapse All</button>
+          <button id="printBtn" type="button">Print</button>
+        </div>
+      </header>
+
+      <aside class="sidebar" aria-label="Table of contents">
+        <div class="search">
+          <input id="tocSearch" type="search" placeholder="Search sections…" autocomplete="off" />
+        </div>
+        <nav id="toc">
+          <ul id="tocList"></ul>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <article>
+          <div class="lede">
+            Use the sidebar to navigate. Search filters the TOC and highlights matching section headings. Use
+            Expand/Collapse for all sections. Double-click equation/theorem blocks to copy the underlying TeX/plain
+            text.
+          </div>
+
+          <details class="section" open id="a-big-picture-origin">
+            <summary>A) Big Picture &amp; Origin <span class="hint">what ⟨φ|ψ⟩ means</span></summary>
+            <div class="sectionBody">
+              <p>
+                <span class="kicker">Math View:</span> <span class="math">\( \langle \phi|\psi\rangle \)</span> is the
+                inner product of two vectors <span class="math">\( |\phi\rangle \)</span> and
+                <span class="math">\( |\psi\rangle \)</span> in a complex Hilbert space, returning a complex number.
+              </p>
+              <p>
+                <span class="kicker">Intuition View:</span> it is the overlap amplitude: how much the state
+                <span class="math">\( |\psi\rangle \)</span> “looks like”
+                <span class="math">\( |\phi\rangle \)</span>.
+              </p>
+              <div class="box trap">
+                <div class="label">Common Trap</div>
+                <div>
+                  Thinking <span class="math">\( \langle \phi|\psi\rangle \)</span> is a probability. It’s an
+                  amplitude; probabilities use <span class="math">\( |\langle \phi|\psi\rangle|^2 \)</span>.
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" open id="b-core-definitions">
+            <summary>B) Core Concepts &amp; Definitions <span class="hint">bras, kets, norms</span></summary>
+            <div class="sectionBody">
+              <div class="box definition">
+                <div class="label">Definition</div>
+                <div>
+                  A <span class="kicker">ket</span> <span class="math">\( |\psi\rangle \)</span> is a vector. A
+                  <span class="kicker">bra</span> <span class="math">\( \langle \phi| \)</span> is the Hermitian adjoint
+                  of <span class="math">\( |\phi\rangle \)</span>:
+                </div>
+                <pre class="equation math">\[\langle \phi| = (|\phi\rangle)^\dagger.\]</pre>
+                <div class="copyHint">Double-click the equation to copy TeX</div>
+              </div>
+
+              <details class="section" open id="b-inner-product-axioms">
+                <summary>Inner product axioms <span class="hint">what makes it “legal”</span></summary>
+                <div class="sectionBody">
+                  <p class="muted">
+                    Physics convention: linear in the second slot and conjugate-linear in the first.
+                  </p>
+                  <pre class="equation math">\[
+\langle \phi|(a\psi+\chi)\rangle = a\langle \phi|\psi\rangle+\langle \phi|\chi\rangle,\quad
+\langle \phi|\psi\rangle = \langle \psi|\phi\rangle^*,\quad
+\langle \psi|\psi\rangle\ge 0.
+\]</pre>
+                  <p>
+                    <span class="kicker">Intuition View:</span> conjugation is what makes “length squared”
+                    <span class="math">\( \langle \psi|\psi\rangle \)</span> real and nonnegative.
+                  </p>
+                </div>
+              </details>
+
+              <details class="section" open id="b-norm-normalization-orthogonality">
+                <summary>Norm, normalization, orthogonality <span class="hint">length and perpendicularity</span></summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[
+\|\psi\|=\sqrt{\langle \psi|\psi\rangle},\quad
+\text{normalized: }\langle \psi|\psi\rangle=1,\quad
+\text{orthogonal: }\langle \phi|\psi\rangle=0.
+\]</pre>
+                  <p>
+                    <span class="kicker">Intuition View:</span> normalized means total probability is 1; orthogonal means
+                    zero overlap.
+                  </p>
+                  <p class="muted">
+                    Units note (common QM): <span class="math">\( \langle \phi|\psi\rangle \)</span> is dimensionless; in
+                    position space, <span class="math">\( \psi(x) \)</span> typically has units
+                    <span class="math">\( 1/\sqrt{\text{volume}} \)</span> so
+                    <span class="math">\( \int |\psi(x)|^2 dx \)</span> is dimensionless.
+                  </p>
+                </div>
+              </details>
+            </div>
+          </details>
+
+          <details class="section" open id="c-equations-theorems">
+            <summary>C) Equations / Theorems <span class="hint">compute and interpret ⟨φ|ψ⟩</span></summary>
+            <div class="sectionBody">
+              <details class="section" open id="c-core-identity">
+                <summary>Core identity <span class="hint">definition in one line</span></summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\langle \phi|\psi\rangle = (|\phi\rangle)^\dagger|\psi\rangle.\]</pre>
+                  <p>
+                    <span class="kicker">Intuition View:</span> “take the conjugate-transposed version of φ, then dot it
+                    with ψ.”
+                  </p>
+                </div>
+              </details>
+
+              <details class="section" open id="c-component-form">
+                <summary>Component form (finite dimension) <span class="hint">sum of conjugate products</span></summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\langle \phi|\psi\rangle = \sum_i \phi_i^*\,\psi_i\quad(\text{orthonormal basis }|i\rangle).\]</pre>
+                  <div class="box trap">
+                    <div class="label">Common Trap</div>
+                    <div>
+                      Forgetting the complex conjugate on <span class="math">\( \phi_i \)</span>. In complex spaces, the
+                      “dot product” is not just <span class="math">\( \sum \phi_i\psi_i \)</span>.
+                    </div>
+                  </div>
+                </div>
+              </details>
+
+              <details class="section" open id="c-position-space">
+                <summary>Wavefunction overlap (continuous) <span class="hint">integral of φ*ψ</span></summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\langle \phi|\psi\rangle = \int \phi(x)^*\,\psi(x)\,dx,\quad \psi(x)=\langle x|\psi\rangle.\]</pre>
+                  <p class="muted">
+                    Assumptions: <span class="math">\( \int |x\rangle\langle x|dx = I \)</span> and
+                    <span class="math">\( \langle x|x'\rangle = \delta(x-x') \)</span>.
+                  </p>
+                </div>
+              </details>
+
+              <details class="section" open id="c-born-rule">
+                <summary>Born rule for a projector outcome |φ⟩ <span class="hint">probability from overlap</span></summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[
+P_\phi = |\phi\rangle\langle \phi|,\quad
+p(\phi|\psi)=\langle \psi|P_\phi|\psi\rangle = |\langle \phi|\psi\rangle|^2
+\quad(\langle \phi|\phi\rangle=1).
+\]</pre>
+                  <p>
+                    <span class="kicker">Intuition View:</span> amplitude is “how much φ is inside ψ”; squaring gives the
+                    probability of getting “φ” when you measure that yes/no question.
+                  </p>
+                </div>
+              </details>
+
+              <details class="section" open id="c-completeness">
+                <summary>Completeness &amp; probabilities sum to 1 <span class="hint">resolution of identity</span></summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\sum_i |i\rangle\langle i| = I \quad\Rightarrow\quad \sum_i |\langle i|\psi\rangle|^2 = 1\ \ (\langle \psi|\psi\rangle=1).\]</pre>
+                </div>
+              </details>
+            </div>
+          </details>
+
+          <details class="section" open id="d-derivations">
+            <summary>D) Derivations / Proofs <span class="hint">step-by-step</span></summary>
+            <div class="sectionBody">
+              <details class="section" open id="d-probabilities-sum-to-1">
+                <summary>Derivation: Σ |⟨i|ψ⟩|² = 1 <span class="hint">insert identity</span></summary>
+                <div class="sectionBody">
+                  <p class="muted">
+                    Assumptions: orthonormal complete basis <span class="math">\( \{|i\rangle\} \)</span>, normalized state
+                    <span class="math">\( \langle \psi|\psi\rangle=1 \)</span>.
+                  </p>
+                  <div class="steps">
+                    <div class="step">
+                      <div class="kicker">Step 1 (insert identity)</div>
+                      <pre class="equation math">\[1=\langle \psi|\psi\rangle = \langle \psi|I|\psi\rangle.\]</pre>
+                    </div>
+                    <div class="step">
+                      <div class="kicker">Step 2 (use completeness)</div>
+                      <pre class="equation math">\[\langle \psi|I|\psi\rangle = \left\langle \psi\left|\sum_i |i\rangle\langle i|\right|\psi\right\rangle
+= \sum_i \langle \psi|i\rangle\langle i|\psi\rangle.\]</pre>
+                    </div>
+                    <div class="step">
+                      <div class="kicker">Step 3 (conjugate symmetry)</div>
+                      <pre class="equation math">\[\langle \psi|i\rangle = \langle i|\psi\rangle^* \quad\Rightarrow\quad
+\sum_i \langle i|\psi\rangle^*\langle i|\psi\rangle = \sum_i |\langle i|\psi\rangle|^2.\]</pre>
+                    </div>
+                  </div>
+                  <p>
+                    <span class="kicker">Intuition View:</span> expanding in an orthonormal basis is decomposing into
+                    perpendicular components; squared magnitudes add to the total length squared (which is 1).
+                  </p>
+                </div>
+              </details>
+
+              <details class="section" open id="d-cauchy-schwarz">
+                <summary>Key bound: Cauchy–Schwarz <span class="hint">why probabilities ≤ 1</span></summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[|\langle \phi|\psi\rangle| \le \|\phi\|\,\|\psi\|.\]</pre>
+                  <p>
+                    <span class="kicker">Intuition View:</span> overlap can’t exceed perfect alignment; for normalized
+                    states this means <span class="math">\( |\langle \phi|\psi\rangle|\le 1 \)</span>.
+                  </p>
+                </div>
+              </details>
+            </div>
+          </details>
+
+          <details class="section" open id="e-worked-examples">
+            <summary>E) Worked Examples <span class="hint">practice computing overlaps</span></summary>
+            <div class="sectionBody">
+              <div class="box example">
+                <div class="label">Example 1 — Qubit overlap</div>
+                <div>
+                  Let <span class="math">\( |0\rangle,|1\rangle \)</span> be orthonormal and
+                  <span class="math">\( |\psi\rangle=(|0\rangle+|1\rangle)/\sqrt{2} \)</span>,
+                  <span class="math">\( |\phi\rangle=|0\rangle \)</span>.
+                </div>
+                <pre class="equation math">\[
+\langle \phi|\psi\rangle
+= \langle 0|\frac{|0\rangle+|1\rangle}{\sqrt{2}}
+= \frac{\langle 0|0\rangle+\langle 0|1\rangle}{\sqrt{2}}
+= \frac{1}{\sqrt{2}},
+\quad
+p=\left|\langle \phi|\psi\rangle\right|^2=\frac{1}{2}.
+\]</pre>
+                <div class="muted"><span class="kicker">Intuition View:</span> ψ is “half |0⟩, half |1⟩.”</div>
+              </div>
+
+              <div class="box example">
+                <div class="label">Example 2 — Global phase invariance</div>
+                <div>
+                  If <span class="math">\( |\psi'\rangle=e^{i\theta}|\psi\rangle \)</span> then probabilities don’t change:
+                </div>
+                <pre class="equation math">\[\left|\langle \phi|\psi'\rangle\right|^2=\left|e^{i\theta}\langle \phi|\psi\rangle\right|^2=\left|\langle \phi|\psi\rangle\right|^2.\]</pre>
+              </div>
+
+              <div class="box example">
+                <div class="label">Example 3 — Continuous overlap</div>
+                <div>Given normalized wavefunctions <span class="math">\( \phi(x),\psi(x) \)</span>:</div>
+                <pre class="equation math">\[\langle \phi|\psi\rangle = \int_{-\infty}^{\infty} \phi(x)^*\,\psi(x)\,dx.\]</pre>
+                <div class="muted">
+                  <span class="kicker">Intuition View:</span> if the “clouds” are separated in x, the overlap is small.
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" open id="f-misconceptions">
+            <summary>F) Common Questions &amp; Misconceptions <span class="hint">fix the usual mistakes</span></summary>
+            <div class="sectionBody">
+              <div class="box trap">
+                <div class="label">Common Trap</div>
+                <div>
+                  Swapping order without conjugating:
+                  <span class="math">\( \langle \psi|\phi\rangle = \langle \phi|\psi\rangle^* \)</span>, not the same in
+                  general.
+                </div>
+              </div>
+              <div class="box trap">
+                <div class="label">Common Trap</div>
+                <div>
+                  Conjugating the wrong wavefunction in
+                  <span class="math">\( \int \phi^*(x)\psi(x)\,dx \)</span>. The conjugation belongs to the bra.
+                </div>
+              </div>
+              <div class="box trap">
+                <div class="label">Common Trap</div>
+                <div>
+                  Treating amplitude as probability. Observable probabilities are
+                  <span class="math">\( |\langle \phi|\psi\rangle|^2 \)</span>.
+                </div>
+              </div>
+              <p>
+                <span class="kicker">Intuition View:</span> amplitudes can be complex so they can interfere; probabilities
+                must be real and nonnegative.
+              </p>
+            </div>
+          </details>
+
+          <details class="section" open id="g-exam-strategy">
+            <summary>G) Exam Strategy <span class="hint">fast workflow</span></summary>
+            <div class="sectionBody">
+              <div class="box strategy">
+                <div class="label">Exam Strategy</div>
+                <ul>
+                  <li>Check normalization: ensure <span class="math">\( \langle \psi|\psi\rangle=1 \)</span>.</li>
+                  <li>Choose a convenient basis; compute <span class="math">\( \langle \phi|\psi\rangle \)</span> via components or an integral.</li>
+                  <li>For a projector outcome, report <span class="math">\( p=|\langle \phi|\psi\rangle|^2 \)</span>.</li>
+                  <li>Use completeness: <span class="math">\( \sum_i |i\rangle\langle i|=I \)</span> to insert identities.</li>
+                </ul>
+                <div class="muted">
+                  Traps: forgetting conjugation, mixing bases, forgetting global phase invariance.
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" open id="h-summary-connections">
+            <summary>H) Summary &amp; Connections <span class="hint">what to remember</span></summary>
+            <div class="sectionBody">
+              <p>
+                <span class="kicker">Summary:</span> <span class="math">\( \langle \phi|\psi\rangle \)</span> is the
+                Hilbert-space inner product (overlap amplitude). Probabilities for projector measurements use
+                <span class="math">\( |\langle \phi|\psi\rangle|^2 \)</span>.
+              </p>
+              <ul>
+                <li><span class="kicker">Linear algebra:</span> complex inner products, orthonormal bases, projections.</li>
+                <li><span class="kicker">QM:</span> Born rule, measurement, interference, basis changes.</li>
+                <li><span class="kicker">Position space:</span> overlap becomes <span class="math">\( \int \phi^*(x)\psi(x)\,dx \)</span>.</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+      </main>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      function slugify(text) {
+        return String(text)
+          .toLowerCase()
+          .trim()
+          .replace(/['"]/g, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.style.opacity = "1";
+        window.clearTimeout(showToast._t);
+        showToast._t = window.setTimeout(() => {
+          toast.style.opacity = "0";
+        }, 900);
+      }
+
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(text)
+            .then(() => showToast("Copied"))
+            .catch(() => fallbackCopy(text));
+          return;
+        }
+        fallbackCopy(text);
+      }
+
+      function fallbackCopy(text) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showToast("Copied");
+        } catch {
+          showToast("Copy failed");
+        } finally {
+          document.body.removeChild(ta);
+        }
+      }
+
+      function fixTeXEscapes(input) {
+        const s = String(input);
+        let out = "";
+        for (let i = 0; i < s.length; i++) {
+          if (s[i] === "\\" && s[i + 1] === "\\") {
+            const next = s[i + 2] ?? "";
+            if (next === "" || next === " " || next === "\n" || next === "\t" || next === "[") {
+              out += "\\\\";
+              i += 1;
+              continue;
+            }
+            out += "\\";
+            i += 1;
+            continue;
+          }
+          out += s[i];
+        }
+        return out;
+      }
+
+      function prepareCopyAndMath() {
+        const candidates = document.querySelectorAll(".math, pre.equation, pre.theorem");
+        for (const el of candidates) {
+          const raw = el.textContent || "";
+          const fixed = fixTeXEscapes(raw);
+          el.dataset.copy = fixed;
+          if (el.classList.contains("math") || el.tagName === "PRE") {
+            el.textContent = fixed;
+          }
+        }
+      }
+
+      function ensureSectionIds() {
+        const used = new Set();
+        const sections = document.querySelectorAll("main details.section");
+        for (const section of sections) {
+          const summary = section.querySelector(":scope > summary");
+          const title = summary ? summary.textContent.trim() : "section";
+          if (!section.id) {
+            let base = slugify(title) || "section";
+            let id = base;
+            let n = 2;
+            while (used.has(id) || document.getElementById(id)) {
+              id = `${base}-${n++}`;
+            }
+            section.id = id;
+          }
+          used.add(section.id);
+        }
+      }
+
+      function buildToc() {
+        const tocList = document.getElementById("tocList");
+        tocList.innerHTML = "";
+
+        const sections = [...document.querySelectorAll("main details.section")];
+        const seen = new Set();
+
+        for (const section of sections) {
+          if (seen.has(section)) continue;
+          seen.add(section);
+
+          const summary = section.querySelector(":scope > summary");
+          const title = summary ? summary.textContent.trim() : section.id;
+
+          const depth = (() => {
+            let d = 0;
+            let node = section.parentElement;
+            while (node) {
+              if (node.matches && node.matches("details.section")) d++;
+              node = node.parentElement;
+            }
+            return d;
+          })();
+
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = `#${section.id}`;
+          a.textContent = title;
+          a.dataset.targetId = section.id;
+          a.style.paddingLeft = `${10 + depth * 14}px`;
+          li.appendChild(a);
+          tocList.appendChild(li);
+        }
+      }
+
+      function applySearchFilter(query) {
+        const q = String(query || "").trim().toLowerCase();
+        const tocLinks = document.querySelectorAll("#tocList a");
+        const summaries = document.querySelectorAll("main details.section > summary");
+
+        for (const s of summaries) s.classList.remove("matched");
+
+        if (!q) {
+          for (const a of tocLinks) {
+            a.classList.remove("hidden", "match");
+          }
+          return;
+        }
+
+        for (const a of tocLinks) {
+          const text = a.textContent.toLowerCase();
+          const isMatch = text.includes(q);
+          a.classList.toggle("hidden", !isMatch);
+          a.classList.toggle("match", isMatch);
+          if (isMatch) {
+            const target = document.getElementById(a.dataset.targetId);
+            const summary = target ? target.querySelector(":scope > summary") : null;
+            if (summary) summary.classList.add("matched");
+          }
+        }
+      }
+
+      function setAllDetailsOpen(open) {
+        const details = document.querySelectorAll("main details");
+        for (const d of details) d.open = open;
+      }
+
+      document.addEventListener("dblclick", (e) => {
+        const target = e.target && e.target.closest ? e.target.closest(".math, pre.equation, pre.theorem") : null;
+        if (!target) return;
+        copyText(target.dataset.copy || target.textContent || "");
+      });
+
+      document.getElementById("toggleSidebarBtn").addEventListener("click", () => {
+        document.body.classList.toggle("sidebar-collapsed");
+      });
+      document.getElementById("expandAllBtn").addEventListener("click", () => setAllDetailsOpen(true));
+      document.getElementById("collapseAllBtn").addEventListener("click", () => setAllDetailsOpen(false));
+      document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+      document.getElementById("tocSearch").addEventListener("input", (e) => {
+        applySearchFilter(e.target.value);
+      });
+
+      // Prepare content once the DOM is ready.
+      ensureSectionIds();
+      prepareCopyAndMath();
+      buildToc();
+
+      // Typeset MathJax (only if MathJax is present and any `.math` exists).
+      (function maybeTypesetMath() {
+        const hasMath = document.querySelector(".math");
+        if (!hasMath) return;
+        if (!window.MathJax || !MathJax.startup || !MathJax.startup.promise) return;
+        MathJax.startup.promise.then(() => MathJax.typesetPromise());
+      })();
+    </script>
+
+    <!-- MathJax v3 (allowed external asset). Remove if no math is used. -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [["\\[", "\\]"]],
+        },
+        options: {
+          renderActions: {
+            addMenu: [0, "", ""],
+          },
+        },
+      };
+    </script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+    ></script>
+  </body>
+</html>
