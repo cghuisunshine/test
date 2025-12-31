@@ -546,8 +546,8 @@
               <details class="section" open id="c1-mass-concentration">
                 <summary>C1) Mass concentration (g/L)</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\
-C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}\
+                  <pre class="equation math">\[
+C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}
 \]</pre>
                   <ul>
                     <li><span class="kicker">Symbols:</span> <span class="math">\(C_m\)</span> in g/L, <span class="math">\(m_{\text{solute}}\)</span> in g, <span class="math">\(V_{\text{solution}}\)</span> in L.</li>
@@ -565,14 +565,14 @@ C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}\
               <details class="section" open id="c2-percent-concentration">
                 <summary>C2) Percent concentrations (m/m, m/v, v/v)</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\
-\%\,(m/m)=\frac{m_{\text{solute}}}{m_{\text{solution}}}\times 100\%\
+                  <pre class="equation math">\[
+\%\,(m/m)=\frac{m_{\text{solute}}}{m_{\text{solution}}}\times 100\%
 \]</pre>
-                  <pre class="equation math">\[\
-\%\,(m/v)=\frac{m_{\text{solute}}}{V_{\text{solution}}}\times 100\%\
+                  <pre class="equation math">\[
+\%\,(m/v)=\frac{m_{\text{solute}}}{V_{\text{solution}}}\times 100\%
 \]</pre>
-                  <pre class="equation math">\[\
-\%\,(v/v)=\frac{V_{\text{solute}}}{V_{\text{solution}}}\times 100\%\
+                  <pre class="equation math">\[
+\%\,(v/v)=\frac{V_{\text{solute}}}{V_{\text{solution}}}\times 100\%
 \]</pre>
                   <ul>
                     <li><span class="kicker">Validity:</span> the denominator changes—always state the type.</li>
@@ -588,8 +588,8 @@ C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}\
               <details class="section" open id="c3-molarity">
                 <summary>C3) Molarity (mol/L)</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\
-M=\frac{n_{\text{solute}}}{V_{\text{solution}}}\
+                  <pre class="equation math">\[
+M=\frac{n_{\text{solute}}}{V_{\text{solution}}}
 \]</pre>
                   <ul>
                     <li><span class="kicker">Symbols:</span> <span class="math">\(M\)</span> mol/L, <span class="math">\(n\)</span> mol, <span class="math">\(V\)</span> L.</li>
@@ -607,8 +607,8 @@ M=\frac{n_{\text{solute}}}{V_{\text{solution}}}\
               <details class="section" open id="c4-moles-from-mass">
                 <summary>C4) Moles from mass</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\
-n=\frac{m}{M_m}\
+                  <pre class="equation math">\[
+n=\frac{m}{M_m}
 \]</pre>
                   <ul>
                     <li><span class="kicker">Symbols:</span> <span class="math">\(n\)</span> mol, <span class="math">\(m\)</span> g, <span class="math">\(M_m\)</span> g/mol.</li>
@@ -624,8 +624,8 @@ n=\frac{m}{M_m}\
               <details class="section" open id="c5-dilution">
                 <summary>C5) Dilution equation</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[\
-M_1V_1=M_2V_2\
+                  <pre class="equation math">\[
+M_1V_1=M_2V_2
 \]</pre>
                   <ul>
                     <li><span class="kicker">Assumptions:</span> no reaction; same solute; solute amount conserved.</li>
@@ -935,7 +935,7 @@ M_1V_1=M_2V_2\
         for (let i = 0; i < s.length; i++) {
           if (s[i] === "\\" && s[i + 1] === "\\") {
             const next = s[i + 2] ?? "";
-            if (next === "" || next === " " || next === "\n" || next === "\t" || next === "[") {
+            if (next === "" || next === " " || next === "\n" || next === "\t") {
               out += "\\\\";
               i += 1;
               continue;
