@@ -254,7 +254,8 @@
           monospace;
       }
 
-      pre.equation {
+      pre.equation,
+      .equation {
         margin: 12px 0;
         padding: 12px 12px;
         border: 1px solid rgba(122, 162, 255, 0.25);
@@ -546,9 +547,9 @@
               <details class="section" open id="c1-mass-concentration">
                 <summary>C1) Mass concentration (g/L)</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[
-C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}
-\]</pre>
+                  <div class="equation math">\[
+	C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}
+\]</div>
                   <ul>
                     <li><span class="kicker">Symbols:</span> <span class="math">\(C_m\)</span> in g/L, <span class="math">\(m_{\text{solute}}\)</span> in g, <span class="math">\(V_{\text{solution}}\)</span> in L.</li>
                     <li><span class="kicker">Validity:</span> use solution volume; keep units consistent.</li>
@@ -565,15 +566,15 @@ C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}
               <details class="section" open id="c2-percent-concentration">
                 <summary>C2) Percent concentrations (m/m, m/v, v/v)</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[
+                  <div class="equation math">\[
 \%\,(m/m)=\frac{m_{\text{solute}}}{m_{\text{solution}}}\times 100\%
-\]</pre>
-                  <pre class="equation math">\[
+\]</div>
+                  <div class="equation math">\[
 \%\,(m/v)=\frac{m_{\text{solute}}}{V_{\text{solution}}}\times 100\%
-\]</pre>
-                  <pre class="equation math">\[
+\]</div>
+                  <div class="equation math">\[
 \%\,(v/v)=\frac{V_{\text{solute}}}{V_{\text{solution}}}\times 100\%
-\]</pre>
+\]</div>
                   <ul>
                     <li><span class="kicker">Validity:</span> the denominator changes—always state the type.</li>
                     <li><span class="kicker">Sanity check:</span> percent is dimensionless.</li>
@@ -588,9 +589,9 @@ C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}
               <details class="section" open id="c3-molarity">
                 <summary>C3) Molarity (mol/L)</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[
+                  <div class="equation math">\[
 M=\frac{n_{\text{solute}}}{V_{\text{solution}}}
-\]</pre>
+\]</div>
                   <ul>
                     <li><span class="kicker">Symbols:</span> <span class="math">\(M\)</span> mol/L, <span class="math">\(n\)</span> mol, <span class="math">\(V\)</span> L.</li>
                     <li><span class="kicker">Validity:</span> use solution volume; temperature can affect <span class="math">\(V\)</span>.</li>
@@ -607,9 +608,9 @@ M=\frac{n_{\text{solute}}}{V_{\text{solution}}}
               <details class="section" open id="c4-moles-from-mass">
                 <summary>C4) Moles from mass</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[
+                  <div class="equation math">\[
 n=\frac{m}{M_m}
-\]</pre>
+\]</div>
                   <ul>
                     <li><span class="kicker">Symbols:</span> <span class="math">\(n\)</span> mol, <span class="math">\(m\)</span> g, <span class="math">\(M_m\)</span> g/mol.</li>
                     <li><span class="kicker">Sanity check:</span> g ÷ (g/mol) = mol.</li>
@@ -624,9 +625,9 @@ n=\frac{m}{M_m}
               <details class="section" open id="c5-dilution">
                 <summary>C5) Dilution equation</summary>
                 <div class="sectionBody">
-                  <pre class="equation math">\[
+                  <div class="equation math">\[
 M_1V_1=M_2V_2
-\]</pre>
+\]</div>
                   <ul>
                     <li><span class="kicker">Assumptions:</span> no reaction; same solute; solute amount conserved.</li>
                     <li><span class="kicker">Roadmap:</span> from <span class="math">\(n=MV\)</span> and <span class="math">\(n_1=n_2\)</span>; full derivation in Section D.</li>
