@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chemistry 11 — Solutions</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: #121a33;
+        --text: #e8ecff;
+        --muted: #a9b3d6;
+        --accent: #7aa2ff;
+        --border: rgba(255, 255, 255, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: radial-gradient(1000px 600px at 20% 0%, rgba(122, 162, 255, 0.15), transparent),
+          radial-gradient(900px 600px at 80% 20%, rgba(155, 120, 255, 0.12), transparent),
+          var(--bg);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+          "top top"
+          "side main";
+        min-height: 100%;
+      }
+
+      header.topbar {
+        grid-area: top;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(11, 16, 32, 0.75);
+        backdrop-filter: blur(10px);
+      }
+
+      .topbar .title {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+
+      .topbar .title .h1 {
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .topbar .title .meta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .btns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(18, 26, 51, 0.85);
+        color: var(--text);
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      button:hover {
+        border-color: rgba(122, 162, 255, 0.6);
+      }
+
+      aside.sidebar {
+        grid-area: side;
+        border-right: 1px solid var(--border);
+        background: rgba(18, 26, 51, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 12px;
+        overflow: auto;
+      }
+
+      .sidebar .search {
+        position: sticky;
+        top: 0;
+        padding: 6px 0 10px;
+        background: rgba(18, 26, 51, 0.95);
+        backdrop-filter: blur(10px);
+      }
+
+      .sidebar input[type="search"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(11, 16, 32, 0.6);
+        color: var(--text);
+        outline: none;
+      }
+
+      .sidebar input[type="search"]::placeholder {
+        color: rgba(169, 179, 214, 0.8);
+      }
+
+      nav#toc {
+        margin-top: 10px;
+      }
+
+      #tocList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 6px;
+      }
+
+      #tocList li {
+        margin: 0;
+      }
+
+      #tocList a {
+        display: block;
+        text-decoration: none;
+        padding: 8px 10px;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        color: var(--muted);
+      }
+
+      #tocList a:hover {
+        border-color: var(--border);
+        color: var(--text);
+      }
+
+      #tocList a.match {
+        border-color: rgba(122, 162, 255, 0.55);
+        color: var(--text);
+      }
+
+      #tocList a.hidden {
+        display: none;
+      }
+
+      main.content {
+        grid-area: main;
+        padding: 18px 18px 80px;
+        overflow: auto;
+      }
+
+      article {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      .lede {
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(18, 26, 51, 0.65);
+        color: var(--muted);
+      }
+
+      details.section {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(18, 26, 51, 0.55);
+        margin: 14px 0;
+        overflow: clip;
+      }
+
+      details.section > summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 12px 14px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      details.section > summary::-webkit-details-marker {
+        display: none;
+      }
+
+      details.section > summary .hint {
+        font-weight: 600;
+        font-size: 12px;
+        color: rgba(169, 179, 214, 0.9);
+      }
+
+      details.section > summary.matched {
+        outline: 2px solid rgba(122, 162, 255, 0.55);
+        outline-offset: -2px;
+      }
+
+      .sectionBody {
+        padding: 14px;
+      }
+
+      h3,
+      h4 {
+        margin: 18px 0 8px;
+      }
+
+      p {
+        margin: 10px 0;
+      }
+
+      ul,
+      ol {
+        margin: 8px 0 8px 22px;
+      }
+
+      code,
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+          monospace;
+      }
+
+      pre.equation {
+        margin: 12px 0;
+        padding: 12px 12px;
+        border: 1px solid rgba(122, 162, 255, 0.25);
+        border-radius: 12px;
+        background: rgba(11, 16, 32, 0.55);
+        overflow: auto;
+      }
+
+      .box {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin: 12px 0;
+        background: rgba(11, 16, 32, 0.45);
+      }
+
+      .box .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        margin-bottom: 8px;
+      }
+
+      .box.definition .label {
+        color: #b6ffea;
+      }
+      .box.example .label {
+        color: #ffd38f;
+      }
+      .box.trap .label {
+        color: #ff9fb3;
+      }
+      .box.strategy .label {
+        color: #cbb6ff;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .kicker {
+        font-weight: 800;
+      }
+
+      .steps {
+        display: grid;
+        gap: 10px;
+        margin: 10px 0;
+      }
+
+      .step {
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px dashed rgba(255, 255, 255, 0.18);
+        background: rgba(18, 26, 51, 0.35);
+      }
+
+      .copyHint {
+        font-size: 12px;
+        color: rgba(169, 179, 214, 0.9);
+        margin-top: 6px;
+      }
+
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        background: rgba(18, 26, 51, 0.92);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 13px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+        z-index: 999;
+      }
+
+      body.sidebar-collapsed .app {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "top"
+          "main";
+      }
+
+      body.sidebar-collapsed aside.sidebar {
+        display: none;
+      }
+
+      @media (max-width: 900px) {
+        .app {
+          grid-template-columns: 1fr;
+          grid-template-areas:
+            "top"
+            "side"
+            "main";
+        }
+
+        aside.sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+          max-height: 38vh;
+        }
+      }
+
+      @media print {
+        header.topbar,
+        aside.sidebar,
+        #toast {
+          display: none !important;
+        }
+        body {
+          background: white !important;
+          color: black !important;
+        }
+        main.content {
+          padding: 0 !important;
+        }
+        details.section {
+          break-inside: avoid;
+          border-color: #ddd !important;
+          background: white !important;
+        }
+        pre.equation {
+          border-color: #bbb !important;
+          background: #fafafa !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="title">
+          <div class="h1">Chemistry 11 — Solutions</div>
+          <div class="meta">Subject: chemistry · Double-click equations to copy</div>
+        </div>
+        <div class="btns">
+          <button id="toggleSidebarBtn" type="button">Toggle Sidebar</button>
+          <button id="expandAllBtn" type="button">Expand All</button>
+          <button id="collapseAllBtn" type="button">Collapse All</button>
+          <button id="printBtn" type="button">Print</button>
+        </div>
+      </header>
+
+      <aside class="sidebar" aria-label="Table of contents">
+        <div class="search">
+          <input id="tocSearch" type="search" placeholder="Search sections…" autocomplete="off" />
+        </div>
+        <nav id="toc">
+          <ul id="tocList"></ul>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <article>
+          <div class="lede">
+            Use the sidebar to navigate. Search filters the TOC and highlights matching section headings. Use
+            Expand/Collapse for all sections. Double-click equation/theorem blocks to copy the underlying TeX/plain
+            text.
+          </div>
+
+          <details class="section" open id="a-big-picture-origin">
+            <summary>A) Big Picture &amp; Origin</summary>
+            <div class="sectionBody">
+              <div class="box definition">
+                <div class="label">Definition</div>
+                <div>
+                  A <span class="kicker">solution</span> is a homogeneous mixture where a
+                  <span class="kicker">solute</span> is dispersed at the particle level in a
+                  <span class="kicker">solvent</span>.
+                </div>
+              </div>
+
+              <p class="kicker">Why it matters</p>
+              <ul>
+                <li>Most reactions in school chemistry happen in solution (aq).</li>
+                <li>To predict yields and do lab prep, you must measure “how much dissolved” quantitatively.</li>
+              </ul>
+
+              <p class="kicker">Two explanations</p>
+              <ul>
+                <li><span class="kicker">Math View:</span> quantify “how much” using ratios like mass/volume or moles/volume.</li>
+                <li><span class="kicker">Intuition View:</span> concentration is “crowdedness” of solute particles in the solvent.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="section" open id="b-core-concepts-definitions">
+            <summary>B) Core Concepts &amp; Definitions</summary>
+            <div class="sectionBody">
+              <details class="section" open id="b1-solution-terms">
+                <summary>B1) Solution, Solute, Solvent, Aqueous</summary>
+                <div class="sectionBody">
+                  <div class="box definition">
+                    <div class="label">Definition</div>
+                    <ul>
+                      <li><span class="kicker">Solution:</span> single-phase (uniform) mixture.</li>
+                      <li><span class="kicker">Solute:</span> substance dissolved.</li>
+                      <li><span class="kicker">Solvent:</span> dissolving medium.</li>
+                      <li><span class="kicker">Aqueous (aq):</span> solvent is water.</li>
+                    </ul>
+                  </div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> measure solute as mass <span class="math">\(m\)</span> or moles <span class="math">\(n\)</span>; solution amount as volume <span class="math">\(V\)</span>.</li>
+                    <li><span class="kicker">Intuition View:</span> particles are evenly spread, so every sample is the same.</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="section" open id="b2-concentrated-dilute">
+                <summary>B2) Concentrated vs Dilute</summary>
+                <div class="sectionBody">
+                  <div class="box definition">
+                    <div class="label">Definition</div>
+                    <div>
+                      <span class="kicker">Concentrated</span> means more solute per amount of solution than another;
+                      <span class="kicker">dilute</span> means less.
+                    </div>
+                  </div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> compare numerical concentration values (e.g., g/L or mol/L).</li>
+                    <li><span class="kicker">Intuition View:</span> same cup size, one has more dissolved “stuff.”</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="section" open id="b3-solubility-saturation">
+                <summary>B3) Saturated, Unsaturated, Supersaturated (Solubility)</summary>
+                <div class="sectionBody">
+                  <div class="box definition">
+                    <div class="label">Definition</div>
+                    <ul>
+                      <li><span class="kicker">Saturated:</span> maximum dissolved solute at a given temperature (equilibrium).</li>
+                      <li><span class="kicker">Unsaturated:</span> less than the maximum.</li>
+                      <li><span class="kicker">Supersaturated:</span> more than equilibrium (unstable).</li>
+                    </ul>
+                  </div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> solubility is often a ratio like “g solute per 100 g water” at a temperature.</li>
+                    <li><span class="kicker">Intuition View:</span> “full” at the particle level; extra solute won’t stay dissolved.</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="section" open id="b4-miscible-immiscible">
+                <summary>B4) Miscible vs Immiscible</summary>
+                <div class="sectionBody">
+                  <div class="box definition">
+                    <div class="label">Definition</div>
+                    <div>
+                      Liquids are <span class="kicker">miscible</span> if they form one uniform phase; <span class="kicker">immiscible</span> if they form layers.
+                    </div>
+                  </div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> one phase vs two phases.</li>
+                    <li><span class="kicker">Intuition View:</span> “do they stay mixed or separate?”</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="section" open id="b5-electrolyte-nonelectrolyte">
+                <summary>B5) Electrolyte vs Nonelectrolyte</summary>
+                <div class="sectionBody">
+                  <div class="box definition">
+                    <div class="label">Definition</div>
+                    <ul>
+                      <li><span class="kicker">Electrolyte:</span> forms ions in water (conducts electricity), e.g., NaCl(aq).</li>
+                      <li><span class="kicker">Nonelectrolyte:</span> stays as molecules, e.g., sugar(aq).</li>
+                    </ul>
+                  </div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> conductivity increases with ion concentration.</li>
+                    <li><span class="kicker">Intuition View:</span> ions are moving charge carriers.</li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </details>
+
+          <details class="section" open id="c-equations-laws">
+            <summary>C) Equations, Laws, or Theorems</summary>
+            <div class="sectionBody">
+              <details class="section" open id="c1-mass-concentration">
+                <summary>C1) Mass concentration (g/L)</summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\
+C_m=\frac{m_{\text{solute}}}{V_{\text{solution}}}\
+\]</pre>
+                  <ul>
+                    <li><span class="kicker">Symbols:</span> <span class="math">\(C_m\)</span> in g/L, <span class="math">\(m_{\text{solute}}\)</span> in g, <span class="math">\(V_{\text{solution}}\)</span> in L.</li>
+                    <li><span class="kicker">Validity:</span> use solution volume; keep units consistent.</li>
+                    <li><span class="kicker">Sanity check:</span> g/L; doubling <span class="math">\(m\)</span> doubles <span class="math">\(C_m\)</span>.</li>
+                  </ul>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> ratio + unit conversions (mL → L).</li>
+                    <li><span class="kicker">Intuition View:</span> more solute or less volume means more crowded.</li>
+                  </ul>
+                  <div class="copyHint">Tip: double-click the equation to copy the TeX.</div>
+                </div>
+              </details>
+
+              <details class="section" open id="c2-percent-concentration">
+                <summary>C2) Percent concentrations (m/m, m/v, v/v)</summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\
+\%\,(m/m)=\frac{m_{\text{solute}}}{m_{\text{solution}}}\times 100\%\
+\]</pre>
+                  <pre class="equation math">\[\
+\%\,(m/v)=\frac{m_{\text{solute}}}{V_{\text{solution}}}\times 100\%\
+\]</pre>
+                  <pre class="equation math">\[\
+\%\,(v/v)=\frac{V_{\text{solute}}}{V_{\text{solution}}}\times 100\%\
+\]</pre>
+                  <ul>
+                    <li><span class="kicker">Validity:</span> the denominator changes—always state the type.</li>
+                    <li><span class="kicker">Sanity check:</span> percent is dimensionless.</li>
+                  </ul>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> each is a definition with a different denominator.</li>
+                    <li><span class="kicker">Intuition View:</span> “what fraction of the whole mixture is solute?”</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="section" open id="c3-molarity">
+                <summary>C3) Molarity (mol/L)</summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\
+M=\frac{n_{\text{solute}}}{V_{\text{solution}}}\
+\]</pre>
+                  <ul>
+                    <li><span class="kicker">Symbols:</span> <span class="math">\(M\)</span> mol/L, <span class="math">\(n\)</span> mol, <span class="math">\(V\)</span> L.</li>
+                    <li><span class="kicker">Validity:</span> use solution volume; temperature can affect <span class="math">\(V\)</span>.</li>
+                    <li><span class="kicker">Roadmap:</span> often combine with <span class="math">\(n=\frac{m}{M_m}\)</span>.</li>
+                    <li><span class="kicker">Sanity check:</span> if you add solvent (increase <span class="math">\(V\)</span>) with same <span class="math">\(n\)</span>, <span class="math">\(M\)</span> decreases.</li>
+                  </ul>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> track units carefully (especially mL → L).</li>
+                    <li><span class="kicker">Intuition View:</span> counts particles per volume, which controls reaction amounts.</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="section" open id="c4-moles-from-mass">
+                <summary>C4) Moles from mass</summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\
+n=\frac{m}{M_m}\
+\]</pre>
+                  <ul>
+                    <li><span class="kicker">Symbols:</span> <span class="math">\(n\)</span> mol, <span class="math">\(m\)</span> g, <span class="math">\(M_m\)</span> g/mol.</li>
+                    <li><span class="kicker">Sanity check:</span> g ÷ (g/mol) = mol.</li>
+                  </ul>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> dimensional analysis.</li>
+                    <li><span class="kicker">Intuition View:</span> converts “weighing” into “counting particles.”</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="section" open id="c5-dilution">
+                <summary>C5) Dilution equation</summary>
+                <div class="sectionBody">
+                  <pre class="equation math">\[\
+M_1V_1=M_2V_2\
+\]</pre>
+                  <ul>
+                    <li><span class="kicker">Assumptions:</span> no reaction; same solute; solute amount conserved.</li>
+                    <li><span class="kicker">Roadmap:</span> from <span class="math">\(n=MV\)</span> and <span class="math">\(n_1=n_2\)</span>; full derivation in Section D.</li>
+                    <li><span class="kicker">Sanity check:</span> if <span class="math">\(V_2&gt;V_1\)</span>, then <span class="math">\(M_2&lt;M_1\)</span>.</li>
+                  </ul>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> keep all volumes as solution volumes and in liters.</li>
+                    <li><span class="kicker">Intuition View:</span> same particles, more space → less crowded.</li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </details>
+
+          <details class="section" open id="d-derivations">
+            <summary>D) Derivations or Proofs</summary>
+            <div class="sectionBody">
+              <details class="section" open id="d1-derive-dilution">
+                <summary>D1) Derive the dilution equation</summary>
+                <div class="sectionBody">
+                  <div class="steps">
+                    <div class="step">
+                      <div class="kicker">Step 1 (Math View)</div>
+                      Start with <span class="math">\(M=\frac{n}{V}\)</span>, so <span class="math">\(n=MV\)</span>.
+                    </div>
+                    <div class="step">
+                      <div class="kicker">Step 2</div>
+                      Before dilution: <span class="math">\(n_1=M_1V_1\)</span>.
+                    </div>
+                    <div class="step">
+                      <div class="kicker">Step 3</div>
+                      After dilution: <span class="math">\(n_2=M_2V_2\)</span>.
+                    </div>
+                    <div class="step">
+                      <div class="kicker">Step 4</div>
+                      No solute added/removed: <span class="math">\(n_1=n_2\)</span>.
+                    </div>
+                    <div class="step">
+                      <div class="kicker">Step 5</div>
+                      Therefore <span class="math">\(M_1V_1=M_2V_2\)</span>.
+                    </div>
+                  </div>
+
+                  <div class="box trap">
+                    <div class="label">Common Trap</div>
+                    <div>Using <span class="math">\(V_2\)</span> as “water added” instead of <span class="kicker">final solution volume</span>.</div>
+                  </div>
+
+                  <p><span class="kicker">Intuition View:</span> dilution is just spreading the same solute into more solvent.</p>
+                </div>
+              </details>
+
+              <details class="section" open id="d2-mass-to-molarity">
+                <summary>D2) Mass → moles → molarity (common pipeline)</summary>
+                <div class="sectionBody">
+                  <div class="steps">
+                    <div class="step">
+                      <div class="kicker">Step 1 (Math View)</div>
+                      Compute moles: <span class="math">\(n=\frac{m}{M_m}\)</span>.
+                    </div>
+                    <div class="step">
+                      <div class="kicker">Step 2</div>
+                      Compute molarity: <span class="math">\(M=\frac{n}{V}=\frac{m}{M_m V}\)</span>.
+                    </div>
+                  </div>
+                  <p><span class="kicker">Intuition View:</span> mass tells how many particles; volume tells how crowded.</p>
+                </div>
+              </details>
+            </div>
+          </details>
+
+          <details class="section" open id="e-worked-examples">
+            <summary>E) Worked Examples</summary>
+            <div class="sectionBody">
+              <div class="box example">
+                <div class="label">Example E1 — Molarity from mass and volume</div>
+                <p><span class="kicker">Problem:</span> Dissolve 5.85 g NaCl to make 500.0 mL solution. Find <span class="math">\(M\)</span>. Take <span class="math">\(M_m(\text{NaCl})\approx 58.44\ \text{g/mol}\)</span>.</p>
+                <div class="steps">
+                  <div class="step">
+                    <div class="kicker">Math View</div>
+                    <div class="math">\(n=\frac{m}{M_m}=\frac{5.85}{58.44}=0.100\ \text{mol}\)</div>
+                    <div class="math">\(V=500.0\ \text{mL}=0.5000\ \text{L}\)</div>
+                    <div class="math">\(M=\frac{n}{V}=\frac{0.100}{0.5000}=0.200\ \text{mol/L}\)</div>
+                  </div>
+                  <div class="step">
+                    <div class="kicker">Intuition View</div>
+                    You have about 0.10 mol of particles spread through half a liter → 0.20 mol per liter.
+                  </div>
+                </div>
+                <div class="box trap">
+                  <div class="label">Common Trap</div>
+                  <div>Forgetting to convert mL to L.</div>
+                </div>
+              </div>
+
+              <div class="box example">
+                <div class="label">Example E2 — Dilution from a stock</div>
+                <p><span class="kicker">Problem:</span> What volume of 2.00 M HCl is needed to make 500.0 mL of 0.250 M HCl?</p>
+                <div class="steps">
+                  <div class="step">
+                    <div class="kicker">Math View</div>
+                    <div class="math">\(V_1=\frac{M_2V_2}{M_1}=\frac{(0.250)(0.5000)}{2.00}=0.0625\ \text{L}=62.5\ \text{mL}\)</div>
+                  </div>
+                  <div class="step">
+                    <div class="kicker">Intuition View</div>
+                    Strong stock means you need a small portion, then add water to reach the final volume.
+                  </div>
+                </div>
+              </div>
+
+              <div class="box example">
+                <div class="label">Example E3 — % (m/v) to molarity</div>
+                <p><span class="kicker">Problem:</span> A solution is 0.90% (m/v) NaCl. Approximate molarity.</p>
+                <div class="steps">
+                  <div class="step">
+                    <div class="kicker">Math View</div>
+                    <div>0.90% (m/v) = 0.90 g per 100 mL → 9.0 g/L</div>
+                    <div class="math">\(M=\frac{m}{M_m V}=\frac{9.0}{58.44\cdot 1.00}=0.154\ \text{M}\)</div>
+                  </div>
+                  <div class="step">
+                    <div class="kicker">Intuition View</div>
+                    Percent gives “grams in a chunk of volume”; molarity converts that to “particle count per liter.”
+                  </div>
+                </div>
+              </div>
+
+              <div class="box example">
+                <div class="label">Example E4 — Solubility ratio reasoning</div>
+                <p><span class="kicker">Problem:</span> A solubility table says KNO<span class="math">\(_3\)</span> at 50°C is 85 g per 100 g water. How much dissolves in 200 g water at 50°C?</p>
+                <div class="steps">
+                  <div class="step">
+                    <div class="kicker">Math View</div>
+                    <div>Use the ratio: 85 g / 100 g water</div>
+                    <div class="math">\(m=85\times \frac{200}{100}=170\ \text{g}\)</div>
+                  </div>
+                  <div class="step">
+                    <div class="kicker">Intuition View</div>
+                    Twice the water can hold about twice the solute at the same temperature.
+                  </div>
+                </div>
+                <div class="box trap">
+                  <div class="label">Common Trap</div>
+                  <div>Mixing up “per 100 g water” with “per 100 mL solution.”</div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" open id="f-misconceptions">
+            <summary>F) Common Questions &amp; Misconceptions</summary>
+            <div class="sectionBody">
+              <div class="box trap">
+                <div class="label">Common Trap</div>
+                <div>
+                  <div class="kicker">“Do I use solute volume or solution volume?”</div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> these formulas use <span class="kicker">solution volume</span> <span class="math">\(V_{\text{solution}}\)</span>.</li>
+                    <li><span class="kicker">Intuition View:</span> particles occupy the whole mixture, not just the solute’s container.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="box trap">
+                <div class="label">Common Trap</div>
+                <div>
+                  <div class="kicker">“Why does molarity change with temperature?”</div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> <span class="math">\(M=\frac{n}{V}\)</span>; if <span class="math">\(V\)</span> changes, <span class="math">\(M\)</span> changes.</li>
+                    <li><span class="kicker">Intuition View:</span> same particles, different spacing when liquid expands/contracts.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="box trap">
+                <div class="label">Common Trap</div>
+                <div>
+                  <div class="kicker">% type confusion (m/m vs m/v vs v/v)</div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> different denominators → different answers.</li>
+                    <li><span class="kicker">Intuition View:</span> one compares to total mass; one compares to total volume.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="box trap">
+                <div class="label">Common Trap</div>
+                <div>
+                  <div class="kicker">“Saturated means no solute left?”</div>
+                  <ul>
+                    <li><span class="kicker">Math View:</span> saturated = equilibrium maximum dissolved amount; extra may remain undissolved.</li>
+                    <li><span class="kicker">Intuition View:</span> “full” dissolved capacity, but you can still have extra sitting at the bottom.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" open id="g-exam-strategy">
+            <summary>G) Exam Strategy (short &amp; focused)</summary>
+            <div class="sectionBody">
+              <div class="box strategy">
+                <div class="label">Exam Strategy</div>
+
+                <p class="kicker">Trigger words → method</p>
+                <ul>
+                  <li><span class="kicker">“molarity”, “mol/L”</span> → use <span class="math">\(M=\frac{n}{V}\)</span> and often <span class="math">\(n=\frac{m}{M_m}\)</span></li>
+                  <li><span class="kicker">“dilute”, “stock”, “prepare”</span> → use <span class="math">\(M_1V_1=M_2V_2\)</span></li>
+                  <li><span class="kicker">“% (m/v)”</span> → interpret as g per 100 mL, then scale</li>
+                  <li><span class="kicker">“solubility at ___°C”</span> → use table/curve ratio carefully</li>
+                </ul>
+
+                <p class="kicker">Quick checklist</p>
+                <ul>
+                  <li>Convert mL → L (for molarity)</li>
+                  <li>Write units at every step</li>
+                  <li>Identify what stays constant (dilution: moles)</li>
+                  <li>Use the correct denominator (solution volume vs water mass)</li>
+                </ul>
+
+                <p class="kicker">Common traps</p>
+                <ul>
+                  <li>Swapping <span class="math">\(V_1\)</span> and <span class="math">\(V_2\)</span></li>
+                  <li>Treating solubility as “per 100 mL solution” when it’s “per 100 g water”</li>
+                  <li>Not stating % type (m/m, m/v, v/v)</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" open id="h-summary-connections">
+            <summary>H) Summary &amp; Connections</summary>
+            <div class="sectionBody">
+              <p class="kicker">Plain-language summary</p>
+              <p>
+                Solutions are mixtures where solute particles are evenly spread in a solvent. Chemistry becomes
+                predictable when you measure “how crowded” the solute is using concentration.
+              </p>
+
+              <p class="kicker">Connections</p>
+              <ul>
+                <li>Stoichiometry in solution (limiting reagent, yield)</li>
+                <li>Acids/bases (often specified in molarity)</li>
+                <li>Conductivity and electrolytes</li>
+                <li>Lab skills: preparing solutions and dilutions</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+      </main>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      function slugify(text) {
+        return String(text)
+          .toLowerCase()
+          .trim()
+          .replace(/['"]/g, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.style.opacity = "1";
+        window.clearTimeout(showToast._t);
+        showToast._t = window.setTimeout(() => {
+          toast.style.opacity = "0";
+        }, 900);
+      }
+
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(text)
+            .then(() => showToast("Copied"))
+            .catch(() => fallbackCopy(text));
+          return;
+        }
+        fallbackCopy(text);
+      }
+
+      function fallbackCopy(text) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showToast("Copied");
+        } catch {
+          showToast("Copy failed");
+        } finally {
+          document.body.removeChild(ta);
+        }
+      }
+
+      function fixTeXEscapes(input) {
+        const s = String(input);
+        let out = "";
+        for (let i = 0; i < s.length; i++) {
+          if (s[i] === "\\" && s[i + 1] === "\\") {
+            const next = s[i + 2] ?? "";
+            if (next === "" || next === " " || next === "\n" || next === "\t" || next === "[") {
+              out += "\\\\";
+              i += 1;
+              continue;
+            }
+            out += "\\";
+            i += 1;
+            continue;
+          }
+          out += s[i];
+        }
+        return out;
+      }
+
+      function prepareCopyAndMath() {
+        const candidates = document.querySelectorAll(".math, pre.equation, pre.theorem");
+        for (const el of candidates) {
+          const raw = el.textContent || "";
+          const fixed = fixTeXEscapes(raw);
+          el.dataset.copy = fixed;
+          if (el.classList.contains("math") || el.tagName === "PRE") {
+            el.textContent = fixed;
+          }
+        }
+      }
+
+      function ensureSectionIds() {
+        const used = new Set();
+        const sections = document.querySelectorAll("main details.section");
+        for (const section of sections) {
+          const summary = section.querySelector(":scope > summary");
+          const title = summary ? summary.textContent.trim() : "section";
+          if (!section.id) {
+            let base = slugify(title) || "section";
+            let id = base;
+            let n = 2;
+            while (used.has(id) || document.getElementById(id)) {
+              id = `${base}-${n++}`;
+            }
+            section.id = id;
+          }
+          used.add(section.id);
+        }
+      }
+
+      function buildToc() {
+        const tocList = document.getElementById("tocList");
+        tocList.innerHTML = "";
+
+        const sections = [...document.querySelectorAll("main details.section")];
+        const seen = new Set();
+
+        for (const section of sections) {
+          if (seen.has(section)) continue;
+          seen.add(section);
+
+          const summary = section.querySelector(":scope > summary");
+          const title = summary ? summary.textContent.trim() : section.id;
+
+          const depth = (() => {
+            let d = 0;
+            let node = section.parentElement;
+            while (node) {
+              if (node.matches && node.matches("details.section")) d++;
+              node = node.parentElement;
+            }
+            return d;
+          })();
+
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = `#${section.id}`;
+          a.textContent = title;
+          a.dataset.targetId = section.id;
+          a.style.paddingLeft = `${10 + depth * 14}px`;
+          li.appendChild(a);
+          tocList.appendChild(li);
+        }
+      }
+
+      function applySearchFilter(query) {
+        const q = String(query || "").trim().toLowerCase();
+        const tocLinks = document.querySelectorAll("#tocList a");
+        const summaries = document.querySelectorAll("main details.section > summary");
+
+        for (const s of summaries) s.classList.remove("matched");
+
+        if (!q) {
+          for (const a of tocLinks) {
+            a.classList.remove("hidden", "match");
+          }
+          return;
+        }
+
+        for (const a of tocLinks) {
+          const text = a.textContent.toLowerCase();
+          const isMatch = text.includes(q);
+          a.classList.toggle("hidden", !isMatch);
+          a.classList.toggle("match", isMatch);
+          if (isMatch) {
+            const target = document.getElementById(a.dataset.targetId);
+            const summary = target ? target.querySelector(":scope > summary") : null;
+            if (summary) summary.classList.add("matched");
+          }
+        }
+      }
+
+      function setAllDetailsOpen(open) {
+        const details = document.querySelectorAll("main details");
+        for (const d of details) d.open = open;
+      }
+
+      document.addEventListener("dblclick", (e) => {
+        const target = e.target && e.target.closest ? e.target.closest(".math, pre.equation, pre.theorem") : null;
+        if (!target) return;
+        copyText(target.dataset.copy || target.textContent || "");
+      });
+
+      document.getElementById("toggleSidebarBtn").addEventListener("click", () => {
+        document.body.classList.toggle("sidebar-collapsed");
+      });
+      document.getElementById("expandAllBtn").addEventListener("click", () => setAllDetailsOpen(true));
+      document.getElementById("collapseAllBtn").addEventListener("click", () => setAllDetailsOpen(false));
+      document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+      document.getElementById("tocSearch").addEventListener("input", (e) => {
+        applySearchFilter(e.target.value);
+      });
+
+      // Prepare content once the DOM is ready.
+      ensureSectionIds();
+      prepareCopyAndMath();
+      buildToc();
+
+      // Typeset MathJax (only if MathJax is present and any `.math` exists).
+      (function maybeTypesetMath() {
+        const hasMath = document.querySelector(".math");
+        if (!hasMath) return;
+        if (!window.MathJax || !MathJax.startup || !MathJax.startup.promise) return;
+        MathJax.startup.promise.then(() => MathJax.typesetPromise());
+      })();
+    </script>
+
+    <!-- MathJax v3 (allowed external asset). Remove if no math is used. -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [["\\[", "\\]"]],
+        },
+        options: {
+          renderActions: {
+            addMenu: [0, "", ""],
+          },
+        },
+      };
+    </script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+    ></script>
+  </body>
+</html>
