@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Todo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0b0f18;
+        --card: #121a2a;
+        --text: #eef3ff;
+        --muted: rgba(238, 243, 255, 0.7);
+        --border: rgba(238, 243, 255, 0.14);
+        --accent: #6aa8ff;
+        --danger: #ff6a7a;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f5f7fb;
+          --card: #ffffff;
+          --text: #0f172a;
+          --muted: rgba(15, 23, 42, 0.66);
+          --border: rgba(15, 23, 42, 0.12);
+          --accent: #2563eb;
+          --danger: #dc2626;
+          --shadow: 0 18px 40px rgba(2, 6, 23, 0.12);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          "Apple Color Emoji",
+          "Segoe UI Emoji";
+        background:
+          radial-gradient(1200px 700px at 20% 10%, rgba(106, 168, 255, 0.18), transparent 55%),
+          radial-gradient(900px 650px at 85% 25%, rgba(255, 106, 122, 0.14), transparent 50%),
+          var(--bg);
+        color: var(--text);
+        display: grid;
+        place-items: center;
+        padding: 32px 16px;
+      }
+
+      .app {
+        width: min(920px, 100%);
+        display: grid;
+        gap: 16px;
+      }
+
+      header {
+        display: grid;
+        gap: 6px;
+      }
+
+      h1 {
+        font-size: clamp(24px, 3vw, 34px);
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .card {
+        background: color-mix(in srgb, var(--card), transparent 0%);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        overflow: clip;
+      }
+
+      .toolbar {
+        padding: 14px;
+        display: grid;
+        gap: 12px;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: color-mix(in srgb, var(--bg), transparent 60%);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 12px 12px;
+        outline: none;
+        font-size: 16px;
+      }
+
+      input[type="text"]:focus {
+        border-color: color-mix(in srgb, var(--accent), white 10%);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 78%);
+      }
+
+      button {
+        border: 1px solid var(--border);
+        background: color-mix(in srgb, var(--card), transparent 0%);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: transform 80ms ease, border-color 120ms ease, background 120ms ease;
+      }
+
+      button:hover {
+        border-color: color-mix(in srgb, var(--accent), transparent 55%);
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .primary {
+        border-color: color-mix(in srgb, var(--accent), transparent 25%);
+        background: color-mix(in srgb, var(--accent), transparent 80%);
+      }
+
+      .danger {
+        border-color: color-mix(in srgb, var(--danger), transparent 35%);
+        background: color-mix(in srgb, var(--danger), transparent 86%);
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .chips {
+        display: inline-flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        user-select: none;
+      }
+
+      .chip[aria-pressed="true"] {
+        border-color: color-mix(in srgb, var(--accent), transparent 15%);
+        background: color-mix(in srgb, var(--accent), transparent 82%);
+      }
+
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .empty {
+        padding: 18px 14px;
+        color: var(--muted);
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        align-items: center;
+      }
+
+      .item:last-child {
+        border-bottom: none;
+      }
+
+      .item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent);
+      }
+
+      .title {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .text {
+        font-size: 15px;
+        line-height: 1.35;
+        word-break: break-word;
+      }
+
+      .text.done {
+        text-decoration: line-through;
+        color: var(--muted);
+      }
+
+      .sub {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .actions {
+        display: inline-flex;
+        gap: 8px;
+      }
+
+      .small {
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-size: 13px;
+      }
+
+      .editBox {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+
+      footer {
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+        padding: 10px 0 0;
+      }
+
+      kbd {
+        border: 1px solid var(--border);
+        border-bottom-width: 2px;
+        border-radius: 6px;
+        padding: 1px 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 11px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app" aria-label="Todo app">
+      <header>
+        <h1>Todo</h1>
+        <p>Add items, toggle done, and everything persists in your browser.</p>
+      </header>
+
+      <section class="card" aria-label="Todo list">
+        <div class="toolbar">
+          <form id="addForm" autocomplete="off">
+            <label class="sr" for="newTodo">New todo</label>
+            <input id="newTodo" name="newTodo" type="text" placeholder="What do you want to do?" maxlength="200" />
+            <button class="primary" type="submit">Add</button>
+          </form>
+
+          <div class="filters">
+            <div class="chips" role="group" aria-label="Filters">
+              <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+              <button class="chip" type="button" data-filter="active" aria-pressed="false">Active</button>
+              <button class="chip" type="button" data-filter="done" aria-pressed="false">Done</button>
+            </div>
+
+            <div class="actions">
+              <button id="clearDone" class="small danger" type="button">Clear done</button>
+            </div>
+          </div>
+
+          <div class="meta" id="meta">0 items</div>
+        </div>
+
+        <ul id="list" aria-live="polite" aria-relevant="additions removals"></ul>
+        <div id="empty" class="empty" hidden>
+          Nothing here yet. Tip: press <kbd>Enter</kbd> to add, double-click an item to edit.
+        </div>
+      </section>
+
+      <footer>
+        Stored locally via <code>localStorage</code>.
+      </footer>
+    </main>
+
+    <script>
+      "use strict";
+
+      const STORAGE_KEY = "todo.html:v1";
+
+      /** @typedef {{id: string, text: string, done: boolean, createdAt: number, updatedAt: number}} Todo */
+
+      /** @returns {Todo[]} */
+      function loadTodos() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) return [];
+          return parsed
+            .filter((t) => t && typeof t.id === "string" && typeof t.text === "string")
+            .map((t) => ({
+              id: t.id,
+              text: String(t.text),
+              done: Boolean(t.done),
+              createdAt: Number(t.createdAt) || Date.now(),
+              updatedAt: Number(t.updatedAt) || Number(t.createdAt) || Date.now(),
+            }));
+        } catch {
+          return [];
+        }
+      }
+
+      /** @param {Todo[]} todos */
+      function saveTodos(todos) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+      }
+
+      function uid() {
+        return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+      }
+
+      /** @param {number} ms */
+      function formatTime(ms) {
+        const d = new Date(ms);
+        const sameYear = d.getFullYear() === new Date().getFullYear();
+        return d.toLocaleString(undefined, {
+          year: sameYear ? undefined : "numeric",
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      const els = {
+        addForm: document.getElementById("addForm"),
+        newTodo: document.getElementById("newTodo"),
+        list: document.getElementById("list"),
+        empty: document.getElementById("empty"),
+        meta: document.getElementById("meta"),
+        clearDone: document.getElementById("clearDone"),
+        chips: Array.from(document.querySelectorAll(".chip[data-filter]")),
+      };
+
+      let todos = loadTodos();
+      /** @type {"all"|"active"|"done"} */
+      let filter = "all";
+
+      function getVisibleTodos() {
+        if (filter === "active") return todos.filter((t) => !t.done);
+        if (filter === "done") return todos.filter((t) => t.done);
+        return todos;
+      }
+
+      function updateMeta() {
+        const doneCount = todos.filter((t) => t.done).length;
+        const activeCount = todos.length - doneCount;
+        const parts = [`${todos.length} item${todos.length === 1 ? "" : "s"}`];
+        if (todos.length) parts.push(`${activeCount} active`, `${doneCount} done`);
+        els.meta.textContent = parts.join(" • ");
+        els.clearDone.disabled = doneCount === 0;
+      }
+
+      /** @param {Todo} todo */
+      function createItem(todo) {
+        const li = document.createElement("li");
+        li.className = "item";
+        li.dataset.id = todo.id;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = todo.done;
+        checkbox.setAttribute("aria-label", "Mark complete");
+
+        const title = document.createElement("div");
+        title.className = "title";
+
+        const text = document.createElement("div");
+        text.className = "text" + (todo.done ? " done" : "");
+        text.textContent = todo.text;
+        text.tabIndex = 0;
+        text.title = "Double-click to edit";
+
+        const sub = document.createElement("div");
+        sub.className = "sub";
+        sub.textContent = `Created ${formatTime(todo.createdAt)}`;
+
+        title.appendChild(text);
+        title.appendChild(sub);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "small";
+        editBtn.textContent = "Edit";
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "small danger";
+        delBtn.textContent = "Delete";
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        checkbox.addEventListener("change", () => {
+          const idx = todos.findIndex((t) => t.id === todo.id);
+          if (idx === -1) return;
+          todos[idx] = { ...todos[idx], done: checkbox.checked, updatedAt: Date.now() };
+          saveTodos(todos);
+          render();
+        });
+
+        function startEdit() {
+          const idx = todos.findIndex((t) => t.id === todo.id);
+          if (idx === -1) return;
+
+          const current = todos[idx];
+
+          const box = document.createElement("div");
+          box.className = "editBox";
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = current.text;
+          input.maxLength = 200;
+
+          const save = document.createElement("button");
+          save.type = "button";
+          save.className = "small primary";
+          save.textContent = "Save";
+
+          box.appendChild(input);
+          box.appendChild(save);
+
+          title.replaceChildren(box, sub);
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+
+          const finish = (commit) => {
+            const nextText = input.value.trim();
+            if (commit && nextText) {
+              todos[idx] = { ...todos[idx], text: nextText, updatedAt: Date.now() };
+              saveTodos(todos);
+            }
+            render();
+          };
+
+          save.addEventListener("click", () => finish(true));
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") finish(true);
+            if (e.key === "Escape") finish(false);
+          });
+          input.addEventListener("blur", () => finish(true));
+        }
+
+        editBtn.addEventListener("click", startEdit);
+        text.addEventListener("dblclick", startEdit);
+        text.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") startEdit();
+        });
+
+        delBtn.addEventListener("click", () => {
+          todos = todos.filter((t) => t.id !== todo.id);
+          saveTodos(todos);
+          render();
+        });
+
+        li.appendChild(checkbox);
+        li.appendChild(title);
+        li.appendChild(actions);
+
+        return li;
+      }
+
+      function render() {
+        updateMeta();
+        els.list.replaceChildren();
+
+        const visible = getVisibleTodos();
+        els.empty.hidden = visible.length !== 0;
+
+        for (const t of visible) {
+          els.list.appendChild(createItem(t));
+        }
+      }
+
+      els.addForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = String(els.newTodo.value || "").trim();
+        if (!text) {
+          els.newTodo.focus();
+          return;
+        }
+
+        const now = Date.now();
+        /** @type {Todo} */
+        const todo = { id: uid(), text, done: false, createdAt: now, updatedAt: now };
+        todos = [todo, ...todos];
+        saveTodos(todos);
+        els.newTodo.value = "";
+        render();
+      });
+
+      els.clearDone.addEventListener("click", () => {
+        todos = todos.filter((t) => !t.done);
+        saveTodos(todos);
+        render();
+      });
+
+      for (const chip of els.chips) {
+        chip.addEventListener("click", () => {
+          filter = chip.dataset.filter;
+          for (const c of els.chips) c.setAttribute("aria-pressed", String(c === chip));
+          render();
+        });
+      }
+
+      render();
+      els.newTodo.focus();
+    </script>
+  </body>
+</html>
