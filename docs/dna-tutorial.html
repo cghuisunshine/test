@@ -274,7 +274,8 @@
     <p>Structure → packaging → replication → repair → expression → regulation → tools</p>
     <div class="meta">
       <div class="pill-row">
-        <span class="pill">Revision: <span id="rev">1</span></span>
+        <span class="pill">Revision: <span id="rev">?</span></span>
+        <span class="pill">Viewer build: <span id="build">2</span></span>
         <span class="pill">Source: <code>docs/dna-tutorial/*</code></span>
         <span class="pill">Tip: double-click code blocks to copy</span>
       </div>
@@ -314,7 +315,10 @@
   <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
 
   <script>
+    const VIEWER_BUILD = 2;
     const MANIFEST_URL = "dna-tutorial/manifest.json";
+
+    document.getElementById("build").textContent = String(VIEWER_BUILD);
 
     const toast = document.getElementById("toast");
     function showToast(message) {
@@ -328,7 +332,7 @@
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/\"/g, "&quot;")
+        .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
     }
 
@@ -353,6 +357,7 @@
     function renderMarkdown(md) {
       const lines = md.replace(/\r\n/g, "\n").split("\n");
       const out = [];
+      const usedIds = new Map();
       let inCode = false;
       let codeLang = "";
       let listKind = null; // "ul" | "ol"
@@ -368,6 +373,13 @@
         if (!listKind) return;
         out.push(`</${listKind}>`);
         listKind = null;
+      }
+
+      function uniqueHeadingId(title) {
+        const base = slugify(title);
+        const seen = usedIds.get(base) || 0;
+        usedIds.set(base, seen + 1);
+        return seen === 0 ? base : `${base}-${seen + 1}`;
       }
 
       for (let i = 0; i < lines.length; i++) {
@@ -413,7 +425,7 @@
           closeList();
           const level = hMatch[1].length;
           const title = hMatch[2].trim();
-          const id = slugify(title);
+          const id = uniqueHeadingId(title);
           out.push(`<h${level} id="${id}">${renderInline(title)}</h${level}>`);
           continue;
         }
