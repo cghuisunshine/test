@@ -1,6 +1,6 @@
 {
   "title": "DNA Tutorial",
-  "revision": 1,
+  "revision": 2,
   "updated": "2026-01-12",
   "sections": [
     {"file": "01-foundations.md", "title": "Foundations: nucleotides → helix"},
