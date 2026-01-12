@@ -1,0 +1,15 @@
+{
+  "title": "DNA Tutorial",
+  "revision": 1,
+  "updated": "2026-01-12",
+  "sections": [
+    {"file": "01-foundations.md", "title": "Foundations: nucleotides → helix"},
+    {"file": "02-structure-packaging.md", "title": "Structure & packaging"},
+    {"file": "03-replication.md", "title": "Replication"},
+    {"file": "04-repair.md", "title": "Damage & repair"},
+    {"file": "05-expression.md", "title": "Gene expression: transcription → translation"},
+    {"file": "06-regulation-epigenetics.md", "title": "Regulation & epigenetics"},
+    {"file": "07-variation-evolution.md", "title": "Variation & evolution"},
+    {"file": "08-tools-bioinformatics-ethics.md", "title": "Tools, bioinformatics & ethics"}
+  ]
+}
