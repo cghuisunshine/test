@@ -19,6 +19,12 @@ Proteins can often recognize sequence **without fully unwinding** the helix beca
 - **A-DNA**: favored in dehydrated conditions and in some DNA/RNA hybrids.
 - **Z-DNA**: left-handed helix; can form in specific sequences and conditions.
 
+### Local structure is sequence-dependent
+DNA is not a perfectly uniform rod. Certain sequences bend more easily or narrow/widen grooves, which can influence:
+- nucleosome positioning
+- transcription factor binding
+- local replication/transcription dynamics
+
 ## DNA packaging in cells
 
 ### Prokaryotes vs eukaryotes
@@ -31,7 +37,23 @@ Proteins can often recognize sequence **without fully unwinding** the helix beca
 A **nucleosome** is ~147 bp of DNA wrapped around a histone octamer:
 - Histones: H2A, H2B, H3, H4 (two copies each)
 
+```txt
+DNA ---- wraps around ---- [histone core] ---- wraps around ---- DNA
+```
+
 Nucleosomes help compact DNA but also create a layer of regulation by controlling access.
+
+### Histone tails and modifications
+Histone proteins have flexible “tails” that can be chemically modified.
+- Some modifications correlate with open chromatin (often associated with transcription).
+- Others correlate with compact chromatin.
+
+These marks can recruit proteins that change chromatin structure.
+
+### Chromatin remodeling
+**Chromatin remodelers** can slide, remove, or restructure nucleosomes.
+- This changes accessibility of promoters/enhancers.
+- Remodelers often use ATP.
 
 ### Euchromatin vs heterochromatin
 - **Euchromatin**: more open, gene-rich, often actively transcribed.
