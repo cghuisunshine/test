@@ -1,6 +1,6 @@
 {
   "title": "DNA Tutorial",
-  "revision": 10,
+  "revision": 11,
   "updated": "2026-01-12",
   "sections": [
     {"file": "01-foundations.md", "title": "Foundations: nucleotides → helix"},
@@ -11,6 +11,7 @@
     {"file": "06-regulation-epigenetics.md", "title": "Regulation & epigenetics"},
     {"file": "07-variation-evolution.md", "title": "Variation & evolution"},
     {"file": "08-tools-bioinformatics-ethics.md", "title": "Tools, bioinformatics & ethics"},
-    {"file": "09-glossary.md", "title": "Glossary"}
+    {"file": "09-glossary.md", "title": "Glossary"},
+    {"file": "10-practice-answers.md", "title": "Practice & answers"}
   ]
 }
