@@ -8,6 +8,20 @@ PCR amplifies a specific DNA region using primers.
 
 If annealing temperature is too low, primers can bind nonspecifically (extra bands).
 
+#### Primer design (practical tips)
+- Primers define what gets amplified.
+- Watch for: strong hairpins, primer–dimer formation, and unintended matches in the genome.
+- GC content and length influence melting temperature.
+
+#### Controls
+- **No-template control (NTC)**: checks contamination.
+- **Positive control**: confirms reagents and cycling conditions can work.
+
+### qPCR (real-time PCR)
+qPCR tracks amplification using fluorescence.
+- Used for quantification (relative or absolute).
+- Requires careful normalization and controls.
+
 ### Gel electrophoresis
 DNA is negatively charged, so it migrates toward the positive electrode.
 - Smaller fragments move faster through the gel matrix.
@@ -16,11 +30,20 @@ DNA is negatively charged, so it migrates toward the positive electrode.
 - **Sanger**: high-accuracy for short reads; good for single genes/plasmids.
 - **NGS**: massively parallel; enables whole genomes, RNA-seq, metagenomics.
 
+#### Sequencing confidence (intuition)
+- **Coverage/depth**: more reads covering a position usually increases confidence.
+- **Base quality**: lower quality means higher error probability.
+- **Biases** exist (GC bias, mapping ambiguity in repeats).
+
 ### Genome editing (CRISPR overview)
 CRISPR systems use a guide RNA to target a matching DNA sequence.
 - A nuclease makes a cut; repair pathways then create edits.
 
 > Where the cut is repaired by NHEJ, small indels are common; HDR can introduce precise changes when a template is provided (often less efficient).
+
+#### Off-target and validation
+- Guides can have partial matches elsewhere.
+- Validate edits by sequencing and consider appropriate controls.
 
 ## Bioinformatics essentials
 
@@ -33,10 +56,10 @@ CRISPR systems use a guide RNA to target a matching DNA sequence.
 
 ### A reproducibility habit
 Always record:
-- Reference genome build
-- Tool versions
-- Parameters
-- Input/output file checksums (optional but helpful)
+- reference genome build
+- tool versions
+- parameters
+- input/output file checksums (optional but helpful)
 
 ## Ethics and society
 
@@ -47,6 +70,11 @@ DNA information can reveal identity, ancestry, and health risk.
 - **Privacy**: who can access data and under what safeguards.
 - **Equity**: who benefits from genomics and who is excluded.
 - **Editing**: somatic vs germline; therapy vs enhancement.
+
+### A useful question set
+- Who could be harmed by misuse or leakage of the data?
+- What safeguards exist (technical + policy)?
+- Who benefits, and who is missing from the benefits?
 
 ## Practice questions (with quick answers)
 
