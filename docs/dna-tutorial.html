@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DNA Tutorial (Interactive)</title>
+  <meta name="description" content="A detailed DNA tutorial: structure, replication, repair, gene expression, regulation, epigenetics, variation, and biotechnology tools." />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #101938;
+      --panel-2: #0f1733;
+      --text: #e8ecff;
+      --muted: #b7c0ff;
+      --accent: #7aa2ff;
+      --accent-2: #4ee7b0;
+      --warn: #ffcc66;
+      --danger: #ff6b6b;
+      --border: rgba(255, 255, 255, 0.12);
+      --shadow: rgba(0, 0, 0, 0.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(1200px 700px at 20% 0%, #182a65 0%, var(--bg) 55%) fixed;
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .skip {
+      position: absolute;
+      top: -50px;
+      left: 12px;
+      background: #000;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 10px;
+      z-index: 10;
+    }
+    .skip:focus { top: 12px; }
+
+    header {
+      padding: 30px 18px 10px;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 2rem;
+      letter-spacing: 0.2px;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .meta {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .pill {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(0, 0, 0, 0.18);
+      color: #eff4ff;
+      white-space: nowrap;
+    }
+
+    .btn {
+      border: 1px solid rgba(122, 162, 255, 0.35);
+      background: rgba(0, 0, 0, 0.18);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: rgba(122, 162, 255, 0.12);
+      border-color: rgba(122, 162, 255, 0.6);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 18px 18px 44px;
+    }
+
+    nav {
+      position: sticky;
+      top: 14px;
+      align-self: start;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 12px 28px var(--shadow);
+      padding: 14px 14px 10px;
+    }
+
+    nav h2 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .search {
+      position: relative;
+      margin: 0 0 10px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--text);
+      outline: none;
+    }
+
+    .search input::placeholder { color: rgba(183, 192, 255, 0.75); }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    nav a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    nav a:hover {
+      background: rgba(122, 162, 255, 0.12);
+      border-color: rgba(122, 162, 255, 0.25);
+    }
+
+    nav a.active {
+      background: rgba(78, 231, 176, 0.12);
+      border-color: rgba(78, 231, 176, 0.25);
+    }
+
+    main { min-width: 0; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 16px 38px var(--shadow);
+      padding: 18px 18px 14px;
+      margin: 0 0 14px;
+    }
+
+    .card h2 { margin: 0 0 10px; font-size: 1.35rem; }
+    .card h3 { margin: 18px 0 8px; font-size: 1.05rem; color: #dfe6ff; }
+
+    .note {
+      border-left: 4px solid var(--accent-2);
+      padding: 10px 12px;
+      background: rgba(78, 231, 176, 0.08);
+      border-radius: 12px;
+    }
+
+    .warn {
+      border-left: 4px solid var(--warn);
+      padding: 10px 12px;
+      background: rgba(255, 204, 102, 0.1);
+      border-radius: 12px;
+    }
+
+    .danger {
+      border-left: 4px solid var(--danger);
+      padding: 10px 12px;
+      background: rgba(255, 107, 107, 0.1);
+      border-radius: 12px;
+    }
+
+    code, pre { font-family: var(--mono); }
+
+    code {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 0.1rem 0.35rem;
+      border-radius: 10px;
+    }
+
+    pre {
+      overflow: auto;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    pre.copyable { cursor: copy; }
+
+    ul, ol { padding-left: 1.2rem; }
+
+    hr {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      margin: 16px 0;
+    }
+
+    .small { font-size: 0.92rem; color: var(--muted); }
+
+    .toast {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; }
+    }
+
+    @media print {
+      .skip, nav, .meta .btn { display: none !important; }
+      body { background: #fff; color: #000; }
+      .card { box-shadow: none; border-color: #ddd; }
+      a { color: #000; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header>
+    <h1>DNA Tutorial</h1>
+    <p>Structure → packaging → replication → repair → expression → regulation → tools</p>
+    <div class="meta">
+      <div class="pill-row">
+        <span class="pill">Revision: <span id="rev">1</span></span>
+        <span class="pill">Source: <code>docs/dna-tutorial/*</code></span>
+        <span class="pill">Tip: double-click code blocks to copy</span>
+      </div>
+      <div class="pill-row">
+        <button class="btn" id="btnPrint" type="button">Print</button>
+        <button class="btn" id="btnTop" type="button">Back to top</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav>
+      <h2>Contents</h2>
+      <div class="search"><input id="tocSearch" type="search" placeholder="Filter sections…" autocomplete="off" /></div>
+      <ul id="toc"></ul>
+      <p class="small" id="loadHint" style="margin: 10px 2px 0">Loading…</p>
+    </nav>
+
+    <main id="main">
+      <section class="card" id="intro">
+        <h2>How to use this page</h2>
+        <ul>
+          <li>Use the sidebar to jump to a topic.</li>
+          <li>Use your browser’s <code>Ctrl/⌘ + F</code> for full-text search.</li>
+          <li>Double-click code blocks to copy.</li>
+        </ul>
+        <div class="warn"><p style="margin: 0">Educational content only; not medical advice.</p></div>
+      </section>
+
+      <section class="card" id="contentCard">
+        <h2>Tutorial</h2>
+        <div id="content" class="small">Loading tutorial content…</div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+
+  <script>
+    const MANIFEST_URL = "dna-tutorial/manifest.json";
+
+    const toast = document.getElementById("toast");
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.setTimeout(() => toast.classList.remove("show"), 1100);
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function slugify(value) {
+      return value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+/, "")
+        .replace(/-+$/, "") || "section";
+    }
+
+    function renderInline(text) {
+      let s = escapeHtml(text);
+      s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+      s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      s = s.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
+      s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+      return s;
+    }
+
+    function renderMarkdown(md) {
+      const lines = md.replace(/\r\n/g, "\n").split("\n");
+      const out = [];
+      let inCode = false;
+      let codeLang = "";
+      let listKind = null; // "ul" | "ol"
+      let paragraph = [];
+
+      function flushParagraph() {
+        if (!paragraph.length) return;
+        out.push(`<p>${renderInline(paragraph.join(" ").trim())}</p>`);
+        paragraph = [];
+      }
+
+      function closeList() {
+        if (!listKind) return;
+        out.push(`</${listKind}>`);
+        listKind = null;
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        const raw = lines[i];
+        const line = raw.replace(/\s+$/g, "");
+
+        if (inCode) {
+          if (line.trim().startsWith("```")) {
+            out.push("</code></pre>");
+            inCode = false;
+            codeLang = "";
+          } else {
+            out.push(escapeHtml(raw));
+          }
+          continue;
+        }
+
+        if (line.trim().startsWith("```")) {
+          flushParagraph();
+          closeList();
+          codeLang = line.trim().slice(3).trim();
+          out.push(`<pre class="copyable"><code data-lang="${escapeHtml(codeLang)}">`);
+          inCode = true;
+          continue;
+        }
+
+        if (!line.trim()) {
+          flushParagraph();
+          closeList();
+          continue;
+        }
+
+        if (line.trim() === "---" || line.trim() === "***" || line.trim() === "___") {
+          flushParagraph();
+          closeList();
+          out.push("<hr />");
+          continue;
+        }
+
+        const hMatch = line.match(/^(#{1,6})\s+(.*)$/);
+        if (hMatch) {
+          flushParagraph();
+          closeList();
+          const level = hMatch[1].length;
+          const title = hMatch[2].trim();
+          const id = slugify(title);
+          out.push(`<h${level} id="${id}">${renderInline(title)}</h${level}>`);
+          continue;
+        }
+
+        const bq = line.match(/^>\s+(.*)$/);
+        if (bq) {
+          flushParagraph();
+          closeList();
+          out.push(`<blockquote class="note"><p style="margin: 0">${renderInline(bq[1])}</p></blockquote>`);
+          continue;
+        }
+
+        const ul = line.match(/^\s*[-*]\s+(.*)$/);
+        const ol = line.match(/^\s*\d+\.\s+(.*)$/);
+        if (ul || ol) {
+          flushParagraph();
+          const kind = ul ? "ul" : "ol";
+          if (listKind && listKind !== kind) closeList();
+          if (!listKind) {
+            listKind = kind;
+            out.push(`<${listKind}>`);
+          }
+          const item = (ul ? ul[1] : ol[1]).trim();
+          out.push(`<li>${renderInline(item)}</li>`);
+          continue;
+        }
+
+        paragraph.push(line.trim());
+      }
+
+      flushParagraph();
+      closeList();
+
+      return out.join("\n");
+    }
+
+    function buildToc(container) {
+      const toc = document.getElementById("toc");
+      toc.innerHTML = "";
+      const headings = Array.from(container.querySelectorAll("h2, h3"));
+      for (const h of headings) {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = `#${h.id}`;
+        a.textContent = h.textContent;
+        a.dataset.level = h.tagName.toLowerCase();
+        if (h.tagName.toLowerCase() === "h3") a.style.paddingLeft = "18px";
+        li.appendChild(a);
+        toc.appendChild(li);
+      }
+
+      const links = Array.from(toc.querySelectorAll("a"));
+      function setActive(hash) {
+        for (const link of links) link.classList.toggle("active", link.getAttribute("href") === hash);
+      }
+
+      window.addEventListener("hashchange", () => setActive(location.hash));
+      if (location.hash) setActive(location.hash);
+
+      document.getElementById("tocSearch").addEventListener("input", (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        for (const link of links) {
+          const match = !q || link.textContent.toLowerCase().includes(q);
+          link.parentElement.style.display = match ? "" : "none";
+        }
+      });
+    }
+
+    async function loadTutorial() {
+      const hint = document.getElementById("loadHint");
+      const content = document.getElementById("content");
+      try {
+        const manifestResp = await fetch(MANIFEST_URL, { cache: "no-store" });
+        if (!manifestResp.ok) throw new Error(`Failed to load manifest: ${manifestResp.status}`);
+        const manifest = await manifestResp.json();
+        document.getElementById("rev").textContent = String(manifest.revision ?? "?");
+
+        const parts = [];
+        for (const section of manifest.sections || []) {
+          const resp = await fetch(`dna-tutorial/${section.file}`, { cache: "no-store" });
+          if (!resp.ok) throw new Error(`Failed to load section: ${section.file}`);
+          parts.push(await resp.text());
+        }
+
+        const md = parts.join("\n\n");
+        content.classList.remove("small");
+        content.innerHTML = renderMarkdown(md);
+        buildToc(content);
+
+        hint.textContent = "Loaded.";
+      } catch (err) {
+        hint.textContent = "Load failed.";
+        content.innerHTML = `<div class="danger"><p style="margin: 0">${escapeHtml(String(err))}</p><p style="margin: 8px 0 0">If you opened this as <code>file://</code>, serve it via GitHub Pages or a local server.</p></div>`;
+      }
+    }
+
+    document.getElementById("btnPrint").addEventListener("click", () => window.print());
+    document.getElementById("btnTop").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+    document.addEventListener("dblclick", async (e) => {
+      const pre = e.target.closest("pre.copyable");
+      if (!pre) return;
+      const text = pre.innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("Copied code");
+      } catch {
+        showToast("Copy failed");
+      }
+    });
+
+    loadTutorial();
+  </script>
+</body>
+</html>
