@@ -29,21 +29,30 @@ DNA has direction because the sugar has numbered carbons (1′, 2′, 3′, 4′
 - A strand’s **5′ end** typically has a free phosphate.
 - A strand’s **3′ end** has a free **3′-OH**.
 
-DNA polymerases add nucleotides by forming a **phosphodiester bond** between the incoming nucleotide’s phosphate and the existing strand’s **3′-OH**, so new DNA is synthesized **5′ → 3′**.
+DNA polymerases add nucleotides by forming a **phosphodiester bond** between the existing strand’s **3′-OH** and the incoming nucleotide’s phosphate. Therefore new DNA is synthesized **5′ → 3′**.
+
+## Complementarity and Chargaff’s rules (double-stranded DNA)
+
+In a typical duplex:
+- **A pairs with T**
+- **G pairs with C**
+
+So the overall composition roughly follows:
+- **%A ≈ %T**
+- **%G ≈ %C**
+
+These are classic **Chargaff’s rules** and reflect base pairing in a stable duplex.
 
 ```txt
 5′ - A T G C C A T - 3′
 3′ - T A C G G T A - 5′
 ```
 
-## Base pairing and helix stability
+## What stabilizes the helix
 
-### Complementarity
-- **A pairs with T** (2 hydrogen bonds)
-- **G pairs with C** (3 hydrogen bonds)
-
-### What really stabilizes the helix
-Hydrogen bonds matter, but **base stacking** (interactions between neighboring bases) is a major contributor to stability.
+### Hydrogen bonds vs base stacking
+- Hydrogen bonds help enforce correct pairing (A–T, G–C).
+- **Base stacking** (interactions between adjacent bases) is a major contributor to duplex stability.
 
 ### GC content and melting temperature (Tm)
 In general, **higher GC% → higher Tm** (harder to separate strands), because GC pairs form more hydrogen bonds and often stack differently.
@@ -54,7 +63,24 @@ In general, **higher GC% → higher Tm** (harder to separate strands), because G
 - **Typical role**: DNA stores information; RNA is often intermediate or functional (mRNA, rRNA, tRNA, regulatory RNAs).
 - **Stability**: RNA is generally less chemically stable than DNA.
 
+## Reading sequences: reverse complements
+
+DNA strands are antiparallel. When you see a sequence written 5′ → 3′, the complementary strand written 5′ → 3′ is the **reverse complement**.
+
+Example:
+```txt
+Forward (5′→3′):   A T G C C A T
+Complement (3′→5′): T A C G G T A
+Reverse complement: A T G G C A T
+```
+
+A lot of lab work (primer design, CRISPR guides, alignments) depends on keeping orientation straight.
+
 ## The “central dogma” (with modern nuance)
 - A simplified flow: **DNA → RNA → protein**.
 - Many RNAs are functional without becoming proteins (e.g., rRNA, tRNA, miRNA, lncRNA).
 - Cells also regulate *when*, *where*, and *how much* RNA/protein is made.
+
+## Mini-check
+1. Why is synthesis 5′ → 3′, not 3′ → 5′?
+2. What is a reverse complement and when do you need it?
