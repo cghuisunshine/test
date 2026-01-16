@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Media Sources  Master Checkbox Demo</title>
+  <title>Media Sources &ndash; Master Checkbox Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -146,7 +146,7 @@
     }
 
     .source-meta span::before {
-      content: " ";
+      content: "\2022\00a0";
     }
 
     @media (max-width: 500px) {
@@ -212,10 +212,10 @@
           </div>
           <div class="source-main">
             <div class="source-title-row">
-              <div class="source-title">Wall Street Journal  Technology</div>
+              <div class="source-title">Wall Street Journal &ndash; Technology</div>
             </div>
             <div class="source-meta">
-              <span>WSJ  Technology</span>
+              <span>WSJ &ndash; Technology</span>
               <span>38 articles</span>
               <span>Just now</span>
             </div>
@@ -228,10 +228,10 @@
           </div>
           <div class="source-main">
             <div class="source-title-row">
-              <div class="source-title">Wall Street Journal  Business</div>
+              <div class="source-title">Wall Street Journal &ndash; Business</div>
             </div>
             <div class="source-meta">
-              <span>WSJ  Business</span>
+              <span>WSJ &ndash; Business</span>
               <span>138 articles</span>
               <span>Just now</span>
             </div>
@@ -244,10 +244,10 @@
           </div>
           <div class="source-main">
             <div class="source-title-row">
-              <div class="source-title">BBC News  UK</div>
+              <div class="source-title">BBC News &ndash; UK</div>
             </div>
             <div class="source-meta">
-              <span>BBC News  UK</span>
+              <span>BBC News &ndash; UK</span>
               <span>25 articles</span>
               <span>Just now</span>
             </div>
@@ -277,7 +277,7 @@
           </div>
           <div class="source-main">
             <div class="source-title-row">
-              <div class="source-title">Reuters  World</div>
+              <div class="source-title">Reuters &ndash; World</div>
             </div>
             <div class="source-meta">
               <span>Reuters</span>
@@ -293,7 +293,7 @@
           </div>
           <div class="source-main">
             <div class="source-title-row">
-              <div class="source-title">Al Jazeera  Top Stories</div>
+              <div class="source-title">Al Jazeera &ndash; Top Stories</div>
             </div>
             <div class="source-meta">
               <span>Al Jazeera</span>
@@ -309,10 +309,10 @@
           </div>
           <div class="source-main">
             <div class="source-title-row">
-              <div class="source-title">BBC News  World</div>
+              <div class="source-title">BBC News &ndash; World</div>
             </div>
             <div class="source-meta">
-              <span>BBC News  World</span>
+              <span>BBC News &ndash; World</span>
               <span>50 articles</span>
               <span>Today</span>
             </div>
@@ -351,8 +351,8 @@
     }
 
     // Master checkbox behavior:
-    // unchecked  checked: select all
-    // checked  unchecked: unselect all
+    // unchecked -> checked: select all
+    // checked -> unchecked: unselect all
     masterToggle.addEventListener("change", () => {
       const shouldCheck = masterToggle.checked;
       itemToggles.forEach(t => (t.checked = shouldCheck));
