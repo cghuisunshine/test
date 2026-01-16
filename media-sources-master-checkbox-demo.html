@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Media Sources  Master Checkbox Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .sheet {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25);
+      max-width: 480px;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .banner {
+      background: #fff7e6;
+      color: #92400e;
+      padding: 10px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid #fde68a;
+    }
+
+    .banner strong {
+      font-weight: 600;
+    }
+
+    .sheet-header {
+      padding: 14px 16px 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sheet-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+
+    .sheet-subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    /* Scrollable container for header + cards */
+    .sources-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    /* Sticky row with a single master checkbox (no text label) */
+    .sources-header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .master-toggle {
+      width: 18px;
+      height: 18px;
+    }
+
+    .sources-list {
+      list-style: none;
+      margin: 0;
+      padding: 8px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .source-card {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+    }
+
+    .source-checkbox {
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .source-checkbox input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+
+    .source-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .source-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .source-title {
+      font-size: 15px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source-meta {
+      font-size: 11px;
+      color: #6b7280;
+      display: flex;
+      gap: 6px;
+    }
+
+    .source-meta span::before {
+      content: " ";
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 8px;
+      }
+
+      .sheet {
+        border-radius: 0;
+        max-width: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="banner">
+      <strong>Guest users:</strong> Your media source preferences will be lost
+      when you reload. Only logged-in users can have preferences saved.
+    </div>
+
+    <div class="sheet-header">
+      <h1 class="sheet-title">Media Sources</h1>
+      <p class="sheet-subtitle">
+        Master checkbox selects or clears all media.
+      </p>
+    </div>
+
+    <!-- Scrollable list: sticky master checkbox + cards -->
+    <div class="sources-container">
+      <!-- Sticky header with a single checkbox, no visible text label -->
+      <div class="sources-header">
+        <input
+          type="checkbox"
+          id="masterToggle"
+          class="master-toggle"
+          aria-label="Select or deselect all media sources"
+        />
+      </div>
+
+      <!-- Cards -->
+      <ul class="sources-list" id="sourcesList">
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" checked />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">The Guardian</div>
+            </div>
+            <div class="source-meta">
+              <span>guardian</span>
+              <span>495 articles</span>
+              <span>Just now</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" checked />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">Wall Street Journal  Technology</div>
+            </div>
+            <div class="source-meta">
+              <span>WSJ  Technology</span>
+              <span>38 articles</span>
+              <span>Just now</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" checked />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">Wall Street Journal  Business</div>
+            </div>
+            <div class="source-meta">
+              <span>WSJ  Business</span>
+              <span>138 articles</span>
+              <span>Just now</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" checked />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">BBC News  UK</div>
+            </div>
+            <div class="source-meta">
+              <span>BBC News  UK</span>
+              <span>25 articles</span>
+              <span>Just now</span>
+            </div>
+          </div>
+        </li>
+
+        <!-- More items to show scrolling -->
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">New York Times</div>
+            </div>
+            <div class="source-meta">
+              <span>NYTimes</span>
+              <span>220 articles</span>
+              <span>3h ago</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">Reuters  World</div>
+            </div>
+            <div class="source-meta">
+              <span>Reuters</span>
+              <span>100 articles</span>
+              <span>Today</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">Al Jazeera  Top Stories</div>
+            </div>
+            <div class="source-meta">
+              <span>Al Jazeera</span>
+              <span>75 articles</span>
+              <span>Today</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">BBC News  World</div>
+            </div>
+            <div class="source-meta">
+              <span>BBC News  World</span>
+              <span>50 articles</span>
+              <span>Today</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="source-card">
+          <div class="source-checkbox">
+            <input type="checkbox" class="source-toggle" />
+          </div>
+          <div class="source-main">
+            <div class="source-title-row">
+              <div class="source-title">The Economist</div>
+            </div>
+            <div class="source-meta">
+              <span>The Economist</span>
+              <span>60 articles</span>
+              <span>This week</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const masterToggle = document.getElementById("masterToggle");
+    const itemToggles = Array.from(
+      document.querySelectorAll(".source-toggle")
+    );
+
+    function syncMasterFromItems() {
+      const checkedCount = itemToggles.filter(t => t.checked).length;
+      const allChecked = checkedCount === itemToggles.length;
+      masterToggle.checked = allChecked && itemToggles.length > 0;
+    }
+
+    // Master checkbox behavior:
+    // unchecked  checked: select all
+    // checked  unchecked: unselect all
+    masterToggle.addEventListener("change", () => {
+      const shouldCheck = masterToggle.checked;
+      itemToggles.forEach(t => (t.checked = shouldCheck));
+      // no need to re-sync master here; it already reflects desired state
+    });
+
+    // If user manually toggles individual items, keep master in sync
+    itemToggles.forEach(t =>
+      t.addEventListener("change", syncMasterFromItems)
+    );
+
+    // Initial state
+    syncMasterFromItems();
+  </script>
+</body>
+</html>
