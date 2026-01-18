@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Grade API Test</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0b0f18;
+        --card: #121a2a;
+        --text: #eef3ff;
+        --muted: rgba(238, 243, 255, 0.72);
+        --border: rgba(238, 243, 255, 0.14);
+        --accent: #6aa8ff;
+        --danger: #ff6a7a;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f5f7fb;
+          --card: #ffffff;
+          --text: #0f172a;
+          --muted: rgba(15, 23, 42, 0.66);
+          --border: rgba(15, 23, 42, 0.12);
+          --accent: #2563eb;
+          --danger: #dc2626;
+          --shadow: 0 18px 40px rgba(2, 6, 23, 0.12);
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+        background:
+          radial-gradient(1200px 700px at 18% 12%, rgba(106, 168, 255, 0.18), transparent 55%),
+          radial-gradient(900px 650px at 88% 28%, rgba(255, 106, 122, 0.14), transparent 50%),
+          var(--bg);
+        color: var(--text);
+        padding: 24px 14px 40px;
+        display: grid;
+        place-items: start center;
+      }
+      main { width: min(1050px, 100%); display: grid; gap: 14px; }
+      header { display: grid; gap: 6px; }
+      h1 { margin: 0; font-size: clamp(22px, 3vw, 34px); letter-spacing: -0.02em; }
+      header p { margin: 0; color: var(--muted); line-height: 1.45; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        overflow: clip;
+      }
+      .pad { padding: 14px; display: grid; gap: 12px; }
+      .row { display: grid; gap: 10px; grid-template-columns: repeat(12, 1fr); }
+      .span-12 { grid-column: span 12; }
+      .span-8 { grid-column: span 8; }
+      .span-6 { grid-column: span 6; }
+      .span-4 { grid-column: span 4; }
+      @media (max-width: 860px) { .span-8, .span-6, .span-4 { grid-column: span 12; } }
+      label { font-size: 13px; color: var(--muted); }
+      input, select, textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: color-mix(in srgb, var(--bg), transparent 60%);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 10px 12px;
+        outline: none;
+        font-size: 14px;
+      }
+      textarea { min-height: 110px; resize: vertical; }
+      input:focus, select:focus, textarea:focus {
+        border-color: color-mix(in srgb, var(--accent), white 10%);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent), transparent 78%);
+      }
+      .help { color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+      .btns { display: inline-flex; gap: 10px; flex-wrap: wrap; }
+      button {
+        border: 1px solid var(--border);
+        background: color-mix(in srgb, var(--card), transparent 0%);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      button:hover { border-color: color-mix(in srgb, var(--accent), transparent 55%); }
+      button[disabled] { opacity: 0.55; cursor: not-allowed; }
+      .primary {
+        border-color: color-mix(in srgb, var(--accent), transparent 25%);
+        background: color-mix(in srgb, var(--accent), transparent 80%);
+      }
+      .danger {
+        border-color: color-mix(in srgb, var(--danger), transparent 35%);
+        background: color-mix(in srgb, var(--danger), transparent 86%);
+      }
+      pre {
+        margin: 0;
+        padding: 14px;
+        overflow: auto;
+        font-size: 13px;
+        line-height: 1.45;
+        border-top: 1px solid var(--border);
+        background: color-mix(in srgb, var(--bg), transparent 72%);
+      }
+      details {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: color-mix(in srgb, var(--bg), transparent 72%);
+      }
+      summary { cursor: pointer; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Grade API Test</h1>
+        <p>Enter question/answer(s), configure your endpoint, and send JSON. For GitHub Pages, your API must allow CORS.</p>
+      </header>
+
+      <section class="card">
+        <div class="pad">
+          <div class="row">
+            <div class="span-8">
+              <label for="apiUrl">Grade API URL</label>
+              <input id="apiUrl" type="text" placeholder="https://your-domain.com/api/grade" />
+              <div class="help">Use a full URL for cross-origin APIs. Relative URLs only work when the API shares the same origin.</div>
+            </div>
+            <div class="span-4">
+              <label for="method">Method</label>
+              <select id="method">
+                <option value="POST" selected>POST</option>
+                <option value="PUT">PUT</option>
+                <option value="PATCH">PATCH</option>
+              </select>
+            </div>
+          </div>
+
+          <details>
+            <summary>Advanced: auth, headers, payload shape</summary>
+            <div style="height:10px"></div>
+            <div class="row">
+              <div class="span-4">
+                <label for="authType">Auth</label>
+                <select id="authType">
+                  <option value="none" selected>None</option>
+                  <option value="bearer">Bearer token</option>
+                  <option value="header">Custom header</option>
+                </select>
+              </div>
+              <div class="span-4" id="authHeaderNameWrap" hidden>
+                <label for="authHeaderName">Header name</label>
+                <input id="authHeaderName" type="text" value="Authorization" />
+              </div>
+              <div class="span-4" id="authValueWrap" hidden>
+                <label for="authValue">Token / header value</label>
+                <input id="authValue" type="password" autocomplete="off" placeholder="(stored locally)" />
+              </div>
+            </div>
+
+            <div style="height:10px"></div>
+            <div class="row">
+              <div class="span-4">
+                <label for="payloadPreset">Payload shape</label>
+                <select id="payloadPreset">
+                  <option value="qa">{ question, answer }</option>
+                  <option value="three" selected>{ question, reference_answer, student_answer }</option>
+                  <option value="rubric">{ question, reference_answer, student_answer, rubric }</option>
+                  <option value="custom">Custom JSON</option>
+                </select>
+              </div>
+              <div class="span-8">
+                <label for="extraHeaders">Extra headers (JSON)</label>
+                <input id="extraHeaders" class="mono" type="text" placeholder='{"X-Api-Key":"..."}' />
+                <div class="help">Optional. Values can be strings or any JSON (will be stringified).</div>
+              </div>
+            </div>
+
+            <div style="height:10px"></div>
+            <div class="row" id="customRow" hidden>
+              <div class="span-12">
+                <label for="customJson">Custom JSON payload</label>
+                <textarea id="customJson" class="mono" placeholder='{"question":"...","answer":"..."}'></textarea>
+              </div>
+            </div>
+          </details>
+
+          <div class="row">
+            <div class="span-12">
+              <label for="question">Question</label>
+              <textarea id="question" placeholder="Paste the question here..."></textarea>
+            </div>
+          </div>
+
+          <div class="row" id="qaRow" hidden>
+            <div class="span-12">
+              <label for="answer">Answer</label>
+              <textarea id="answer" placeholder="Answer (for {question, answer} payloads)..."></textarea>
+            </div>
+          </div>
+
+          <div class="row" id="threeRow">
+            <div class="span-6">
+              <label for="referenceAnswer">Reference / expected answer</label>
+              <textarea id="referenceAnswer" placeholder="Optional for some APIs..."></textarea>
+            </div>
+            <div class="span-6">
+              <label for="studentAnswer">Student answer</label>
+              <textarea id="studentAnswer" placeholder="The answer you want to grade..."></textarea>
+            </div>
+          </div>
+
+          <div class="row" id="rubricRow" hidden>
+            <div class="span-12">
+              <label for="rubric">Rubric / grading instructions</label>
+              <textarea id="rubric" placeholder="Optional rubric, e.g. award 0-5 points and explain..."></textarea>
+            </div>
+          </div>
+
+          <div class="actions">
+            <div class="btns">
+              <button id="send" class="primary" type="button">Send</button>
+              <button id="copyCurl" type="button">Copy curl</button>
+              <button id="clear" class="danger" type="button">Clear local data</button>
+            </div>
+            <div class="help" id="status">Idle</div>
+          </div>
+
+          <div class="help">Security note: this runs in your browser. Avoid long-lived secrets. If you get a CORS error, enable CORS on the API or call it through a same-origin proxy.</div>
+        </div>
+
+        <pre id="output" class="mono">Response will appear here.</pre>
+      </section>
+    </main>
+
+    <script>
+      const STORAGE_KEY = "grade_api_test_v1";
+
+      const els = {
+        apiUrl: document.getElementById("apiUrl"),
+        method: document.getElementById("method"),
+        authType: document.getElementById("authType"),
+        authHeaderNameWrap: document.getElementById("authHeaderNameWrap"),
+        authValueWrap: document.getElementById("authValueWrap"),
+        authHeaderName: document.getElementById("authHeaderName"),
+        authValue: document.getElementById("authValue"),
+        payloadPreset: document.getElementById("payloadPreset"),
+        extraHeaders: document.getElementById("extraHeaders"),
+        customRow: document.getElementById("customRow"),
+        customJson: document.getElementById("customJson"),
+        question: document.getElementById("question"),
+        answer: document.getElementById("answer"),
+        referenceAnswer: document.getElementById("referenceAnswer"),
+        studentAnswer: document.getElementById("studentAnswer"),
+        rubric: document.getElementById("rubric"),
+        qaRow: document.getElementById("qaRow"),
+        threeRow: document.getElementById("threeRow"),
+        rubricRow: document.getElementById("rubricRow"),
+        send: document.getElementById("send"),
+        copyCurl: document.getElementById("copyCurl"),
+        clear: document.getElementById("clear"),
+        status: document.getElementById("status"),
+        output: document.getElementById("output"),
+      };
+
+      function setStatus(text) {
+        els.status.textContent = text;
+      }
+
+      function pretty(value) {
+        return JSON.stringify(value, null, 2);
+      }
+
+      function safeParseJson(text, label) {
+        const trimmed = String(text ?? "").trim();
+        if (!trimmed) return null;
+        try {
+          return JSON.parse(trimmed);
+        } catch (err) {
+          throw new Error(`${label} is invalid JSON: ${err?.message || err}`);
+        }
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function saveState() {
+        const state = {
+          apiUrl: els.apiUrl.value,
+          method: els.method.value,
+          authType: els.authType.value,
+          authHeaderName: els.authHeaderName.value,
+          authValue: els.authValue.value,
+          payloadPreset: els.payloadPreset.value,
+          extraHeaders: els.extraHeaders.value,
+          customJson: els.customJson.value,
+          question: els.question.value,
+          answer: els.answer.value,
+          referenceAnswer: els.referenceAnswer.value,
+          studentAnswer: els.studentAnswer.value,
+          rubric: els.rubric.value,
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function applyState(state) {
+        if (!state) return;
+        for (const [k, v] of Object.entries(state)) {
+          if (k in els && typeof els[k]?.value !== "undefined") {
+            els[k].value = v ?? "";
+          }
+        }
+      }
+
+      function updateAuthUI() {
+        const t = els.authType.value;
+        els.authHeaderNameWrap.hidden = t !== "header";
+        els.authValueWrap.hidden = t === "none";
+      }
+
+      function updatePayloadUI() {
+        const p = els.payloadPreset.value;
+        els.qaRow.hidden = p !== "qa";
+        els.threeRow.hidden = !(p === "three" || p === "rubric");
+        els.rubricRow.hidden = p !== "rubric";
+        els.customRow.hidden = p !== "custom";
+
+        if (p === "custom" && !String(els.customJson.value || "").trim()) {
+          els.customJson.value = pretty({ question: els.question.value || "", answer: "" });
+        }
+      }
+
+      function buildHeaders() {
+        const headers = { "Content-Type": "application/json" };
+
+        const authType = els.authType.value;
+        const authValue = String(els.authValue.value || "").trim();
+
+        if (authType === "bearer" && authValue) {
+          headers.Authorization = `Bearer ${authValue}`;
+        }
+
+        if (authType === "header") {
+          const name = String(els.authHeaderName.value || "").trim();
+          if (name && authValue) headers[name] = authValue;
+        }
+
+        const extra = safeParseJson(els.extraHeaders.value, "Extra headers");
+        if (extra && typeof extra === "object") {
+          for (const [k, v] of Object.entries(extra)) {
+            headers[k] = typeof v === "string" ? v : JSON.stringify(v);
+          }
+        }
+
+        return headers;
+      }
+
+      function buildPayload() {
+        const p = els.payloadPreset.value;
+        if (p === "qa") return { question: els.question.value, answer: els.answer.value };
+        if (p === "three") {
+          return {
+            question: els.question.value,
+            reference_answer: els.referenceAnswer.value,
+            student_answer: els.studentAnswer.value,
+          };
+        }
+        if (p === "rubric") {
+          return {
+            question: els.question.value,
+            reference_answer: els.referenceAnswer.value,
+            student_answer: els.studentAnswer.value,
+            rubric: els.rubric.value,
+          };
+        }
+        if (p === "custom") return safeParseJson(els.customJson.value, "Custom JSON");
+        throw new Error(`Unknown payload preset: ${p}`);
+      }
+
+      function shSingleQuote(text) {
+        return `'${String(text).replaceAll("'", `'\\''`)}'`;
+      }
+
+      function buildCurl(url, method, headers, payload) {
+        const parts = ["curl", "-sS", "-X", method, shSingleQuote(url)];
+        for (const [k, v] of Object.entries(headers)) {
+          parts.push("-H", shSingleQuote(`${k}: ${v}`));
+        }
+        parts.push("--data", shSingleQuote(JSON.stringify(payload)));
+        return parts.join(" ");
+      }
+
+      async function send() {
+        saveState();
+
+        const url = String(els.apiUrl.value || "").trim();
+        if (!url) {
+          els.apiUrl.focus();
+          setStatus("Missing API URL");
+          return;
+        }
+
+        els.send.disabled = true;
+        setStatus("Sending…");
+        els.output.textContent = "Sending request...";
+        const start = performance.now();
+
+        try {
+          const method = els.method.value;
+          const headers = buildHeaders();
+          const payload = buildPayload();
+
+          const res = await fetch(url, { method, headers, body: JSON.stringify(payload) });
+          const durationMs = Math.round(performance.now() - start);
+          const text = await res.text();
+
+          let body = text;
+          try {
+            body = text ? JSON.parse(text) : null;
+          } catch {
+            // keep as text
+          }
+
+          els.output.textContent = pretty({
+            ok: res.ok,
+            status: res.status,
+            statusText: res.statusText,
+            durationMs,
+            response: body,
+          });
+
+          setStatus(`${res.status} • ${durationMs}ms`);
+        } catch (err) {
+          const durationMs = Math.round(performance.now() - start);
+          els.output.textContent = pretty({ ok: false, durationMs, error: String(err?.message || err) });
+          setStatus(`Error • ${durationMs}ms`);
+        } finally {
+          els.send.disabled = false;
+        }
+      }
+
+      async function copyCurl() {
+        saveState();
+        try {
+          const url = String(els.apiUrl.value || "").trim();
+          if (!url) throw new Error("Missing API URL");
+          const method = els.method.value;
+          const headers = buildHeaders();
+          const payload = buildPayload();
+          const cmd = buildCurl(url, method, headers, payload);
+          await navigator.clipboard.writeText(cmd);
+          setStatus("Copied curl");
+        } catch (err) {
+          setStatus(String(err?.message || err));
+        }
+      }
+
+      function clearLocal() {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+
+      for (const el of Object.values(els)) {
+        if (!el?.addEventListener) continue;
+        el.addEventListener("input", saveState);
+        el.addEventListener("change", saveState);
+      }
+
+      els.authType.addEventListener("change", updateAuthUI);
+      els.payloadPreset.addEventListener("change", updatePayloadUI);
+      els.send.addEventListener("click", send);
+      els.copyCurl.addEventListener("click", copyCurl);
+      els.clear.addEventListener("click", clearLocal);
+
+      applyState(loadState());
+      updateAuthUI();
+      updatePayloadUI();
+      setStatus("Idle");
+    </script>
+  </body>
+</html>
