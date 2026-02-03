@@ -103,6 +103,11 @@
         gap: 10px;
       }
 
+      form.ai-style-change-1 {
+        position: relative;
+        padding-bottom: 60px;
+      }
+
       input[type="text"] {
         width: 100%;
         border: 1px solid var(--border);
@@ -141,6 +146,12 @@
       .primary {
         border-color: color-mix(in srgb, var(--accent), transparent 25%);
         background: color-mix(in srgb, var(--accent), transparent 80%);
+      }
+
+      .primary.ai-style-change-2 {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
       }
 
       .danger {
@@ -288,10 +299,10 @@
 
       <section class="card" aria-label="Todo list">
         <div class="toolbar">
-          <form id="addForm" autocomplete="off">
+          <form id="addForm" class="ai-style-change-1" autocomplete="off">
             <label class="sr" for="newTodo">New todo</label>
             <input id="newTodo" name="newTodo" type="text" placeholder="What do you want to do?" maxlength="200" />
-            <button class="primary" type="submit">Add</button>
+            <button class="primary ai-style-change-2" type="submit">Add</button>
           </form>
 
           <div class="filters">
