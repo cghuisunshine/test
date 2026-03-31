@@ -176,7 +176,8 @@
 
       .split-grid,
       .card-grid,
-      .command-grid {
+      .command-grid,
+      .snapshot-grid {
         display: grid;
         gap: 16px;
       }
@@ -194,9 +195,15 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .snapshot-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 18px;
+      }
+
       .card,
       .callout,
-      .command-box {
+      .command-box,
+      .snapshot-card {
         padding: 18px;
         border: 1px solid var(--color-border);
         border-radius: var(--radius);
@@ -205,8 +212,38 @@
 
       .card h3,
       .callout h3,
-      .command-box h3 {
+      .command-box h3,
+      .snapshot-card h3 {
         margin-top: 0;
+      }
+
+      .snapshot-card {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .snapshot-card--wide {
+        grid-column: 1 / -1;
+      }
+
+      .snapshot-frame {
+        overflow: hidden;
+        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        background: #eef4eb;
+      }
+
+      .snapshot-frame img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .snapshot-meta {
+        margin: 0;
+        font-size: 0.94rem;
+        color: var(--color-text-muted);
       }
 
       .callout {
@@ -348,6 +385,7 @@
           <h2>On this page</h2>
           <ul>
             <li><a href="#overview">Project Overview</a></li>
+            <li><a href="#ui-reference">UI Reference</a></li>
             <li><a href="#for-clients">For Clients</a></li>
             <li><a href="#client-workflows">Client Workflows</a></li>
             <li><a href="#for-developers">For Future Developers</a></li>
@@ -387,6 +425,83 @@
                   and persist records, surveys, documents, notifications, and timelines.
                 </p>
               </article>
+            </div>
+          </section>
+
+          <section id="ui-reference" class="section">
+            <span class="eyeline">Visual Reference</span>
+            <h2>UI snapshots from the live frontend</h2>
+
+            <div class="snapshot-grid">
+              <article class="snapshot-card">
+                <div class="snapshot-frame">
+                  <img src="assets/frontend-login-page.png" alt="SRP login page with centered sign-in card and support links" />
+                </div>
+                <div>
+                  <h3>Public login route</h3>
+                  <p class="snapshot-meta">
+                    <code>/login</code> is the real public entry point. The current experience is a centered sign-in
+                    card over the branded green canvas with direct links to privacy and terms pages.
+                  </p>
+                </div>
+              </article>
+
+              <article class="snapshot-card">
+                <div class="snapshot-frame">
+                  <img src="assets/frontend-terms-page.png" alt="Terms of Use page with branded legal header and long-form article layout" />
+                </div>
+                <div>
+                  <h3>Public legal screen</h3>
+                  <p class="snapshot-meta">
+                    <code>/terms</code> reuses the same visual system but switches to a long-form document layout with a
+                    simple back-to-login affordance in the header.
+                  </p>
+                </div>
+              </article>
+
+              <article class="snapshot-card">
+                <div class="snapshot-frame">
+                  <img src="assets/frontend-admin-dashboard-live.png" alt="Authenticated admin dashboard with left navigation, summary metrics, shortcuts, and operational sections" />
+                </div>
+                <div>
+                  <h3>Authenticated admin dashboard</h3>
+                  <p class="snapshot-meta">
+                    The live admin view keeps the fixed left navigation and metric-first layout, but now clearly exposes
+                    operational shortcuts, urgent actions, upcoming appointments, target dates, and recent activity.
+                  </p>
+                </div>
+              </article>
+
+              <article class="snapshot-card">
+                <div class="snapshot-frame">
+                  <img src="assets/frontend-client-dashboard-live.png" alt="Authenticated client dashboard with progress bar and priority task cards" />
+                </div>
+                <div>
+                  <h3>Authenticated client dashboard</h3>
+                  <p class="snapshot-meta">
+                    The live client dashboard centers the user on overall progress and the next required actions:
+                    survey completion, document handling, and inspection booking inside the protected portal.
+                  </p>
+                </div>
+              </article>
+            </div>
+
+            <div class="split-grid" style="margin-top: 18px;">
+              <div class="callout">
+                <h3>Observed auth bootstrap behavior</h3>
+                <p>
+                  A headless capture of <code>/</code> rendered a loading state before routing the user. Treat the root
+                  path as an auth bootstrap entry rather than a public landing page when explaining the app flow.
+                </p>
+              </div>
+              <div class="callout">
+                <h3>Documentation implication</h3>
+                <p>
+                  For user-facing docs, describe the public surface as <code>/login</code>, <code>/privacy</code>, and
+                  <code>/terms</code>. Protected role experiences should be documented separately because they depend on
+                  a valid Supabase session and profile lookup.
+                </p>
+              </div>
             </div>
           </section>
 
@@ -753,10 +868,6 @@ npm run start</pre>
             </ul>
           </section>
 
-          <p class="footer">
-            This document is intended to be opened directly as a standalone HTML file and kept in version control as a
-            handoff artifact for both clients and future maintainers.
-          </p>
         </main>
       </div>
     </div>
