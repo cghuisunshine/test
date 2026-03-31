@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Documentation | Client Portal and Developer Handoff</title>
+    <style>
+      :root {
+        --color-primary: #6b8e5f;
+        --color-primary-dark: #4f6a46;
+        --color-secondary: #155dfc;
+        --color-secondary-dark: #1c398e;
+        --color-surface: #ffffff;
+        --color-canvas: #fafaf9;
+        --color-subtle: #f3f4f6;
+        --color-border: #e5e7eb;
+        --color-text: #1c1917;
+        --color-text-muted: #4a5565;
+        --color-warning-bg: #fef3c7;
+        --color-warning-text: #92400e;
+        --shadow-soft: 0 8px 24px rgba(28, 25, 23, 0.08);
+        --radius: 10px;
+        --content-width: 1200px;
+        --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-body);
+        color: var(--color-text);
+        background: var(--color-canvas);
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--color-secondary-dark);
+      }
+
+      a:hover {
+        color: var(--color-secondary);
+      }
+
+      code,
+      pre {
+        font-family: "SFMono-Regular", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      .shell {
+        max-width: var(--content-width);
+        margin: 0 auto;
+        padding: 32px 24px 64px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .title-block h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        line-height: 1.15;
+      }
+
+      .title-block p {
+        margin: 0;
+        max-width: 760px;
+        color: var(--color-text-muted);
+        font-size: 1rem;
+      }
+
+      .status-note {
+        min-width: 240px;
+        padding: 14px 16px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .status-note strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.95rem;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 28px;
+        margin-top: 28px;
+      }
+
+      .toc {
+        position: sticky;
+        top: 24px;
+        align-self: start;
+        padding: 18px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+      }
+
+      .toc h2 {
+        margin: 0 0 12px;
+        font-size: 1rem;
+      }
+
+      .toc ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .toc li + li {
+        margin-top: 10px;
+      }
+
+      .toc a {
+        text-decoration: none;
+      }
+
+      .content {
+        min-width: 0;
+      }
+
+      .section {
+        padding: 28px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .section + .section {
+        margin-top: 24px;
+      }
+
+      .section h2 {
+        margin: 0 0 10px;
+        font-size: 1.6rem;
+      }
+
+      .section h3 {
+        margin: 24px 0 10px;
+        font-size: 1.1rem;
+      }
+
+      .section p,
+      .section li {
+        color: var(--color-text-muted);
+      }
+
+      .eyeline {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #eef4eb;
+        color: var(--color-primary-dark);
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .split-grid,
+      .card-grid,
+      .command-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .split-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 18px;
+      }
+
+      .command-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .card,
+      .callout,
+      .command-box {
+        padding: 18px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+      }
+
+      .card h3,
+      .callout h3,
+      .command-box h3 {
+        margin-top: 0;
+      }
+
+      .callout {
+        background: var(--color-subtle);
+      }
+
+      .warning {
+        background: var(--color-warning-bg);
+        color: var(--color-warning-text);
+        border-color: #f59e0b;
+      }
+
+      .workflow-table,
+      .env-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 14px;
+      }
+
+      .workflow-table th,
+      .workflow-table td,
+      .env-table th,
+      .env-table td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--color-border);
+        vertical-align: top;
+      }
+
+      .workflow-table th,
+      .env-table th {
+        color: var(--color-text);
+        font-size: 0.92rem;
+      }
+
+      .checklist {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .stack-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        padding: 0;
+        margin: 16px 0 0;
+        list-style: none;
+      }
+
+      .stack-list li {
+        padding: 12px 14px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        background: var(--color-subtle);
+      }
+
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        padding: 14px;
+        border-radius: 8px;
+        background: #f8fafc;
+        border: 1px solid var(--color-border);
+        color: #0f172a;
+      }
+
+      .footer {
+        margin-top: 24px;
+        color: var(--color-text-muted);
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 960px) {
+        .layout,
+        .split-grid,
+        .card-grid,
+        .command-grid,
+        .stack-list {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .toc {
+          position: static;
+        }
+      }
+
+      @media print {
+        body {
+          background: #ffffff;
+        }
+
+        .shell {
+          max-width: none;
+          padding: 0;
+        }
+
+        .layout {
+          display: block;
+        }
+
+        .toc {
+          display: none;
+        }
+
+        .section,
+        .status-note {
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="title-block">
+          <span class="eyeline">Full-Stack Project Documentation</span>
+          <h1>Client Portal and Developer Handoff Guide</h1>
+          <p>
+            This page documents the current project from two angles: how clients use the service day to day,
+            and how future developers should understand, run, and maintain the frontend and backend.
+          </p>
+        </div>
+        <aside class="status-note">
+          <strong>Current stack</strong>
+          Frontend: React + Vite<br />
+          Backend: Hono API<br />
+          Auth: Supabase<br />
+          Data: Prisma + PostgreSQL
+        </aside>
+      </header>
+
+      <div class="layout">
+        <nav class="toc" aria-label="Table of contents">
+          <h2>On this page</h2>
+          <ul>
+            <li><a href="#overview">Project Overview</a></li>
+            <li><a href="#for-clients">For Clients</a></li>
+            <li><a href="#client-workflows">Client Workflows</a></li>
+            <li><a href="#for-developers">For Future Developers</a></li>
+            <li><a href="#developer-setup">Developer Setup</a></li>
+            <li><a href="#maintenance-hotspots">Maintenance Hotspots</a></li>
+          </ul>
+        </nav>
+
+        <main class="content">
+          <section id="overview" class="section">
+            <h2>Project Overview</h2>
+            <p>
+              The service is a split full-stack TypeScript application. The frontend is a role-aware single-page app.
+              The backend exposes authenticated route groups for admin and client features, validates Supabase bearer
+              tokens, and reads or writes operational data through Prisma against PostgreSQL.
+            </p>
+
+            <ul class="stack-list">
+              <li><strong>Frontend</strong><br />React + Vite SPA for admin and client experiences.</li>
+              <li><strong>Backend</strong><br />Hono API with shared, admin, and client route namespaces.</li>
+              <li><strong>Authentication</strong><br />Supabase session handling in the browser and token validation in the API.</li>
+              <li><strong>Persistence</strong><br />Prisma client and PostgreSQL for the core data model.</li>
+            </ul>
+
+            <div class="card-grid">
+              <article class="card">
+                <h3>Frontend responsibility</h3>
+                <p>
+                  Render the client and admin portal, manage role-based routing, load the active user session,
+                  and call backend endpoints with a bearer token through shared hooks and API helpers.
+                </p>
+              </article>
+              <article class="card">
+                <h3>Backend responsibility</h3>
+                <p>
+                  Enforce auth and admin checks, expose route groups, orchestrate controller and service logic,
+                  and persist records, surveys, documents, notifications, and timelines.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section id="for-clients" class="section">
+            <span class="eyeline">For Users</span>
+            <h2>Guide for All User-Facing Roles</h2>
+            <p>
+              In this project, documentation for clients should be read broadly as documentation for
+              <strong>all user-facing roles</strong>. The code currently supports four roles:
+              <strong>admin</strong>, <strong>inspector</strong>, <strong>assistant</strong>, and
+              <strong>client</strong>. The first three are routed into the <strong>admin workspace</strong>,
+              while client users are routed into the protected client portal.
+            </p>
+
+            <div class="split-grid">
+              <div class="callout">
+                <h3>Role map</h3>
+                <ul class="checklist">
+                  <li><strong>Admin</strong>: full operational access to the admin workspace.</li>
+                  <li><strong>Inspector</strong>: treated as an authorized admin-side role by protected routing.</li>
+                  <li><strong>Assistant</strong>: treated as an authorized admin-side role by protected routing.</li>
+                  <li><strong>Client</strong>: uses the client portal to provide project information and materials.</li>
+                </ul>
+              </div>
+              <div class="callout">
+                <h3>Workspace split</h3>
+                <ul class="checklist">
+                  <li>The admin workspace includes dashboards, users, strata, appointments, documents, questions, timelines, and profile management.</li>
+                  <li>The client portal focuses on project submission and review workflows such as documents, surveys, timelines, and inspection scheduling.</li>
+                  <li>Both surfaces rely on the same Supabase-authenticated session and backend API.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="split-grid" style="margin-top: 16px;">
+              <div class="callout">
+                <h3>What client users use the portal for</h3>
+                <ul class="checklist">
+                  <li>Review overall progress from the Dashboard.</li>
+                  <li>Confirm strata details and strata members.</li>
+                  <li>Upload requested supporting documents.</li>
+                  <li>Complete survey sections tied to their project.</li>
+                  <li>Provide important timeline dates.</li>
+                  <li>Review or respond to inspection and appointment steps.</li>
+                </ul>
+              </div>
+              <div class="callout warning">
+                <h3>Known status note</h3>
+                <p>
+                  The current client routes include a <strong>Reports</strong> page, but the UI labels it as
+                  <strong>Coming Soon</strong>. Documentation should not describe reporting as a completed client feature.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="client-workflows" class="section">
+            <h2>Main Role-Based Workflows</h2>
+            <p>
+              These workflows are based on the existing route definitions and current page behavior in the frontend
+              codebase. Admin-side roles and client users do not see the same surface area, so the documentation should
+              distinguish between the admin workspace and the client portal.
+            </p>
+
+            <h3>Admin workspace workflows</h3>
+            <table class="workflow-table">
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Route</th>
+                  <th>Who uses it</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Dashboard</td>
+                  <td><code>/admin/dashboard</code></td>
+                  <td>Admin, inspector, and assistant roles land here after authentication.</td>
+                </tr>
+                <tr>
+                  <td>Profile</td>
+                  <td><code>/admin/profile</code></td>
+                  <td>Admin-side roles manage their own profile information.</td>
+                </tr>
+                <tr>
+                  <td>Strata and Strata Detail</td>
+                  <td><code>/admin/strata</code> and <code>/admin/strata/:id</code></td>
+                  <td>Operational users manage strata records and drill into individual files or buildings.</td>
+                </tr>
+                <tr>
+                  <td>Users</td>
+                  <td><code>/admin/users</code></td>
+                  <td>Administrative staff manage user-related operations.</td>
+                </tr>
+                <tr>
+                  <td>Appointments</td>
+                  <td><code>/admin/appointments</code></td>
+                  <td>Admin-side roles manage scheduling and inspection-related coordination.</td>
+                </tr>
+                <tr>
+                  <td>Documents, Questions, Timelines</td>
+                  <td><code>/admin/documents</code>, <code>/admin/questions</code>, <code>/admin/timelines</code></td>
+                  <td>Admin-side roles review submissions and manage operational project data.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Client portal workflows</h3>
+
+            <table class="workflow-table">
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Route</th>
+                  <th>What the client does here</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Dashboard</td>
+                  <td><code>/client/dashboard</code></td>
+                  <td>See project progress, action items, document status, survey completion, and appointment-related alerts.</td>
+                </tr>
+                <tr>
+                  <td>Strata Information</td>
+                  <td><code>/client/strata-information</code></td>
+                  <td>Review and confirm the core details for the strata or building profile.</td>
+                </tr>
+                <tr>
+                  <td>Strata Members</td>
+                  <td><code>/client/strata-members</code></td>
+                  <td>Review or contribute member-related information required for the project.</td>
+                </tr>
+                <tr>
+                  <td>Documents</td>
+                  <td><code>/client/documents</code></td>
+                  <td>Upload required files, replace rejected files, and mark items as not available or not applicable where allowed.</td>
+                </tr>
+                <tr>
+                  <td>Survey</td>
+                  <td><code>/client/survey</code> and <code>/client/survey/:section</code></td>
+                  <td>Complete categorized survey sections, review submission progress, and download survey PDFs when available.</td>
+                </tr>
+                <tr>
+                  <td>Timelines</td>
+                  <td><code>/client/timelines</code></td>
+                  <td>Provide key dates such as fiscal year end, AGM timing, and depreciation report timing.</td>
+                </tr>
+                <tr>
+                  <td>Inspection Date</td>
+                  <td><code>/client/inspection-date</code></td>
+                  <td>Handle appointment and inspection-related coordination inside the protected client flow.</td>
+                </tr>
+                <tr>
+                  <td>Reports</td>
+                  <td><code>/client/reports</code></td>
+                  <td>Reserved for future reporting capability. The current UI explicitly marks it as coming soon.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Client access flow</h3>
+            <p>
+              Authentication starts through public routes like <code>/login</code>, <code>/accept-invite</code>,
+              <code>/set-password</code>, and <code>/auth/callback</code>. Once the browser has a valid Supabase session,
+              the app resolves the user profile and routes the user to the correct experience.
+            </p>
+          </section>
+
+          <section id="for-developers" class="section">
+            <span class="eyeline">For Future Developers</span>
+            <h2>Developer Handoff Guide</h2>
+            <p>
+              This project already has a clear split between frontend and backend. The main maintenance task is keeping
+              the route contracts, auth assumptions, and shared domain behavior aligned across both sides.
+            </p>
+
+            <div class="card-grid">
+              <article class="card">
+                <h3>Frontend structure</h3>
+                <p>
+                  <code>frontend/src</code> is divided into <code>admin/</code>, <code>client/</code>, and
+                  <code>shared/</code>. Shared code holds auth context, reusable components, hooks, route guards,
+                  API helpers, and global SCSS.
+                </p>
+              </article>
+              <article class="card">
+                <h3>Backend structure</h3>
+                <p>
+                  <code>backend/src</code> is divided into <code>admin/</code>, <code>client/</code>, and
+                  <code>shared/</code>. Route files delegate to controllers, and controllers rely on shared services,
+                  helpers, middleware, and types.
+                </p>
+              </article>
+            </div>
+
+            <h3>Runtime topology</h3>
+            <pre>[Browser SPA]
+  -> Supabase Auth
+  -> Backend API with bearer token
+     -> authMiddleware
+     -> adminMiddleware for /admin/*
+     -> Controllers
+     -> Shared services
+     -> Prisma client
+     -> PostgreSQL</pre>
+
+            <h3>Routing and auth model</h3>
+            <ul class="checklist">
+              <li>Public frontend routes include login, invite acceptance, password setup, password reset, privacy, terms, and auth callback handling.</li>
+              <li>Client frontend routes are protected with <code>ProtectedRoute</code> and wrapped in <code>ClientLayout</code>.</li>
+              <li>The browser auth context reads the Supabase session, then loads role-specific profile data.</li>
+              <li>The backend validates bearer tokens with Supabase and applies an additional admin role check for <code>/admin/*</code>.</li>
+              <li>Shared backend routes currently include lookups and notifications, while admin and client routes expose the role-specific features.</li>
+            </ul>
+
+            <h3>Route namespaces to know</h3>
+            <div class="split-grid">
+              <div class="callout">
+                <h3>Frontend</h3>
+                <ul class="checklist">
+                  <li><code>/login</code>, <code>/set-password</code>, <code>/reset-password</code>, <code>/auth/callback</code></li>
+                  <li><code>/dashboard</code> as the role-aware landing route</li>
+                  <li><code>/admin/*</code> for administrator tools</li>
+                  <li><code>/client/*</code> for the client portal</li>
+                </ul>
+              </div>
+              <div class="callout">
+                <h3>Backend</h3>
+                <ul class="checklist">
+                  <li><code>/health</code> for health checks</li>
+                  <li><code>/api/lookups/*</code> for shared lookup data</li>
+                  <li><code>/admin/*</code> for admin-only endpoints</li>
+                  <li><code>/client/*</code> for authenticated client operations</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="developer-setup" class="section">
+            <h2>Developer Setup and Local Commands</h2>
+            <p>
+              The frontend and backend are separate Node projects. Install dependencies and run each side from its own
+              directory.
+            </p>
+
+            <div class="command-grid">
+              <div class="command-box">
+                <h3>Frontend</h3>
+                <pre>cd frontend
+npm install
+npm run dev
+npm run build</pre>
+              </div>
+              <div class="command-box">
+                <h3>Backend</h3>
+                <pre>cd backend
+npm install
+npm run dev
+npm run build
+npm run start</pre>
+              </div>
+            </div>
+
+            <h3>Environment variables</h3>
+            <table class="env-table">
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Variable</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Frontend</td>
+                  <td><code>VITE_API_URL</code></td>
+                  <td>Base URL for backend requests. Defaults to <code>http://localhost:3000</code> when omitted.</td>
+                </tr>
+                <tr>
+                  <td>Frontend</td>
+                  <td><code>VITE_SUPABASE_URL</code></td>
+                  <td>Supabase project URL used by the browser client.</td>
+                </tr>
+                <tr>
+                  <td>Frontend</td>
+                  <td><code>VITE_SUPABASE_ANON_KEY</code></td>
+                  <td>Supabase public anonymous key used by the browser client.</td>
+                </tr>
+                <tr>
+                  <td>Backend</td>
+                  <td><code>PORT</code></td>
+                  <td>Optional API port. Defaults to <code>3000</code>.</td>
+                </tr>
+                <tr>
+                  <td>Backend</td>
+                  <td><code>CORS_ORIGIN</code></td>
+                  <td>Allowed frontend origin list, stored as a comma-separated value when more than one origin is needed.</td>
+                </tr>
+                <tr>
+                  <td>Backend</td>
+                  <td><code>SUPABASE_URL</code></td>
+                  <td>Supabase project URL for server-side auth validation and admin actions.</td>
+                </tr>
+                <tr>
+                  <td>Backend</td>
+                  <td><code>SUPABASE_SERVICE_ROLE_KEY</code></td>
+                  <td>Service role key used by the backend for privileged Supabase operations.</td>
+                </tr>
+                <tr>
+                  <td>Backend</td>
+                  <td><code>DATABASE_URL</code></td>
+                  <td>Prisma database connection string for PostgreSQL.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="maintenance-hotspots" class="section">
+            <h2>Maintenance Hotspots</h2>
+            <p>
+              These are the parts of the codebase where changes are most likely to ripple across the system and require
+              careful verification.
+            </p>
+
+            <div class="card-grid">
+              <article class="card">
+                <h3>Auth and routing</h3>
+                <p>
+                  Changes to auth, role detection, or redirect behavior affect public routes, protected route guards,
+                  the auth context, and backend middleware together. Keep frontend session assumptions aligned with
+                  backend token validation.
+                </p>
+              </article>
+              <article class="card">
+                <h3>Documents and surveys</h3>
+                <p>
+                  The client dashboard, documents flow, and survey flow all reflect status from the same active request.
+                  Changes here often require matching updates in frontend hooks, backend route handlers, and service logic.
+                </p>
+              </article>
+              <article class="card">
+                <h3>Lookup-driven UI</h3>
+                <p>
+                  Survey sections and other UI labels depend on backend-provided lookup data. If lookup shapes change,
+                  verify the user-facing section labels and completion logic still behave correctly.
+                </p>
+              </article>
+              <article class="card">
+                <h3>Prisma-backed behavior</h3>
+                <p>
+                  Schema or relation changes can affect middleware role checks, profile loading, service methods,
+                  and any route returning nested project data. Review migrations, types, and include selections together.
+                </p>
+              </article>
+            </div>
+
+            <h3>Recommended change checklist</h3>
+            <ul class="checklist">
+              <li>Confirm the route exists on both sides when changing a frontend workflow that calls the API.</li>
+              <li>Check role restrictions before exposing or moving any route.</li>
+              <li>Verify environment variables and local defaults when changing auth, CORS, or database access.</li>
+              <li>Keep documentation aligned with the code, especially when a feature is still partial or marked as coming soon.</li>
+            </ul>
+          </section>
+
+          <p class="footer">
+            This document is intended to be opened directly as a standalone HTML file and kept in version control as a
+            handoff artifact for both clients and future maintainers.
+          </p>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
