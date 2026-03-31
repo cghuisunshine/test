@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOM Editorial Engine</title>
+  <style>
+    :root {
+      --paper: #faf7f2;
+      --ink: #1e1e1e;
+      --muted: #6b6b6b;
+      --line: #d8d2c8;
+      --orb1: #d6e7ff;
+      --orb2: #ffe1cc;
+      --orb3: #d8f0d8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f2efe8 0%, #ece7dd 100%);
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 28px auto;
+      padding: 20px;
+    }
+
+    .header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 38px;
+      line-height: 1;
+      letter-spacing: 0.2px;
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 70ch;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button {
+      border: 1px solid #b8b1a5;
+      background: white;
+      color: #222;
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover { background: #f7f7f7; }
+
+    .note {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    #spread {
+      position: relative;
+      width: 100%;
+      height: 720px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.9), rgba(255,255,255,0.75)),
+        var(--paper);
+      box-shadow:
+        0 18px 45px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+
+    .guide {
+      position: absolute;
+      inset: 28px;
+      border: 1px dashed rgba(100,100,100,0.13);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .kicker {
+      position: absolute;
+      left: 64px;
+      top: 48px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #7c7469;
+    }
+
+    .deck {
+      position: absolute;
+      left: 64px;
+      top: 82px;
+      width: 62%;
+      font-size: 19px;
+      line-height: 1.35;
+      color: #39342f;
+    }
+
+    #text-layer {
+      position: absolute;
+      left: 64px;
+      right: 64px;
+      top: 164px;
+      bottom: 48px;
+      overflow: hidden;
+    }
+
+    .line {
+      position: absolute;
+      white-space: pre;
+      font-size: 21px;
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+      will-change: transform;
+      text-rendering: optimizeLegibility;
+      user-select: text;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      cursor: grab;
+      touch-action: none;
+      box-shadow:
+        0 18px 38px rgba(0,0,0,0.15),
+        inset 0 1px 0 rgba(255,255,255,0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #333;
+      text-align: center;
+      padding: 18px;
+      user-select: none;
+    }
+
+    .orb:active { cursor: grabbing; }
+
+    .orb .label {
+      font-size: 13px;
+      line-height: 1.25;
+      font-weight: 600;
+      max-width: 90%;
+      opacity: 0.84;
+    }
+
+    .orb1 { background: radial-gradient(circle at 30% 30%, #eef5ff, var(--orb1)); }
+    .orb2 { background: radial-gradient(circle at 30% 30%, #fff1e7, var(--orb2)); }
+    .orb3 { background: radial-gradient(circle at 30% 30%, #f2fff2, var(--orb3)); }
+
+    .caption {
+      position: absolute;
+      right: 26px;
+      bottom: 18px;
+      font: 12px/1.4 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #7a7369;
+      background: rgba(255,255,255,0.72);
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.05);
+      backdrop-filter: blur(4px);
+    }
+
+    #measure {
+      position: absolute;
+      visibility: hidden;
+      pointer-events: none;
+      white-space: pre;
+      font-size: 21px;
+      line-height: 1.35;
+      letter-spacing: 0.01em;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 14px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      color: #4e4a44;
+    }
+
+    .legend > div {
+      border: 1px solid #d8d2c8;
+      background: rgba(255,255,255,0.75);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .header {
+        grid-template-columns: 1fr;
+      }
+      .controls {
+        justify-content: flex-start;
+      }
+      #spread {
+        height: 820px;
+      }
+      .deck {
+        width: calc(100% - 128px);
+      }
+      .legend {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div>
+        <h1>DOM Editorial Engine</h1>
+        <div class="sub">
+          A single-file DOM reimplementation of the “text flowing around draggable circles” idea.
+          This version uses real DOM measurement, absolute-positioned line boxes, and per-row obstacle
+          calculations instead of a custom canvas/typesetting engine.
+        </div>
+      </div>
+      <div class="controls">
+        <button id="shuffleBtn">Shuffle orbs</button>
+        <button id="toggleBtn">Toggle article</button>
+      </div>
+    </div>
+
+    <p class="note">
+      Drag the circles. Each frame, the script computes blocked horizontal intervals for each text row,
+      subtracts them from the available width, then fits words into the remaining slot with a hidden
+      measuring node.
+    </p>
+
+    <div id="spread">
+      <div class="guide"></div>
+      <div class="kicker">Layout demo</div>
+      <div class="deck">
+        The paragraph below is not left to flow naturally as one HTML block. Instead, each visible line is
+        placed deliberately after measuring how much room remains once the orbs carve holes out of the page.
+      </div>
+
+      <div id="text-layer" aria-label="article text layer"></div>
+
+      <div class="orb orb1" data-index="0"><div class="label">Lead image</div></div>
+      <div class="orb orb2" data-index="1"><div class="label">Pull quote</div></div>
+      <div class="orb orb3" data-index="2"><div class="label">Sidebar</div></div>
+
+      <div class="caption">DOM layout • drag to reflow</div>
+      <div id="measure"></div>
+    </div>
+
+    <div class="legend">
+      <div><strong>How it works:</strong> for each row, compute circle intersections, merge blocked intervals, derive free segments, then fit as many words as possible.</div>
+      <div><strong>DOM tradeoff:</strong> this is easy to inspect in DevTools, but repeated measurement can be more expensive than a custom zero-read layout engine.</div>
+      <div><strong>Core APIs:</strong> <code>offsetWidth</code>, <code>requestAnimationFrame</code>, absolute positioning, pointer events.</div>
+    </div>
+  </div>
+
+  <script>
+    const spread = document.getElementById('spread');
+    const textLayer = document.getElementById('text-layer');
+    const measureEl = document.getElementById('measure');
+    const orbEls = [...document.querySelectorAll('.orb')];
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const toggleBtn = document.getElementById('toggleBtn');
+
+    const articles = [
+      `Editorial design becomes interesting when a page stops acting like a rectangular bucket. Once an image, a quote, or a diagram intrudes into the column, the text must negotiate with shape. The browser's normal flow model is excellent for ordinary documents, yet it was not designed to think like a magazine art director. This demo rebuilds that negotiation in plain DOM terms. Every visible line is created as its own element. At each vertical step, the code asks a simple geometric question: which horizontal spans are blocked by the circles at this height? The answer produces one or more free segments. From there the engine measures candidate text using a hidden DOM node and keeps adding words until the next word would overflow the chosen slot. The finished line is then positioned explicitly. When you drag a circle, the geometry changes, the lines are recomputed, and the paragraph reshapes itself around the new holes in the page. It is not magic; it is merely deliberate layout, performed quickly enough to feel alive.`,
+
+      `A conventional article trusts the browser to wrap words automatically, and most of the time that is exactly the right choice. But if you want text to bend around moving obstacles, you need one more layer of intention. In this version, intention is expressed row by row. The script advances through the article like a compositor with a ruler. For a given row center, it intersects that horizontal slice with every draggable circle. Overlapping blocked spans are merged, and what remains becomes the legal territory for text. A hidden measuring element serves as the width oracle. Words are appended until the line no longer fits, then the accepted text is committed to the page as an absolutely positioned node. Because the visible paragraph is rebuilt from many line elements, the composition can respond instantly to interaction. The result feels editorial rather than merely responsive: space is treated as a shape to be edited, not just a box to be filled.`
+    ];
+
+    let articleIndex = 0;
+    let words = tokenize(articles[articleIndex]);
+
+    const state = {
+      lineHeight: 34,
+      minSegmentWidth: 84,
+      pendingFrame: 0,
+      drag: null,
+      orbs: [
+        { x: 520, y: 120, r: 86 },
+        { x: 255, y: 286, r: 108 },
+        { x: 640, y: 410, r: 94 }
+      ]
+    };
+
+    const widthCache = new Map();
+
+    function tokenize(text) {
+      return text.trim().split(/\s+/).filter(Boolean);
+    }
+
+    function syncOrbElements() {
+      state.orbs.forEach((orb, i) => {
+        const el = orbEls[i];
+        el.style.width = `${orb.r * 2}px`;
+        el.style.height = `${orb.r * 2}px`;
+        el.style.left = `${orb.x - orb.r}px`;
+        el.style.top = `${orb.y - orb.r}px`;
+      });
+    }
+
+    function measureWidth(text) {
+      if (widthCache.has(text)) return widthCache.get(text);
+      measureEl.textContent = text;
+      const w = measureEl.offsetWidth;
+      widthCache.set(text, w);
+      return w;
+    }
+
+    function mergeIntervals(intervals) {
+      if (!intervals.length) return [];
+      intervals.sort((a, b) => a[0] - b[0]);
+      const merged = [intervals[0].slice()];
+
+      for (let i = 1; i < intervals.length; i++) {
+        const [l, r] = intervals[i];
+        const last = merged[merged.length - 1];
+        if (l > last[1]) {
+          merged.push([l, r]);
+        } else {
+          last[1] = Math.max(last[1], r);
+        }
+      }
+      return merged;
+    }
+
+    function freeSegmentsForRow(y) {
+      const rowCenter = y + state.lineHeight / 2;
+      const width = textLayer.clientWidth;
+      const blocked = [];
+
+      for (const orb of state.orbs) {
+        const dy = Math.abs(rowCenter - orb.y);
+        if (dy >= orb.r) continue;
+
+        const dx = Math.sqrt(orb.r * orb.r - dy * dy);
+        blocked.push([
+          Math.max(0, orb.x - dx),
+          Math.min(width, orb.x + dx)
+        ]);
+      }
+
+      const merged = mergeIntervals(blocked);
+      const free = [];
+      let cursor = 0;
+
+      for (const [l, r] of merged) {
+        if (l > cursor) free.push([cursor, l]);
+        cursor = Math.max(cursor, r);
+      }
+      if (cursor < width) free.push([cursor, width]);
+
+      return free.filter(([l, r]) => r - l >= state.minSegmentWidth);
+    }
+
+    function fitLine(startIndex, segmentWidth) {
+      let i = startIndex;
+      let current = '';
+      let accepted = '';
+      let acceptedIndex = startIndex;
+
+      while (i < words.length) {
+        const candidate = current ? current + ' ' + words[i] : words[i];
+        if (measureWidth(candidate) <= segmentWidth) {
+          current = candidate;
+          accepted = candidate;
+          acceptedIndex = i + 1;
+          i++;
+        } else {
+          break;
+        }
+      }
+
+      return accepted ? { text: accepted, nextIndex: acceptedIndex } : null;
+    }
+
+    function buildLayout() {
+      const lines = [];
+      const maxHeight = textLayer.clientHeight;
+      let y = 0;
+      let index = 0;
+
+      while (index < words.length && y + state.lineHeight <= maxHeight) {
+        const segments = freeSegmentsForRow(y);
+
+        let placed = false;
+        for (const [left, right] of segments) {
+          const result = fitLine(index, right - left);
+          if (!result) continue;
+
+          lines.push({
+            x: left,
+            y,
+            text: result.text
+          });
+
+          index = result.nextIndex;
+          placed = true;
+          break;
+        }
+
+        y += state.lineHeight;
+        if (!placed) continue;
+      }
+
+      return { lines, truncated: index < words.length };
+    }
+
+    function renderLayout() {
+      state.pendingFrame = 0;
+      syncOrbElements();
+
+      const { lines, truncated } = buildLayout();
+      const frag = document.createDocumentFragment();
+
+      for (const line of lines) {
+        const el = document.createElement('div');
+        el.className = 'line';
+        el.style.left = `${line.x}px`;
+        el.style.top = `${line.y}px`;
+        el.textContent = line.text;
+        frag.appendChild(el);
+      }
+
+      textLayer.innerHTML = '';
+      textLayer.appendChild(frag);
+
+      if (truncated) {
+        const tail = document.createElement('div');
+        tail.className = 'line';
+        tail.style.left = '0px';
+        tail.style.top = `${Math.max(0, textLayer.clientHeight - state.lineHeight)}px`;
+        tail.style.fontStyle = 'italic';
+        tail.style.opacity = '0.68';
+        tail.textContent = '…';
+        textLayer.appendChild(tail);
+      }
+    }
+
+    function scheduleRender() {
+      if (state.pendingFrame) return;
+      state.pendingFrame = requestAnimationFrame(renderLayout);
+    }
+
+    function clampOrb(orb) {
+      const width = textLayer.clientWidth;
+      const height = textLayer.clientHeight;
+      orb.x = Math.max(orb.r, Math.min(width - orb.r, orb.x));
+      orb.y = Math.max(orb.r, Math.min(height - orb.r, orb.y));
+    }
+
+    orbEls.forEach((el, index) => {
+      el.addEventListener('pointerdown', (e) => {
+        const orb = state.orbs[index];
+        const rect = textLayer.getBoundingClientRect();
+        state.drag = {
+          index,
+          offsetX: e.clientX - rect.left - orb.x,
+          offsetY: e.clientY - rect.top - orb.y
+        };
+        el.setPointerCapture(e.pointerId);
+      });
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!state.drag) return;
+      const rect = textLayer.getBoundingClientRect();
+      const orb = state.orbs[state.drag.index];
+
+      orb.x = e.clientX - rect.left - state.drag.offsetX;
+      orb.y = e.clientY - rect.top - state.drag.offsetY;
+      clampOrb(orb);
+      scheduleRender();
+    });
+
+    window.addEventListener('pointerup', () => {
+      state.drag = null;
+    });
+
+    shuffleBtn.addEventListener('click', () => {
+      const width = textLayer.clientWidth;
+      const height = textLayer.clientHeight;
+      state.orbs.forEach((orb) => {
+        orb.x = orb.r + Math.random() * (width - orb.r * 2);
+        orb.y = orb.r + Math.random() * (height - orb.r * 2);
+      });
+      scheduleRender();
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      articleIndex = (articleIndex + 1) % articles.length;
+      words = tokenize(articles[articleIndex]);
+      widthCache.clear();
+      scheduleRender();
+    });
+
+    window.addEventListener('resize', scheduleRender);
+
+    syncOrbElements();
+    renderLayout();
+  </script>
+</body>
+</html>
