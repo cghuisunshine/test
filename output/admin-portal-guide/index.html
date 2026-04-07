@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal Guide</title>
+  <style>
+    :root {
+      --bg: #f3f0e8;
+      --surface: #fffdf8;
+      --surface-2: #f6f3eb;
+      --text: #1f221c;
+      --muted: #5a6256;
+      --border: #d8d1c4;
+      --accent: #6e925f;
+      --accent-dark: #4f6e44;
+      --warning: #8a6920;
+      --shadow: 0 8px 24px rgba(31, 34, 28, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a { color: var(--accent-dark); }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    .topbar,
+    .toc,
+    .section,
+    .note,
+    .meta-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 12px;
+      line-height: 1.15;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      font-size: 1.08rem;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .meta-card {
+      padding: 16px;
+    }
+
+    .meta-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .toc {
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+
+    .toc ol {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    .toc li { margin: 6px 0; }
+
+    .section {
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .steps {
+      margin: 12px 0 0;
+      padding-left: 20px;
+      color: var(--text);
+    }
+
+    .steps li {
+      margin: 9px 0;
+      padding-left: 4px;
+    }
+
+    .note {
+      background: var(--surface-2);
+      padding: 16px 18px;
+      margin-top: 16px;
+    }
+
+    .note strong {
+      color: var(--warning);
+    }
+
+    .double {
+      display: grid;
+      gap: 18px;
+    }
+
+    figure { margin: 0 0 18px; }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <h1>Admin Portal Guide</h1>
+      <p>This guide combines the local admin walkthrough notes from the <code>admin/</code> directory with fresh screenshots captured from the live demo admin account. It follows the same document order as the original admin training set.</p>
+      <div class="meta">
+        <div class="meta-card">
+          <strong>Portal URL</strong>
+          <a href="https://srp.builtbyrobyn.com/">https://srp.builtbyrobyn.com/</a>
+        </div>
+        <div class="meta-card">
+          <strong>Admin Login</strong>
+          <span><code>admin@admin.com</code></span>
+        </div>
+        <div class="meta-card">
+          <strong>Password</strong>
+          <span><code>Hidden</code></span>
+        </div>
+        <div class="meta-card">
+          <strong>Capture Scope</strong>
+          <span>Read-only navigation and view-only capture in the demo admin environment.</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-labelledby="toc-heading">
+      <h2 id="toc-heading">Contents</h2>
+      <ol>
+        <li><a href="#login-dashboard">Login &amp; Dashboard</a></li>
+        <li><a href="#strata-management">Strata Management</a></li>
+        <li><a href="#strata-active-file">Strata Active File</a></li>
+        <li><a href="#activating-file">Activating a File Number</a></li>
+        <li><a href="#user-management">User Management</a></li>
+        <li><a href="#document-management">Document Management</a></li>
+        <li><a href="#appointment-management">Appointment Management</a></li>
+        <li><a href="#timeline-management">Timeline Management</a></li>
+        <li><a href="#question-filtering">Question Filtering</a></li>
+        <li><a href="#system-settings">System Settings</a></li>
+        <li><a href="#deleting-file">Deleting a File</a></li>
+      </ol>
+    </nav>
+
+    <section class="section" id="login-dashboard">
+      <h2>Login &amp; Dashboard</h2>
+      <div class="section-grid">
+        <div>
+          <p>The admin portal starts on the same login page as the client portal, but the authenticated experience changes into the admin workspace after sign-in.</p>
+          <ol class="steps">
+            <li>Open the portal URL and sign in with the admin email and password.</li>
+            <li>After login, review the metrics cards for <strong>Active Requests</strong>, <strong>Pending Approvals</strong>, <strong>Appointments This Week</strong>, and <strong>Total Active Strata</strong>.</li>
+            <li>Use the <strong>Shortcuts</strong> block for fast access to high-frequency admin actions such as creating strata, creating users, adding appointments, uploading documents, or adding inspector availability.</li>
+            <li>Review the <strong>Urgent Actions</strong> cards for account activations, rebooking needs, and other items requiring follow-up.</li>
+            <li>Use the left navigation to move into the dedicated admin modules.</li>
+          </ol>
+        </div>
+        <div class="double">
+          <figure>
+            <img src="screenshots/01-admin-login-page.png" alt="Admin login page">
+            <figcaption>Portal login page before entering the admin account.</figcaption>
+          </figure>
+          <figure>
+            <img src="screenshots/02-admin-dashboard.png" alt="Admin dashboard">
+            <figcaption>Admin dashboard with shortcuts, urgent actions, and overview metrics.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="strata-management">
+      <h2>Strata Management</h2>
+      <div class="section-grid">
+        <div>
+          <p>The strata page is the main entry point for browsing and maintaining strata records, including active and optionally inactive plans.</p>
+          <ol class="steps">
+            <li>Open <strong>Strata</strong> from the left navigation.</li>
+            <li>Use the filters for strata name, strata plan, property type, and city to narrow the list.</li>
+            <li>Enable <strong>Show Inactive</strong> when you need to expose strata without an active file.</li>
+            <li>Use <strong>Create New Strata</strong> to add a new record when required, making sure all required fields are present.</li>
+            <li>Select <strong>Edit</strong> for an existing strata when the record needs maintenance or review.</li>
+          </ol>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/03-strata-list.png" alt="Strata list page">
+            <figcaption>Strata list with filters, create action, and edit links for existing records.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="strata-active-file">
+      <h2>Strata Active File</h2>
+      <div class="section-grid">
+        <div>
+          <p>The local admin guide explains that once a strata has an active file, deeper request details become available, including answers, archives, documents, notes, downloads, and appointment-offer tools.</p>
+          <ol class="steps">
+            <li>Start from the relevant strata record in the <strong>Strata</strong> list.</li>
+            <li>Open the active file details for the specific strata request when you need to review live answers, archived changes, notes, or request-level actions.</li>
+            <li>Use the request-level tools for downloading documents, exporting survey answers, and offering appointments only when you are ready for the client side to move forward.</li>
+            <li>Treat notes in this area as internal-only administrative notes.</li>
+          </ol>
+          <div class="note">
+            <strong>Capture note:</strong> This demo session provided the strata list but not a stable dedicated active-file detail page capture without moving into deeper request actions, so this section is documented from the admin transcript and the available strata entry view.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/03-strata-list.png" alt="Strata list as entry point to active files">
+            <figcaption>The active-file workflow starts from a strata entry in the main strata list.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="activating-file">
+      <h2>Activating a File Number</h2>
+      <div class="section-grid">
+        <div>
+          <p>Activation begins either from a manual file creation flow or from a client-requested activation waiting on the admin dashboard.</p>
+          <ol class="steps">
+            <li>Check the <strong>Urgent Actions</strong> area on the dashboard for activation requests from clients whose strata do not yet have an active file.</li>
+            <li>Review the activation request and decide whether to approve or deny it.</li>
+            <li>If approved, create or assign the new file number and continue into request-specific configuration for documents and survey questions.</li>
+            <li>If denied, add the explanatory note so the client can see why the request was rejected.</li>
+            <li>Finalize the file configuration only when the request is ready for the client side to begin data entry.</li>
+          </ol>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/02-admin-dashboard.png" alt="Dashboard urgent actions with activation request">
+            <figcaption>The dashboard urgent-action cards surface activation-related requests that need admin review.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="user-management">
+      <h2>User Management</h2>
+      <div class="section-grid">
+        <div>
+          <p>The users page manages both internal staff and client accounts, with filters for strata, role, and property types.</p>
+          <ol class="steps">
+            <li>Open <strong>Users</strong> from the left navigation.</li>
+            <li>Use the search field and the role or strata filters to find the right person.</li>
+            <li>Use <strong>Create New Users</strong> when a new internal or client account is required.</li>
+            <li>Use <strong>Edit</strong> to update existing user details, roles, or client-to-strata assignments.</li>
+            <li>Remember that invitations are email-based and can be resent if onboarding mail is missed.</li>
+          </ol>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/05-users-list.png" alt="Users page">
+            <figcaption>Users list with filters and edit actions for both internal staff and clients.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="document-management">
+      <h2>Document Management</h2>
+      <div class="section-grid">
+        <div>
+          <p>The documents page is the administrative document hub, including Dropbox sync and manual document intake.</p>
+          <ol class="steps">
+            <li>Open <strong>Documents</strong> to review uploaded records and search by document type, strata name, or strata plan.</li>
+            <li>Use <strong>Add New Document</strong> when uploading a file directly from the admin side.</li>
+            <li>Use <strong>Sync with Dropbox</strong> when uploaded files have been moved or removed outside the portal and the portal needs to refresh orphaned records.</li>
+            <li>Review client-submitted records through the strata-side review flow before finalizing approvals.</li>
+          </ol>
+          <div class="note">
+            <strong>Capture note:</strong> In this demo account the documents listing is currently empty, so the screenshot reflects the live no-documents state rather than an approval queue.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/06-documents-page.png" alt="Documents admin page">
+            <figcaption>Admin documents page with search filters, Dropbox sync, and manual upload action.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="appointment-management">
+      <h2>Appointment Management</h2>
+      <div class="section-grid">
+        <div>
+          <p>The local guide describes the appointments module as the place for manual appointment creation, override scheduling, and cancellation or completion workflows.</p>
+          <ol class="steps">
+            <li>Use the appointments tools when you need to create or override a booking directly from the admin side.</li>
+            <li>Update appointment status to completed once an inspection or draft meeting has taken place.</li>
+            <li>If an appointment is cancelled, record the reason so the client sees the correct rebooking prompt.</li>
+            <li>Use rebooking reminders when clients have not yet chosen replacement dates.</li>
+          </ol>
+          <div class="note">
+            <strong>Capture note:</strong> A stable dedicated appointments page was not captured in this session. The live dashboard still shows appointment-related urgent actions and rebooking context, which is included here as the nearest live admin view.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/02-admin-dashboard.png" alt="Dashboard urgent actions for appointment rebooking">
+            <figcaption>The dashboard urgent-action cards include appointment rebooking follow-up work.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="timeline-management">
+      <h2>Timeline Management</h2>
+      <div class="section-grid">
+        <div>
+          <p>Timeline management is the admin-side view for non-appointment deadlines tied to active file numbers, including AGM and depreciation report dates.</p>
+          <ol class="steps">
+            <li>Use the timelines module to review file-specific deadlines and filter between future and past dates.</li>
+            <li>Remember that factual system dates such as file opened, documents finalized, and survey finalized are not editable.</li>
+            <li>Edit only the manually managed dates, such as AGM or last-report dates, when an update is needed.</li>
+            <li>Expect timeline changes to be visible on the client side.</li>
+          </ol>
+          <div class="note">
+            <strong>Capture note:</strong> This demo session did not yield a dedicated timelines screenshot, so the section is documented from the transcript guidance instead of a captured page.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/02-admin-dashboard.png" alt="Admin dashboard as context for upcoming target dates">
+            <figcaption>The dashboard includes the target-date overview that complements the deeper timelines workflow.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="question-filtering">
+      <h2>Question Filtering</h2>
+      <div class="section-grid">
+        <div>
+          <p>The questions module is the global question bank for the portal and affects all strata and files when changed.</p>
+          <ol class="steps">
+            <li>Open <strong>Questions</strong> from the left navigation.</li>
+            <li>Use the search field, category filter, property type filter, and <strong>Show Sub-questions</strong> toggle to isolate the questions you need.</li>
+            <li>Use <strong>Create New Question</strong> for global question additions.</li>
+            <li>Use <strong>Edit</strong> to adjust existing questions, categories, services, or sub-question links.</li>
+            <li>Remember that this module is global, while file-specific customization belongs in request-specific configuration.</li>
+          </ol>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/04-questions-list.png" alt="Questions list page">
+            <figcaption>Questions page with global filters, question list, and edit actions.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="system-settings">
+      <h2>System Settings</h2>
+      <div class="section-grid">
+        <div>
+          <p>The system settings area covers profile maintenance, company holidays, and inspector availability management.</p>
+          <ol class="steps">
+            <li>Open <strong>System Settings</strong> from the admin navigation.</li>
+            <li>Use the tab controls to switch between <strong>Company Holidays</strong>, <strong>Inspector Availability</strong>, and <strong>Profile</strong>.</li>
+            <li>Review or add company holidays carefully, paying attention to whether a date really should recur annually.</li>
+            <li>Use the availability tools to manage inspector scheduling and location-specific availability windows.</li>
+          </ol>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/07-system-settings-holidays.png" alt="System settings company holidays page">
+            <figcaption>System settings on the company holidays tab, including add and edit controls for holiday dates.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="deleting-file">
+      <h2>Deleting a File</h2>
+      <div class="section-grid">
+        <div>
+          <p>File deletion is an administrator-only cleanup step used after a request is fully complete and the original file needs to be closed before a new one is created.</p>
+          <ol class="steps">
+            <li>Confirm the file is truly complete and that any survey answers needing retention have already been exported.</li>
+            <li>Understand that deleting the file clears the active request state, removes associated answers and statuses from the live request, and moves uploaded files into the completed storage location.</li>
+            <li>Use deletion only when you are sure the strata should return to an inactive state before a future request is opened.</li>
+          </ol>
+          <div class="note">
+            <strong>Capture note:</strong> No live delete confirmation screen was captured because that would move beyond safe read-only navigation. This section is intentionally transcript-driven.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/03-strata-list.png" alt="Strata list context for file lifecycle management">
+            <figcaption>The file lifecycle begins from the strata management area, even though deletion itself was not opened in this capture session.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">Generated from local admin guide transcripts in <code>admin/</code> and fresh screenshots captured from the live demo admin portal on 2026-04-07.</p>
+  </main>
+</body>
+</html>

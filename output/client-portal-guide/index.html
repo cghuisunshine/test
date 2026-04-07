@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Portal Guide</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --surface: #fffdf8;
+      --surface-2: #f7f4ed;
+      --text: #1f221c;
+      --muted: #596252;
+      --border: #d8d3c6;
+      --accent: #6f925f;
+      --accent-dark: #516c45;
+      --warning: #8f6b18;
+      --shadow: 0 8px 24px rgba(29, 34, 23, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--accent-dark);
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 12px;
+      line-height: 1.15;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .meta-card,
+    .toc,
+    .section,
+    .note {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .meta-card {
+      padding: 16px;
+    }
+
+    .meta-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .toc {
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+
+    .toc ol {
+      margin: 12px 0 0;
+      padding-left: 20px;
+    }
+
+    .toc li {
+      margin: 6px 0;
+    }
+
+    .section {
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .steps {
+      margin: 12px 0 0;
+      padding-left: 20px;
+      color: var(--text);
+    }
+
+    .steps li {
+      margin: 9px 0;
+      padding-left: 4px;
+    }
+
+    .steps strong {
+      color: var(--text);
+    }
+
+    .note {
+      padding: 16px 18px;
+      margin: 16px 0 0;
+      background: var(--surface-2);
+    }
+
+    .note strong {
+      color: var(--warning);
+    }
+
+    figure {
+      margin: 0 0 18px;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .double {
+      display: grid;
+      gap: 18px;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <h1>Client Portal Guide</h1>
+      <p>This page combines the client walkthrough notes from the local guide files with fresh screenshots captured from the live demo portal. It is organized to mirror the original client documentation set.</p>
+      <div class="meta">
+        <div class="meta-card">
+          <strong>Portal URL</strong>
+          <a href="https://srp.builtbyrobyn.com/">https://srp.builtbyrobyn.com/</a>
+        </div>
+        <div class="meta-card">
+          <strong>Client Login</strong>
+          <span><code>client@client.com</code></span>
+        </div>
+        <div class="meta-card">
+          <strong>Password</strong>
+          <span><code>Hidden</code></span>
+        </div>
+        <div class="meta-card">
+          <strong>Capture Scope</strong>
+          <span>Live demo account, client-side pages only, no form submissions.</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-labelledby="toc-heading">
+      <h2 id="toc-heading">Contents</h2>
+      <ol>
+        <li><a href="#login-dashboard">Login &amp; Dashboard</a></li>
+        <li><a href="#strata-info-members">Strata Information &amp; Strata Members</a></li>
+        <li><a href="#timelines">Timelines</a></li>
+        <li><a href="#surveys">Answering Surveys</a></li>
+        <li><a href="#documents">Document Uploads</a></li>
+        <li><a href="#no-active-service">No Active Service</a></li>
+        <li><a href="#appointments">Appointment Booking</a></li>
+      </ol>
+    </nav>
+
+    <section class="section" id="login-dashboard">
+      <h2>Login &amp; Dashboard</h2>
+      <div class="section-grid">
+        <div>
+          <p>The client portal starts on the login page. After signing in, the dashboard becomes the main home base for the rest of the data collection process.</p>
+          <ol class="steps">
+            <li>Open the portal URL and sign in with the assigned email and password.</li>
+            <li>If a password has been forgotten, use <strong>Forgot Password?</strong> from the login page before attempting again.</li>
+            <li>After login, review the <strong>Your Progress</strong> panel to see how many questions, documents, and timeline items are complete.</li>
+            <li>Use the three main dashboard cards to jump straight into <strong>Survey</strong>, <strong>Documents</strong>, or <strong>Draft Meeting</strong>.</li>
+            <li>Use the left navigation for direct access to every client section.</li>
+          </ol>
+        </div>
+        <div class="double">
+          <figure>
+            <img src="screenshots/01-login-page.png" alt="Client portal login page">
+            <figcaption>Login page for the client portal.</figcaption>
+          </figure>
+          <figure>
+            <img src="screenshots/02-dashboard.png" alt="Client dashboard overview">
+            <figcaption>Dashboard view after sign-in, showing progress and priority task cards.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="strata-info-members">
+      <h2>Strata Information &amp; Strata Members</h2>
+      <div class="section-grid">
+        <div>
+          <p>These two pages show the building profile and the client member record associated with the strata. They are reference pages first, with update actions where permitted.</p>
+          <ol class="steps">
+            <li>Open <strong>Strata Information</strong> to confirm the property profile details such as strata plan, address, city, legal type, and property types.</li>
+            <li>If any building details are incorrect, treat the page as a verification screen and contact the support address from the client guide rather than assuming you can edit the building profile directly.</li>
+            <li>Open <strong>Strata Members</strong> to review the member record tied to the logged-in user.</li>
+            <li>Use <strong>Update Your Details</strong> when personal contact details or password information needs to be changed.</li>
+            <li>Use <strong>Request Section Change</strong> if the strata section allocation is wrong for the logged-in member.</li>
+          </ol>
+        </div>
+        <div class="double">
+          <figure>
+            <img src="screenshots/04-strata-information.png" alt="Strata information page">
+            <figcaption>Property profile page for the strata.</figcaption>
+          </figure>
+          <figure>
+            <img src="screenshots/05-strata-members.png" alt="Strata members page">
+            <figcaption>Strata members page showing the logged-in client member details.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="timelines">
+      <h2>Timelines</h2>
+      <div class="section-grid">
+        <div>
+          <p>The timelines page collects key dates needed to plan and deliver the depreciation report request.</p>
+          <ol class="steps">
+            <li>Open <strong>Timelines</strong> from the left navigation.</li>
+            <li>Confirm the current fiscal year start date and provide the date of the last AGM, or check <strong>No AGM to date</strong> if that applies.</li>
+            <li>Provide the date of the last depreciation report, or check <strong>No report to date</strong> when no earlier report exists.</li>
+            <li>Optionally enter a target date if the strata has one.</li>
+            <li>Select <strong>Calculate Timelines</strong> after reviewing the dates carefully, because the transcript notes that these dates can lock after calculation.</li>
+          </ol>
+          <div class="note">
+            <strong>Important:</strong> The client guide notes that AGM and prior report dates must be in the past, while the target date must leave enough lead time for the SRP team to complete the report.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/06-timelines.png" alt="Timelines page">
+            <figcaption>Timelines page with date fields and timeline calculation action.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="surveys">
+      <h2>Answering Surveys</h2>
+      <div class="section-grid">
+        <div>
+          <p>The survey flow starts with an overview of required sections, then continues into detailed section-by-section questionnaires.</p>
+          <ol class="steps">
+            <li>Open <strong>Survey</strong> to review the required survey categories.</li>
+            <li>Use <strong>Download Survey</strong> if a copy is needed for offline review.</li>
+            <li>Select a survey category to open its questions.</li>
+            <li>Answer each top-level question or use the applicable availability options described in the transcript guidance.</li>
+            <li>Continue page by page until all required sections are complete, then return to the overview to confirm completion status.</li>
+          </ol>
+          <div class="note">
+            <strong>Important:</strong> The transcript explains that top-level questions need an answer state before final completion, while some follow-up questions may remain blank if the information is not available.
+          </div>
+        </div>
+        <div class="double">
+          <figure>
+            <img src="screenshots/07-survey-overview.png" alt="Survey overview page">
+            <figcaption>Survey overview page listing the required survey sections.</figcaption>
+          </figure>
+          <figure>
+            <img src="screenshots/08-survey-section.png" alt="Survey section detail page">
+            <figcaption>A live survey section showing the detailed question layout inside the questionnaire.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="documents">
+      <h2>Document Uploads</h2>
+      <div class="section-grid">
+        <div>
+          <p>The documents area is organized by strata section and then by requested document type. Each requested document can be uploaded or marked unavailable.</p>
+          <ol class="steps">
+            <li>Open <strong>Documents</strong> to see the document groups that apply to the strata.</li>
+            <li>Expand a requested item to reveal the available actions.</li>
+            <li>Use <strong>Upload</strong> to add the file, or mark it as <strong>Not Available</strong> or <strong>Not Applicable</strong> when appropriate.</li>
+            <li>Repeat this for each requested document in every visible strata section.</li>
+            <li>Use <strong>Finalize and Submit</strong> only after reviewing all requested files, because the client guide indicates that changes become restricted after final submission unless something is rejected.</li>
+          </ol>
+          <div class="note">
+            <strong>Important:</strong> The transcript notes that files are saved automatically while working through the page and that rejected files may need replacement later.
+          </div>
+        </div>
+        <div class="double">
+          <figure>
+            <img src="screenshots/09-documents-overview.png" alt="Documents overview page">
+            <figcaption>Documents overview grouped by Apartments and Air Parcel.</figcaption>
+          </figure>
+          <figure>
+            <img src="screenshots/10-document-upload-item.png" alt="Expanded document upload item">
+            <figcaption>Expanded document request showing upload and status actions.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="no-active-service">
+      <h2>No Active Service</h2>
+      <div class="section-grid">
+        <div>
+          <p>This flow is described in the local client guide, but it is not exposed in the active demo account used for live capture. The account available for screenshots already has an active file and lands in the standard client workspace.</p>
+          <ol class="steps">
+            <li>If the portal shows a no-active-service message, request activation from the Strata Reserve Planning team.</li>
+            <li>Wait for the request to be reviewed and approved by the team.</li>
+            <li>If the request is declined, review the reason shown in the notification and submit a corrected request.</li>
+            <li>Once activated, return to the normal dashboard and resume the standard client workflow.</li>
+          </ol>
+          <div class="note">
+            <strong>Screenshot note:</strong> No fresh screenshot is included here because this demo account does not expose the inactive-file state.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/02-dashboard.png" alt="Active client dashboard used in the demo account">
+            <figcaption>The demo account remains in an active-file state and therefore does not surface the no-active-service page.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="appointments">
+      <h2>Appointment Booking</h2>
+      <div class="section-grid">
+        <div>
+          <p>The local guide describes appointment booking after submission review. In this live demo account, the available client appointment route is the draft meeting scheduler.</p>
+          <ol class="steps">
+            <li>Use the appointment card from the dashboard or open the <strong>Draft Meeting</strong> item in the left navigation.</li>
+            <li>Review the calendar to see which dates are marked available and which are unavailable.</li>
+            <li>Select the preferred date and time options for the draft meeting.</li>
+            <li>After submission, monitor dashboard notifications and appointment status messages for approvals, cancellations, or requests to choose new dates.</li>
+            <li>If a requested slot is not accepted, return to the scheduling page and choose a new set of available dates.</li>
+          </ol>
+          <div class="note">
+            <strong>Demo account note:</strong> The transcript refers to inspection and draft meeting booking phases. The live account available for capture is already at the draft meeting stage, so that is the state shown here.
+          </div>
+        </div>
+        <div class="double">
+          <figure>
+            <img src="screenshots/02-dashboard.png" alt="Dashboard appointment card">
+            <figcaption>The dashboard card links directly into the meeting scheduling flow.</figcaption>
+          </figure>
+          <figure>
+            <img src="screenshots/11-draft-meeting-calendar.png" alt="Draft meeting calendar">
+            <figcaption>Draft meeting scheduling page with available dates and evening time slots.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">Generated from local client guide transcripts in <code>client/</code> and fresh screenshots captured from the live demo client portal on 2026-04-07.</p>
+  </main>
+</body>
+</html>
