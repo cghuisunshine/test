@@ -176,8 +176,8 @@
 <body>
   <main class="page">
     <header class="topbar">
-      <h1>Admin Portal Guide</h1>
-      <p>This guide combines the local admin walkthrough notes from the <code>admin/</code> directory with fresh screenshots captured from the live demo admin account. It follows the same document order as the original admin training set.</p>
+      <h1>Strata Reserve Planning Admin Portal Guide</h1>
+      <p>This guide aligns the local admin portal reference page with the shared Strata Reserve Planning admin transcript. It follows the document order from the source guide while reusing the current screenshot set from the live demo admin environment.</p>
       <div class="meta">
         <div class="meta-card">
           <strong>Portal URL</strong>
@@ -193,7 +193,7 @@
         </div>
         <div class="meta-card">
           <strong>Capture Scope</strong>
-          <span>Read-only navigation and view-only capture in the demo admin environment.</span>
+          <span>Doc-aligned walkthrough copy with read-only screenshots from the demo admin environment.</span>
         </div>
       </div>
     </header>
@@ -203,14 +203,14 @@
       <ol>
         <li><a href="#login-dashboard">Login &amp; Dashboard</a></li>
         <li><a href="#strata-management">Strata Management</a></li>
-        <li><a href="#strata-active-file">Strata Active File</a></li>
         <li><a href="#activating-file">Activating a File Number</a></li>
+        <li><a href="#strata-active-file">Strata Active File</a></li>
         <li><a href="#user-management">User Management</a></li>
         <li><a href="#document-management">Document Management</a></li>
-        <li><a href="#appointment-management">Appointment Management</a></li>
-        <li><a href="#timeline-management">Timeline Management</a></li>
         <li><a href="#question-filtering">Question Filtering</a></li>
         <li><a href="#system-settings">System Settings</a></li>
+        <li><a href="#appointment-management">Appointment Management</a></li>
+        <li><a href="#timeline-management">Timeline Management</a></li>
         <li><a href="#deleting-file">Deleting a File</a></li>
       </ol>
     </nav>
@@ -219,13 +219,14 @@
       <h2>Login &amp; Dashboard</h2>
       <div class="section-grid">
         <div>
-          <p>The admin portal starts on the same login page as the client portal, but the authenticated experience changes into the admin workspace after sign-in.</p>
+          <p>The admin portal is the operational hub for managing Strata clients, inspections, documents, and depreciation-report progress across the full reserve-planning workflow.</p>
           <ol class="steps">
             <li>Open the portal URL and sign in with the admin email and password.</li>
-            <li>After login, review the metrics cards for <strong>Active Requests</strong>, <strong>Pending Approvals</strong>, <strong>Appointments This Week</strong>, and <strong>Total Active Strata</strong>.</li>
-            <li>Use the <strong>Shortcuts</strong> block for fast access to high-frequency admin actions such as creating strata, creating users, adding appointments, uploading documents, or adding inspector availability.</li>
-            <li>Review the <strong>Urgent Actions</strong> cards for account activations, rebooking needs, and other items requiring follow-up.</li>
-            <li>Use the left navigation to move into the dedicated admin modules.</li>
+            <li>After login, confirm you are in the admin workspace and review the main metric cards for active requests, pending approvals, appointments this week, and active Strata plans.</li>
+            <li>Use the <strong>Shortcuts</strong> panel for frequent actions such as creating a strata, creating a user, scheduling an appointment, uploading a document, or adding inspector setup details.</li>
+            <li>Review the <strong>Urgent Actions</strong> area for canceled inspections, rebooking needs, and other items that require immediate follow-up.</li>
+            <li>Use the <strong>Upcoming Appointments</strong>, <strong>Target Dates</strong>, and <strong>Recent Activity</strong> blocks to monitor what is approaching and what has changed most recently.</li>
+            <li>Use the left navigation to move into the admin modules for strata, users, documents, questions, appointments, timelines, and settings.</li>
           </ol>
         </div>
         <div class="double">
@@ -245,13 +246,16 @@
       <h2>Strata Management</h2>
       <div class="section-grid">
         <div>
-          <p>The strata page is the main entry point for browsing and maintaining strata records, including active and optionally inactive plans.</p>
+          <p>The Strata page is the master record for each plan. It controls core building details, property-type setup, location-based scheduling behavior, and whether inactive plans are visible.</p>
           <ol class="steps">
             <li>Open <strong>Strata</strong> from the left navigation.</li>
-            <li>Use the filters for strata name, strata plan, property type, and city to narrow the list.</li>
+            <li>Use the filters for strata name, strata plan, property type, and location to narrow the list quickly.</li>
             <li>Enable <strong>Show Inactive</strong> when you need to expose strata without an active file.</li>
-            <li>Use <strong>Create New Strata</strong> to add a new record when required, making sure all required fields are present.</li>
-            <li>Select <strong>Edit</strong> for an existing strata when the record needs maintenance or review.</li>
+            <li>Use <strong>Create New Strata</strong> to add a new record, completing the required plan number, address, municipality, province, postal code, country, legal type, and management-company details where applicable.</li>
+            <li>Select all relevant property types because property-type selections drive question filtering and per-user access permissions later in the workflow.</li>
+            <li>Set the correct location because appointment availability uses location rules when same-day inspections need admin approval.</li>
+            <li>Edit existing strata records whenever maintenance is needed. The fiscal year start date is optional and can also be supplied later by the client.</li>
+            <li>Delete a strata only when you are certain, because deleting it removes associated files and survey answers.</li>
           </ol>
         </div>
         <div>
@@ -263,41 +267,18 @@
       </div>
     </section>
 
-    <section class="section" id="strata-active-file">
-      <h2>Strata Active File</h2>
-      <div class="section-grid">
-        <div>
-          <p>The local admin guide explains that once a strata has an active file, deeper request details become available, including answers, archives, documents, notes, downloads, and appointment-offer tools.</p>
-          <ol class="steps">
-            <li>Start from the relevant strata record in the <strong>Strata</strong> list.</li>
-            <li>Open the active file details for the specific strata request when you need to review live answers, archived changes, notes, or request-level actions.</li>
-            <li>Use the request-level tools for downloading documents, exporting survey answers, and offering appointments only when you are ready for the client side to move forward.</li>
-            <li>Treat notes in this area as internal-only administrative notes.</li>
-          </ol>
-          <div class="note">
-            <strong>Capture note:</strong> This demo session provided the strata list but not a stable dedicated active-file detail page capture without moving into deeper request actions, so this section is documented from the admin transcript and the available strata entry view.
-          </div>
-        </div>
-        <div>
-          <figure>
-            <img src="screenshots/03-strata-list.png" alt="Strata list as entry point to active files">
-            <figcaption>The active-file workflow starts from a strata entry in the main strata list.</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
     <section class="section" id="activating-file">
       <h2>Activating a File Number</h2>
       <div class="section-grid">
         <div>
-          <p>Activation begins either from a manual file creation flow or from a client-requested activation waiting on the admin dashboard.</p>
+          <p>A strata becomes active once a file is created. Until that happens, the client sees an empty dashboard and several admin workflows remain unavailable.</p>
           <ol class="steps">
-            <li>Check the <strong>Urgent Actions</strong> area on the dashboard for activation requests from clients whose strata do not yet have an active file.</li>
-            <li>Review the activation request and decide whether to approve or deny it.</li>
-            <li>If approved, create or assign the new file number and continue into request-specific configuration for documents and survey questions.</li>
-            <li>If denied, add the explanatory note so the client can see why the request was rejected.</li>
-            <li>Finalize the file configuration only when the request is ready for the client side to begin data entry.</li>
+            <li>Create a file manually with <strong>Create New File</strong> when the admin team is initiating the request.</li>
+            <li>Alternatively, review client-submitted activation requests from the dashboard and approve or deny them.</li>
+            <li>When approving a request, assign the file number and add any note needed for client context if the request needs clarification or is denied.</li>
+            <li>After file creation, configure the required document list, including versioning and tags where needed.</li>
+            <li>Configure survey questions based on the strata's selected property types, and treat those changes as file-specific rather than global defaults.</li>
+            <li>Reorder questions within the file setup when needed, but make category changes only in the global <strong>Questions</strong> module.</li>
           </ol>
         </div>
         <div>
@@ -309,17 +290,42 @@
       </div>
     </section>
 
+    <section class="section" id="strata-active-file">
+      <h2>Strata Active File</h2>
+      <div class="section-grid">
+        <div>
+          <p>Once a strata has an active file, its detail view becomes the request-level control center for answers, archives, documents, notes, downloads, and appointment access.</p>
+          <ol class="steps">
+            <li>Open the active file from the relevant strata record to review file number, address, property types, and fiscal-year details.</li>
+            <li>Use the <strong>Active</strong> tab to work with current survey questions and answers, and use <strong>Archive</strong> to review overwritten responses with attribution.</li>
+            <li>Use the <strong>Documents</strong> tab to review uploads, approve or deny document versions, and confirm when all required items are approved.</li>
+            <li>Treat internal notes as staff-only records that are visible to administrators, assistants, and inspectors but not clients. Only administrators can delete notes.</li>
+            <li>Use the download tools to create a ZIP of uploaded documents or a PDF of survey answers when records need to be exported.</li>
+            <li>Use <strong>Offer Appointment</strong> when you are ready for the client to access booking availability for half-day, full-day, or draft-meeting scheduling.</li>
+          </ol>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/03-strata-list.png" alt="Strata list as entry point to active file details">
+            <figcaption>The active-file workflow starts from the strata record, then opens into request-level details and controls.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="user-management">
       <h2>User Management</h2>
       <div class="section-grid">
         <div>
-          <p>The users page manages both internal staff and client accounts, with filters for strata, role, and property types.</p>
+          <p>The Users page manages both internal staff and client accounts, including role setup, strata assignment, property-type permissions, and invitation handling.</p>
           <ol class="steps">
             <li>Open <strong>Users</strong> from the left navigation.</li>
-            <li>Use the search field and the role or strata filters to find the right person.</li>
-            <li>Use <strong>Create New Users</strong> when a new internal or client account is required.</li>
-            <li>Use <strong>Edit</strong> to update existing user details, roles, or client-to-strata assignments.</li>
-            <li>Remember that invitations are email-based and can be resent if onboarding mail is missed.</li>
+            <li>Use <strong>Create New Users</strong> when adding administrators, assistants, inspectors, or client users.</li>
+            <li>For client users, assign the correct strata and then confirm which property types that user should be allowed to see.</li>
+            <li>Use role labels such as property manager or council member to identify client contacts clearly.</li>
+            <li>Edit user details whenever needed, but remember that email addresses cannot be changed because they are tied to login identity.</li>
+            <li>Use <strong>Resend Invite</strong> if the confirmation email does not arrive.</li>
+            <li>Delete users cautiously because related answers and inputs are removed, and staff appointments may need reallocation before deletion.</li>
           </ol>
         </div>
         <div>
@@ -335,15 +341,17 @@
       <h2>Document Management</h2>
       <div class="section-grid">
         <div>
-          <p>The documents page is the administrative document hub, including Dropbox sync and manual document intake.</p>
+          <p>The Documents page is the admin document hub for active files. It supports direct uploads, client-submission review, approval workflows, and cleanup when Dropbox and portal records drift out of sync.</p>
           <ol class="steps">
-            <li>Open <strong>Documents</strong> to review uploaded records and search by document type, strata name, or strata plan.</li>
-            <li>Use <strong>Add New Document</strong> when uploading a file directly from the admin side.</li>
-            <li>Use <strong>Sync with Dropbox</strong> when uploaded files have been moved or removed outside the portal and the portal needs to refresh orphaned records.</li>
-            <li>Review client-submitted records through the strata-side review flow before finalizing approvals.</li>
+            <li>Make sure the strata has an active file, because documents attach to the file number rather than to the strata record alone.</li>
+            <li>When uploading a document, select the correct strata, file number, document type, and property type.</li>
+            <li>Remember that only users with permission for a property type can see documents in that section.</li>
+            <li>Review client uploads through the document-review flow, approving or denying versions and saving progress before finalizing.</li>
+            <li>Remember that admin-uploaded documents are auto-approved.</li>
+            <li>Use <strong>Sync with Dropbox</strong> if folders have been changed outside the portal and the system needs to clear orphaned records.</li>
           </ol>
           <div class="note">
-            <strong>Capture note:</strong> The refreshed demo deployment now shows a live pending client document, so the screenshot reflects an active review queue rather than the older empty-state page.
+            <strong>Storage note:</strong> Active files appear in the main list, while completed files move to separate storage after the file lifecycle is closed.
           </div>
         </div>
         <div>
@@ -355,65 +363,19 @@
       </div>
     </section>
 
-    <section class="section" id="appointment-management">
-      <h2>Appointment Management</h2>
-      <div class="section-grid">
-        <div>
-          <p>The local guide describes the appointments module as the place for manual appointment creation, override scheduling, and cancellation or completion workflows.</p>
-          <ol class="steps">
-            <li>Use the appointments tools when you need to create or override a booking directly from the admin side.</li>
-            <li>Update appointment status to completed once an inspection or draft meeting has taken place.</li>
-            <li>If an appointment is cancelled, record the reason so the client sees the correct rebooking prompt.</li>
-            <li>Use rebooking reminders when clients have not yet chosen replacement dates.</li>
-          </ol>
-          <div class="note">
-            <strong>Capture note:</strong> A stable dedicated appointments page was not captured in this session. The live dashboard still shows appointment-related urgent actions and rebooking context, which is included here as the nearest live admin view.
-          </div>
-        </div>
-        <div>
-          <figure>
-            <img src="screenshots/02-admin-dashboard.png" alt="Dashboard urgent actions for appointment rebooking">
-            <figcaption>The dashboard urgent-action cards include appointment rebooking follow-up work.</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="timeline-management">
-      <h2>Timeline Management</h2>
-      <div class="section-grid">
-        <div>
-          <p>Timeline management is the admin-side view for non-appointment deadlines tied to active file numbers, including AGM and depreciation report dates.</p>
-          <ol class="steps">
-            <li>Use the timelines module to review file-specific deadlines and filter between future and past dates.</li>
-            <li>Remember that factual system dates such as file opened, documents finalized, and survey finalized are not editable.</li>
-            <li>Edit only the manually managed dates, such as AGM or last-report dates, when an update is needed.</li>
-            <li>Expect timeline changes to be visible on the client side.</li>
-          </ol>
-          <div class="note">
-            <strong>Capture note:</strong> This demo session did not yield a dedicated timelines screenshot, so the section is documented from the transcript guidance instead of a captured page.
-          </div>
-        </div>
-        <div>
-          <figure>
-            <img src="screenshots/02-admin-dashboard.png" alt="Admin dashboard as context for upcoming target dates">
-            <figcaption>The dashboard includes the target-date overview that complements the deeper timelines workflow.</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
     <section class="section" id="question-filtering">
       <h2>Question Filtering</h2>
       <div class="section-grid">
         <div>
-          <p>The questions module is the global question bank for the portal and affects all strata and files when changed.</p>
+          <p>The Questions page is the global question bank for the portal. Changes here affect every strata and file, so it is used for system-wide configuration rather than file-specific adjustments.</p>
           <ol class="steps">
             <li>Open <strong>Questions</strong> from the left navigation.</li>
-            <li>Use the search field, category filter, property type filter, and <strong>Show Sub-questions</strong> toggle to isolate the questions you need.</li>
-            <li>Use <strong>Create New Question</strong> for global question additions.</li>
-            <li>Use <strong>Edit</strong> to adjust existing questions, categories, services, or sub-question links.</li>
-            <li>Remember that this module is global, while file-specific customization belongs in request-specific configuration.</li>
+            <li>Use <strong>Show Sub-Questions</strong> when you want to isolate sub-questions, or leave it off to browse parent questions more broadly.</li>
+            <li>Remember that parent questions require an answer state, while sub-questions are optional and appear conditionally after the parent.</li>
+            <li>Use <strong>Create New Question</strong> to add a global question, setting answer type, optional info text, and allowed response rules such as <strong>Not Applicable</strong> or <strong>Not Available</strong>.</li>
+            <li>Add or link sub-questions as needed. Sub-questions inherit the parent property type and category and can be attached to multiple parents.</li>
+            <li>Edit existing questions when needed, but keep category changes global and use file-specific configuration inside the active-file workflow instead.</li>
+            <li>Remember that this module is visible to assistants and administrators, but not to inspectors.</li>
           </ol>
         </div>
         <div>
@@ -429,12 +391,15 @@
       <h2>System Settings</h2>
       <div class="section-grid">
         <div>
-          <p>The system settings area covers profile maintenance, company holidays, and inspector availability management.</p>
+          <p>The System Settings area covers profile maintenance, company holiday calendars, and inspector availability by location and meeting type.</p>
           <ol class="steps">
             <li>Open <strong>System Settings</strong> from the admin navigation.</li>
-            <li>Use the tab controls to switch between <strong>Company Holidays</strong>, <strong>Inspector Availability</strong>, and <strong>Profile</strong>.</li>
-            <li>Review or add company holidays carefully, paying attention to whether a date really should recur annually.</li>
-            <li>Use the availability tools to manage inspector scheduling and location-specific availability windows.</li>
+            <li>Use the tabs to switch between <strong>Profile</strong>, <strong>Company Holidays</strong>, and <strong>Inspector Availability</strong>.</li>
+            <li>Update your own profile details or password as needed.</li>
+            <li>Maintain company holidays carefully, especially when deciding whether a holiday should recur every year or remain a one-time date.</li>
+            <li>Remember that only administrators can remove holidays.</li>
+            <li>Use inspector availability to set open dates, available locations, and custom windows for virtual meetings.</li>
+            <li>When batch adding dates, review weekend and holiday warnings before confirming availability.</li>
           </ol>
         </div>
         <div>
@@ -446,29 +411,81 @@
       </div>
     </section>
 
-    <section class="section" id="deleting-file">
-      <h2>Deleting a File</h2>
+    <section class="section" id="appointment-management">
+      <h2>Appointment Management</h2>
       <div class="section-grid">
         <div>
-          <p>File deletion is an administrator-only cleanup step used after a request is fully complete and the original file needs to be closed before a new one is created.</p>
+          <p>The Appointments page is used for direct appointment creation and ongoing schedule maintenance. It can bypass normal client-facing availability gates when the admin team already has scheduling confirmation.</p>
           <ol class="steps">
-            <li>Confirm the file is truly complete and that any survey answers needing retention have already been exported.</li>
-            <li>Understand that deleting the file clears the active request state, removes associated answers and statuses from the live request, and moves uploaded files into the completed storage location.</li>
-            <li>Use deletion only when you are sure the strata should return to an inactive state before a future request is opened.</li>
+            <li>Use <strong>Add New Appointment</strong> when administrators need to enter an appointment manually.</li>
+            <li>Remember that manual appointment entry bypasses inspector-availability and short-notice restrictions because availability is assumed to have been confirmed already.</li>
+            <li>Edit existing appointments to adjust timing, cancel them, or mark them as completed after the inspection or draft meeting has happened.</li>
+            <li>When canceling, record the reason so the client sees accurate context when they log in.</li>
+            <li>Use <strong>Request Rebooking</strong> to trigger reminder follow-up for clients who have not booked a replacement date.</li>
+            <li>Switch between calendar and list views depending on whether you are scheduling or auditing history.</li>
           </ol>
           <div class="note">
-            <strong>Capture note:</strong> No live delete confirmation screen was captured because that would move beyond safe read-only navigation. This section is intentionally transcript-driven.
+            <strong>Workflow note:</strong> <strong>Offer Appointment</strong> inside strata details opens availability for client booking, while the main <strong>Appointments</strong> tab creates confirmed appointments directly.
           </div>
         </div>
         <div>
           <figure>
-            <img src="screenshots/03-strata-list.png" alt="Strata list context for file lifecycle management">
-            <figcaption>The file lifecycle begins from the strata management area, even though deletion itself was not opened in this capture session.</figcaption>
+            <img src="screenshots/02-admin-dashboard.png" alt="Dashboard urgent actions for appointment rebooking">
+            <figcaption>Urgent-action cards on the dashboard surface cancellations and rebooking work that feeds into appointment management.</figcaption>
           </figure>
         </div>
       </div>
     </section>
 
+    <section class="section" id="timeline-management">
+      <h2>Timeline Management</h2>
+      <div class="section-grid">
+        <div>
+          <p>The Timelines page tracks non-appointment dates tied to active files, such as AGM dates, fiscal-year milestones, and other reporting deadlines.</p>
+          <ol class="steps">
+            <li>Use the timelines module to view date items in either list view or calendar view.</li>
+            <li>Filter by deadline type or active strata, and switch between future-only and full history views as needed.</li>
+            <li>Remember that some dates are automatic, including file open date, documents finalized date, and finalized survey date. These cannot be edited manually.</li>
+            <li>Edit manual dates such as AGM or fiscal-year dates when corrections are needed, and expect those updates to be visible to clients.</li>
+            <li>Use this module for assistants and administrators. Inspectors do not have access.</li>
+            <li>Remember that timelines tied to a file disappear when that file is closed and are recreated for new files.</li>
+          </ol>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/02-admin-dashboard.png" alt="Admin dashboard target-date context">
+            <figcaption>The dashboard target-date summary complements the deeper timeline views used for detailed date management.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="deleting-file">
+      <h2>Deleting a File</h2>
+      <div class="section-grid">
+        <div>
+          <p>Deleting a file is an end-of-lifecycle administrative action used after report delivery, when the original request must be closed before a new one is created for the same strata.</p>
+          <ol class="steps">
+            <li>Before deleting the file, export survey answers as a PDF if the record needs to be preserved.</li>
+            <li>Understand that deleting the file removes active and archived answers, notes, and document states such as <strong>Not Received</strong> or <strong>Not Applicable</strong>.</li>
+            <li>Visible documents are moved to completed Dropbox storage for compliance, helping keep old and new file cycles separate.</li>
+            <li>After deletion, the strata returns to an inactive state with no active file number and disappears from the default list until <strong>Show Inactive</strong> is enabled.</li>
+            <li>Treat this as an administrator-only action and use it only when the file is fully complete.</li>
+          </ol>
+          <div class="note">
+            <strong>Storage note:</strong> Completed document folders are tagged separately so older request records do not mix with future files for the same strata.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/03-strata-list.png" alt="Strata list context for file lifecycle management">
+            <figcaption>Strata management is the starting point for file lifecycle work, including returning a completed request to inactive status.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">© 2026 Strata Reserve Planning. All rights reserved.</p>
   </main>
 </body>
 </html>

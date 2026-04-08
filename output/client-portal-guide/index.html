@@ -191,8 +191,8 @@
 <body>
   <main class="page">
     <header class="topbar">
-      <h1>Client Portal Guide</h1>
-      <p>This page combines the client walkthrough notes from the local guide files with fresh screenshots captured from the live demo portal. It is organized to mirror the original client documentation set.</p>
+      <h1>Strata Reserve Planning Client Portal Guide</h1>
+      <p>This page aligns the local client portal reference with the shared Strata Reserve Planning client transcript. It keeps the current live screenshot set while restoring the document flow and client-facing instructions from the source guide.</p>
       <div class="meta">
         <div class="meta-card">
           <strong>Portal URL</strong>
@@ -208,7 +208,7 @@
         </div>
         <div class="meta-card">
           <strong>Capture Scope</strong>
-          <span>Live demo account, client-side pages only, no form submissions.</span>
+          <span>Doc-aligned walkthrough copy with client-side screenshots from the live demo portal.</span>
         </div>
       </div>
     </header>
@@ -217,11 +217,11 @@
       <h2 id="toc-heading">Contents</h2>
       <ol>
         <li><a href="#login-dashboard">Login &amp; Dashboard</a></li>
+        <li><a href="#no-active-service">No Active Service</a></li>
         <li><a href="#strata-info-members">Strata Information &amp; Strata Members</a></li>
         <li><a href="#timelines">Timelines</a></li>
         <li><a href="#surveys">Answering Surveys</a></li>
         <li><a href="#documents">Document Uploads</a></li>
-        <li><a href="#no-active-service">No Active Service</a></li>
         <li><a href="#appointments">Appointment Booking</a></li>
       </ol>
     </nav>
@@ -230,13 +230,14 @@
       <h2>Login &amp; Dashboard</h2>
       <div class="section-grid">
         <div>
-          <p>The client portal starts on the login page. After signing in, the dashboard becomes the main home base for the rest of the data collection process.</p>
+          <p>The client portal is the main workspace for strata managers and property representatives to complete reserve-planning data collection. After sign-in, the dashboard becomes the home base for the rest of the submission process.</p>
           <ol class="steps">
             <li>Open the portal URL and sign in with the assigned email and password.</li>
             <li>If a password has been forgotten, use <strong>Forgot Password?</strong> from the login page before attempting again.</li>
-            <li>After login, review the <strong>Your Progress</strong> panel to see how many questions, documents, and timeline items are complete.</li>
-            <li>Use the three main dashboard cards to jump straight into <strong>Survey</strong>, <strong>Documents</strong>, or <strong>Draft Meeting</strong>.</li>
-            <li>Use the left navigation for direct access to every client section.</li>
+            <li>After login, review the dashboard progress summary for survey questions, documents, and timelines so you can see what is still incomplete.</li>
+            <li>Use the left navigation to move between <strong>Dashboard</strong>, <strong>Strata Information</strong>, <strong>Strata Members</strong>, <strong>Timelines</strong>, <strong>Survey</strong>, <strong>Documents</strong>, and <strong>Inspection Date</strong> when that final step becomes available.</li>
+            <li>Use the dashboard priority-task cards to jump directly into the next required action, including survey completion, document uploads, and deadline review.</li>
+            <li>Remember that the inspection-date workflow stays locked until survey answers, documents, and deadlines have all been completed first.</li>
           </ol>
         </div>
         <div class="double">
@@ -252,17 +253,41 @@
       </div>
     </section>
 
+    <section class="section" id="no-active-service">
+      <h2>No Active Service</h2>
+      <div class="section-grid">
+        <div>
+          <p>If the portal shows a <strong>No Active Service</strong> message, the strata does not currently have an active file request attached to the account. Because depreciation-report work is tied to a specific file number, the client workspace remains limited until activation is approved.</p>
+          <ol class="steps">
+            <li>If you see the inactive-service message across multiple pages, request activation from the Strata Reserve Planning team.</li>
+            <li>Wait for the activation request to be reviewed. The guide states that review typically takes three to five business days.</li>
+            <li>If the request is denied, read the explanation in the notification, dismiss it, and submit a corrected activation request when ready.</li>
+            <li>Once the request is approved, return to the dashboard and continue with the full client workflow.</li>
+          </ol>
+          <div class="note">
+            <strong>Capture note:</strong> The live demo account used for screenshots already has an active file, so this section is based on the transcript while reusing the standard dashboard image as the post-activation state.
+          </div>
+        </div>
+        <div>
+          <figure>
+            <img src="screenshots/02-dashboard.png" alt="Client dashboard after activation">
+            <figcaption>After activation is approved, the client returns to the normal dashboard and can access the full workflow.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="strata-info-members">
       <h2>Strata Information &amp; Strata Members</h2>
       <div class="section-grid">
         <div>
-          <p>These two pages show the building profile and the client member record associated with the strata. They are reference pages first, with update actions where permitted.</p>
+          <p>These pages show both the building-level profile and the people associated with the strata. Accuracy here matters because these details affect appointment filtering, document requirements, question visibility, and legal reporting context.</p>
           <ol class="steps">
-            <li>Open <strong>Strata Information</strong> to confirm the property profile details such as strata plan, address, city, legal type, and property types.</li>
-            <li>If any building details are incorrect, treat the page as a verification screen and contact the support address from the client guide rather than assuming you can edit the building profile directly.</li>
-            <li>Open <strong>Strata Members</strong> to review the member record tied to the logged-in user.</li>
-            <li>Use <strong>Update Your Details</strong> when personal contact details or password information needs to be changed.</li>
-            <li>Use <strong>Request Section Change</strong> if the strata section allocation is wrong for the logged-in member.</li>
+            <li>Open <strong>Strata Information</strong> to review the building profile, including strata plan, address, property types, and other core strata details.</li>
+            <li>If any building information is wrong, contact <a href="mailto:clientcare@stratareserveplanning.com">clientcare@stratareserveplanning.com</a> to request an update.</li>
+            <li>Confirm that the listed property types are correct, because they determine which questions and documents apply to the file.</li>
+            <li>Open <strong>Strata Members</strong> to review the individuals associated with the strata, including roles, accessible sections, and contact details.</li>
+            <li>Use the available update action to keep your personal contact details and password current so the SRP team can reach the right person during the report process.</li>
           </ol>
         </div>
         <div class="double">
@@ -282,16 +307,17 @@
       <h2>Timelines</h2>
       <div class="section-grid">
         <div>
-          <p>The timelines page collects key dates needed to plan and deliver the depreciation report request.</p>
+          <p>The Timelines page captures the key dates needed to plan and deliver the depreciation report. Some values may already be pre-filled, but clients are expected to confirm and complete what is missing.</p>
           <ol class="steps">
             <li>Open <strong>Timelines</strong> from the left navigation.</li>
-            <li>Confirm the current fiscal year start date and provide the date of the last AGM, or check <strong>No AGM to date</strong> if that applies.</li>
-            <li>Provide the date of the last depreciation report, or check <strong>No report to date</strong> when no earlier report exists.</li>
-            <li>Optionally enter a target date if the strata has one.</li>
-            <li>Select <strong>Calculate Timelines</strong> after reviewing the dates carefully, because the transcript notes that these dates can lock after calculation.</li>
+            <li>Enter or confirm the current fiscal year start date, the date of the last AGM, the date of the last depreciation report, and the target date if one applies.</li>
+            <li>If this is the first cycle, use <strong>No AGM to date</strong> or <strong>No report to date</strong> as appropriate.</li>
+            <li>Make sure AGM and prior-report dates are in the past, because future dates are not allowed.</li>
+            <li>Use a target date that leaves enough lead time. The guide states that it must be at least 30 days in the future.</li>
+            <li>Finalize the timelines only after careful review, because the timeline values lock after submission and later changes require manual help from Strata Reserve Planning.</li>
           </ol>
           <div class="note">
-            <strong>Important:</strong> The client guide notes that AGM and prior report dates must be in the past, while the target date must leave enough lead time for the SRP team to complete the report.
+            <strong>Important:</strong> If no target date is selected, the guide explains that the system can calculate a default based on the fiscal year timeline.
           </div>
         </div>
         <div>
@@ -307,16 +333,17 @@
       <h2>Answering Surveys</h2>
       <div class="section-grid">
         <div>
-          <p>The survey flow starts with an overview of required sections, then continues into detailed section-by-section questionnaires.</p>
+          <p>The survey flow starts on an overview page and then moves into detailed question pages grouped by property type. Top-level questions are mandatory, while many follow-up prompts are conditional.</p>
           <ol class="steps">
-            <li>Open <strong>Survey</strong> to review the required survey categories.</li>
-            <li>Use <strong>Download Survey</strong> if a copy is needed for offline review.</li>
-            <li>Select a survey category to open its questions.</li>
-            <li>Answer each top-level question or use the applicable availability options described in the transcript guidance.</li>
-            <li>Continue page by page until all required sections are complete, then return to the overview to confirm completion status.</li>
+            <li>Open <strong>Survey</strong> or use the dashboard shortcut to access the question set for the file.</li>
+            <li>Review the overview page to see which survey sections still need work, and use <strong>Download Survey</strong> if an empty form is needed for offline reference.</li>
+            <li>Open a section and answer every top-level question with either a direct answer, <strong>Not Available</strong>, or <strong>Not Applicable</strong>.</li>
+            <li>Answer follow-up questions where possible. The guide notes that many follow-up questions can remain blank if the information is not available.</li>
+            <li>Use <strong>Save Changes</strong> to keep progress for later, or <strong>Save and Download PDF</strong> if a completed copy is needed for review or printing.</li>
+            <li>Return to <strong>Overview</strong> at any time to see what remains, then finalize only when all required answers are complete because the survey becomes read-only after final submission.</li>
           </ol>
           <div class="note">
-            <strong>Important:</strong> The transcript explains that top-level questions need an answer state before final completion, while some follow-up questions may remain blank if the information is not available.
+            <strong>Manual option:</strong> The transcript also describes downloading the PDF, completing it by hand, and mailing it to the Vancouver office if a paper workflow is needed.
           </div>
         </div>
         <div class="double">
@@ -336,16 +363,17 @@
       <h2>Document Uploads</h2>
       <div class="section-grid">
         <div>
-          <p>The documents area is organized by strata section and then by requested document type. Each requested document can be uploaded or marked unavailable.</p>
+          <p>The Documents page is where clients upload requested files for the active report. It supports multiple document versions, autosave behavior, and later review by the SRP team.</p>
           <ol class="steps">
-            <li>Open <strong>Documents</strong> to see the document groups that apply to the strata.</li>
-            <li>Expand a requested item to reveal the available actions.</li>
-            <li>Use <strong>Upload</strong> to add the file, or mark it as <strong>Not Available</strong> or <strong>Not Applicable</strong> when appropriate.</li>
-            <li>Repeat this for each requested document in every visible strata section.</li>
-            <li>Use <strong>Finalize and Submit</strong> only after reviewing all requested files, because the client guide indicates that changes become restricted after final submission unless something is rejected.</li>
+            <li>Open <strong>Documents</strong> to review the requested document groups that apply to your strata and accessible property types.</li>
+            <li>Expand each requested item and upload the appropriate file, or mark it as <strong>Not Available</strong> or <strong>Not Applicable</strong> when that is the correct status.</li>
+            <li>Upload as many requested versions as possible when the same document type is needed for multiple years or reporting cycles.</li>
+            <li>Rely on autosave if you need to stop partway through. The guide notes that uploads remain in place so co-workers can return and continue later.</li>
+            <li>Finalize documents only when you are satisfied with the submission, because further changes are blocked unless a document is rejected during review.</li>
+            <li>If a document is rejected, read the admin note, dismiss the message, then upload a replacement file with a different filename.</li>
           </ol>
           <div class="note">
-            <strong>Important:</strong> The transcript notes that files are saved automatically while working through the page and that rejected files may need replacement later.
+            <strong>Next step:</strong> Once documents, survey answers, and timelines are complete and accepted, the inspection-booking workflow becomes available.
           </div>
         </div>
         <div class="double">
@@ -361,59 +389,37 @@
       </div>
     </section>
 
-    <section class="section" id="no-active-service">
-      <h2>No Active Service</h2>
-      <div class="section-grid">
-        <div>
-          <p>This flow is described in the local client guide, but it is not exposed in the active demo account used for live capture. The account available for screenshots already has an active file and lands in the standard client workspace.</p>
-          <ol class="steps">
-            <li>If the portal shows a no-active-service message, request activation from the Strata Reserve Planning team.</li>
-            <li>Wait for the request to be reviewed and approved by the team.</li>
-            <li>If the request is declined, review the reason shown in the notification and submit a corrected request.</li>
-            <li>Once activated, return to the normal dashboard and resume the standard client workflow.</li>
-          </ol>
-          <div class="note">
-            <strong>Screenshot note:</strong> No fresh screenshot is included here because this demo account does not expose the inactive-file state.
-          </div>
-        </div>
-        <div>
-          <figure>
-            <img src="screenshots/02-dashboard.png" alt="Active client dashboard used in the demo account">
-            <figcaption>The demo account remains in an active-file state and therefore does not surface the no-active-service page.</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-
     <section class="section" id="appointments">
       <h2>Appointment Booking</h2>
       <div class="section-grid">
         <div>
-          <p>The local guide describes appointment booking after submission review. In the refreshed live demo deployment, this client account no longer exposes the older draft meeting scheduler and instead surfaces deadline follow-up through the dashboard and timelines page.</p>
+          <p>Appointment booking becomes available only after survey answers, documents, and timelines have been completed and accepted. The booking flow covers both the physical inspection and the later draft meeting.</p>
           <ol class="steps">
-            <li>Use the dashboard task cards to jump into the active next step for the file.</li>
-            <li>Review the <strong>Deadlines</strong> card for status prompts and then open the timelines page for date-related follow-up.</li>
-            <li>Confirm the current fiscal year, AGM, depreciation report, and target date details shown for the file.</li>
-            <li>After updates are submitted, monitor dashboard notifications and timeline status messaging for follow-up requests.</li>
-            <li>If scheduling returns as a visible workflow in a later account state, continue from the client dashboard into that appointment-specific route.</li>
+            <li>Once the workflow unlocks, open <strong>Inspection Date</strong> from the dashboard or navigation to access the booking calendar.</li>
+            <li>Review the available dates for the assigned inspector and note the yellow reference dates that mark approved-document timing and target completion timing.</li>
+            <li>Select two different dates as your first and second choices, then add any special notes if needed before submitting the request.</li>
+            <li>After submission, the request stays pending and the chosen dates cannot be edited until the SRP team reviews them.</li>
+            <li>If the request is not accepted, return to the booking page, choose new first and second dates, and submit another request.</li>
+            <li>Once the inspection is approved and later completed, the workflow shifts to <strong>Draft Meeting</strong>, where virtual meeting times become available and are booked in a similar review-and-confirm pattern.</li>
           </ol>
           <div class="note">
-            <strong>Demo account note:</strong> The transcript references inspection and draft meeting booking phases, but the current live client account used for capture now lands in a post-submission state with deadline tracking instead of the older scheduling calendar.
+            <strong>Draft meetings:</strong> The transcript notes that draft-meeting availability is virtual and offered in fixed evening times, with the appointment locking again while the request is under review.
           </div>
         </div>
         <div class="double">
           <figure>
             <img src="screenshots/02-dashboard.png" alt="Dashboard appointment card">
-            <figcaption>The dashboard now surfaces the next active follow-up step through its priority task cards.</figcaption>
+            <figcaption>The dashboard card becomes the entry point once appointment booking is unlocked.</figcaption>
           </figure>
           <figure>
-            <img src="screenshots/11-draft-meeting-calendar.png" alt="Client timelines page">
-            <figcaption>The timelines page now serves as the live date-focused follow-up view for this demo account.</figcaption>
+            <img src="screenshots/11-draft-meeting-calendar.png" alt="Client appointment calendar">
+            <figcaption>Booking calendar used to choose appointment dates once the file is ready for scheduling.</figcaption>
           </figure>
         </div>
       </div>
     </section>
 
+    <p class="footer">© 2026 Strata Reserve Planning. All rights reserved.</p>
   </main>
 </body>
 </html>
