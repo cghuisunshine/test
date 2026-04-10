@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7 Useful Skills Explainer</title>
+  <style>
+    :root {
+      --bg: #0b0b0f;
+      --panel: #15151c;
+      --card: #1c1c26;
+      --text: #f5f7fb;
+      --muted: #b7bfd1;
+      --accent: #9be000;
+      --accent2: #7db7ff;
+      --line: #2a2d38;
+      --warn: #ffcc66;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #050507 0%, #101018 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 60px;
+    }
+
+    .hero {
+      background: radial-gradient(circle at top, rgba(155, 224, 0, 0.15), transparent 35%),
+                  linear-gradient(135deg, #111119, #171722);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 5vw, 48px);
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    .hero .highlight {
+      color: var(--accent);
+      text-shadow: 0 0 12px rgba(155, 224, 0, 0.25);
+    }
+
+    .hero p {
+      margin: 8px 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .notice {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--warn);
+      background: rgba(255, 204, 102, 0.08);
+      border-radius: 10px;
+      color: #ffe7b0;
+      font-size: 14px;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #181821 0%, #12121a 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      color: var(--accent2);
+      word-break: break-word;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+      background: rgba(125, 183, 255, 0.12);
+      border: 1px solid rgba(125, 183, 255, 0.25);
+      color: #dbe9ff;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      margin: 16px 0 6px;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .card ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    .pain {
+      color: #ffd27a;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.02);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    code {
+      background: rgba(255,255,255,0.06);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #fff3c2;
+    }
+
+    a {
+      color: #a7d4ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1><span class="highlight">7 Useful Skills</span> from the image</h1>
+      <p>This page is based on the screenshot you provided. It extracts the listed skill names and explains what they likely do and how to use them in practical work.</p>
+      <p>The image title says: <strong>“Out of 70,000 skills, only these 7 are really worth installing.”</strong></p>
+      <div class="notice">
+        Note: the image provides the skill names and the pain points they solve, but not the full official documentation. So the explanations below are practical interpretations based on the names shown in the screenshot.
+      </div>
+    </section>
+
+    <section class="skills-grid">
+      <article class="card">
+        <h2>1. planning-with-files</h2>
+        <div class="tag">Project planning / context management</div>
+        <p class="pain">Pain point: 做项目做到一半忘了全局 — You get halfway through a project and lose the big picture.</p>
+
+        <div class="section-title">What it is</div>
+        <p>A workflow skill for planning while directly using your files, notes, docs, specs, and codebase as context. It helps you keep the overall structure of the project in mind instead of only focusing on the current small task.</p>
+
+        <div class="section-title">How to use it</div>
+        <ul>
+          <li>Give it your project files, requirements, notes, or drafts.</li>
+          <li>Ask it to summarize the overall project goal.</li>
+          <li>Ask it to break the work into milestones, tasks, and dependencies.</li>
+          <li>Use it again whenever you feel lost, to rebuild the roadmap from existing files.</li>
+        </ul>
+
+        <div class="section-title">Example prompts</div>
+        <ul>
+          <li><code>Read these files and make a project plan.</code></li>
+          <li><code>What have I already finished, and what is still missing?</code></li>
+          <li><code>Turn these notes into a step-by-step execution checklist.</code></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>2. superpowers</h2>
+        <div class="tag">Toolchain enhancement / developer workflow</div>
+        <p class="pain">Pain point: 缺少完整的开发工具链 — You do not have a complete development toolchain.</p>
+
+        <div class="section-title">What it is</div>
+        <p>A general “power-up” skill that gives the assistant broader working ability, such as handling more steps in a workflow, combining tools, or acting more like a capable engineering copilot.</p>
+
+        <div class="section-title">How to use it</div>
+        <ul>
+          <li>Use it when a task requires several linked actions, not just one answer.</li>
+          <li>Use it for coding, debugging, refactoring, setup help, and automation ideas.</li>
+          <li>Ask it to connect planning, implementation, testing, and documentation together.</li>
+        </ul>
+
+        <div class="section-title">Example prompts</div>
+        <ul>
+          <li><code>Help me build this feature from plan to code to test.</code></li>
+          <li><code>What tools or steps are missing in my current workflow?</code></li>
+          <li><code>Turn this rough idea into a complete dev pipeline.</code></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>3. frontend-design</h2>
+        <div class="tag">UI polishing / front-end quality</div>
+        <p class="pain">Pain point: AI做的前端一眼就看出是AI做的 — The front end made by AI looks obviously AI-generated.</p>
+
+        <div class="section-title">What it is</div>
+        <p>A front-end refinement skill focused on improving layout, spacing, visual hierarchy, typography, and interaction patterns so the result looks more natural, intentional, and production-quality.</p>
+
+        <div class="section-title">How to use it</div>
+        <ul>
+          <li>Give it your existing HTML/CSS/JS or screenshots.</li>
+          <li>Ask it to improve structure, spacing, alignment, and consistency.</li>
+          <li>Use it to turn generic AI-looking UI into cleaner, more human-looking design.</li>
+          <li>Ask for component-level improvement: cards, buttons, forms, navigation, tables, mobile layout.</li>
+        </ul>
+
+        <div class="section-title">Example prompts</div>
+        <ul>
+          <li><code>Make this landing page look less AI-generated.</code></li>
+          <li><code>Improve the visual hierarchy and spacing of this page.</code></li>
+          <li><code>Refactor this CSS to look more polished and modern.</code></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>4. notebooklm</h2>
+        <div class="tag">Research-assisted writing / note synthesis</div>
+        <p class="pain">Pain point: 写东西切窗口查资料 — When writing, you keep switching windows to look up information.</p>
+
+        <div class="section-title">What it is</div>
+        <p>A research companion style skill that helps you work with source material while writing. Instead of constantly changing tabs, you bring your notes, references, or documents into one workflow and ask questions directly.</p>
+
+        <div class="section-title">How to use it</div>
+        <ul>
+          <li>Upload or provide the articles, notes, PDFs, or source documents you are using.</li>
+          <li>Ask it to summarize, compare, extract claims, or find evidence.</li>
+          <li>Use it while drafting essays, reports, scripts, or study notes.</li>
+          <li>Ask it to generate outlines, key points, FAQs, or citation-friendly notes.</li>
+        </ul>
+
+        <div class="section-title">Example prompts</div>
+        <ul>
+          <li><code>Summarize these articles and help me write an outline.</code></li>
+          <li><code>Compare these two papers and list their main differences.</code></li>
+          <li><code>Find the evidence in these notes for my paragraph.</code></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>5. baoyu-skills</h2>
+        <div class="tag">Content workflow / publishing pipeline</div>
+        <p class="pain">Pain point: 内容从写到发布中间环节太碎 — The workflow from writing content to publishing it is too fragmented.</p>
+
+        <div class="section-title">What it is</div>
+        <p>A content production workflow skill that helps manage the full path from idea to finished publication. It likely focuses on reducing friction between drafting, editing, formatting, packaging, and publishing.</p>
+
+        <div class="section-title">How to use it</div>
+        <ul>
+          <li>Use it when writing posts, articles, scripts, product content, or educational material.</li>
+          <li>Ask it to turn drafts into publishable content.</li>
+          <li>Use it to create repurposed versions: long article, short post, title, summary, hashtags, publishing checklist.</li>
+          <li>Let it organize the whole pipeline so fewer steps are done manually.</li>
+        </ul>
+
+        <div class="section-title">Example prompts</div>
+        <ul>
+          <li><code>Turn this draft into a publish-ready blog post.</code></li>
+          <li><code>Rewrite this into Xiaohongshu / LinkedIn / Twitter versions.</code></li>
+          <li><code>Create a content publishing checklist from this draft.</code></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>6. webapp-testing</h2>
+        <div class="tag">Testing / QA for web apps</div>
+        <p class="pain">Pain point: 做完网页懒得一页页检查 — After finishing a website, you do not want to manually check every page one by one.</p>
+
+        <div class="section-title">What it is</div>
+        <p>A testing-oriented skill for checking web pages, flows, and UI behavior more systematically. It is useful for quality assurance after building a website or web application.</p>
+
+        <div class="section-title">How to use it</div>
+        <ul>
+          <li>Use it after building or updating a web app.</li>
+          <li>Ask it to generate a testing checklist for all pages and user flows.</li>
+          <li>Use it to find broken links, inconsistent layouts, form issues, mobile problems, and missing edge cases.</li>
+          <li>Ask it to propose manual or automated test cases.</li>
+        </ul>
+
+        <div class="section-title">Example prompts</div>
+        <ul>
+          <li><code>Create a test plan for my website.</code></li>
+          <li><code>List the main user flows I should verify.</code></li>
+          <li><code>Generate QA test cases for login, forms, and navigation.</code></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>7. skill-creator</h2>
+        <div class="tag">Skill building / custom workflow creation</div>
+        <p class="pain">Pain point: 想创建Skill但不知道从哪开始 — You want to create a skill but do not know where to start.</p>
+
+        <div class="section-title">What it is</div>
+        <p>A starter skill for building your own custom skills. It likely helps define the purpose, input, output, workflow, prompt structure, and usage scenario for a reusable assistant capability.</p>
+
+        <div class="section-title">How to use it</div>
+        <ul>
+          <li>Start with the problem you want to solve repeatedly.</li>
+          <li>Define what inputs the skill should accept.</li>
+          <li>Define what output format you want every time.</li>
+          <li>Have it draft the skill instructions, steps, and sample prompts.</li>
+          <li>Iterate until the skill becomes reusable.</li>
+        </ul>
+
+        <div class="section-title">Example prompts</div>
+        <ul>
+          <li><code>Help me create a skill for turning screenshots into quiz pages.</code></li>
+          <li><code>Design a reusable skill for writing bilingual study notes.</code></li>
+          <li><code>Create a skill template with purpose, inputs, outputs, and example prompts.</code></li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="footer">
+      <strong>Extracted from the image:</strong><br />
+      <code>planning-with-files</code>,
+      <code>superpowers</code>,
+      <code>frontend-design</code>,
+      <code>notebooklm</code>,
+      <code>baoyu-skills</code>,
+      <code>webapp-testing</code>,
+      <code>skill-creator</code>
+      <br /><br />
+      You can save this as <code>skills_explainer.html</code> and open it directly in a browser.
+    </section>
+  </div>
+</body>
+</html>
