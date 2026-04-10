@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7 Useful Skills Explainer</title>
+  <title>7 Skills from the Screenshot</title>
   <style>
     :root {
       --bg: #0b0b0f;
@@ -15,22 +15,21 @@
       --accent2: #7db7ff;
       --line: #2a2d38;
       --warn: #ffcc66;
+      --link: #9fd0ff;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background: linear-gradient(180deg, #050507 0%, #101018 100%);
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     .container {
-      width: min(1100px, calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
       padding: 32px 0 60px;
     }
@@ -49,7 +48,6 @@
       margin: 0 0 12px;
       font-size: clamp(28px, 5vw, 48px);
       line-height: 1.1;
-      color: var(--text);
     }
 
     .hero .highlight {
@@ -75,7 +73,7 @@
 
     .skills-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 18px;
     }
 
@@ -94,6 +92,13 @@
       word-break: break-word;
     }
 
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
     .tag {
       display: inline-block;
       padding: 4px 10px;
@@ -102,7 +107,6 @@
       background: rgba(125, 183, 255, 0.12);
       border: 1px solid rgba(125, 183, 255, 0.25);
       color: #dbe9ff;
-      margin-bottom: 14px;
     }
 
     .section-title {
@@ -128,6 +132,15 @@
       font-weight: bold;
     }
 
+    .links a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
     .footer {
       margin-top: 28px;
       padding: 18px;
@@ -145,194 +158,263 @@
       color: #fff3c2;
     }
 
-    a {
-      color: #a7d4ff;
+    .small {
+      font-size: 13px;
+      color: #9fa8bb;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <section class="hero">
-      <h1><span class="highlight">7 Useful Skills</span> from the image</h1>
-      <p>This page is based on the screenshot you provided. It extracts the listed skill names and explains what they likely do and how to use them in practical work.</p>
-      <p>The image title says: <strong>“Out of 70,000 skills, only these 7 are really worth installing.”</strong></p>
+      <h1><span class="highlight">7 Skills</span> from the screenshot</h1>
+      <p>This page extracts the seven skill names shown in the screenshot and expands them using public GitHub information.</p>
+      <p>The screenshot headline says these are the few skills “really worth installing” out of many available skills.</p>
       <div class="notice">
-        Note: the image provides the skill names and the pain points they solve, but not the full official documentation. So the explanations below are practical interpretations based on the names shown in the screenshot.
+        Important note: these explanations are based on public GitHub repositories and skill descriptions. Some names match official Anthropic skills directly, while others are community projects or broader skill collections.
       </div>
     </section>
 
     <section class="skills-grid">
+
       <article class="card">
         <h2>1. planning-with-files</h2>
-        <div class="tag">Project planning / context management</div>
-        <p class="pain">Pain point: 做项目做到一半忘了全局 — You get halfway through a project and lose the big picture.</p>
+        <div class="meta">
+          <span class="tag">Project planning</span>
+          <span class="tag">Persistent context</span>
+        </div>
+        <p class="pain">Pain point: 做项目做到一半忘了全局 — you get halfway through a project and lose the overall picture.</p>
 
         <div class="section-title">What it is</div>
-        <p>A workflow skill for planning while directly using your files, notes, docs, specs, and codebase as context. It helps you keep the overall structure of the project in mind instead of only focusing on the current small task.</p>
+        <p>
+          <code>planning-with-files</code> is a GitHub repo described as a Claude Code plugin that uses persistent markdown files for planning, progress tracking, and knowledge storage. The core idea is to keep project state in files so the agent can repeatedly return to the same roadmap instead of “forgetting” structure between steps.
+        </p>
 
         <div class="section-title">How to use it</div>
         <ul>
-          <li>Give it your project files, requirements, notes, or drafts.</li>
-          <li>Ask it to summarize the overall project goal.</li>
-          <li>Ask it to break the work into milestones, tasks, and dependencies.</li>
-          <li>Use it again whenever you feel lost, to rebuild the roadmap from existing files.</li>
+          <li>Put your goals, milestones, notes, and progress into markdown files.</li>
+          <li>Ask the agent to read those files and rebuild the project roadmap.</li>
+          <li>Use it for task decomposition, tracking what is done, and deciding what comes next.</li>
+          <li>Useful for long-running builds, feature work, research projects, and multi-step debugging.</li>
         </ul>
 
-        <div class="section-title">Example prompts</div>
+        <div class="section-title">Good use cases</div>
         <ul>
-          <li><code>Read these files and make a project plan.</code></li>
-          <li><code>What have I already finished, and what is still missing?</code></li>
-          <li><code>Turn these notes into a step-by-step execution checklist.</code></li>
+          <li>Large coding projects with many unfinished pieces</li>
+          <li>Turning scattered notes into an execution plan</li>
+          <li>Keeping a running project memory in markdown</li>
         </ul>
+
+        <div class="section-title">GitHub</div>
+        <p class="links">
+          <a href="https://github.com/OthmanAdi/planning-with-files" target="_blank" rel="noopener noreferrer">OthmanAdi/planning-with-files</a>
+        </p>
       </article>
 
       <article class="card">
         <h2>2. superpowers</h2>
-        <div class="tag">Toolchain enhancement / developer workflow</div>
-        <p class="pain">Pain point: 缺少完整的开发工具链 — You do not have a complete development toolchain.</p>
+        <div class="meta">
+          <span class="tag">Developer workflow</span>
+          <span class="tag">Agentic framework</span>
+        </div>
+        <p class="pain">Pain point: 缺少完整的开发工具链 — you do not have a complete development workflow/toolchain.</p>
 
         <div class="section-title">What it is</div>
-        <p>A general “power-up” skill that gives the assistant broader working ability, such as handling more steps in a workflow, combining tools, or acting more like a capable engineering copilot.</p>
+        <p>
+          <code>superpowers</code> is a GitHub repository that presents itself as an agentic skills framework and software development methodology. It is meant to give coding agents a more complete workflow by combining composable skills with operating instructions.
+        </p>
 
         <div class="section-title">How to use it</div>
         <ul>
-          <li>Use it when a task requires several linked actions, not just one answer.</li>
-          <li>Use it for coding, debugging, refactoring, setup help, and automation ideas.</li>
-          <li>Ask it to connect planning, implementation, testing, and documentation together.</li>
+          <li>Install it when you want an AI coding agent to follow a more structured engineering process.</li>
+          <li>Use it to connect planning, implementation, code review, writing, and other repeated software tasks.</li>
+          <li>Good for developers who want the agent to behave less like a one-off chatbot and more like a workflow-driven assistant.</li>
         </ul>
 
-        <div class="section-title">Example prompts</div>
+        <div class="section-title">Good use cases</div>
         <ul>
-          <li><code>Help me build this feature from plan to code to test.</code></li>
-          <li><code>What tools or steps are missing in my current workflow?</code></li>
-          <li><code>Turn this rough idea into a complete dev pipeline.</code></li>
+          <li>End-to-end feature development</li>
+          <li>Code review and response cycles</li>
+          <li>Standardizing how your agent works across projects</li>
         </ul>
+
+        <div class="section-title">GitHub</div>
+        <p class="links">
+          <a href="https://github.com/obra/superpowers" target="_blank" rel="noopener noreferrer">obra/superpowers</a>
+        </p>
       </article>
 
       <article class="card">
         <h2>3. frontend-design</h2>
-        <div class="tag">UI polishing / front-end quality</div>
-        <p class="pain">Pain point: AI做的前端一眼就看出是AI做的 — The front end made by AI looks obviously AI-generated.</p>
+        <div class="meta">
+          <span class="tag">UI design</span>
+          <span class="tag">Official Anthropic skill</span>
+        </div>
+        <p class="pain">Pain point: AI做的前端一眼就看出是AI做的 — the front end looks obviously AI-generated.</p>
 
         <div class="section-title">What it is</div>
-        <p>A front-end refinement skill focused on improving layout, spacing, visual hierarchy, typography, and interaction patterns so the result looks more natural, intentional, and production-quality.</p>
+        <p>
+          <code>frontend-design</code> appears in Anthropic’s public skills repository. Its description says it is for creating distinctive, production-grade frontend interfaces with high design quality and for avoiding generic AI aesthetics.
+        </p>
 
         <div class="section-title">How to use it</div>
         <ul>
-          <li>Give it your existing HTML/CSS/JS or screenshots.</li>
-          <li>Ask it to improve structure, spacing, alignment, and consistency.</li>
-          <li>Use it to turn generic AI-looking UI into cleaner, more human-looking design.</li>
-          <li>Ask for component-level improvement: cards, buttons, forms, navigation, tables, mobile layout.</li>
+          <li>Give it HTML/CSS/JS, a component brief, or a screenshot.</li>
+          <li>Ask it to improve spacing, hierarchy, typography, layout, and polish.</li>
+          <li>Use it for landing pages, dashboards, React components, visual redesigns, and beautifying rough UI output.</li>
         </ul>
 
-        <div class="section-title">Example prompts</div>
+        <div class="section-title">Good use cases</div>
         <ul>
-          <li><code>Make this landing page look less AI-generated.</code></li>
-          <li><code>Improve the visual hierarchy and spacing of this page.</code></li>
-          <li><code>Refactor this CSS to look more polished and modern.</code></li>
+          <li>Making AI-generated UIs feel more intentional</li>
+          <li>Improving visual consistency across a web app</li>
+          <li>Polishing a page before demo or deployment</li>
         </ul>
+
+        <div class="section-title">GitHub</div>
+        <p class="links">
+          <a href="https://github.com/anthropics/skills/tree/main/skills/frontend-design" target="_blank" rel="noopener noreferrer">anthropics/skills → frontend-design</a>
+        </p>
       </article>
 
       <article class="card">
         <h2>4. notebooklm</h2>
-        <div class="tag">Research-assisted writing / note synthesis</div>
-        <p class="pain">Pain point: 写东西切窗口查资料 — When writing, you keep switching windows to look up information.</p>
+        <div class="meta">
+          <span class="tag">Research workflow</span>
+          <span class="tag">NotebookLM integration</span>
+        </div>
+        <p class="pain">Pain point: 写东西切窗口查资料 — while writing, you keep switching windows to look up sources.</p>
 
         <div class="section-title">What it is</div>
-        <p>A research companion style skill that helps you work with source material while writing. Instead of constantly changing tabs, you bring your notes, references, or documents into one workflow and ask questions directly.</p>
+        <p>
+          Public GitHub repos for <code>notebooklm-skill</code> describe it as a way for an agent to query Google NotebookLM notebooks directly and get source-grounded answers from your uploaded documents. That makes it useful for writing with references close at hand.
+        </p>
 
         <div class="section-title">How to use it</div>
         <ul>
-          <li>Upload or provide the articles, notes, PDFs, or source documents you are using.</li>
-          <li>Ask it to summarize, compare, extract claims, or find evidence.</li>
-          <li>Use it while drafting essays, reports, scripts, or study notes.</li>
-          <li>Ask it to generate outlines, key points, FAQs, or citation-friendly notes.</li>
+          <li>Put your source documents into NotebookLM.</li>
+          <li>Use the skill to query those notebooks from your coding/writing agent.</li>
+          <li>Ask for summaries, evidence extraction, comparison, and citation-backed notes while drafting.</li>
         </ul>
 
-        <div class="section-title">Example prompts</div>
+        <div class="section-title">Good use cases</div>
         <ul>
-          <li><code>Summarize these articles and help me write an outline.</code></li>
-          <li><code>Compare these two papers and list their main differences.</code></li>
-          <li><code>Find the evidence in these notes for my paragraph.</code></li>
+          <li>Essay or report writing with many source documents</li>
+          <li>Turning large document sets into outlines</li>
+          <li>Research-heavy content where hallucination reduction matters</li>
         </ul>
+
+        <div class="section-title">GitHub</div>
+        <p class="links">
+          <a href="https://github.com/PleasePrompto/notebooklm-skill" target="_blank" rel="noopener noreferrer">PleasePrompto/notebooklm-skill</a>
+        </p>
       </article>
 
       <article class="card">
         <h2>5. baoyu-skills</h2>
-        <div class="tag">Content workflow / publishing pipeline</div>
-        <p class="pain">Pain point: 内容从写到发布中间环节太碎 — The workflow from writing content to publishing it is too fragmented.</p>
+        <div class="meta">
+          <span class="tag">Content pipeline</span>
+          <span class="tag">Skill collection</span>
+        </div>
+        <p class="pain">Pain point: 内容从写到发布中间环节太碎 — the path from writing content to publishing it is too fragmented.</p>
 
         <div class="section-title">What it is</div>
-        <p>A content production workflow skill that helps manage the full path from idea to finished publication. It likely focuses on reducing friction between drafting, editing, formatting, packaging, and publishing.</p>
+        <p>
+          <code>baoyu-skills</code> is a GitHub repository containing multiple skills rather than one single narrow feature. Publicly visible examples include article illustration and WeChat publishing workflows, which suggests it is aimed at content creation, enhancement, and publishing automation.
+        </p>
 
         <div class="section-title">How to use it</div>
         <ul>
-          <li>Use it when writing posts, articles, scripts, product content, or educational material.</li>
-          <li>Ask it to turn drafts into publishable content.</li>
-          <li>Use it to create repurposed versions: long article, short post, title, summary, hashtags, publishing checklist.</li>
-          <li>Let it organize the whole pipeline so fewer steps are done manually.</li>
+          <li>Use it when your content workflow has too many separate steps.</li>
+          <li>Draft content, add supporting visuals, transform it into publication-friendly output, and publish through connected workflows.</li>
+          <li>Especially useful for Chinese-language content operations and platform publishing flows.</li>
         </ul>
 
-        <div class="section-title">Example prompts</div>
+        <div class="section-title">Good use cases</div>
         <ul>
-          <li><code>Turn this draft into a publish-ready blog post.</code></li>
-          <li><code>Rewrite this into Xiaohongshu / LinkedIn / Twitter versions.</code></li>
-          <li><code>Create a content publishing checklist from this draft.</code></li>
+          <li>From draft to formatted article</li>
+          <li>Generating illustrations for articles</li>
+          <li>Publishing to channels such as WeChat</li>
         </ul>
+
+        <div class="section-title">GitHub</div>
+        <p class="links">
+          <a href="https://github.com/JimLiu/baoyu-skills" target="_blank" rel="noopener noreferrer">JimLiu/baoyu-skills</a>
+        </p>
       </article>
 
       <article class="card">
         <h2>6. webapp-testing</h2>
-        <div class="tag">Testing / QA for web apps</div>
-        <p class="pain">Pain point: 做完网页懒得一页页检查 — After finishing a website, you do not want to manually check every page one by one.</p>
+        <div class="meta">
+          <span class="tag">Testing</span>
+          <span class="tag">Official Anthropic skill</span>
+        </div>
+        <p class="pain">Pain point: 做完网页懒得一页页检查 — after building a site, you do not want to manually check every page one by one.</p>
 
         <div class="section-title">What it is</div>
-        <p>A testing-oriented skill for checking web pages, flows, and UI behavior more systematically. It is useful for quality assurance after building a website or web application.</p>
+        <p>
+          <code>webapp-testing</code> appears in Anthropic’s public skills repo and is described as a toolkit for interacting with and testing local web applications using Playwright. It supports checking frontend behavior, browser logs, screenshots, and debugging.
+        </p>
 
         <div class="section-title">How to use it</div>
         <ul>
-          <li>Use it after building or updating a web app.</li>
-          <li>Ask it to generate a testing checklist for all pages and user flows.</li>
-          <li>Use it to find broken links, inconsistent layouts, form issues, mobile problems, and missing edge cases.</li>
-          <li>Ask it to propose manual or automated test cases.</li>
+          <li>Run it after building or updating a web app.</li>
+          <li>Use it to test main user flows like login, forms, navigation, and responsive behavior.</li>
+          <li>Capture screenshots and inspect logs when a page does not behave as expected.</li>
+          <li>Use it as a structured QA layer instead of random manual clicking.</li>
         </ul>
 
-        <div class="section-title">Example prompts</div>
+        <div class="section-title">Good use cases</div>
         <ul>
-          <li><code>Create a test plan for my website.</code></li>
-          <li><code>List the main user flows I should verify.</code></li>
-          <li><code>Generate QA test cases for login, forms, and navigation.</code></li>
+          <li>Regression checks after UI changes</li>
+          <li>Smoke tests for multiple pages</li>
+          <li>Browser-based debugging with Playwright</li>
         </ul>
+
+        <div class="section-title">GitHub</div>
+        <p class="links">
+          <a href="https://github.com/anthropics/skills/tree/main/skills/webapp-testing" target="_blank" rel="noopener noreferrer">anthropics/skills → webapp-testing</a>
+        </p>
       </article>
 
       <article class="card">
         <h2>7. skill-creator</h2>
-        <div class="tag">Skill building / custom workflow creation</div>
-        <p class="pain">Pain point: 想创建Skill但不知道从哪开始 — You want to create a skill but do not know where to start.</p>
+        <div class="meta">
+          <span class="tag">Skill authoring</span>
+          <span class="tag">Official Anthropic skill</span>
+        </div>
+        <p class="pain">Pain point: 想创建Skill但不知道从哪开始 — you want to create a skill but do not know where to begin.</p>
 
         <div class="section-title">What it is</div>
-        <p>A starter skill for building your own custom skills. It likely helps define the purpose, input, output, workflow, prompt structure, and usage scenario for a reusable assistant capability.</p>
+        <p>
+          <code>skill-creator</code> appears in Anthropic’s public skills repository and is described as a skill for creating new skills, improving existing ones, running evals, benchmarking performance, and optimizing descriptions so skills trigger more accurately.
+        </p>
 
         <div class="section-title">How to use it</div>
         <ul>
-          <li>Start with the problem you want to solve repeatedly.</li>
-          <li>Define what inputs the skill should accept.</li>
-          <li>Define what output format you want every time.</li>
-          <li>Have it draft the skill instructions, steps, and sample prompts.</li>
-          <li>Iterate until the skill becomes reusable.</li>
+          <li>Start from a repeated task you want your agent to handle better.</li>
+          <li>Define the trigger, inputs, expected outputs, and reusable steps.</li>
+          <li>Use it to draft the skill structure and improve it through testing and iteration.</li>
+          <li>Use it again later to refine descriptions, evals, and reuse patterns.</li>
         </ul>
 
-        <div class="section-title">Example prompts</div>
+        <div class="section-title">Good use cases</div>
         <ul>
-          <li><code>Help me create a skill for turning screenshots into quiz pages.</code></li>
-          <li><code>Design a reusable skill for writing bilingual study notes.</code></li>
-          <li><code>Create a skill template with purpose, inputs, outputs, and example prompts.</code></li>
+          <li>Building your first reusable skill</li>
+          <li>Converting ad hoc prompts into repeatable workflows</li>
+          <li>Improving a skill that triggers poorly or gives inconsistent output</li>
         </ul>
+
+        <div class="section-title">GitHub</div>
+        <p class="links">
+          <a href="https://github.com/anthropics/skills/tree/main/skills/skill-creator" target="_blank" rel="noopener noreferrer">anthropics/skills → skill-creator</a>
+        </p>
       </article>
+
     </section>
 
     <section class="footer">
-      <strong>Extracted from the image:</strong><br />
+      <strong>Extracted skill names from the screenshot:</strong><br />
       <code>planning-with-files</code>,
       <code>superpowers</code>,
       <code>frontend-design</code>,
@@ -340,8 +422,10 @@
       <code>baoyu-skills</code>,
       <code>webapp-testing</code>,
       <code>skill-creator</code>
-      <br /><br />
-      You can save this as <code>skills_explainer.html</code> and open it directly in a browser.
+      <br><br>
+      <span class="small">
+        Tip: save this as <code>skills_explainer_full.html</code> and open it in a browser.
+      </span>
     </section>
   </div>
 </body>
