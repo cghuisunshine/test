@@ -135,6 +135,14 @@
       font-family: "Times New Roman", serif;
       font-size: 1.1rem;
     }
+
+    .formula-block {
+      margin: 10px 0;
+      padding: 10px 12px;
+      background: #fff;
+      border-left: 4px solid #8db4ff;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
@@ -225,18 +233,25 @@
         <span class="small-math">
           Compare the ratio instead:<br><br>
 
-          \[
-          \frac{6^{93}}{9^{63}} = \frac{(2\cdot 3)^{93}}{(3^2)^{63}} = \frac{2^{93}3^{93}}{3^{126}} = \frac{2^{93}}{3^{33}} = \left(\frac{2^{31}}{3^{11}}\right)^3.
-          \]<br>
+          <div class="formula-block">
+            6<sup>93</sup> / 9<sup>63</sup>
+            = (2·3)<sup>93</sup> / (3<sup>2</sup>)<sup>63</sup>
+            = (2<sup>93</sup>3<sup>93</sup>) / 3<sup>126</sup>
+            = 2<sup>93</sup> / 3<sup>33</sup>
+            = (2<sup>31</sup> / 3<sup>11</sup>)<sup>3</sup>
+          </div>
 
           So it is enough to compare 2<sup>31</sup> and 3<sup>11</sup>.<br><br>
 
-          Since 2<sup>5</sup> = 32 &gt; 27 = 3<sup>3</sup>, we get<br>
-          2<sup>30</sup> = (2<sup>5</sup>)<sup>6</sup> &gt; (3<sup>3</sup>)<sup>6</sup> = 3<sup>18</sup> &gt; 3<sup>11</sup>.<br>
-          Therefore 2<sup>31</sup> &gt; 3<sup>11</sup>.<br><br>
+          Since 2<sup>5</sup> = 32 &gt; 27 = 3<sup>3</sup>, raising both sides to the 6th power gives:<br><br>
 
-          Hence \(\frac{6^{93}}{9^{63}} &gt; 1\), so<br>
-          6<sup>93</sup> &gt; 9<sup>63</sup>.
+          <div class="formula-block">
+            2<sup>30</sup> = (2<sup>5</sup>)<sup>6</sup> &gt; (3<sup>3</sup>)<sup>6</sup> = 3<sup>18</sup> &gt; 3<sup>11</sup>
+          </div>
+
+          Therefore 2<sup>31</sup> &gt; 3<sup>11</sup>, so 6<sup>93</sup> / 9<sup>63</sup> &gt; 1.<br><br>
+
+          Hence 6<sup>93</sup> &gt; 9<sup>63</sup>.
         </span>
       `;
     }
