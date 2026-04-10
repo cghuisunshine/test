@@ -186,7 +186,7 @@
     </div>
 
     <div class="footer-note">
-      Tip: Rewrite the numbers using the same exponent or same base idea.
+      Tip: Compare a ratio or rewrite with a valid common exponent.
     </div>
   </div>
 
@@ -212,27 +212,31 @@
       if (selected.value === correct) {
         resultBox.style.display = "block";
         resultBox.className = "result correct";
-        resultText.innerHTML = "✅ Correct!";
+        resultText.innerHTML = "Correct!";
       } else {
         resultBox.style.display = "block";
         resultBox.className = "result wrong";
-        resultText.innerHTML = "❌ Not correct.";
+        resultText.innerHTML = "Not correct.";
       }
 
       correctAnswer.innerHTML = "Correct Answer: A. 6<sup>93</sup> &gt; 9<sup>63</sup>";
 
       explanationText.innerHTML = `
         <span class="small-math">
-          Rewrite both sides using the same exponent:<br><br>
+          Compare the ratio instead:<br><br>
 
-          6<sup>93</sup> = (6<sup>3</sup>)<sup>31</sup> = 216<sup>31</sup><br>
-          9<sup>63</sup> = (9<sup>2</sup>)<sup>31</sup> = 81<sup>31</sup><br><br>
+          \[
+          \frac{6^{93}}{9^{63}} = \frac{(2\cdot 3)^{93}}{(3^2)^{63}} = \frac{2^{93}3^{93}}{3^{126}} = \frac{2^{93}}{3^{33}} = \left(\frac{2^{31}}{3^{11}}\right)^3.
+          \]<br>
 
-          Since 216 &gt; 81, we have:<br>
-          216<sup>31</sup> &gt; 81<sup>31</sup><br><br>
+          So it is enough to compare 2<sup>31</sup> and 3<sup>11</sup>.<br><br>
 
-          Therefore:<br>
-          6<sup>93</sup> &gt; 9<sup>63</sup>
+          Since 2<sup>5</sup> = 32 &gt; 27 = 3<sup>3</sup>, we get<br>
+          2<sup>30</sup> = (2<sup>5</sup>)<sup>6</sup> &gt; (3<sup>3</sup>)<sup>6</sup> = 3<sup>18</sup> &gt; 3<sup>11</sup>.<br>
+          Therefore 2<sup>31</sup> &gt; 3<sup>11</sup>.<br><br>
+
+          Hence \(\frac{6^{93}}{9^{63}} &gt; 1\), so<br>
+          6<sup>93</sup> &gt; 9<sup>63</sup>.
         </span>
       `;
     }
