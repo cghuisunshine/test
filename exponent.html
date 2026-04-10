@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exponent Comparison Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 24px;
+      color: #222;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 0;
+      color: #1f3c88;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 28px;
+    }
+
+    .question-box {
+      background: #f9fbff;
+      border: 2px solid #dbe7ff;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .question {
+      font-size: 1.3rem;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .math {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #111;
+    }
+
+    .options label {
+      display: block;
+      padding: 12px 14px;
+      margin: 10px 0;
+      border: 1px solid #d0d7e2;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+      background: #fff;
+    }
+
+    .options label:hover {
+      background: #eef5ff;
+      border-color: #8db4ff;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .btn-row {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    button {
+      background: #1f6feb;
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 6px;
+    }
+
+    button:hover {
+      background: #1557b0;
+    }
+
+    .result {
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 12px;
+      display: none;
+      line-height: 1.7;
+    }
+
+    .correct {
+      background: #e9f9ee;
+      border: 1px solid #9ad7aa;
+      color: #1f6b35;
+    }
+
+    .wrong {
+      background: #fff1f1;
+      border: 1px solid #efb0b0;
+      color: #a12626;
+    }
+
+    .explanation {
+      margin-top: 12px;
+      color: #333;
+    }
+
+    .answer-line {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      text-align: center;
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .small-math {
+      font-family: "Times New Roman", serif;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Math Quiz</h1>
+    <div class="subtitle">Compare the two powers</div>
+
+    <div class="question-box">
+      <div class="question">
+        Which is larger?
+      </div>
+
+      <div class="question math">
+        6<sup>93</sup> &nbsp; ? &nbsp; 9<sup>63</sup>
+      </div>
+
+      <form id="quizForm" class="options">
+        <label>
+          <input type="radio" name="answer" value="A" />
+          A. 6<sup>93</sup> &gt; 9<sup>63</sup>
+        </label>
+
+        <label>
+          <input type="radio" name="answer" value="B" />
+          B. 6<sup>93</sup> &lt; 9<sup>63</sup>
+        </label>
+
+        <label>
+          <input type="radio" name="answer" value="C" />
+          C. 6<sup>93</sup> = 9<sup>63</sup>
+        </label>
+
+        <label>
+          <input type="radio" name="answer" value="D" />
+          D. Cannot determine
+        </label>
+      </form>
+
+      <div class="btn-row">
+        <button type="button" onclick="checkAnswer()">Check Answer</button>
+        <button type="button" onclick="resetQuiz()">Reset</button>
+      </div>
+
+      <div id="resultBox" class="result">
+        <div id="resultText"></div>
+        <div class="answer-line" id="correctAnswer"></div>
+        <div class="explanation" id="explanationText"></div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      Tip: Rewrite the numbers using the same exponent or same base idea.
+    </div>
+  </div>
+
+  <script>
+    function checkAnswer() {
+      const selected = document.querySelector('input[name="answer"]:checked');
+      const resultBox = document.getElementById("resultBox");
+      const resultText = document.getElementById("resultText");
+      const correctAnswer = document.getElementById("correctAnswer");
+      const explanationText = document.getElementById("explanationText");
+
+      if (!selected) {
+        resultBox.style.display = "block";
+        resultBox.className = "result wrong";
+        resultText.innerHTML = "Please select an answer first.";
+        correctAnswer.innerHTML = "";
+        explanationText.innerHTML = "";
+        return;
+      }
+
+      const correct = "A";
+
+      if (selected.value === correct) {
+        resultBox.style.display = "block";
+        resultBox.className = "result correct";
+        resultText.innerHTML = "✅ Correct!";
+      } else {
+        resultBox.style.display = "block";
+        resultBox.className = "result wrong";
+        resultText.innerHTML = "❌ Not correct.";
+      }
+
+      correctAnswer.innerHTML = "Correct Answer: A. 6<sup>93</sup> &gt; 9<sup>63</sup>";
+
+      explanationText.innerHTML = `
+        <span class="small-math">
+          Rewrite both sides using the same exponent:<br><br>
+
+          6<sup>93</sup> = (6<sup>3</sup>)<sup>31</sup> = 216<sup>31</sup><br>
+          9<sup>63</sup> = (9<sup>2</sup>)<sup>31</sup> = 81<sup>31</sup><br><br>
+
+          Since 216 &gt; 81, we have:<br>
+          216<sup>31</sup> &gt; 81<sup>31</sup><br><br>
+
+          Therefore:<br>
+          6<sup>93</sup> &gt; 9<sup>63</sup>
+        </span>
+      `;
+    }
+
+    function resetQuiz() {
+      const radios = document.querySelectorAll('input[name="answer"]');
+      radios.forEach(radio => radio.checked = false);
+
+      const resultBox = document.getElementById("resultBox");
+      resultBox.style.display = "none";
+      resultBox.className = "result";
+      document.getElementById("resultText").innerHTML = "";
+      document.getElementById("correctAnswer").innerHTML = "";
+      document.getElementById("explanationText").innerHTML = "";
+    }
+  </script>
+</body>
+</html>
