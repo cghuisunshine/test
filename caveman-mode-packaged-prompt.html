@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Caveman Mode: Packaged Prompt or New Model?</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5efe6;
+      --panel: #fffdf9;
+      --ink: #1f1a14;
+      --muted: #62584a;
+      --line: #ddd1c2;
+      --accent: #8f4f16;
+      --accent-soft: #f3e5d3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: linear-gradient(180deg, #ede2d3 0%, var(--bg) 26%, #faf7f2 100%);
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 20px 72px;
+    }
+
+    .hero,
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 18px 40px rgba(88, 61, 28, 0.07);
+    }
+
+    .hero {
+      padding: 30px;
+      background: radial-gradient(circle at top left, #fff3e4 0%, var(--panel) 52%, #f6eee3 100%);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font: 700 0.78rem/1.2 Arial, sans-serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4.8vw, 3.3rem);
+      line-height: 1.08;
+    }
+
+    .summary {
+      margin: 16px 0 0;
+      font-size: 1.14rem;
+      color: var(--muted);
+      max-width: 60ch;
+    }
+
+    .section {
+      margin-top: 24px;
+      padding: 26px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.5rem;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.3rem;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    .callout {
+      padding: 16px 18px;
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+      border-radius: 14px;
+      margin-top: 12px;
+    }
+
+    strong {
+      color: #241a0d;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Repo Assessment</p>
+      <h1>Caveman mode is mostly a packaged prompt or instruction skill.</h1>
+      <p class="summary">It does not look like a new model or heavy software layer. It is much closer to a reusable behavior-steering package for supported coding agents.</p>
+    </section>
+
+    <section class="section">
+      <h2>Why I Say That</h2>
+      <ul>
+        <li>The repo describes itself as a <strong>skill/plugin</strong> that <strong>makes agent talk like caveman</strong>, which points to behavior steering rather than a new inference engine.</li>
+        <li>The visible repo structure is centered around skill and plugin style paths such as <strong>.cursor/skills/caveman</strong>, <strong>plugins/caveman</strong>, <strong>caveman.skill</strong>, <strong>caveman</strong>, and <strong>caveman-compress</strong>, not a large standalone application codebase.</li>
+        <li>The usage model relies on trigger phrases such as <strong>/caveman</strong>, <strong>$caveman</strong>, <strong>talk like caveman</strong>, and <strong>normal mode</strong>, which is typical of prompt-based mode switching.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Practical Answer</h2>
+      <ul>
+        <li><strong>Caveman mode</strong>: basically prompt and instruction wrapping.</li>
+        <li><strong>Caveman Compress</strong>: may include a bit more implementation logic because it transforms files, but it is still a lightweight tool feature, not a model of its own. The repo presents it as a companion tool for compressing memory files.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Plain Words</h2>
+      <p>It is closer to <strong>a reusable prompt packaged for multiple coding agents</strong> than to <strong>real new AI capability</strong>.</p>
+      <div class="callout">
+        <p><strong>Subtle point:</strong> saying <strong>just a prompt</strong> can sound dismissive. In practice, packaging still matters.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Why the Packaging Still Matters</h2>
+      <ul>
+        <li>Install once.</li>
+        <li>Work across supported agents.</li>
+        <li>Expose named modes like <strong>Lite</strong>, <strong>Full</strong>, and <strong>Ultra</strong>.</li>
+        <li>Provide consistent activation commands.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>Bottom Line</h2>
+      <p>It is mainly prompt engineering, packaged as a portable skill or plugin.</p>
+      <p>If needed, the next step would be to inspect the actual repo files and separate the pure instruction text from the executable logic.</p>
+    </section>
+  </main>
+</body>
+</html>
