@@ -223,14 +223,39 @@
       color: #66757f;
     }
 
-    #customPanel {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: min(760px, calc(100vw - 24px));
+    #configMenuWrap {
+      position: relative;
     }
 
-    #customPanelHeader {
+    #menuBtn {
+      min-width: 44px;
+      padding: 10px 12px;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    #configMenu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: min(420px, calc(100vw - 24px));
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid rgba(207, 216, 220, 0.98);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(12px);
+      z-index: 40;
+    }
+
+    #configMenu.open {
+      display: flex;
+    }
+
+    #configMenuHeader {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -240,7 +265,7 @@
 
     #customSentenceInput {
       width: 100%;
-      min-height: 84px;
+      min-height: 120px;
       resize: vertical;
       padding: 10px 12px;
       border-radius: 10px;
@@ -314,8 +339,15 @@
         min-width: 0;
       }
 
-      #customPanel {
-        width: 100%;
+      #configMenu {
+        position: fixed;
+        top: auto;
+        right: 12px;
+        left: 12px;
+        bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+        width: auto;
+        max-height: min(55vh, 420px);
+        overflow: auto;
       }
 
       #customSentenceInput {
@@ -341,20 +373,22 @@
         <button id='startBtn'>Start</button>
         <button id='restartBtn'>Restart</button>
         <span class='small'>One falling sentence at a time.</span>
-      </div>
-    </div>
-
-    <div id='customPanel' class='panel'>
-      <div id='customPanelHeader'>
-        <strong>Custom falling sentences</strong>
-        <span class='small'>Paste one sentence per line or upload a .txt file.</span>
-      </div>
-      <textarea id='customSentenceInput' placeholder='Paste custom sentences here, one per line'></textarea>
-      <div id='customPanelControls'>
-        <input id='sentenceFileInput' type='file' accept='.txt,text/plain' />
-        <button id='applySentenceBankBtn' type='button'>Use Custom Sentences</button>
-        <button id='resetSentenceBankBtn' type='button'>Use Default Sentences</button>
-        <span id='sentenceBankStatus'>Using the default sentence set.</span>
+        <div id='configMenuWrap'>
+          <button id='menuBtn' type='button' aria-label='Open settings' aria-expanded='false'>☰</button>
+          <div id='configMenu' role='dialog' aria-label='Game settings'>
+            <div id='configMenuHeader'>
+              <strong>Custom falling sentences</strong>
+              <span class='small'>Paste one sentence per line or upload a .txt file.</span>
+            </div>
+            <textarea id='customSentenceInput' placeholder='Paste custom sentences here, one per line'></textarea>
+            <div id='customPanelControls'>
+              <input id='sentenceFileInput' type='file' accept='.txt,text/plain' />
+              <button id='applySentenceBankBtn' type='button'>Use Custom Sentences</button>
+              <button id='resetSentenceBankBtn' type='button'>Use Default Sentences</button>
+              <span id='sentenceBankStatus'>Using the default sentence set.</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -425,6 +459,9 @@ The library was silent except for turning pages.`.trim().split('\n');
       const applySentenceBankBtn = document.getElementById('applySentenceBankBtn');
       const resetSentenceBankBtn = document.getElementById('resetSentenceBankBtn');
       const sentenceBankStatus = document.getElementById('sentenceBankStatus');
+      const menuBtn = document.getElementById('menuBtn');
+      const configMenu = document.getElementById('configMenu');
+      const configMenuWrap = document.getElementById('configMenuWrap');
       const overlay = document.getElementById('overlay');
       const results = document.getElementById('results');
 
@@ -530,6 +567,19 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function refreshSentenceBankStatus(message) {
         sentenceBankStatus.textContent = message;
+      }
+
+      function setConfigMenuOpen(nextOpen) {
+        configMenu.classList.toggle('open', nextOpen);
+        menuBtn.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
+      }
+
+      function closeConfigMenu() {
+        setConfigMenuOpen(false);
+      }
+
+      function toggleConfigMenu() {
+        setConfigMenuOpen(!configMenu.classList.contains('open'));
       }
 
       async function refreshGameplaySentence() {
@@ -1113,12 +1163,23 @@ The library was silent except for turning pages.`.trim().split('\n');
         return active === customSentenceInput || active === sentenceFileInput;
       }
 
+      menuBtn.addEventListener('click', event => {
+        event.stopPropagation();
+        toggleConfigMenu();
+      });
+
+      configMenu.addEventListener('click', event => {
+        event.stopPropagation();
+      });
+
       applySentenceBankBtn.addEventListener('click', async () => {
         await applyCustomSentences(customSentenceInput.value, 'pasted text');
+        closeConfigMenu();
       });
 
       resetSentenceBankBtn.addEventListener('click', async () => {
         await resetSentenceBank();
+        closeConfigMenu();
       });
 
       sentenceFileInput.addEventListener('change', async event => {
@@ -1127,10 +1188,21 @@ The library was silent except for turning pages.`.trim().split('\n');
         try {
           const text = await file.text();
           await applyCustomSentences(text, file.name || 'uploaded file');
+          closeConfigMenu();
         } catch (error) {
           console.error(error);
           refreshSentenceBankStatus('Could not read that file. Please upload a plain text file.');
         }
+      });
+
+      document.addEventListener('pointerdown', event => {
+        if (!configMenu.classList.contains('open')) return;
+        if (configMenuWrap.contains(event.target)) return;
+        closeConfigMenu();
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeConfigMenu();
       });
 
       startBtn.addEventListener('click', startGame);
