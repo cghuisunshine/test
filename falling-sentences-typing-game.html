@@ -100,39 +100,39 @@
     #typingBar {
       position: absolute;
       left: 50%;
-      bottom: 90px;
+      bottom: 84px;
       transform: translateX(-50%);
-      width: min(900px, 92vw);
+      width: min(560px, 86vw);
       z-index: 30;
       background: rgba(255, 255, 255, 0.96);
-      border-radius: 16px;
-      padding: 14px;
+      border-radius: 14px;
+      padding: 10px;
       box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
       border: 1px solid var(--panel-border);
     }
 
     #targetInfo {
-      font-size: 14px;
+      font-size: 12px;
       color: #44515a;
-      margin-bottom: 8px;
-      min-height: 20px;
+      margin-bottom: 6px;
+      min-height: 16px;
     }
 
     #targetCanvas {
       display: block;
       width: 100%;
-      min-height: 36px;
-      margin-bottom: 10px;
-      border-radius: 10px;
+      min-height: 28px;
+      margin-bottom: 8px;
+      border-radius: 8px;
       background: linear-gradient(180deg, rgba(245, 249, 252, 0.95), rgba(255, 255, 255, 0.95));
       border: 1px solid #e2eaee;
     }
 
     #typingInput {
       width: 100%;
-      padding: 14px 16px;
-      font-size: 20px;
-      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 16px;
+      border-radius: 9px;
       border: 2px solid #90caf9;
       outline: none;
     }
@@ -206,7 +206,7 @@
       <div id='controls' class='panel'>
         <button id='startBtn'>Start</button>
         <button id='restartBtn'>Restart</button>
-        <span class='small'>Pretext now handles the sentence layout and canvas text rendering.</span>
+        <span class='small'>One falling sentence at a time.</span>
       </div>
     </div>
 
@@ -274,12 +274,12 @@ The library was silent except for turning pages.`.trim().split('\n');
       const GROUND_HEIGHT = 70;
       const SENTENCE_FONT = '600 22px Arial';
       const SENTENCE_LINE_HEIGHT = 32;
-      const TARGET_FONT = '700 18px Arial';
-      const TARGET_LINE_HEIGHT = 28;
+      const TARGET_FONT = '700 16px Arial';
+      const TARGET_LINE_HEIGHT = 24;
       const BOX_PADDING_X = 18;
       const BOX_PADDING_Y = 16;
-      const TARGET_PADDING_X = 14;
-      const TARGET_PADDING_Y = 12;
+      const TARGET_PADDING_X = 12;
+      const TARGET_PADDING_Y = 8;
       const MAX_MISSED = 5;
 
       const sentencePalette = {
@@ -314,8 +314,6 @@ The library was silent except for turning pages.`.trim().split('\n');
       let running = false;
       let activeSentenceId = null;
       let lastTime = 0;
-      let spawnTimer = 0;
-      let spawnInterval = 3000;
       let nextId = 1;
       let gameToken = 0;
       let lastInputValue = '';
@@ -432,7 +430,7 @@ The library was silent except for turning pages.`.trim().split('\n');
           boxHeight: 0,
           x: 0,
           y: -20,
-          speed: 18 + Math.random() * 18,
+          speed: 24 + Math.random() * 14,
           hitGround: false
         };
         layoutSentence(sentence);
@@ -450,15 +448,14 @@ The library was silent except for turning pages.`.trim().split('\n');
         if (alive.length === 0) {
           activeSentenceId = null;
           targetInfo.textContent = running
-            ? 'No active sentence yet. Wait for the next Pretext-rendered sentence.'
+            ? 'Preparing the next sentence...'
             : 'Click Start, then type the highlighted falling sentence.';
           renderTargetPreview();
           return null;
         }
 
-        alive.sort((a, b) => b.y - a.y);
         activeSentenceId = alive[0].id;
-        targetInfo.textContent = 'Type the highlighted falling sentence. The preview below is drawn with Pretext.';
+        targetInfo.textContent = 'Type the single falling sentence shown above.';
         renderTargetPreview();
         return alive[0];
       }
@@ -466,6 +463,19 @@ The library was silent except for turning pages.`.trim().split('\n');
       function clearInput() {
         input.value = '';
         lastInputValue = '';
+      }
+
+      async function ensureSingleSentence() {
+        if (!running) return;
+        if (sentences.some(sentence => !sentence.hitGround)) return;
+        const token = gameToken;
+        const sentence = await buildSentence(randomSentence());
+        if (token !== gameToken || !running) return;
+        sentences = [sentence];
+        activeSentenceId = sentence.id;
+        clearInput();
+        chooseActiveSentence();
+        renderScene();
       }
 
       function handleSuccessfulClear(target) {
@@ -477,6 +487,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         updateStats();
         chooseActiveSentence();
         renderScene();
+        void ensureSingleSentence();
       }
 
       function recordTypingDelta(targetText, value) {
@@ -489,15 +500,6 @@ The library was silent except for turning pages.`.trim().split('\n');
           if (value[i] === targetText[i]) correctCharsTyped += 1;
         }
         lastInputValue = value;
-      }
-
-      async function spawnSentence() {
-        const token = gameToken;
-        const sentence = await buildSentence(randomSentence());
-        if (token !== gameToken) return;
-        sentences.push(sentence);
-        chooseActiveSentence();
-        renderScene();
       }
 
       function removeSentenceById(id) {
@@ -565,11 +567,11 @@ The library was silent except for turning pages.`.trim().split('\n');
 
         if (!target) {
           targetCanvas.width = Math.round(canvasWidth * ratio);
-          targetCanvas.height = Math.round(36 * ratio);
-          targetCanvas.style.height = '36px';
+          targetCanvas.height = Math.round(28 * ratio);
+          targetCanvas.style.height = '28px';
           targetCanvas.style.width = `${canvasWidth}px`;
           targetCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
-          targetCtx.clearRect(0, 0, canvasWidth, 36);
+          targetCtx.clearRect(0, 0, canvasWidth, 28);
           return;
         }
 
@@ -692,7 +694,6 @@ The library was silent except for turning pages.`.trim().split('\n');
         activeSentenceId = null;
         running = false;
         lastTime = 0;
-        spawnTimer = 0;
         nextId = 1;
         clearInput();
         score = 0;
@@ -727,11 +728,11 @@ The library was silent except for turning pages.`.trim().split('\n');
               removeSentenceById(sentence.id);
               chooseActiveSentence();
               renderScene();
+              void ensureSingleSentence();
             }, 250);
           }
         }
 
-        if (!getActiveSentence() && sentences.some(sentence => !sentence.hitGround)) chooseActiveSentence();
         if (missed >= MAX_MISSED) endGame();
       }
 
@@ -742,13 +743,6 @@ The library was silent except for turning pages.`.trim().split('\n');
         const dtMs = timestamp - lastTime;
         const dt = dtMs / 1000;
         lastTime = timestamp;
-
-        spawnTimer += dtMs;
-        if (spawnTimer >= spawnInterval) {
-          void spawnSentence();
-          spawnTimer = 0;
-          if (spawnInterval > 1500) spawnInterval -= 40;
-        }
 
         update(dt);
         renderScene();
@@ -761,10 +755,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         overlay.style.display = 'none';
         input.focus();
         chooseActiveSentence();
-        if (sentences.length === 0) {
-          void spawnSentence();
-          void spawnSentence();
-        }
+        void ensureSingleSentence();
         window.requestAnimationFrame(gameLoop);
       }
 
@@ -772,13 +763,11 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       restartBtn.addEventListener('click', () => {
         resetGame();
-        spawnInterval = 3000;
         startGame();
       });
 
       playAgainBtn.addEventListener('click', () => {
         resetGame();
-        spawnInterval = 3000;
         startGame();
       });
 
