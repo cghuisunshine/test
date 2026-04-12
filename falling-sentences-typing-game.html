@@ -75,23 +75,30 @@
 
     #controls {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
+      justify-content: flex-end;
       flex-wrap: wrap;
+      row-gap: 10px;
     }
 
     button {
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 10px 14px;
       font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
       background: var(--primary);
       color: white;
+      transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+      box-shadow: 0 6px 14px rgba(30, 136, 229, 0.18);
     }
 
     button:hover:not(:disabled) {
-      opacity: 0.92;
+      opacity: 0.96;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(30, 136, 229, 0.22);
     }
 
     button:disabled {
@@ -223,30 +230,55 @@
       color: #66757f;
     }
 
+    #modeHint {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(30, 136, 229, 0.08);
+      color: #36627f;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
     #configMenuWrap {
       position: relative;
     }
 
     #menuBtn {
       min-width: 44px;
-      padding: 10px 12px;
+      padding: 10px 13px;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+    }
+
+    #menuBtn .icon {
       font-size: 18px;
       line-height: 1;
+    }
+
+    #menuBtn .label {
+      letter-spacing: 0.01em;
     }
 
     #configMenu {
       position: absolute;
       top: calc(100% + 10px);
       right: 0;
-      width: min(420px, calc(100vw - 24px));
+      width: min(440px, calc(100vw - 24px));
       display: none;
       flex-direction: column;
-      gap: 10px;
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.98);
+      gap: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.99);
       border: 1px solid rgba(207, 216, 220, 0.98);
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
       backdrop-filter: blur(12px);
       z-index: 40;
     }
@@ -257,20 +289,31 @@
 
     #configMenuHeader {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    #configMenuHeader strong {
+      font-size: 16px;
+    }
+
+    .menuSectionLabel {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6b7f8a;
     }
 
     #customSentenceInput {
       width: 100%;
       min-height: 120px;
       resize: vertical;
-      padding: 10px 12px;
-      border-radius: 10px;
+      padding: 12px 13px;
+      border-radius: 12px;
       border: 1px solid #cfd8dc;
-      font: 14px/1.45 Arial, Helvetica, sans-serif;
+      font: 14px/1.5 Arial, Helvetica, sans-serif;
       color: var(--text);
       background: rgba(255,255,255,0.98);
     }
@@ -283,19 +326,41 @@
 
     #customPanelControls {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
       flex-wrap: wrap;
     }
 
     #sentenceFileInput {
+      width: 100%;
       max-width: 100%;
       font-size: 13px;
+      padding: 8px 0 2px;
+    }
+
+    #applySentenceBankBtn {
+      flex: 1 1 190px;
+    }
+
+    #resetSentenceBankBtn {
+      flex: 1 1 170px;
+      background: #eef4f8;
+      color: #35576d;
+      box-shadow: none;
+    }
+
+    #resetSentenceBankBtn:hover:not(:disabled) {
+      box-shadow: 0 10px 18px rgba(83, 115, 137, 0.14);
     }
 
     #sentenceBankStatus {
+      width: 100%;
       font-size: 12px;
       color: #546670;
+      background: #f3f8fb;
+      border: 1px solid #dde8ef;
+      border-radius: 10px;
+      padding: 9px 10px;
     }
 
     @media (max-width: 640px) {
@@ -319,6 +384,11 @@
         gap: 10px;
         padding: 8px 10px;
         border-radius: 999px;
+      }
+
+      #modeHint,
+      #menuBtn .label {
+        display: none;
       }
 
       #keyboardBadge {
@@ -372,15 +442,20 @@
       <div id='controls' class='panel'>
         <button id='startBtn'>Start</button>
         <button id='restartBtn'>Restart</button>
-        <span class='small'>One falling sentence at a time.</span>
+        <span id='modeHint'>Single sentence mode</span>
         <div id='configMenuWrap'>
-          <button id='menuBtn' type='button' aria-label='Open settings' aria-expanded='false'>☰</button>
+          <button id='menuBtn' type='button' aria-label='Open settings' aria-expanded='false'>
+            <span class='icon'>☰</span>
+            <span class='label'>Settings</span>
+          </button>
           <div id='configMenu' role='dialog' aria-label='Game settings'>
             <div id='configMenuHeader'>
-              <strong>Custom falling sentences</strong>
-              <span class='small'>Paste one sentence per line or upload a .txt file.</span>
+              <strong>Customize sentences</strong>
+              <span class='small'>Paste one sentence per line, or upload a plain text file.</span>
             </div>
+            <span class='menuSectionLabel'>Sentence list</span>
             <textarea id='customSentenceInput' placeholder='Paste custom sentences here, one per line'></textarea>
+            <span class='menuSectionLabel'>Import or apply</span>
             <div id='customPanelControls'>
               <input id='sentenceFileInput' type='file' accept='.txt,text/plain' />
               <button id='applySentenceBankBtn' type='button'>Use Custom Sentences</button>
