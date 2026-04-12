@@ -17,7 +17,6 @@
       --ground-dark: #4a8b45;
       --ground-light: #97d28d;
       --text: #203040;
-      --muted: #5f6e77;
     }
 
     body {
@@ -411,7 +410,7 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function getTargetTextWidth() {
         const available = Math.floor(typingBar.getBoundingClientRect().width - TARGET_PADDING_X * 2 - 2);
-        return Math.max(220, available);
+        return Math.max(140, available);
       }
 
       function layoutSentence(sentence) {
@@ -424,7 +423,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         const prepared = await Promise.resolve(prepareWithSegments(text, SENTENCE_FONT));
         const previewPrepared = await Promise.resolve(prepareWithSegments(text, TARGET_FONT));
         const sentence = {
-          id: nextId += 1,
+          id: nextId++,
           text,
           prepared,
           previewPrepared,
@@ -560,27 +559,28 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function renderTargetPreview() {
         const target = getActiveSentence();
-        const width = getTargetTextWidth();
+        const textWidth = getTargetTextWidth();
+        const canvasWidth = textWidth + TARGET_PADDING_X * 2;
         const ratio = dpr();
 
         if (!target) {
-          targetCanvas.width = Math.round(width * ratio);
+          targetCanvas.width = Math.round(canvasWidth * ratio);
           targetCanvas.height = Math.round(36 * ratio);
           targetCanvas.style.height = '36px';
-          targetCanvas.style.width = `${width}px`;
+          targetCanvas.style.width = `${canvasWidth}px`;
           targetCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
-          targetCtx.clearRect(0, 0, width, 36);
+          targetCtx.clearRect(0, 0, canvasWidth, 36);
           return;
         }
 
-        const layout = layoutWithLines(target.previewPrepared, width, TARGET_LINE_HEIGHT);
+        const layout = layoutWithLines(target.previewPrepared, textWidth, TARGET_LINE_HEIGHT);
         const canvasHeight = layout.height + TARGET_PADDING_Y * 2;
-        targetCanvas.width = Math.round(width * ratio);
+        targetCanvas.width = Math.round(canvasWidth * ratio);
         targetCanvas.height = Math.round(canvasHeight * ratio);
-        targetCanvas.style.width = `${width}px`;
+        targetCanvas.style.width = `${canvasWidth}px`;
         targetCanvas.style.height = `${canvasHeight}px`;
         targetCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
-        targetCtx.clearRect(0, 0, width, canvasHeight);
+        targetCtx.clearRect(0, 0, canvasWidth, canvasHeight);
         targetCtx.font = TARGET_FONT;
         drawWrappedText(targetCtx, layout.lines, target.text, input.value, TARGET_PADDING_X, TARGET_PADDING_Y, TARGET_LINE_HEIGHT, {
           text: '#34424b',
@@ -709,7 +709,6 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function update(dt) {
         const groundTop = window.innerHeight - GROUND_HEIGHT;
-        const toRemove = [];
 
         for (const sentence of sentences) {
           if (sentence.hitGround) continue;
@@ -722,16 +721,17 @@ The library was silent except for turning pages.`.trim().split('\n');
               activeSentenceId = null;
               clearInput();
             }
+            const token = gameToken;
             window.setTimeout(() => {
+              if (token !== gameToken) return;
               removeSentenceById(sentence.id);
               chooseActiveSentence();
               renderScene();
             }, 250);
-            toRemove.push(sentence.id);
           }
         }
 
-        if (toRemove.length > 0) chooseActiveSentence();
+        if (!getActiveSentence() && sentences.some(sentence => !sentence.hitGround)) chooseActiveSentence();
         if (missed >= MAX_MISSED) endGame();
       }
 
