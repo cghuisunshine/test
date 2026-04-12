@@ -31,6 +31,7 @@
       position: relative;
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
       touch-action: manipulation;
     }
@@ -45,9 +46,9 @@
 
     #hud {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
+      top: calc(12px + env(safe-area-inset-top, 0px));
+      left: calc(12px + env(safe-area-inset-left, 0px));
+      right: calc(12px + env(safe-area-inset-right, 0px));
       z-index: 20;
       display: flex;
       gap: 12px;
@@ -101,24 +102,23 @@
     #typingBar {
       position: absolute;
       left: 50%;
-      bottom: 18px;
+      bottom: calc(18px + env(safe-area-inset-bottom, 0px));
       transform: translateX(-50%);
-      width: min(460px, calc(100vw - 28px));
-      min-height: 0;
+      width: min(760px, calc(100vw - 28px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
       z-index: 30;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 12px;
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.92);
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.93);
       border: 1px solid rgba(207, 216, 220, 0.95);
-      border-radius: 999px;
+      border-radius: 18px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
       backdrop-filter: blur(10px);
     }
 
     #typingMeta {
+      flex: 1 1 auto;
       min-width: 0;
       display: flex;
       flex-direction: column;
@@ -144,6 +144,7 @@
     }
 
     #keyboardBadge {
+      display: none;
       flex: 0 0 auto;
       font-size: 11px;
       font-weight: 700;
@@ -158,16 +159,21 @@
     }
 
     #typingInput {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-      border: 0;
-      padding: 0;
-      margin: 0;
-      left: -9999px;
-      bottom: 0;
+      flex: 0 1 280px;
+      min-width: 220px;
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 2px solid #90caf9;
+      outline: none;
+      background: rgba(255, 255, 255, 0.98);
+      color: var(--text);
+    }
+
+    #typingInput:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.15);
     }
 
     #ground {
@@ -233,13 +239,29 @@
 
       #typingBar {
         width: min(96vw, 420px);
-        bottom: 12px;
-        padding: 8px 10px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        justify-content: space-between;
         gap: 10px;
+        padding: 8px 10px;
+        border-radius: 999px;
       }
 
       #keyboardBadge {
-        padding: 5px 8px;
+        display: block;
+      }
+
+      #typingInput {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        left: -9999px;
+        bottom: 0;
+        min-width: 0;
       }
     }
   </style>
@@ -269,19 +291,19 @@
         <div id='targetInfo'>Loading Pretext renderer...</div>
         <div id='progressInfo'>Tap anywhere to keep typing.</div>
       </div>
+      <input
+        id='typingInput'
+        type='text'
+        placeholder='Type here...'
+        autocomplete='off'
+        autocapitalize='off'
+        autocorrect='off'
+        spellcheck='false'
+        enterkeyhint='done'
+        inputmode='text'
+      />
       <div id='keyboardBadge'>Tap to type</div>
     </div>
-
-    <input
-      id='typingInput'
-      type='text'
-      autocomplete='off'
-      autocapitalize='off'
-      autocorrect='off'
-      spellcheck='false'
-      enterkeyhint='done'
-      inputmode='text'
-    />
 
     <div id='ground'></div>
 
@@ -317,6 +339,8 @@ A kind teacher can change a student's life.
 Healthy habits improve both energy and focus.
 The library was silent except for turning pages.`.trim().split('\n');
 
+      const MOBILE_QUERY = '(max-width: 640px), (hover: none) and (pointer: coarse)';
+
       const game = document.getElementById('game');
       const sceneCanvas = document.getElementById('sceneCanvas');
       const input = document.getElementById('typingInput');
@@ -337,6 +361,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       const playAgainBtn = document.getElementById('playAgainBtn');
 
       const sceneCtx = sceneCanvas.getContext('2d');
+      const mobileQuery = window.matchMedia(MOBILE_QUERY);
 
       const GROUND_HEIGHT = 70;
       const SENTENCE_FONT = '600 22px Arial';
@@ -388,6 +413,18 @@ The library was silent except for turning pages.`.trim().split('\n');
       let missed = 0;
       let totalCharsTyped = 0;
       let correctCharsTyped = 0;
+
+      function isMobileInputMode() {
+        return mobileQuery.matches;
+      }
+
+      function getGameWidth() {
+        return game.clientWidth || window.innerWidth;
+      }
+
+      function getGameHeight() {
+        return game.clientHeight || window.innerHeight;
+      }
 
       function randomSentence() {
         return sentenceBank[Math.floor(Math.random() * sentenceBank.length)];
@@ -476,16 +513,19 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function syncCanvasSize() {
         const ratio = dpr();
-        sceneCanvas.width = Math.round(window.innerWidth * ratio);
-        sceneCanvas.height = Math.round(window.innerHeight * ratio);
-        sceneCanvas.style.width = `${window.innerWidth}px`;
-        sceneCanvas.style.height = `${window.innerHeight}px`;
+        const width = getGameWidth();
+        const height = getGameHeight();
+        sceneCanvas.width = Math.round(width * ratio);
+        sceneCanvas.height = Math.round(height * ratio);
+        sceneCanvas.style.width = `${width}px`;
+        sceneCanvas.style.height = `${height}px`;
         sceneCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
         renderScene();
       }
 
       function getSentenceBoxWidth() {
-        return Math.max(250, Math.min(420, window.innerWidth - 30, Math.round(window.innerWidth * 0.34 + 100)));
+        const width = getGameWidth();
+        return Math.max(250, Math.min(420, width - 30, Math.round(width * 0.34 + 100)));
       }
 
       function getSentenceTextWidth(boxWidth) {
@@ -502,6 +542,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         const prepared = await Promise.resolve(prepareWithSegments(text, SENTENCE_FONT));
         const parts = createWordParts(text);
         const wordCount = parts.filter(part => part.isWord).length;
+        const width = getGameWidth();
 
         const sentence = {
           id: nextId++,
@@ -519,7 +560,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         };
 
         layoutSentence(sentence);
-        const maxLeft = Math.max(10, window.innerWidth - sentence.boxWidth - 10);
+        const maxLeft = Math.max(10, width - sentence.boxWidth - 10);
         sentence.x = maxLeft <= 10 ? 10 : 10 + Math.random() * (maxLeft - 10);
         return sentence;
       }
@@ -543,7 +584,9 @@ The library was silent except for turning pages.`.trim().split('\n');
         if (!target) {
           progressInfo.textContent = running
             ? 'Next sentence is spawning.'
-            : 'Tap Start, then tap anywhere to type.';
+            : isMobileInputMode()
+              ? 'Tap Start, then tap anywhere to type.'
+              : 'Click Start, then type in the box.';
           return;
         }
 
@@ -552,19 +595,32 @@ The library was silent except for turning pages.`.trim().split('\n');
         progressInfo.textContent = `${completedWords}/${target.wordCount} words • ${typedChars}/${target.text.length} chars`;
       }
 
+      function updateTypingPrompt() {
+        const hasTarget = Boolean(getActiveSentence());
+        if (!hasTarget && !running) {
+          targetInfo.textContent = 'Click Start, then type the highlighted falling sentence.';
+          return;
+        }
+        if (!hasTarget && running) {
+          targetInfo.textContent = 'Preparing the next sentence...';
+          return;
+        }
+        targetInfo.textContent = isMobileInputMode()
+          ? 'Type on the highlighted falling sentence. Tap the game if the keyboard closes.'
+          : 'Type in the box and watch the falling sentence update live.';
+      }
+
       function chooseActiveSentence() {
         const alive = sentences.filter(sentence => !sentence.hitGround);
         if (alive.length === 0) {
           activeSentenceId = null;
-          targetInfo.textContent = running
-            ? 'Preparing the next sentence...'
-            : 'Click Start, then type the highlighted falling sentence.';
+          updateTypingPrompt();
           updateTypingStatus();
           return null;
         }
 
         activeSentenceId = alive[0].id;
-        targetInfo.textContent = 'Type the highlighted words directly on the falling sentence.';
+        updateTypingPrompt();
         updateTypingStatus();
         return alive[0];
       }
@@ -736,7 +792,9 @@ The library was silent except for turning pages.`.trim().split('\n');
       }
 
       function renderScene() {
-        sceneCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        const width = getGameWidth();
+        const height = getGameHeight();
+        sceneCtx.clearRect(0, 0, width, height);
         sceneCtx.font = SENTENCE_FONT;
         sceneCtx.textBaseline = 'top';
 
@@ -795,6 +853,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         recordTypingDelta(target.text, typedValue);
         updateStats();
         updateTypingStatus();
+        renderScene();
 
         if (typedValue === target.text) {
           handleSuccessfulClear(target);
@@ -846,13 +905,13 @@ The library was silent except for turning pages.`.trim().split('\n');
         totalCharsTyped = 0;
         correctCharsTyped = 0;
         overlay.style.display = 'none';
-        targetInfo.textContent = 'Click Start, then type the highlighted falling sentence.';
+        updateTypingPrompt();
         updateStats();
         renderScene();
       }
 
       function update(dt) {
-        const groundTop = window.innerHeight - GROUND_HEIGHT;
+        const groundTop = getGameHeight() - GROUND_HEIGHT;
 
         for (const sentence of sentences) {
           if (sentence.hitGround) continue;
@@ -947,24 +1006,40 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       game.addEventListener('pointerdown', () => {
         if (!running || overlay.style.display === 'flex') return;
+        if (!isMobileInputMode()) return;
         focusTyping();
       });
 
       typingBar.addEventListener('pointerdown', () => {
         if (!running || overlay.style.display === 'flex') return;
+        if (!isMobileInputMode()) return;
         focusTyping();
       });
 
       window.addEventListener('resize', () => {
         syncCanvasSize();
+        const width = getGameWidth();
         for (const sentence of sentences) {
           layoutSentence(sentence);
-          sentence.x = Math.min(sentence.x, Math.max(10, window.innerWidth - sentence.boxWidth - 10));
+          sentence.x = Math.min(sentence.x, Math.max(10, width - sentence.boxWidth - 10));
         }
+        updateTypingPrompt();
+        updateTypingStatus();
         renderScene();
       });
 
-      targetInfo.textContent = 'Click Start, then type the highlighted falling sentence.';
+      const syncMobileMode = () => {
+        updateTypingPrompt();
+        updateTypingStatus();
+      };
+
+      if (typeof mobileQuery.addEventListener === 'function') {
+        mobileQuery.addEventListener('change', syncMobileMode);
+      } else if (typeof mobileQuery.addListener === 'function') {
+        mobileQuery.addListener(syncMobileMode);
+      }
+
+      updateTypingPrompt();
       updateTypingStatus();
       updateStats();
       syncCanvasSize();
