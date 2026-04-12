@@ -1,17 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
   <title>Falling Sentences Typing Game</title>
   <style>
     * { box-sizing: border-box; }
 
+    :root {
+      --sky-top: #dff3ff;
+      --sky-mid: #f8fcff;
+      --sky-bottom: #e9f7e9;
+      --panel-bg: rgba(255, 255, 255, 0.94);
+      --panel-border: #cfd8dc;
+      --primary: #1e88e5;
+      --ground-dark: #4a8b45;
+      --ground-light: #97d28d;
+      --text: #203040;
+      --muted: #5f6e77;
+    }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(to bottom, #dff3ff 0%, #f8fcff 60%, #e9f7e9 100%);
+      background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 60%, var(--sky-bottom) 100%);
       overflow: hidden;
+      color: var(--text);
     }
 
     #game {
@@ -21,21 +35,12 @@
       overflow: hidden;
     }
 
-    #sky {
+    #sceneCanvas {
       position: absolute;
       inset: 0;
-      pointer-events: none;
-    }
-
-    #ground {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 70px;
-      background: linear-gradient(to top, #6fae63, #97d28d);
-      border-top: 3px solid #4a8b45;
-      z-index: 1;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
     }
 
     #hud {
@@ -52,11 +57,12 @@
     }
 
     .panel {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid #cfd8dc;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
       border-radius: 12px;
       padding: 10px 14px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(6px);
     }
 
     #stats {
@@ -79,12 +85,17 @@
       padding: 10px 14px;
       font-size: 14px;
       cursor: pointer;
-      background: #1e88e5;
+      background: var(--primary);
       color: white;
     }
 
-    button:hover {
+    button:hover:not(:disabled) {
       opacity: 0.92;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
 
     #typingBar {
@@ -94,18 +105,28 @@
       transform: translateX(-50%);
       width: min(900px, 92vw);
       z-index: 30;
-      background: rgba(255,255,255,0.95);
-      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 16px;
       padding: 14px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-      border: 1px solid #cfd8dc;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+      border: 1px solid var(--panel-border);
     }
 
     #targetInfo {
       font-size: 14px;
-      color: #444;
-      margin-bottom: 10px;
+      color: #44515a;
+      margin-bottom: 8px;
       min-height: 20px;
+    }
+
+    #targetCanvas {
+      display: block;
+      width: 100%;
+      min-height: 36px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(245, 249, 252, 0.95), rgba(255, 255, 255, 0.95));
+      border: 1px solid #e2eaee;
     }
 
     #typingInput {
@@ -118,66 +139,25 @@
     }
 
     #typingInput:focus {
-      border-color: #1e88e5;
-      box-shadow: 0 0 0 3px rgba(30,136,229,0.15);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.15);
     }
 
-    .sentence {
+    #ground {
       position: absolute;
-      min-width: 240px;
-      max-width: 480px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.95);
-      border: 1px solid #b0bec5;
-      box-shadow: 0 5px 12px rgba(0,0,0,0.08);
-      font-size: 22px;
-      line-height: 1.45;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 70px;
+      background: linear-gradient(to top, #6fae63, var(--ground-light));
+      border-top: 3px solid var(--ground-dark);
       z-index: 10;
-      user-select: none;
-    }
-
-    .sentence.active {
-      border: 2px solid #1e88e5;
-      box-shadow: 0 7px 18px rgba(30,136,229,0.22);
-    }
-
-    .sentence .word {
-      padding: 1px 3px;
-      border-radius: 6px;
-    }
-
-    .sentence .typed {
-      background: #c8e6c9;
-      color: #1b5e20;
-      font-weight: 700;
-    }
-
-    .sentence .current-correct {
-      background: #fff59d;
-      color: #5d4037;
-      font-weight: 700;
-    }
-
-    .sentence .current-wrong {
-      background: #ffcdd2;
-      color: #b71c1c;
-      font-weight: 700;
-    }
-
-    .sentence .pending {
-      color: #333;
-    }
-
-    .sentence.hit-ground {
-      background: #ffe0e0;
-      border-color: #e57373;
     }
 
     #overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.35);
+      background: rgba(0, 0, 0, 0.35);
       display: none;
       align-items: center;
       justify-content: center;
@@ -189,7 +169,7 @@
       background: white;
       border-radius: 18px;
       padding: 24px;
-      box-shadow: 0 14px 32px rgba(0,0,0,0.2);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
       text-align: center;
     }
 
@@ -207,447 +187,628 @@
 
     .small {
       font-size: 13px;
-      color: #666;
+      color: #66757f;
     }
   </style>
 </head>
 <body>
-  <div id="game">
-    <div id="sky"></div>
-    <div id="hud">
-      <div id="stats" class="panel">
-        <div><strong>Score:</strong> <span id="score">0</span></div>
-        <div><strong>Cleared:</strong> <span id="cleared">0</span></div>
-        <div><strong>Missed:</strong> <span id="missed">0</span></div>
-        <div><strong>Accuracy:</strong> <span id="accuracy">100%</span></div>
-        <div><strong>Grade:</strong> <span id="grade">A</span></div>
+  <div id='game'>
+    <canvas id='sceneCanvas'></canvas>
+
+    <div id='hud'>
+      <div id='stats' class='panel'>
+        <div><strong>Score:</strong> <span id='score'>0</span></div>
+        <div><strong>Cleared:</strong> <span id='cleared'>0</span></div>
+        <div><strong>Missed:</strong> <span id='missed'>0</span></div>
+        <div><strong>Accuracy:</strong> <span id='accuracy'>100%</span></div>
+        <div><strong>Grade:</strong> <span id='grade'>A</span></div>
       </div>
 
-      <div id="controls" class="panel">
-        <button id="startBtn">Start</button>
-        <button id="restartBtn">Restart</button>
-        <span class="small">Type the active falling sentence. Press Enter to submit.</span>
+      <div id='controls' class='panel'>
+        <button id='startBtn'>Start</button>
+        <button id='restartBtn'>Restart</button>
+        <span class='small'>Pretext now handles the sentence layout and canvas text rendering.</span>
       </div>
     </div>
 
-    <div id="typingBar">
-      <div id="targetInfo">Click Start, then type the highlighted falling sentence.</div>
-      <input id="typingInput" type="text" placeholder="Type here..." autocomplete="off" spellcheck="false" />
+    <div id='typingBar'>
+      <div id='targetInfo'>Loading Pretext renderer...</div>
+      <canvas id='targetCanvas'></canvas>
+      <input id='typingInput' type='text' placeholder='Type here...' autocomplete='off' spellcheck='false' />
     </div>
 
-    <div id="ground"></div>
+    <div id='ground'></div>
 
-    <div id="overlay">
-      <div id="overlayContent">
+    <div id='overlay'>
+      <div id='overlayContent'>
         <h2>Game Over</h2>
-        <div id="results"></div>
-        <button id="playAgainBtn">Play Again</button>
+        <div id='results'></div>
+        <button id='playAgainBtn'>Play Again</button>
       </div>
     </div>
   </div>
 
-  <script>
-    const sentenceBank = [
-      "The cat sleeps under the warm window.",
-      "Learning to type quickly takes steady practice.",
-      "Small steps every day can build strong habits.",
-      "The stars shine brightly above the quiet town.",
-      "A careful student reviews the lesson each evening.",
-      "Fresh rain made the garden smell clean and sweet.",
-      "Reading good books can expand the mind.",
-      "The little bird landed softly on the fence.",
-      "Teamwork often makes difficult problems easier to solve.",
-      "A clear plan helps people finish work on time.",
-      "The river moved slowly through the green valley.",
-      "Good communication prevents many common mistakes.",
-      "Sunlight filled the classroom on Monday morning.",
-      "The young athlete trained hard for the race.",
-      "Patience is useful when learning a new skill.",
-      "The baker placed warm bread on the wooden table.",
-      "The moon appeared behind a thin silver cloud.",
-      "A kind teacher can change a student's life.",
-      "Healthy habits improve both energy and focus.",
-      "The library was silent except for turning pages."
-    ];
+  <script type='module'>
+    (async () => {
+      const sentenceBank = `The cat sleeps under the warm window.
+Learning to type quickly takes steady practice.
+Small steps every day can build strong habits.
+The stars shine brightly above the quiet town.
+A careful student reviews the lesson each evening.
+Fresh rain made the garden smell clean and sweet.
+Reading good books can expand the mind.
+The little bird landed softly on the fence.
+Teamwork often makes difficult problems easier to solve.
+A clear plan helps people finish work on time.
+The river moved slowly through the green valley.
+Good communication prevents many common mistakes.
+Sunlight filled the classroom on Monday morning.
+The young athlete trained hard for the race.
+Patience is useful when learning a new skill.
+The baker placed warm bread on the wooden table.
+The moon appeared behind a thin silver cloud.
+A kind teacher can change a student's life.
+Healthy habits improve both energy and focus.
+The library was silent except for turning pages.`.trim().split('\n');
 
-    const game = document.getElementById("game");
-    const input = document.getElementById("typingInput");
-    const targetInfo = document.getElementById("targetInfo");
+      const sceneCanvas = document.getElementById('sceneCanvas');
+      const targetCanvas = document.getElementById('targetCanvas');
+      const input = document.getElementById('typingInput');
+      const targetInfo = document.getElementById('targetInfo');
+      const typingBar = document.getElementById('typingBar');
+      const overlay = document.getElementById('overlay');
+      const results = document.getElementById('results');
 
-    const scoreEl = document.getElementById("score");
-    const clearedEl = document.getElementById("cleared");
-    const missedEl = document.getElementById("missed");
-    const accuracyEl = document.getElementById("accuracy");
-    const gradeEl = document.getElementById("grade");
+      const scoreEl = document.getElementById('score');
+      const clearedEl = document.getElementById('cleared');
+      const missedEl = document.getElementById('missed');
+      const accuracyEl = document.getElementById('accuracy');
+      const gradeEl = document.getElementById('grade');
 
-    const overlay = document.getElementById("overlay");
-    const results = document.getElementById("results");
+      const startBtn = document.getElementById('startBtn');
+      const restartBtn = document.getElementById('restartBtn');
+      const playAgainBtn = document.getElementById('playAgainBtn');
 
-    const startBtn = document.getElementById("startBtn");
-    const restartBtn = document.getElementById("restartBtn");
-    const playAgainBtn = document.getElementById("playAgainBtn");
+      const sceneCtx = sceneCanvas.getContext('2d');
+      const targetCtx = targetCanvas.getContext('2d');
 
-    let sentences = [];
-    let running = false;
-    let lastTime = 0;
-    let spawnTimer = 0;
-    let spawnInterval = 3000;
-    let nextId = 1;
+      const GROUND_HEIGHT = 70;
+      const SENTENCE_FONT = '600 22px Arial';
+      const SENTENCE_LINE_HEIGHT = 32;
+      const TARGET_FONT = '700 18px Arial';
+      const TARGET_LINE_HEIGHT = 28;
+      const BOX_PADDING_X = 18;
+      const BOX_PADDING_Y = 16;
+      const TARGET_PADDING_X = 14;
+      const TARGET_PADDING_Y = 12;
+      const MAX_MISSED = 5;
 
-    let score = 0;
-    let cleared = 0;
-    let missed = 0;
-    let totalCharsTyped = 0;
-    let correctCharsTyped = 0;
-    let maxMissed = 5;
-
-    function randomSentence() {
-      return sentenceBank[Math.floor(Math.random() * sentenceBank.length)];
-    }
-
-    function shuffleArray(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
-    }
-
-    function sentenceToWords(text) {
-      return text.trim().split(/\s+/);
-    }
-
-    function escapeHtml(str) {
-      return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function spawnSentence() {
-      const text = randomSentence();
-      const words = sentenceToWords(text);
-
-      const el = document.createElement("div");
-      el.className = "sentence";
-      el.style.left = Math.max(10, Math.floor(Math.random() * (window.innerWidth - 520))) + "px";
-      el.style.top = "-20px";
-
-      const obj = {
-        id: nextId++,
-        text,
-        words,
-        x: parseFloat(el.style.left),
-        y: -20,
-        speed: 18 + Math.random() * 18,
-        el,
-        typedWordCount: 0,
-        completed: false,
-        hitGround: false
+      const sentencePalette = {
+        fill: 'rgba(255, 255, 255, 0.95)',
+        border: '#b0bec5',
+        activeFill: 'rgba(255, 255, 255, 0.98)',
+        activeBorder: '#1e88e5',
+        hitFill: '#ffe0e0',
+        hitBorder: '#e57373',
+        text: '#22313a',
+        correctBg: '#d9f2d6',
+        correctText: '#1b5e20',
+        wrongBg: '#ffd6da',
+        wrongText: '#b71c1c'
       };
 
-      sentences.push(obj);
-      game.appendChild(el);
-      renderSentence(obj);
-      chooseActiveSentence();
-    }
+      let prepareWithSegments;
+      let layoutWithLines;
 
-    function chooseActiveSentence() {
-      const alive = sentences.filter(s => !s.completed && !s.hitGround);
-      if (alive.length === 0) {
-        targetInfo.textContent = "No active sentence yet. Wait for one to appear.";
-        return null;
+      try {
+        ({ prepareWithSegments, layoutWithLines } = await import('https://cdn.jsdelivr.net/npm/@chenglou/pretext@0.0.5/dist/layout.js'));
+      } catch (error) {
+        targetInfo.textContent = 'Pretext could not be loaded from the CDN.';
+        startBtn.disabled = true;
+        restartBtn.disabled = true;
+        playAgainBtn.disabled = true;
+        console.error(error);
+        return;
       }
 
-      alive.sort((a, b) => b.y - a.y);
-      const target = alive[0];
+      let sentences = [];
+      let running = false;
+      let activeSentenceId = null;
+      let lastTime = 0;
+      let spawnTimer = 0;
+      let spawnInterval = 3000;
+      let nextId = 1;
+      let gameToken = 0;
+      let lastInputValue = '';
 
-      for (const s of sentences) {
-        s.el.classList.toggle("active", s.id === target.id);
+      let score = 0;
+      let cleared = 0;
+      let missed = 0;
+      let totalCharsTyped = 0;
+      let correctCharsTyped = 0;
+
+      function randomSentence() {
+        return sentenceBank[Math.floor(Math.random() * sentenceBank.length)];
       }
 
-      targetInfo.textContent = `Target sentence: ${target.text}`;
-      return target;
-    }
+      function dpr() {
+        return window.devicePixelRatio || 1;
+      }
 
-    function getActiveSentence() {
-      return sentences.find(s => s.el.classList.contains("active") && !s.completed && !s.hitGround) || chooseActiveSentence();
-    }
+      function commonPrefixLength(expected, typed) {
+        const max = Math.min(expected.length, typed.length);
+        let i = 0;
+        while (i < max && expected[i] === typed[i]) i += 1;
+        return i;
+      }
 
-    function renderSentence(sentence, currentInput = input.value.trim()) {
-      const typedWords = currentInput.length ? currentInput.split(/\s+/) : [];
-      const active = sentence.el.classList.contains("active");
+      function getTypedState(text, typed) {
+        const safeTyped = typed || '';
+        const correct = commonPrefixLength(text, safeTyped);
+        return {
+          correct,
+          typedEnd: Math.min(text.length, safeTyped.length)
+        };
+      }
 
-      let html = "";
+      function getGrade(accuracy, clearedCount, missedCount) {
+        if (missedCount >= MAX_MISSED) {
+          if (accuracy >= 90 && clearedCount >= 8) return 'B';
+          if (accuracy >= 80 && clearedCount >= 5) return 'C';
+          if (accuracy >= 70 && clearedCount >= 3) return 'D';
+          return 'F';
+        }
+        if (accuracy >= 97 && clearedCount >= 12) return 'A+';
+        if (accuracy >= 93 && clearedCount >= 10) return 'A';
+        if (accuracy >= 88 && clearedCount >= 8) return 'B';
+        if (accuracy >= 78 && clearedCount >= 5) return 'C';
+        if (accuracy >= 65) return 'D';
+        return 'F';
+      }
 
-      sentence.words.forEach((word, index) => {
-        let cls = "pending";
+      function currentAccuracy() {
+        return totalCharsTyped === 0 ? 100 : Math.round((correctCharsTyped / totalCharsTyped) * 100);
+      }
 
-        if (index < sentence.typedWordCount) {
-          cls = "typed";
-        } else if (active && index === sentence.typedWordCount && currentInput.length > 0) {
-          const currentTyped = typedWords[sentence.typedWordCount] || "";
-          if (currentTyped.length > 0) {
-            if (word.startsWith(currentTyped)) {
-              cls = "current-correct";
-            } else {
-              cls = "current-wrong";
+      function updateStats() {
+        const accuracy = currentAccuracy();
+        scoreEl.textContent = score;
+        clearedEl.textContent = cleared;
+        missedEl.textContent = missed;
+        accuracyEl.textContent = `${accuracy}%`;
+        gradeEl.textContent = getGrade(accuracy, cleared, missed);
+      }
+
+      function roundRectPath(ctx, x, y, w, h, r) {
+        const radius = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + w, y, x + w, y + h, radius);
+        ctx.arcTo(x + w, y + h, x, y + h, radius);
+        ctx.arcTo(x, y + h, x, y, radius);
+        ctx.arcTo(x, y, x + w, y, radius);
+        ctx.closePath();
+      }
+
+      function syncCanvasSize() {
+        const ratio = dpr();
+        sceneCanvas.width = Math.round(window.innerWidth * ratio);
+        sceneCanvas.height = Math.round(window.innerHeight * ratio);
+        sceneCanvas.style.width = `${window.innerWidth}px`;
+        sceneCanvas.style.height = `${window.innerHeight}px`;
+        sceneCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        renderScene();
+        renderTargetPreview();
+      }
+
+      function getSentenceBoxWidth() {
+        return Math.max(250, Math.min(420, window.innerWidth - 30, Math.round(window.innerWidth * 0.34 + 100)));
+      }
+
+      function getSentenceTextWidth(boxWidth) {
+        return Math.max(140, boxWidth - BOX_PADDING_X * 2);
+      }
+
+      function getTargetTextWidth() {
+        const available = Math.floor(typingBar.getBoundingClientRect().width - TARGET_PADDING_X * 2 - 2);
+        return Math.max(220, available);
+      }
+
+      function layoutSentence(sentence) {
+        sentence.boxWidth = getSentenceBoxWidth();
+        sentence.layout = layoutWithLines(sentence.prepared, getSentenceTextWidth(sentence.boxWidth), SENTENCE_LINE_HEIGHT);
+        sentence.boxHeight = BOX_PADDING_Y * 2 + sentence.layout.height;
+      }
+
+      async function buildSentence(text) {
+        const prepared = await Promise.resolve(prepareWithSegments(text, SENTENCE_FONT));
+        const previewPrepared = await Promise.resolve(prepareWithSegments(text, TARGET_FONT));
+        const sentence = {
+          id: nextId += 1,
+          text,
+          prepared,
+          previewPrepared,
+          layout: null,
+          boxWidth: 0,
+          boxHeight: 0,
+          x: 0,
+          y: -20,
+          speed: 18 + Math.random() * 18,
+          hitGround: false
+        };
+        layoutSentence(sentence);
+        const maxLeft = Math.max(10, window.innerWidth - sentence.boxWidth - 10);
+        sentence.x = maxLeft <= 10 ? 10 : 10 + Math.random() * (maxLeft - 10);
+        return sentence;
+      }
+
+      function getActiveSentence() {
+        return sentences.find(sentence => sentence.id === activeSentenceId && !sentence.hitGround) || null;
+      }
+
+      function chooseActiveSentence() {
+        const alive = sentences.filter(sentence => !sentence.hitGround);
+        if (alive.length === 0) {
+          activeSentenceId = null;
+          targetInfo.textContent = running
+            ? 'No active sentence yet. Wait for the next Pretext-rendered sentence.'
+            : 'Click Start, then type the highlighted falling sentence.';
+          renderTargetPreview();
+          return null;
+        }
+
+        alive.sort((a, b) => b.y - a.y);
+        activeSentenceId = alive[0].id;
+        targetInfo.textContent = 'Type the highlighted falling sentence. The preview below is drawn with Pretext.';
+        renderTargetPreview();
+        return alive[0];
+      }
+
+      function clearInput() {
+        input.value = '';
+        lastInputValue = '';
+      }
+
+      function handleSuccessfulClear(target) {
+        score += 100;
+        cleared += 1;
+        sentences = sentences.filter(sentence => sentence.id !== target.id);
+        if (activeSentenceId === target.id) activeSentenceId = null;
+        clearInput();
+        updateStats();
+        chooseActiveSentence();
+        renderScene();
+      }
+
+      function recordTypingDelta(targetText, value) {
+        if (value.length <= lastInputValue.length) {
+          lastInputValue = value;
+          return;
+        }
+        for (let i = lastInputValue.length; i < value.length; i += 1) {
+          totalCharsTyped += 1;
+          if (value[i] === targetText[i]) correctCharsTyped += 1;
+        }
+        lastInputValue = value;
+      }
+
+      async function spawnSentence() {
+        const token = gameToken;
+        const sentence = await buildSentence(randomSentence());
+        if (token !== gameToken) return;
+        sentences.push(sentence);
+        chooseActiveSentence();
+        renderScene();
+      }
+
+      function removeSentenceById(id) {
+        sentences = sentences.filter(sentence => sentence.id !== id);
+        if (activeSentenceId === id) activeSentenceId = null;
+      }
+
+      function drawWrappedText(ctx, lines, fullText, typed, startX, startY, lineHeight, palette) {
+        const { correct, typedEnd } = getTypedState(fullText, typed);
+        let cursor = 0;
+
+        ctx.textBaseline = 'top';
+        for (let index = 0; index < lines.length; index += 1) {
+          const line = lines[index];
+          const lineText = line.text;
+          const lineY = startY + index * lineHeight;
+          const lineStart = cursor;
+          const lineEnd = lineStart + lineText.length;
+
+          const correctEnd = Math.min(correct, lineEnd);
+          if (correctEnd > lineStart) {
+            const correctText = lineText.slice(0, correctEnd - lineStart);
+            const correctWidth = ctx.measureText(correctText).width;
+            ctx.fillStyle = palette.correctBg;
+            ctx.fillRect(startX - 3, lineY + 3, correctWidth + 6, lineHeight - 8);
+          }
+
+          const wrongStart = Math.max(correct, lineStart);
+          const wrongEnd = Math.min(typedEnd, lineEnd);
+          if (wrongEnd > wrongStart) {
+            const leading = lineText.slice(0, wrongStart - lineStart);
+            const wrongText = lineText.slice(wrongStart - lineStart, wrongEnd - lineStart);
+            const offset = ctx.measureText(leading).width;
+            const wrongWidth = ctx.measureText(wrongText).width;
+            ctx.fillStyle = palette.wrongBg;
+            ctx.fillRect(startX + offset - 3, lineY + 3, wrongWidth + 6, lineHeight - 8);
+          }
+
+          ctx.fillStyle = palette.text;
+          ctx.fillText(lineText, startX, lineY);
+
+          if (correctEnd > lineStart) {
+            const correctText = lineText.slice(0, correctEnd - lineStart);
+            ctx.fillStyle = palette.correctText;
+            ctx.fillText(correctText, startX, lineY);
+          }
+
+          if (wrongEnd > wrongStart) {
+            const leading = lineText.slice(0, wrongStart - lineStart);
+            const wrongText = lineText.slice(wrongStart - lineStart, wrongEnd - lineStart);
+            const offset = ctx.measureText(leading).width;
+            ctx.fillStyle = palette.wrongText;
+            ctx.fillText(wrongText, startX + offset, lineY);
+          }
+
+          cursor = lineEnd;
+        }
+      }
+
+      function renderTargetPreview() {
+        const target = getActiveSentence();
+        const width = getTargetTextWidth();
+        const ratio = dpr();
+
+        if (!target) {
+          targetCanvas.width = Math.round(width * ratio);
+          targetCanvas.height = Math.round(36 * ratio);
+          targetCanvas.style.height = '36px';
+          targetCanvas.style.width = `${width}px`;
+          targetCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+          targetCtx.clearRect(0, 0, width, 36);
+          return;
+        }
+
+        const layout = layoutWithLines(target.previewPrepared, width, TARGET_LINE_HEIGHT);
+        const canvasHeight = layout.height + TARGET_PADDING_Y * 2;
+        targetCanvas.width = Math.round(width * ratio);
+        targetCanvas.height = Math.round(canvasHeight * ratio);
+        targetCanvas.style.width = `${width}px`;
+        targetCanvas.style.height = `${canvasHeight}px`;
+        targetCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        targetCtx.clearRect(0, 0, width, canvasHeight);
+        targetCtx.font = TARGET_FONT;
+        drawWrappedText(targetCtx, layout.lines, target.text, input.value, TARGET_PADDING_X, TARGET_PADDING_Y, TARGET_LINE_HEIGHT, {
+          text: '#34424b',
+          correctBg: '#dff3dd',
+          correctText: '#1b5e20',
+          wrongBg: '#ffe1e4',
+          wrongText: '#b71c1c'
+        });
+      }
+
+      function renderScene() {
+        sceneCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        sceneCtx.font = SENTENCE_FONT;
+        sceneCtx.textBaseline = 'top';
+
+        const active = getActiveSentence();
+        for (const sentence of sentences) {
+          const isActive = active && sentence.id === active.id;
+          const fill = sentence.hitGround
+            ? sentencePalette.hitFill
+            : isActive
+              ? sentencePalette.activeFill
+              : sentencePalette.fill;
+          const stroke = sentence.hitGround
+            ? sentencePalette.hitBorder
+            : isActive
+              ? sentencePalette.activeBorder
+              : sentencePalette.border;
+
+          sceneCtx.save();
+          sceneCtx.shadowColor = isActive ? 'rgba(30, 136, 229, 0.20)' : 'rgba(0, 0, 0, 0.10)';
+          sceneCtx.shadowBlur = isActive ? 18 : 12;
+          sceneCtx.shadowOffsetY = 6;
+          roundRectPath(sceneCtx, sentence.x, sentence.y, sentence.boxWidth, sentence.boxHeight, 14);
+          sceneCtx.fillStyle = fill;
+          sceneCtx.fill();
+          sceneCtx.shadowColor = 'transparent';
+          sceneCtx.lineWidth = isActive ? 2.5 : 1.2;
+          sceneCtx.strokeStyle = stroke;
+          sceneCtx.stroke();
+          sceneCtx.restore();
+
+          sceneCtx.font = SENTENCE_FONT;
+          drawWrappedText(
+            sceneCtx,
+            sentence.layout.lines,
+            sentence.text,
+            isActive ? input.value : '',
+            sentence.x + BOX_PADDING_X,
+            sentence.y + BOX_PADDING_Y,
+            SENTENCE_LINE_HEIGHT,
+            sentencePalette
+          );
+        }
+      }
+
+      function submitTypedSentence() {
+        const target = getActiveSentence();
+        if (!target) return;
+
+        const typed = input.value.trim();
+        if (!typed) return;
+
+        if (typed === target.text.trim()) {
+          handleSuccessfulClear(target);
+          return;
+        }
+
+        score = Math.max(0, score - 10);
+        updateStats();
+        renderScene();
+        renderTargetPreview();
+      }
+
+      function handleLiveTyping() {
+        const target = getActiveSentence();
+        if (!target) return;
+
+        const current = input.value;
+        recordTypingDelta(target.text, current);
+        updateStats();
+
+        if (current.trim() === target.text.trim()) {
+          handleSuccessfulClear(target);
+          return;
+        }
+
+        renderScene();
+        renderTargetPreview();
+      }
+
+      function endGame() {
+        running = false;
+        overlay.style.display = 'flex';
+        const accuracy = currentAccuracy();
+        const grade = getGrade(accuracy, cleared, missed);
+        results.innerHTML = `
+          <div><strong>Final Score:</strong> ${score}</div>
+          <div><strong>Sentences Cleared:</strong> ${cleared}</div>
+          <div><strong>Sentences Missed:</strong> ${missed}</div>
+          <div><strong>Accuracy:</strong> ${accuracy}%</div>
+          <div><strong>Grade:</strong> ${grade}</div>
+        `;
+      }
+
+      function resetGame() {
+        gameToken += 1;
+        sentences = [];
+        activeSentenceId = null;
+        running = false;
+        lastTime = 0;
+        spawnTimer = 0;
+        nextId = 1;
+        clearInput();
+        score = 0;
+        cleared = 0;
+        missed = 0;
+        totalCharsTyped = 0;
+        correctCharsTyped = 0;
+        overlay.style.display = 'none';
+        targetInfo.textContent = 'Click Start, then type the highlighted falling sentence.';
+        updateStats();
+        renderScene();
+        renderTargetPreview();
+      }
+
+      function update(dt) {
+        const groundTop = window.innerHeight - GROUND_HEIGHT;
+        const toRemove = [];
+
+        for (const sentence of sentences) {
+          if (sentence.hitGround) continue;
+          sentence.y += sentence.speed * dt;
+          if (sentence.y + sentence.boxHeight >= groundTop) {
+            sentence.hitGround = true;
+            missed += 1;
+            updateStats();
+            if (sentence.id === activeSentenceId) {
+              activeSentenceId = null;
+              clearInput();
             }
+            window.setTimeout(() => {
+              removeSentenceById(sentence.id);
+              chooseActiveSentence();
+              renderScene();
+            }, 250);
+            toRemove.push(sentence.id);
           }
         }
 
-        html += `<span class="word ${cls}">${escapeHtml(word)}</span> `;
+        if (toRemove.length > 0) chooseActiveSentence();
+        if (missed >= MAX_MISSED) endGame();
+      }
+
+      function gameLoop(timestamp) {
+        if (!running) return;
+        if (!lastTime) lastTime = timestamp;
+
+        const dtMs = timestamp - lastTime;
+        const dt = dtMs / 1000;
+        lastTime = timestamp;
+
+        spawnTimer += dtMs;
+        if (spawnTimer >= spawnInterval) {
+          void spawnSentence();
+          spawnTimer = 0;
+          if (spawnInterval > 1500) spawnInterval -= 40;
+        }
+
+        update(dt);
+        renderScene();
+        if (running) window.requestAnimationFrame(gameLoop);
+      }
+
+      function startGame() {
+        if (running) return;
+        running = true;
+        overlay.style.display = 'none';
+        input.focus();
+        chooseActiveSentence();
+        if (sentences.length === 0) {
+          void spawnSentence();
+          void spawnSentence();
+        }
+        window.requestAnimationFrame(gameLoop);
+      }
+
+      startBtn.addEventListener('click', startGame);
+
+      restartBtn.addEventListener('click', () => {
+        resetGame();
+        spawnInterval = 3000;
+        startGame();
       });
 
-      sentence.el.innerHTML = html.trim();
-    }
+      playAgainBtn.addEventListener('click', () => {
+        resetGame();
+        spawnInterval = 3000;
+        startGame();
+      });
 
-    function updateAllSentenceRenders() {
-      for (const s of sentences) renderSentence(s);
-    }
+      input.addEventListener('input', () => {
+        if (!running) return;
+        handleLiveTyping();
+      });
 
-    function updateStats() {
-      scoreEl.textContent = score;
-      clearedEl.textContent = cleared;
-      missedEl.textContent = missed;
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submitTypedSentence();
+        }
+      });
 
-      const accuracy = totalCharsTyped === 0
-        ? 100
-        : Math.round((correctCharsTyped / totalCharsTyped) * 100);
+      window.addEventListener('resize', () => {
+        syncCanvasSize();
+        for (const sentence of sentences) {
+          layoutSentence(sentence);
+          sentence.x = Math.min(sentence.x, Math.max(10, window.innerWidth - sentence.boxWidth - 10));
+        }
+        renderScene();
+        renderTargetPreview();
+      });
 
-      accuracyEl.textContent = `${accuracy}%`;
-      gradeEl.textContent = getGrade(accuracy, cleared, missed);
-    }
-
-    function getGrade(accuracy, clearedCount, missedCount) {
-      if (missedCount >= maxMissed) {
-        if (accuracy >= 90 && clearedCount >= 8) return "B";
-        if (accuracy >= 80 && clearedCount >= 5) return "C";
-        if (accuracy >= 70 && clearedCount >= 3) return "D";
-        return "F";
-      }
-
-      if (accuracy >= 97 && clearedCount >= 12) return "A+";
-      if (accuracy >= 93 && clearedCount >= 10) return "A";
-      if (accuracy >= 88 && clearedCount >= 8) return "B";
-      if (accuracy >= 78 && clearedCount >= 5) return "C";
-      if (accuracy >= 65) return "D";
-      return "F";
-    }
-
-    function removeSentence(sentence) {
-      sentence.el.remove();
-      sentences = sentences.filter(s => s.id !== sentence.id);
-    }
-
-    function submitTypedSentence() {
-      const target = getActiveSentence();
-      if (!target) return;
-
-      const typed = input.value.trim();
-      if (!typed) return;
-
-      const expected = target.text.trim();
-
-      totalCharsTyped += typed.length;
-
-      let correctCount = 0;
-      const len = Math.min(typed.length, expected.length);
-      for (let i = 0; i < len; i++) {
-        if (typed[i] === expected[i]) correctCount++;
-      }
-      correctCharsTyped += correctCount;
-
-      if (typed === expected) {
-        score += 100;
-        cleared += 1;
-        target.completed = true;
-        removeSentence(target);
-        input.value = "";
-        chooseActiveSentence();
-      } else {
-        score = Math.max(0, score - 10);
-      }
-
+      targetInfo.textContent = 'Click Start, then type the highlighted falling sentence.';
       updateStats();
-      updateAllSentenceRenders();
-    }
-
-    function handleLiveHighlight() {
-      const target = getActiveSentence();
-      if (!target) return;
-
-      const current = input.value;
-      const expectedStart = target.text.slice(0, current.length);
-
-      totalCharsTyped += 1;
-      if (current.length > 0 && current[current.length - 1] === expectedStart[expectedStart.length - 1]) {
-        correctCharsTyped += 1;
-      }
-
-      const typedWords = current.trim().length ? current.trim().split(/\s+/) : [];
-      let completedWords = 0;
-
-      for (let i = 0; i < target.words.length; i++) {
-        const word = target.words[i];
-        const typedWord = typedWords[i];
-
-        if (typedWord === word) {
-          completedWords++;
-        } else {
-          break;
-        }
-      }
-
-      target.typedWordCount = completedWords;
-
-      if (current.trim() === target.text.trim()) {
-        score += 100;
-        cleared += 1;
-        target.completed = true;
-        removeSentence(target);
-        input.value = "";
-        chooseActiveSentence();
-      }
-
-      updateStats();
-      updateAllSentenceRenders();
-    }
-
-    function endGame() {
-      running = false;
-      overlay.style.display = "flex";
-
-      const accuracy = totalCharsTyped === 0
-        ? 100
-        : Math.round((correctCharsTyped / totalCharsTyped) * 100);
-      const grade = getGrade(accuracy, cleared, missed);
-
-      results.innerHTML = `
-        <div><strong>Final Score:</strong> ${score}</div>
-        <div><strong>Sentences Cleared:</strong> ${cleared}</div>
-        <div><strong>Sentences Missed:</strong> ${missed}</div>
-        <div><strong>Accuracy:</strong> ${accuracy}%</div>
-        <div><strong>Grade:</strong> ${grade}</div>
-      `;
-    }
-
-    function resetGame() {
-      for (const s of sentences) s.el.remove();
-      sentences = [];
-      nextId = 1;
-      running = false;
-      lastTime = 0;
-      spawnTimer = 0;
-
-      score = 0;
-      cleared = 0;
-      missed = 0;
-      totalCharsTyped = 0;
-      correctCharsTyped = 0;
-
-      input.value = "";
-      overlay.style.display = "none";
-      targetInfo.textContent = "Click Start, then type the highlighted falling sentence.";
-      updateStats();
-    }
-
-    function update(dt) {
-      for (const s of sentences) {
-        if (s.completed || s.hitGround) continue;
-
-        s.y += s.speed * dt;
-        s.el.style.top = `${s.y}px`;
-
-        const groundTop = window.innerHeight - 70;
-        if (s.y + s.el.offsetHeight >= groundTop) {
-          s.hitGround = true;
-          s.el.classList.add("hit-ground");
-          missed += 1;
-          updateStats();
-
-          setTimeout(() => {
-            removeSentence(s);
-            chooseActiveSentence();
-          }, 250);
-        }
-      }
-
-      if (missed >= maxMissed) {
-        endGame();
-      }
-    }
-
-    function gameLoop(timestamp) {
-      if (!running) return;
-
-      if (!lastTime) lastTime = timestamp;
-      const dtMs = timestamp - lastTime;
-      const dt = dtMs / 1000;
-      lastTime = timestamp;
-
-      spawnTimer += dtMs;
-      if (spawnTimer >= spawnInterval) {
-        spawnSentence();
-        spawnTimer = 0;
-
-        if (spawnInterval > 1500) {
-          spawnInterval -= 40;
-        }
-      }
-
-      update(dt);
-      requestAnimationFrame(gameLoop);
-    }
-
-    function startGame() {
-      if (running) return;
-      running = true;
-      overlay.style.display = "none";
-      input.focus();
-
-      if (sentences.length === 0) {
-        spawnSentence();
-        spawnSentence();
-      }
-
-      requestAnimationFrame(gameLoop);
-    }
-
-    startBtn.addEventListener("click", startGame);
-
-    restartBtn.addEventListener("click", () => {
-      resetGame();
-      spawnInterval = 3000;
-      startGame();
-    });
-
-    playAgainBtn.addEventListener("click", () => {
-      resetGame();
-      spawnInterval = 3000;
-      startGame();
-    });
-
-    input.addEventListener("input", () => {
-      if (!running) return;
-      handleLiveHighlight();
-    });
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        submitTypedSentence();
-      }
-    });
-
-    window.addEventListener("resize", () => {
-      for (const s of sentences) {
-        if (s.x > window.innerWidth - 520) {
-          s.x = Math.max(10, window.innerWidth - 540);
-          s.el.style.left = `${s.x}px`;
-        }
-      }
-    });
-
-    resetGame();
+      syncCanvasSize();
+      renderTargetPreview();
+    })();
   </script>
 </body>
 </html>
