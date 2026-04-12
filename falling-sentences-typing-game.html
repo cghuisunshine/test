@@ -418,6 +418,11 @@ The library was silent except for turning pages.`.trim().split('\n');
         return mobileQuery.matches;
       }
 
+      function getSpawnSpeed() {
+        const baseSpeed = 24 + Math.random() * 14;
+        return isMobileInputMode() ? baseSpeed * 0.5 : baseSpeed;
+      }
+
       function getGameWidth() {
         return game.clientWidth || window.innerWidth;
       }
@@ -555,7 +560,7 @@ The library was silent except for turning pages.`.trim().split('\n');
           boxHeight: 0,
           x: 0,
           y: -20,
-          speed: 24 + Math.random() * 14,
+          speed: getSpawnSpeed(),
           hitGround: false
         };
 
