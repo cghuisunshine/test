@@ -32,6 +32,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
+      touch-action: manipulation;
     }
 
     #sceneCanvas {
@@ -100,46 +101,73 @@
     #typingBar {
       position: absolute;
       left: 50%;
-      bottom: 84px;
+      bottom: 18px;
       transform: translateX(-50%);
-      width: min(560px, 86vw);
+      width: min(460px, calc(100vw - 28px));
+      min-height: 0;
       z-index: 30;
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 14px;
-      padding: 10px;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
-      border: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(207, 216, 220, 0.95);
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+      backdrop-filter: blur(10px);
+    }
+
+    #typingMeta {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
     #targetInfo {
       font-size: 12px;
       color: #44515a;
-      margin-bottom: 6px;
       min-height: 16px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    #targetCanvas {
-      display: block;
-      width: 100%;
-      min-height: 28px;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      background: linear-gradient(180deg, rgba(245, 249, 252, 0.95), rgba(255, 255, 255, 0.95));
-      border: 1px solid #e2eaee;
+    #progressInfo {
+      font-size: 11px;
+      color: #60727d;
+      min-height: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #keyboardBadge {
+      flex: 0 0 auto;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #1e88e5;
+      background: rgba(30, 136, 229, 0.10);
+      border: 1px solid rgba(30, 136, 229, 0.20);
+      border-radius: 999px;
+      padding: 6px 10px;
+      user-select: none;
     }
 
     #typingInput {
-      width: 100%;
-      padding: 10px 12px;
-      font-size: 16px;
-      border-radius: 9px;
-      border: 2px solid #90caf9;
-      outline: none;
-    }
-
-    #typingInput:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.15);
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      left: -9999px;
+      bottom: 0;
     }
 
     #ground {
@@ -188,6 +216,32 @@
       font-size: 13px;
       color: #66757f;
     }
+
+    @media (max-width: 640px) {
+      #hud {
+        gap: 10px;
+      }
+
+      .panel {
+        padding: 9px 12px;
+      }
+
+      #stats {
+        font-size: 14px;
+        gap: 10px;
+      }
+
+      #typingBar {
+        width: min(96vw, 420px);
+        bottom: 12px;
+        padding: 8px 10px;
+        gap: 10px;
+      }
+
+      #keyboardBadge {
+        padding: 5px 8px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -211,10 +265,23 @@
     </div>
 
     <div id='typingBar'>
-      <div id='targetInfo'>Loading Pretext renderer...</div>
-      <canvas id='targetCanvas'></canvas>
-      <input id='typingInput' type='text' placeholder='Type here...' autocomplete='off' spellcheck='false' />
+      <div id='typingMeta'>
+        <div id='targetInfo'>Loading Pretext renderer...</div>
+        <div id='progressInfo'>Tap anywhere to keep typing.</div>
+      </div>
+      <div id='keyboardBadge'>Tap to type</div>
     </div>
+
+    <input
+      id='typingInput'
+      type='text'
+      autocomplete='off'
+      autocapitalize='off'
+      autocorrect='off'
+      spellcheck='false'
+      enterkeyhint='done'
+      inputmode='text'
+    />
 
     <div id='ground'></div>
 
@@ -250,10 +317,11 @@ A kind teacher can change a student's life.
 Healthy habits improve both energy and focus.
 The library was silent except for turning pages.`.trim().split('\n');
 
+      const game = document.getElementById('game');
       const sceneCanvas = document.getElementById('sceneCanvas');
-      const targetCanvas = document.getElementById('targetCanvas');
       const input = document.getElementById('typingInput');
       const targetInfo = document.getElementById('targetInfo');
+      const progressInfo = document.getElementById('progressInfo');
       const typingBar = document.getElementById('typingBar');
       const overlay = document.getElementById('overlay');
       const results = document.getElementById('results');
@@ -269,17 +337,12 @@ The library was silent except for turning pages.`.trim().split('\n');
       const playAgainBtn = document.getElementById('playAgainBtn');
 
       const sceneCtx = sceneCanvas.getContext('2d');
-      const targetCtx = targetCanvas.getContext('2d');
 
       const GROUND_HEIGHT = 70;
       const SENTENCE_FONT = '600 22px Arial';
       const SENTENCE_LINE_HEIGHT = 32;
-      const TARGET_FONT = '700 16px Arial';
-      const TARGET_LINE_HEIGHT = 24;
       const BOX_PADDING_X = 18;
       const BOX_PADDING_Y = 16;
-      const TARGET_PADDING_X = 12;
-      const TARGET_PADDING_Y = 8;
       const MAX_MISSED = 5;
 
       const sentencePalette = {
@@ -303,6 +366,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         ({ prepareWithSegments, layoutWithLines } = await import('https://cdn.jsdelivr.net/npm/@chenglou/pretext@0.0.5/dist/layout.js'));
       } catch (error) {
         targetInfo.textContent = 'Pretext could not be loaded from the CDN.';
+        progressInfo.textContent = 'The game cannot start without the text layout library.';
         startBtn.disabled = true;
         restartBtn.disabled = true;
         playAgainBtn.disabled = true;
@@ -316,6 +380,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       let lastTime = 0;
       let nextId = 1;
       let gameToken = 0;
+      let typedValue = '';
       let lastInputValue = '';
 
       let score = 0;
@@ -339,13 +404,35 @@ The library was silent except for turning pages.`.trim().split('\n');
         return i;
       }
 
-      function getTypedState(text, typed) {
+      function createWordParts(text) {
+        const parts = [];
+        const regex = /\S+|\s+/g;
+        let match;
+
+        while ((match = regex.exec(text))) {
+          const chunk = match[0];
+          parts.push({
+            text: chunk,
+            start: match.index,
+            end: match.index + chunk.length,
+            isWord: /\S/.test(chunk)
+          });
+        }
+
+        return parts;
+      }
+
+      function getHighlightState(text, typed, parts) {
         const safeTyped = typed || '';
+        const typedEnd = Math.min(text.length, safeTyped.length);
         const correct = commonPrefixLength(text, safeTyped);
-        return {
-          correct,
-          typedEnd: Math.min(text.length, safeTyped.length)
-        };
+        let completedWords = 0;
+
+        for (const part of parts) {
+          if (part.isWord && correct >= part.end) completedWords += 1;
+        }
+
+        return { correct, typedEnd, completedWords };
       }
 
       function getGrade(accuracy, clearedCount, missedCount) {
@@ -395,7 +482,6 @@ The library was silent except for turning pages.`.trim().split('\n');
         sceneCanvas.style.height = `${window.innerHeight}px`;
         sceneCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
         renderScene();
-        renderTargetPreview();
       }
 
       function getSentenceBoxWidth() {
@@ -406,11 +492,6 @@ The library was silent except for turning pages.`.trim().split('\n');
         return Math.max(140, boxWidth - BOX_PADDING_X * 2);
       }
 
-      function getTargetTextWidth() {
-        const available = Math.floor(typingBar.getBoundingClientRect().width - TARGET_PADDING_X * 2 - 2);
-        return Math.max(140, available);
-      }
-
       function layoutSentence(sentence) {
         sentence.boxWidth = getSentenceBoxWidth();
         sentence.layout = layoutWithLines(sentence.prepared, getSentenceTextWidth(sentence.boxWidth), SENTENCE_LINE_HEIGHT);
@@ -419,12 +500,15 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       async function buildSentence(text) {
         const prepared = await Promise.resolve(prepareWithSegments(text, SENTENCE_FONT));
-        const previewPrepared = await Promise.resolve(prepareWithSegments(text, TARGET_FONT));
+        const parts = createWordParts(text);
+        const wordCount = parts.filter(part => part.isWord).length;
+
         const sentence = {
           id: nextId++,
           text,
           prepared,
-          previewPrepared,
+          parts,
+          wordCount,
           layout: null,
           boxWidth: 0,
           boxHeight: 0,
@@ -433,6 +517,7 @@ The library was silent except for turning pages.`.trim().split('\n');
           speed: 24 + Math.random() * 14,
           hitGround: false
         };
+
         layoutSentence(sentence);
         const maxLeft = Math.max(10, window.innerWidth - sentence.boxWidth - 10);
         sentence.x = maxLeft <= 10 ? 10 : 10 + Math.random() * (maxLeft - 10);
@@ -443,6 +528,30 @@ The library was silent except for turning pages.`.trim().split('\n');
         return sentences.find(sentence => sentence.id === activeSentenceId && !sentence.hitGround) || null;
       }
 
+      function focusTyping() {
+        if (!running || overlay.style.display === 'flex') return;
+        input.focus({ preventScroll: true });
+        const end = input.value.length;
+        if (typeof input.setSelectionRange === 'function') {
+          input.setSelectionRange(end, end);
+        }
+      }
+
+      function updateTypingStatus() {
+        const target = getActiveSentence();
+
+        if (!target) {
+          progressInfo.textContent = running
+            ? 'Next sentence is spawning.'
+            : 'Tap Start, then tap anywhere to type.';
+          return;
+        }
+
+        const { completedWords } = getHighlightState(target.text, typedValue, target.parts);
+        const typedChars = Math.min(typedValue.length, target.text.length);
+        progressInfo.textContent = `${completedWords}/${target.wordCount} words • ${typedChars}/${target.text.length} chars`;
+      }
+
       function chooseActiveSentence() {
         const alive = sentences.filter(sentence => !sentence.hitGround);
         if (alive.length === 0) {
@@ -450,19 +559,44 @@ The library was silent except for turning pages.`.trim().split('\n');
           targetInfo.textContent = running
             ? 'Preparing the next sentence...'
             : 'Click Start, then type the highlighted falling sentence.';
-          renderTargetPreview();
+          updateTypingStatus();
           return null;
         }
 
         activeSentenceId = alive[0].id;
-        targetInfo.textContent = 'Type the single falling sentence shown above.';
-        renderTargetPreview();
+        targetInfo.textContent = 'Type the highlighted words directly on the falling sentence.';
+        updateTypingStatus();
         return alive[0];
       }
 
       function clearInput() {
+        typedValue = '';
         input.value = '';
         lastInputValue = '';
+        updateTypingStatus();
+      }
+
+      function normalizeInputValue(value, maxLength) {
+        return String(value || '')
+          .replace(/[\r\n]/g, '')
+          .slice(0, maxLength);
+      }
+
+      function syncInputValue() {
+        const target = getActiveSentence();
+        if (!target) {
+          input.value = '';
+          typedValue = '';
+          return;
+        }
+
+        const normalized = normalizeInputValue(input.value, target.text.length);
+        if (input.value !== normalized) input.value = normalized;
+        typedValue = normalized;
+        const end = normalized.length;
+        if (typeof input.setSelectionRange === 'function') {
+          input.setSelectionRange(end, end);
+        }
       }
 
       async function ensureSingleSentence() {
@@ -487,6 +621,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         updateStats();
         chooseActiveSentence();
         renderScene();
+        focusTyping();
         void ensureSingleSentence();
       }
 
@@ -495,10 +630,12 @@ The library was silent except for turning pages.`.trim().split('\n');
           lastInputValue = value;
           return;
         }
+
         for (let i = lastInputValue.length; i < value.length; i += 1) {
           totalCharsTyped += 1;
           if (value[i] === targetText[i]) correctCharsTyped += 1;
         }
+
         lastInputValue = value;
       }
 
@@ -507,90 +644,95 @@ The library was silent except for turning pages.`.trim().split('\n');
         if (activeSentenceId === id) activeSentenceId = null;
       }
 
-      function drawWrappedText(ctx, lines, fullText, typed, startX, startY, lineHeight, palette) {
-        const { correct, typedEnd } = getTypedState(fullText, typed);
+      function drawRangeHighlight(ctx, lineText, lineStart, rangeStart, rangeEnd, startX, lineY, lineHeight, fillStyle, textStyle) {
+        const start = Math.max(lineStart, rangeStart);
+        const end = Math.min(lineStart + lineText.length, rangeEnd);
+        if (end <= start) return;
+
+        const localStart = start - lineStart;
+        const localEnd = end - lineStart;
+        const leading = lineText.slice(0, localStart);
+        const segment = lineText.slice(localStart, localEnd);
+        const offset = ctx.measureText(leading).width;
+        const width = ctx.measureText(segment).width;
+
+        ctx.fillStyle = fillStyle;
+        ctx.fillRect(startX + offset - 3, lineY + 3, width + 6, lineHeight - 8);
+        ctx.fillStyle = textStyle;
+        ctx.fillText(segment, startX + offset, lineY);
+      }
+
+      function drawWrappedText(ctx, lines, sentence, typed, startX, startY, lineHeight, palette) {
+        const { correct, typedEnd } = getHighlightState(sentence.text, typed, sentence.parts);
         let cursor = 0;
 
         ctx.textBaseline = 'top';
+
         for (let index = 0; index < lines.length; index += 1) {
           const line = lines[index];
           const lineText = line.text;
           const lineY = startY + index * lineHeight;
           const lineStart = cursor;
-          const lineEnd = lineStart + lineText.length;
-
-          const correctEnd = Math.min(correct, lineEnd);
-          if (correctEnd > lineStart) {
-            const correctText = lineText.slice(0, correctEnd - lineStart);
-            const correctWidth = ctx.measureText(correctText).width;
-            ctx.fillStyle = palette.correctBg;
-            ctx.fillRect(startX - 3, lineY + 3, correctWidth + 6, lineHeight - 8);
-          }
-
-          const wrongStart = Math.max(correct, lineStart);
-          const wrongEnd = Math.min(typedEnd, lineEnd);
-          if (wrongEnd > wrongStart) {
-            const leading = lineText.slice(0, wrongStart - lineStart);
-            const wrongText = lineText.slice(wrongStart - lineStart, wrongEnd - lineStart);
-            const offset = ctx.measureText(leading).width;
-            const wrongWidth = ctx.measureText(wrongText).width;
-            ctx.fillStyle = palette.wrongBg;
-            ctx.fillRect(startX + offset - 3, lineY + 3, wrongWidth + 6, lineHeight - 8);
-          }
 
           ctx.fillStyle = palette.text;
           ctx.fillText(lineText, startX, lineY);
 
-          if (correctEnd > lineStart) {
-            const correctText = lineText.slice(0, correctEnd - lineStart);
-            ctx.fillStyle = palette.correctText;
-            ctx.fillText(correctText, startX, lineY);
+          for (const part of sentence.parts) {
+            if (!part.isWord) continue;
+            if (part.end <= lineStart || part.start >= lineStart + lineText.length) continue;
+
+            if (correct >= part.end) {
+              drawRangeHighlight(
+                ctx,
+                lineText,
+                lineStart,
+                part.start,
+                part.end,
+                startX,
+                lineY,
+                lineHeight,
+                palette.correctBg,
+                palette.correctText
+              );
+              continue;
+            }
+
+            const correctEnd = Math.min(correct, part.end);
+            if (correctEnd > part.start) {
+              drawRangeHighlight(
+                ctx,
+                lineText,
+                lineStart,
+                part.start,
+                correctEnd,
+                startX,
+                lineY,
+                lineHeight,
+                palette.correctBg,
+                palette.correctText
+              );
+            }
+
+            const wrongStart = Math.max(correct, part.start);
+            const wrongEnd = Math.min(typedEnd, part.end);
+            if (wrongEnd > wrongStart) {
+              drawRangeHighlight(
+                ctx,
+                lineText,
+                lineStart,
+                wrongStart,
+                wrongEnd,
+                startX,
+                lineY,
+                lineHeight,
+                palette.wrongBg,
+                palette.wrongText
+              );
+            }
           }
 
-          if (wrongEnd > wrongStart) {
-            const leading = lineText.slice(0, wrongStart - lineStart);
-            const wrongText = lineText.slice(wrongStart - lineStart, wrongEnd - lineStart);
-            const offset = ctx.measureText(leading).width;
-            ctx.fillStyle = palette.wrongText;
-            ctx.fillText(wrongText, startX + offset, lineY);
-          }
-
-          cursor = lineEnd;
+          cursor += lineText.length;
         }
-      }
-
-      function renderTargetPreview() {
-        const target = getActiveSentence();
-        const textWidth = getTargetTextWidth();
-        const canvasWidth = textWidth + TARGET_PADDING_X * 2;
-        const ratio = dpr();
-
-        if (!target) {
-          targetCanvas.width = Math.round(canvasWidth * ratio);
-          targetCanvas.height = Math.round(28 * ratio);
-          targetCanvas.style.height = '28px';
-          targetCanvas.style.width = `${canvasWidth}px`;
-          targetCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
-          targetCtx.clearRect(0, 0, canvasWidth, 28);
-          return;
-        }
-
-        const layout = layoutWithLines(target.previewPrepared, textWidth, TARGET_LINE_HEIGHT);
-        const canvasHeight = layout.height + TARGET_PADDING_Y * 2;
-        targetCanvas.width = Math.round(canvasWidth * ratio);
-        targetCanvas.height = Math.round(canvasHeight * ratio);
-        targetCanvas.style.width = `${canvasWidth}px`;
-        targetCanvas.style.height = `${canvasHeight}px`;
-        targetCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
-        targetCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-        targetCtx.font = TARGET_FONT;
-        drawWrappedText(targetCtx, layout.lines, target.text, input.value, TARGET_PADDING_X, TARGET_PADDING_Y, TARGET_LINE_HEIGHT, {
-          text: '#34424b',
-          correctBg: '#dff3dd',
-          correctText: '#1b5e20',
-          wrongBg: '#ffe1e4',
-          wrongText: '#b71c1c'
-        });
       }
 
       function renderScene() {
@@ -629,8 +771,8 @@ The library was silent except for turning pages.`.trim().split('\n');
           drawWrappedText(
             sceneCtx,
             sentence.layout.lines,
-            sentence.text,
-            isActive ? input.value : '',
+            sentence,
+            isActive ? typedValue : '',
             sentence.x + BOX_PADDING_X,
             sentence.y + BOX_PADDING_Y,
             SENTENCE_LINE_HEIGHT,
@@ -639,39 +781,41 @@ The library was silent except for turning pages.`.trim().split('\n');
         }
       }
 
-      function submitTypedSentence() {
-        const target = getActiveSentence();
-        if (!target) return;
-
-        const typed = input.value.trim();
-        if (!typed) return;
-
-        if (typed === target.text.trim()) {
-          handleSuccessfulClear(target);
-          return;
-        }
-
-        score = Math.max(0, score - 10);
-        updateStats();
-        renderScene();
-        renderTargetPreview();
-      }
-
       function handleLiveTyping() {
         const target = getActiveSentence();
         if (!target) return;
 
-        const current = input.value;
-        recordTypingDelta(target.text, current);
-        updateStats();
-
-        if (current.trim() === target.text.trim()) {
-          handleSuccessfulClear(target);
+        const previous = typedValue;
+        syncInputValue();
+        if (typedValue === previous && typedValue !== '') {
+          updateTypingStatus();
           return;
         }
 
-        renderScene();
-        renderTargetPreview();
+        recordTypingDelta(target.text, typedValue);
+        updateStats();
+        updateTypingStatus();
+
+        if (typedValue === target.text) {
+          handleSuccessfulClear(target);
+        }
+      }
+
+      function applyDetachedKey(event) {
+        const target = getActiveSentence();
+        if (!target) return false;
+
+        if (event.key === 'Backspace') {
+          input.value = input.value.slice(0, -1);
+          return true;
+        }
+
+        if (event.key.length === 1) {
+          input.value = normalizeInputValue(`${input.value}${event.key}`, target.text.length);
+          return true;
+        }
+
+        return false;
       }
 
       function endGame() {
@@ -705,7 +849,6 @@ The library was silent except for turning pages.`.trim().split('\n');
         targetInfo.textContent = 'Click Start, then type the highlighted falling sentence.';
         updateStats();
         renderScene();
-        renderTargetPreview();
       }
 
       function update(dt) {
@@ -753,10 +896,16 @@ The library was silent except for turning pages.`.trim().split('\n');
         if (running) return;
         running = true;
         overlay.style.display = 'none';
-        input.focus();
         chooseActiveSentence();
         void ensureSingleSentence();
+        focusTyping();
         window.requestAnimationFrame(gameLoop);
+      }
+
+      function shouldRefocusForKey(event) {
+        if (event.metaKey || event.ctrlKey || event.altKey) return false;
+        if (event.key.length === 1) return true;
+        return event.key === 'Backspace' || event.key === 'Enter';
       }
 
       startBtn.addEventListener('click', startGame);
@@ -779,8 +928,31 @@ The library was silent except for turning pages.`.trim().split('\n');
       input.addEventListener('keydown', event => {
         if (event.key === 'Enter') {
           event.preventDefault();
-          submitTypedSentence();
         }
+      });
+
+      window.addEventListener('keydown', event => {
+        if (!running || overlay.style.display === 'flex') return;
+        if (!shouldRefocusForKey(event)) return;
+
+        if (document.activeElement !== input) {
+          const applied = applyDetachedKey(event);
+          if (applied || event.key === ' ' || event.key === 'Backspace') {
+            event.preventDefault();
+          }
+          focusTyping();
+          if (applied) handleLiveTyping();
+        }
+      });
+
+      game.addEventListener('pointerdown', () => {
+        if (!running || overlay.style.display === 'flex') return;
+        focusTyping();
+      });
+
+      typingBar.addEventListener('pointerdown', () => {
+        if (!running || overlay.style.display === 'flex') return;
+        focusTyping();
       });
 
       window.addEventListener('resize', () => {
@@ -790,13 +962,13 @@ The library was silent except for turning pages.`.trim().split('\n');
           sentence.x = Math.min(sentence.x, Math.max(10, window.innerWidth - sentence.boxWidth - 10));
         }
         renderScene();
-        renderTargetPreview();
       });
 
       targetInfo.textContent = 'Click Start, then type the highlighted falling sentence.';
+      updateTypingStatus();
       updateStats();
       syncCanvasSize();
-      renderTargetPreview();
+      renderScene();
     })();
   </script>
 </body>
