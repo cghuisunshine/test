@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Falling Sentences Typing Game</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(to bottom, #dff3ff 0%, #f8fcff 60%, #e9f7e9 100%);
+      overflow: hidden;
+    }
+
+    #game {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #sky {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #ground {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 70px;
+      background: linear-gradient(to top, #6fae63, #97d28d);
+      border-top: 3px solid #4a8b45;
+      z-index: 1;
+    }
+
+    #hud {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      z-index: 20;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #cfd8dc;
+      border-radius: 12px;
+      padding: 10px 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    #stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 15px;
+    }
+
+    #controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #1e88e5;
+      color: white;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    #typingBar {
+      position: absolute;
+      left: 50%;
+      bottom: 90px;
+      transform: translateX(-50%);
+      width: min(900px, 92vw);
+      z-index: 30;
+      background: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      border: 1px solid #cfd8dc;
+    }
+
+    #targetInfo {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 10px;
+      min-height: 20px;
+    }
+
+    #typingInput {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 20px;
+      border-radius: 10px;
+      border: 2px solid #90caf9;
+      outline: none;
+    }
+
+    #typingInput:focus {
+      border-color: #1e88e5;
+      box-shadow: 0 0 0 3px rgba(30,136,229,0.15);
+    }
+
+    .sentence {
+      position: absolute;
+      min-width: 240px;
+      max-width: 480px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #b0bec5;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+      font-size: 22px;
+      line-height: 1.45;
+      z-index: 10;
+      user-select: none;
+    }
+
+    .sentence.active {
+      border: 2px solid #1e88e5;
+      box-shadow: 0 7px 18px rgba(30,136,229,0.22);
+    }
+
+    .sentence .word {
+      padding: 1px 3px;
+      border-radius: 6px;
+    }
+
+    .sentence .typed {
+      background: #c8e6c9;
+      color: #1b5e20;
+      font-weight: 700;
+    }
+
+    .sentence .current-correct {
+      background: #fff59d;
+      color: #5d4037;
+      font-weight: 700;
+    }
+
+    .sentence .current-wrong {
+      background: #ffcdd2;
+      color: #b71c1c;
+      font-weight: 700;
+    }
+
+    .sentence .pending {
+      color: #333;
+    }
+
+    .sentence.hit-ground {
+      background: #ffe0e0;
+      border-color: #e57373;
+    }
+
+    #overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    #overlayContent {
+      width: min(520px, 92vw);
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    #overlayContent h2 {
+      margin-top: 0;
+      font-size: 30px;
+    }
+
+    #results {
+      text-align: left;
+      margin: 18px 0;
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div id="sky"></div>
+    <div id="hud">
+      <div id="stats" class="panel">
+        <div><strong>Score:</strong> <span id="score">0</span></div>
+        <div><strong>Cleared:</strong> <span id="cleared">0</span></div>
+        <div><strong>Missed:</strong> <span id="missed">0</span></div>
+        <div><strong>Accuracy:</strong> <span id="accuracy">100%</span></div>
+        <div><strong>Grade:</strong> <span id="grade">A</span></div>
+      </div>
+
+      <div id="controls" class="panel">
+        <button id="startBtn">Start</button>
+        <button id="restartBtn">Restart</button>
+        <span class="small">Type the active falling sentence. Press Enter to submit.</span>
+      </div>
+    </div>
+
+    <div id="typingBar">
+      <div id="targetInfo">Click Start, then type the highlighted falling sentence.</div>
+      <input id="typingInput" type="text" placeholder="Type here..." autocomplete="off" spellcheck="false" />
+    </div>
+
+    <div id="ground"></div>
+
+    <div id="overlay">
+      <div id="overlayContent">
+        <h2>Game Over</h2>
+        <div id="results"></div>
+        <button id="playAgainBtn">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sentenceBank = [
+      "The cat sleeps under the warm window.",
+      "Learning to type quickly takes steady practice.",
+      "Small steps every day can build strong habits.",
+      "The stars shine brightly above the quiet town.",
+      "A careful student reviews the lesson each evening.",
+      "Fresh rain made the garden smell clean and sweet.",
+      "Reading good books can expand the mind.",
+      "The little bird landed softly on the fence.",
+      "Teamwork often makes difficult problems easier to solve.",
+      "A clear plan helps people finish work on time.",
+      "The river moved slowly through the green valley.",
+      "Good communication prevents many common mistakes.",
+      "Sunlight filled the classroom on Monday morning.",
+      "The young athlete trained hard for the race.",
+      "Patience is useful when learning a new skill.",
+      "The baker placed warm bread on the wooden table.",
+      "The moon appeared behind a thin silver cloud.",
+      "A kind teacher can change a student's life.",
+      "Healthy habits improve both energy and focus.",
+      "The library was silent except for turning pages."
+    ];
+
+    const game = document.getElementById("game");
+    const input = document.getElementById("typingInput");
+    const targetInfo = document.getElementById("targetInfo");
+
+    const scoreEl = document.getElementById("score");
+    const clearedEl = document.getElementById("cleared");
+    const missedEl = document.getElementById("missed");
+    const accuracyEl = document.getElementById("accuracy");
+    const gradeEl = document.getElementById("grade");
+
+    const overlay = document.getElementById("overlay");
+    const results = document.getElementById("results");
+
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const playAgainBtn = document.getElementById("playAgainBtn");
+
+    let sentences = [];
+    let running = false;
+    let lastTime = 0;
+    let spawnTimer = 0;
+    let spawnInterval = 3000;
+    let nextId = 1;
+
+    let score = 0;
+    let cleared = 0;
+    let missed = 0;
+    let totalCharsTyped = 0;
+    let correctCharsTyped = 0;
+    let maxMissed = 5;
+
+    function randomSentence() {
+      return sentenceBank[Math.floor(Math.random() * sentenceBank.length)];
+    }
+
+    function shuffleArray(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function sentenceToWords(text) {
+      return text.trim().split(/\s+/);
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function spawnSentence() {
+      const text = randomSentence();
+      const words = sentenceToWords(text);
+
+      const el = document.createElement("div");
+      el.className = "sentence";
+      el.style.left = Math.max(10, Math.floor(Math.random() * (window.innerWidth - 520))) + "px";
+      el.style.top = "-20px";
+
+      const obj = {
+        id: nextId++,
+        text,
+        words,
+        x: parseFloat(el.style.left),
+        y: -20,
+        speed: 18 + Math.random() * 18,
+        el,
+        typedWordCount: 0,
+        completed: false,
+        hitGround: false
+      };
+
+      sentences.push(obj);
+      game.appendChild(el);
+      renderSentence(obj);
+      chooseActiveSentence();
+    }
+
+    function chooseActiveSentence() {
+      const alive = sentences.filter(s => !s.completed && !s.hitGround);
+      if (alive.length === 0) {
+        targetInfo.textContent = "No active sentence yet. Wait for one to appear.";
+        return null;
+      }
+
+      alive.sort((a, b) => b.y - a.y);
+      const target = alive[0];
+
+      for (const s of sentences) {
+        s.el.classList.toggle("active", s.id === target.id);
+      }
+
+      targetInfo.textContent = `Target sentence: ${target.text}`;
+      return target;
+    }
+
+    function getActiveSentence() {
+      return sentences.find(s => s.el.classList.contains("active") && !s.completed && !s.hitGround) || chooseActiveSentence();
+    }
+
+    function renderSentence(sentence, currentInput = input.value.trim()) {
+      const typedWords = currentInput.length ? currentInput.split(/\s+/) : [];
+      const active = sentence.el.classList.contains("active");
+
+      let html = "";
+
+      sentence.words.forEach((word, index) => {
+        let cls = "pending";
+
+        if (index < sentence.typedWordCount) {
+          cls = "typed";
+        } else if (active && index === sentence.typedWordCount && currentInput.length > 0) {
+          const currentTyped = typedWords[sentence.typedWordCount] || "";
+          if (currentTyped.length > 0) {
+            if (word.startsWith(currentTyped)) {
+              cls = "current-correct";
+            } else {
+              cls = "current-wrong";
+            }
+          }
+        }
+
+        html += `<span class="word ${cls}">${escapeHtml(word)}</span> `;
+      });
+
+      sentence.el.innerHTML = html.trim();
+    }
+
+    function updateAllSentenceRenders() {
+      for (const s of sentences) renderSentence(s);
+    }
+
+    function updateStats() {
+      scoreEl.textContent = score;
+      clearedEl.textContent = cleared;
+      missedEl.textContent = missed;
+
+      const accuracy = totalCharsTyped === 0
+        ? 100
+        : Math.round((correctCharsTyped / totalCharsTyped) * 100);
+
+      accuracyEl.textContent = `${accuracy}%`;
+      gradeEl.textContent = getGrade(accuracy, cleared, missed);
+    }
+
+    function getGrade(accuracy, clearedCount, missedCount) {
+      if (missedCount >= maxMissed) {
+        if (accuracy >= 90 && clearedCount >= 8) return "B";
+        if (accuracy >= 80 && clearedCount >= 5) return "C";
+        if (accuracy >= 70 && clearedCount >= 3) return "D";
+        return "F";
+      }
+
+      if (accuracy >= 97 && clearedCount >= 12) return "A+";
+      if (accuracy >= 93 && clearedCount >= 10) return "A";
+      if (accuracy >= 88 && clearedCount >= 8) return "B";
+      if (accuracy >= 78 && clearedCount >= 5) return "C";
+      if (accuracy >= 65) return "D";
+      return "F";
+    }
+
+    function removeSentence(sentence) {
+      sentence.el.remove();
+      sentences = sentences.filter(s => s.id !== sentence.id);
+    }
+
+    function submitTypedSentence() {
+      const target = getActiveSentence();
+      if (!target) return;
+
+      const typed = input.value.trim();
+      if (!typed) return;
+
+      const expected = target.text.trim();
+
+      totalCharsTyped += typed.length;
+
+      let correctCount = 0;
+      const len = Math.min(typed.length, expected.length);
+      for (let i = 0; i < len; i++) {
+        if (typed[i] === expected[i]) correctCount++;
+      }
+      correctCharsTyped += correctCount;
+
+      if (typed === expected) {
+        score += 100;
+        cleared += 1;
+        target.completed = true;
+        removeSentence(target);
+        input.value = "";
+        chooseActiveSentence();
+      } else {
+        score = Math.max(0, score - 10);
+      }
+
+      updateStats();
+      updateAllSentenceRenders();
+    }
+
+    function handleLiveHighlight() {
+      const target = getActiveSentence();
+      if (!target) return;
+
+      const current = input.value;
+      const expectedStart = target.text.slice(0, current.length);
+
+      totalCharsTyped += 1;
+      if (current.length > 0 && current[current.length - 1] === expectedStart[expectedStart.length - 1]) {
+        correctCharsTyped += 1;
+      }
+
+      const typedWords = current.trim().length ? current.trim().split(/\s+/) : [];
+      let completedWords = 0;
+
+      for (let i = 0; i < target.words.length; i++) {
+        const word = target.words[i];
+        const typedWord = typedWords[i];
+
+        if (typedWord === word) {
+          completedWords++;
+        } else {
+          break;
+        }
+      }
+
+      target.typedWordCount = completedWords;
+
+      if (current.trim() === target.text.trim()) {
+        score += 100;
+        cleared += 1;
+        target.completed = true;
+        removeSentence(target);
+        input.value = "";
+        chooseActiveSentence();
+      }
+
+      updateStats();
+      updateAllSentenceRenders();
+    }
+
+    function endGame() {
+      running = false;
+      overlay.style.display = "flex";
+
+      const accuracy = totalCharsTyped === 0
+        ? 100
+        : Math.round((correctCharsTyped / totalCharsTyped) * 100);
+      const grade = getGrade(accuracy, cleared, missed);
+
+      results.innerHTML = `
+        <div><strong>Final Score:</strong> ${score}</div>
+        <div><strong>Sentences Cleared:</strong> ${cleared}</div>
+        <div><strong>Sentences Missed:</strong> ${missed}</div>
+        <div><strong>Accuracy:</strong> ${accuracy}%</div>
+        <div><strong>Grade:</strong> ${grade}</div>
+      `;
+    }
+
+    function resetGame() {
+      for (const s of sentences) s.el.remove();
+      sentences = [];
+      nextId = 1;
+      running = false;
+      lastTime = 0;
+      spawnTimer = 0;
+
+      score = 0;
+      cleared = 0;
+      missed = 0;
+      totalCharsTyped = 0;
+      correctCharsTyped = 0;
+
+      input.value = "";
+      overlay.style.display = "none";
+      targetInfo.textContent = "Click Start, then type the highlighted falling sentence.";
+      updateStats();
+    }
+
+    function update(dt) {
+      for (const s of sentences) {
+        if (s.completed || s.hitGround) continue;
+
+        s.y += s.speed * dt;
+        s.el.style.top = `${s.y}px`;
+
+        const groundTop = window.innerHeight - 70;
+        if (s.y + s.el.offsetHeight >= groundTop) {
+          s.hitGround = true;
+          s.el.classList.add("hit-ground");
+          missed += 1;
+          updateStats();
+
+          setTimeout(() => {
+            removeSentence(s);
+            chooseActiveSentence();
+          }, 250);
+        }
+      }
+
+      if (missed >= maxMissed) {
+        endGame();
+      }
+    }
+
+    function gameLoop(timestamp) {
+      if (!running) return;
+
+      if (!lastTime) lastTime = timestamp;
+      const dtMs = timestamp - lastTime;
+      const dt = dtMs / 1000;
+      lastTime = timestamp;
+
+      spawnTimer += dtMs;
+      if (spawnTimer >= spawnInterval) {
+        spawnSentence();
+        spawnTimer = 0;
+
+        if (spawnInterval > 1500) {
+          spawnInterval -= 40;
+        }
+      }
+
+      update(dt);
+      requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      if (running) return;
+      running = true;
+      overlay.style.display = "none";
+      input.focus();
+
+      if (sentences.length === 0) {
+        spawnSentence();
+        spawnSentence();
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    startBtn.addEventListener("click", startGame);
+
+    restartBtn.addEventListener("click", () => {
+      resetGame();
+      spawnInterval = 3000;
+      startGame();
+    });
+
+    playAgainBtn.addEventListener("click", () => {
+      resetGame();
+      spawnInterval = 3000;
+      startGame();
+    });
+
+    input.addEventListener("input", () => {
+      if (!running) return;
+      handleLiveHighlight();
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        submitTypedSentence();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      for (const s of sentences) {
+        if (s.x > window.innerWidth - 520) {
+          s.x = Math.max(10, window.innerWidth - 540);
+          s.el.style.left = `${s.x}px`;
+        }
+      }
+    });
+
+    resetGame();
+  </script>
+</body>
+</html>
