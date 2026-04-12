@@ -223,6 +223,56 @@
       color: #66757f;
     }
 
+    #customPanel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: min(760px, calc(100vw - 24px));
+    }
+
+    #customPanelHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    #customSentenceInput {
+      width: 100%;
+      min-height: 84px;
+      resize: vertical;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #cfd8dc;
+      font: 14px/1.45 Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: rgba(255,255,255,0.98);
+    }
+
+    #customSentenceInput:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
+    }
+
+    #customPanelControls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #sentenceFileInput {
+      max-width: 100%;
+      font-size: 13px;
+    }
+
+    #sentenceBankStatus {
+      font-size: 12px;
+      color: #546670;
+    }
+
     @media (max-width: 640px) {
       #hud {
         gap: 10px;
@@ -263,6 +313,14 @@
         bottom: 0;
         min-width: 0;
       }
+
+      #customPanel {
+        width: 100%;
+      }
+
+      #customSentenceInput {
+        min-height: 72px;
+      }
     }
   </style>
 </head>
@@ -283,6 +341,20 @@
         <button id='startBtn'>Start</button>
         <button id='restartBtn'>Restart</button>
         <span class='small'>One falling sentence at a time.</span>
+      </div>
+    </div>
+
+    <div id='customPanel' class='panel'>
+      <div id='customPanelHeader'>
+        <strong>Custom falling sentences</strong>
+        <span class='small'>Paste one sentence per line or upload a .txt file.</span>
+      </div>
+      <textarea id='customSentenceInput' placeholder='Paste custom sentences here, one per line'></textarea>
+      <div id='customPanelControls'>
+        <input id='sentenceFileInput' type='file' accept='.txt,text/plain' />
+        <button id='applySentenceBankBtn' type='button'>Use Custom Sentences</button>
+        <button id='resetSentenceBankBtn' type='button'>Use Default Sentences</button>
+        <span id='sentenceBankStatus'>Using the default sentence set.</span>
       </div>
     </div>
 
@@ -318,7 +390,7 @@
 
   <script type='module'>
     (async () => {
-      const sentenceBank = `The cat sleeps under the warm window.
+      const DEFAULT_SENTENCE_BANK = `The cat sleeps under the warm window.
 Learning to type quickly takes steady practice.
 Small steps every day can build strong habits.
 The stars shine brightly above the quiet town.
@@ -338,6 +410,7 @@ The moon appeared behind a thin silver cloud.
 A kind teacher can change a student's life.
 Healthy habits improve both energy and focus.
 The library was silent except for turning pages.`.trim().split('\n');
+      let sentenceBank = [...DEFAULT_SENTENCE_BANK];
 
       const MOBILE_QUERY = '(max-width: 640px), (hover: none) and (pointer: coarse)';
 
@@ -347,6 +420,11 @@ The library was silent except for turning pages.`.trim().split('\n');
       const targetInfo = document.getElementById('targetInfo');
       const progressInfo = document.getElementById('progressInfo');
       const typingBar = document.getElementById('typingBar');
+      const customSentenceInput = document.getElementById('customSentenceInput');
+      const sentenceFileInput = document.getElementById('sentenceFileInput');
+      const applySentenceBankBtn = document.getElementById('applySentenceBankBtn');
+      const resetSentenceBankBtn = document.getElementById('resetSentenceBankBtn');
+      const sentenceBankStatus = document.getElementById('sentenceBankStatus');
       const overlay = document.getElementById('overlay');
       const results = document.getElementById('results');
 
@@ -433,6 +511,64 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function randomSentence() {
         return sentenceBank[Math.floor(Math.random() * sentenceBank.length)];
+      }
+
+      function parseSentenceText(rawText) {
+        const normalized = String(rawText || '').replace(/\r/g, '\n');
+        const lineBased = normalized
+          .split('\n')
+          .map(line => line.trim())
+          .filter(Boolean);
+
+        if (lineBased.length > 1) return lineBased;
+
+        return normalized
+          .split(/(?<=[.!?])\s+/)
+          .map(line => line.trim())
+          .filter(Boolean);
+      }
+
+      function refreshSentenceBankStatus(message) {
+        sentenceBankStatus.textContent = message;
+      }
+
+      async function refreshGameplaySentence() {
+        if (!running) {
+          renderScene();
+          return;
+        }
+        gameToken += 1;
+        sentences = [];
+        activeSentenceId = null;
+        clearInput();
+        chooseActiveSentence();
+        renderScene();
+        await ensureSingleSentence();
+        focusTyping();
+      }
+
+      async function useSentenceBank(nextBank, message) {
+        if (!Array.isArray(nextBank) || nextBank.length === 0) return false;
+        sentenceBank = [...nextBank];
+        refreshSentenceBankStatus(message);
+        await refreshGameplaySentence();
+        return true;
+      }
+
+      async function applyCustomSentences(rawText, sourceLabel = 'custom text') {
+        const parsed = parseSentenceText(rawText);
+        if (parsed.length === 0) {
+          refreshSentenceBankStatus('No valid sentences found. Paste one sentence per line or upload a text file.');
+          return false;
+        }
+        customSentenceInput.value = parsed.join('\n');
+        return useSentenceBank(parsed, `Using ${parsed.length} custom sentence${parsed.length === 1 ? '' : 's'} from ${sourceLabel}.`);
+      }
+
+      async function resetSentenceBank() {
+        customSentenceInput.value = '';
+        sentenceFileInput.value = '';
+        await useSentenceBank(DEFAULT_SENTENCE_BANK, 'Using the default sentence set.');
       }
 
       function dpr() {
@@ -972,6 +1108,31 @@ The library was silent except for turning pages.`.trim().split('\n');
         return event.key === 'Backspace' || event.key === 'Enter';
       }
 
+      function isEditingCustomSentences() {
+        const active = document.activeElement;
+        return active === customSentenceInput || active === sentenceFileInput;
+      }
+
+      applySentenceBankBtn.addEventListener('click', async () => {
+        await applyCustomSentences(customSentenceInput.value, 'pasted text');
+      });
+
+      resetSentenceBankBtn.addEventListener('click', async () => {
+        await resetSentenceBank();
+      });
+
+      sentenceFileInput.addEventListener('change', async event => {
+        const [file] = Array.from(event.target.files || []);
+        if (!file) return;
+        try {
+          const text = await file.text();
+          await applyCustomSentences(text, file.name || 'uploaded file');
+        } catch (error) {
+          console.error(error);
+          refreshSentenceBankStatus('Could not read that file. Please upload a plain text file.');
+        }
+      });
+
       startBtn.addEventListener('click', startGame);
 
       restartBtn.addEventListener('click', () => {
@@ -997,6 +1158,7 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       window.addEventListener('keydown', event => {
         if (!running || overlay.style.display === 'flex') return;
+        if (isEditingCustomSentences()) return;
         if (!shouldRefocusForKey(event)) return;
 
         if (document.activeElement !== input) {
