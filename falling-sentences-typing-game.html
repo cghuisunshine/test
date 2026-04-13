@@ -642,7 +642,8 @@ The library was silent except for turning pages.`.trim().split('\n');
         correctBg: '#d9f2d6',
         correctText: '#1b5e20',
         wrongBg: '#ffd6da',
-        wrongText: '#b71c1c'
+        wrongText: '#b71c1c',
+        pendingSpace: '#ff8f00'
       };
 
       let prepareWithSegments;
@@ -949,6 +950,7 @@ The library was silent except for turning pages.`.trim().split('\n');
           prepared,
           parts,
           wordCount,
+          hiddenIndices: new Set(),
           layout: null,
           boxWidth: 0,
           boxHeight: 0,
@@ -1106,6 +1108,36 @@ The library was silent except for turning pages.`.trim().split('\n');
         if (activeSentenceId === id) activeSentenceId = null;
       }
 
+      function measureGlyphWidth(ctx, glyph) {
+        return Math.max(ctx.measureText(glyph || ' ').width, glyph === ' ' ? 8 : 0);
+      }
+
+      function buildHiddenIndexSet(count) {
+        const hiddenIndices = new Set();
+        for (let index = 0; index < count; index += 1) {
+          hiddenIndices.add(index);
+        }
+        return hiddenIndices;
+      }
+
+      function isWordCharacterIndex(parts, charIndex) {
+        for (const part of parts) {
+          if (charIndex < part.start) return false;
+          if (charIndex < part.end) return part.isWord;
+        }
+        return false;
+      }
+
+      function isWrongCharacterIndex(sentence, charIndex, correct, typedEnd) {
+        return charIndex >= correct
+          && charIndex < typedEnd
+          && isWordCharacterIndex(sentence.parts, charIndex);
+      }
+
+      function isPendingSpaceCharacter(sentence, charIndex, correct) {
+        return charIndex === correct && sentence.text[charIndex] === ' ';
+      }
+
       function drawRangeHighlight(ctx, lineText, lineStart, rangeStart, rangeEnd, startX, lineY, lineHeight, fillStyle, textStyle) {
         const start = Math.max(lineStart, rangeStart);
         const end = Math.min(lineStart + lineText.length, rangeEnd);
@@ -1132,27 +1164,28 @@ The library was silent except for turning pages.`.trim().split('\n');
         sceneCtx.textBaseline = 'top';
 
         let cursor = 0;
-        for (let index = 0; index < sentence.layout.lines.length; index += 1) {
-          const lineText = sentence.layout.lines[index].text;
+        for (let lineIndex = 0; lineIndex < sentence.layout.lines.length; lineIndex += 1) {
+          const lineText = sentence.layout.lines[lineIndex].text;
           const lineEnd = cursor + lineText.length;
           if (charIndex >= lineEnd) {
             cursor = lineEnd;
             continue;
           }
 
-          const localIndex = charIndex - cursor;
-          const leading = lineText.slice(0, localIndex);
-          const glyph = lineText[localIndex] || sentence.text[charIndex] || '';
-          const measuredGlyph = glyph === ' ' ? ' ' : glyph;
-          const leadingWidth = sceneCtx.measureText(leading).width;
-          const glyphWidth = Math.max(sceneCtx.measureText(measuredGlyph).width, glyph === ' ' ? 8 : 10);
-          sceneCtx.restore();
-
-          return {
-            x: sentence.x + BOX_PADDING_X + leadingWidth + glyphWidth * 0.5,
-            y: sentence.y + BOX_PADDING_Y + index * SENTENCE_LINE_HEIGHT + SENTENCE_LINE_HEIGHT * 0.5,
-            glyph
-          };
+          let offsetX = 0;
+          for (let localIndex = 0; localIndex < lineText.length; localIndex += 1) {
+            const glyph = lineText[localIndex];
+            const width = measureGlyphWidth(sceneCtx, glyph);
+            if (cursor + localIndex === charIndex) {
+              sceneCtx.restore();
+              return {
+                x: sentence.x + BOX_PADDING_X + offsetX + width * 0.5,
+                y: sentence.y + BOX_PADDING_Y + lineIndex * SENTENCE_LINE_HEIGHT + SENTENCE_LINE_HEIGHT * 0.5,
+                glyph
+              };
+            }
+            offsetX += width;
+          }
         }
 
         sceneCtx.restore();
@@ -1204,14 +1237,19 @@ The library was silent except for turning pages.`.trim().split('\n');
         }
       }
 
-      function spawnMatchedCharBursts(sentence, previousValue, nextValue) {
-        if (!sentence || nextValue.length <= previousValue.length) return;
+      function syncMatchedCharacterEffects(sentence, previousValue, nextValue) {
+        if (!sentence) return;
 
-        for (let index = previousValue.length; index < nextValue.length; index += 1) {
-          if (nextValue[index] === sentence.text[index]) {
+        const previousCorrect = commonPrefixLength(sentence.text, previousValue);
+        const nextCorrect = commonPrefixLength(sentence.text, nextValue);
+
+        if (nextCorrect > previousCorrect) {
+          for (let index = previousCorrect; index < nextCorrect; index += 1) {
             spawnDandelionBurst(sentence, index);
           }
         }
+
+        sentence.hiddenIndices = buildHiddenIndexSet(nextCorrect);
       }
 
       function updateDandelionParticles(dt) {
@@ -1246,7 +1284,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         ctx.rotate(particle.rotation);
         ctx.lineCap = 'round';
 
-        ctx.strokeStyle = `rgba(255, 255, 255, ${0.92 * alpha})`;
+        ctx.strokeStyle = `rgba(244, 196, 48, ${0.96 * alpha})`;
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(0, 0);
@@ -1263,7 +1301,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         ctx.lineTo(particle.tuft, -particle.tuft * 0.95);
         ctx.stroke();
 
-        ctx.fillStyle = `rgba(211, 225, 206, ${0.45 * alpha})`;
+        ctx.fillStyle = `rgba(201, 125, 20, ${0.72 * alpha})`;
         ctx.beginPath();
         ctx.arc(0, particle.stem, 1.4, 0, Math.PI * 2);
         ctx.fill();
@@ -1311,62 +1349,33 @@ The library was silent except for turning pages.`.trim().split('\n');
           const lineText = line.text;
           const lineY = startY + index * lineHeight;
           const lineStart = cursor;
+          let cursorX = startX;
 
-          ctx.fillStyle = palette.text;
-          ctx.fillText(lineText, startX, lineY);
+          for (let localIndex = 0; localIndex < lineText.length; localIndex += 1) {
+            const charIndex = lineStart + localIndex;
+            const glyph = lineText[localIndex];
+            const glyphWidth = measureGlyphWidth(ctx, glyph);
+            const isHidden = sentence.hiddenIndices.has(charIndex);
 
-          for (const part of sentence.parts) {
-            if (!part.isWord) continue;
-            if (part.end <= lineStart || part.start >= lineStart + lineText.length) continue;
-
-            if (correct >= part.end) {
-              drawRangeHighlight(
-                ctx,
-                lineText,
-                lineStart,
-                part.start,
-                part.end,
-                startX,
-                lineY,
-                lineHeight,
-                palette.correctBg,
-                palette.correctText
-              );
-              continue;
+            if (!isHidden && isWrongCharacterIndex(sentence, charIndex, correct, typedEnd)) {
+              ctx.fillStyle = palette.wrongBg;
+              ctx.fillRect(cursorX - 3, lineY + 3, glyphWidth + 6, lineHeight - 8);
             }
 
-            const correctEnd = Math.min(correct, part.end);
-            if (correctEnd > part.start) {
-              drawRangeHighlight(
-                ctx,
-                lineText,
-                lineStart,
-                part.start,
-                correctEnd,
-                startX,
-                lineY,
-                lineHeight,
-                palette.correctBg,
-                palette.correctText
-              );
+            if (!isHidden && isPendingSpaceCharacter(sentence, charIndex, correct)) {
+              ctx.fillStyle = palette.pendingSpace;
+              ctx.fillText('·', cursorX, lineY);
             }
 
-            const wrongStart = Math.max(correct, part.start);
-            const wrongEnd = Math.min(typedEnd, part.end);
-            if (wrongEnd > wrongStart) {
-              drawRangeHighlight(
-                ctx,
-                lineText,
-                lineStart,
-                wrongStart,
-                wrongEnd,
-                startX,
-                lineY,
-                lineHeight,
-                palette.wrongBg,
-                palette.wrongText
-              );
+            if (!isHidden && glyph !== ' ') {
+              ctx.fillStyle = palette.text;
+              if (isWrongCharacterIndex(sentence, charIndex, correct, typedEnd)) {
+                ctx.fillStyle = palette.wrongText;
+              }
+              ctx.fillText(glyph, cursorX, lineY);
             }
+
+            cursorX += glyphWidth;
           }
 
           cursor += lineText.length;
@@ -1434,7 +1443,7 @@ The library was silent except for turning pages.`.trim().split('\n');
           return;
         }
 
-        spawnMatchedCharBursts(target, previous, typedValue);
+        syncMatchedCharacterEffects(target, previous, typedValue);
         recordTypingDelta(target.text, typedValue);
         updateStats();
         updateTypingStatus();
@@ -1464,6 +1473,7 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function endGame() {
         running = false;
+        dandelionParticles = [];
         if (keyboardPromptTimer) {
           window.clearTimeout(keyboardPromptTimer);
           keyboardPromptTimer = 0;
@@ -1514,9 +1524,8 @@ The library was silent except for turning pages.`.trim().split('\n');
       }
 
       function update(dt) {
-        updateDandelionParticles(dt);
-
         const visibleFloorTop = getVisibleFloorTop();
+        updateDandelionParticles(dt);
 
         for (const sentence of sentences) {
           if (sentence.hitGround) continue;
