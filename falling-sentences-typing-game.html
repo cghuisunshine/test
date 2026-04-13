@@ -88,7 +88,6 @@
 
     #hud.is-playing #stats,
     #hud.is-playing #startBtn,
-    #hud.is-playing #restartBtn,
     #hud.is-playing #modeHint {
       display: none;
     }
@@ -559,7 +558,6 @@
 
       <div id='controls' class='panel'>
         <button id='startBtn'>Start</button>
-        <button id='restartBtn'>Restart</button>
         <span id='modeHint'>Single sentence mode</span>
         <div id='configMenuWrap'>
           <button id='menuBtn' type='button' aria-label='Open settings' aria-expanded='false'>
@@ -650,6 +648,7 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       const MOBILE_QUERY = '(max-width: 640px), (hover: none) and (pointer: coarse)';
       const SPEED_STORAGE_KEY = 'falling-sentences-speed-percent';
+      const CUSTOM_SENTENCE_STORAGE_KEY = 'falling-sentences-custom-bank';
       const DEFAULT_SPEED_PERCENT = 100;
 
       const game = document.getElementById('game');
@@ -680,7 +679,6 @@ The library was silent except for turning pages.`.trim().split('\n');
       const gradeEl = document.getElementById('grade');
 
       const startBtn = document.getElementById('startBtn');
-      const restartBtn = document.getElementById('restartBtn');
       const playAgainBtn = document.getElementById('playAgainBtn');
 
       const sceneCtx = sceneCanvas.getContext('2d');
@@ -722,7 +720,6 @@ The library was silent except for turning pages.`.trim().split('\n');
         targetInfo.textContent = 'Pretext could not be loaded from the CDN.';
         progressInfo.textContent = 'The game cannot start without the text layout library.';
         startBtn.disabled = true;
-        restartBtn.disabled = true;
         playAgainBtn.disabled = true;
         console.error(error);
         return;
@@ -968,6 +965,29 @@ The library was silent except for turning pages.`.trim().split('\n');
         sentenceBankStatus.textContent = message;
       }
 
+      function persistCustomSentenceBank(nextBank) {
+        try {
+          if (!Array.isArray(nextBank) || nextBank.length === 0) {
+            window.localStorage.removeItem(CUSTOM_SENTENCE_STORAGE_KEY);
+            return;
+          }
+          window.localStorage.setItem(CUSTOM_SENTENCE_STORAGE_KEY, JSON.stringify(nextBank));
+        } catch {
+          // Ignore storage failures.
+        }
+      }
+
+      function loadCustomSentenceBank() {
+        try {
+          const raw = window.localStorage.getItem(CUSTOM_SENTENCE_STORAGE_KEY);
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed.map(item => String(item).trim()).filter(Boolean) : null;
+        } catch {
+          return null;
+        }
+      }
+
       function setGameplayHudState(isPlaying) {
         hud.classList.toggle('is-playing', isPlaying);
       }
@@ -1000,9 +1020,13 @@ The library was silent except for turning pages.`.trim().split('\n');
         focusTyping();
       }
 
-      async function useSentenceBank(nextBank, message) {
+      async function useSentenceBank(nextBank, message, options = {}) {
         if (!Array.isArray(nextBank) || nextBank.length === 0) return false;
+        const { persist = false } = options;
         sentenceBank = [...nextBank];
+        if (persist) {
+          persistCustomSentenceBank(sentenceBank);
+        }
         refreshSentenceBankStatus(message);
         await refreshGameplaySentence();
         return true;
@@ -1015,12 +1039,17 @@ The library was silent except for turning pages.`.trim().split('\n');
           return false;
         }
         customSentenceInput.value = parsed.join('\n');
-        return useSentenceBank(parsed, `Using ${parsed.length} custom sentence${parsed.length === 1 ? '' : 's'} from ${sourceLabel}.`);
+        return useSentenceBank(
+          parsed,
+          `Using ${parsed.length} custom sentence${parsed.length === 1 ? '' : 's'} from ${sourceLabel}.`,
+          { persist: true }
+        );
       }
 
       async function resetSentenceBank() {
         customSentenceInput.value = '';
         sentenceFileInput.value = '';
+        persistCustomSentenceBank(null);
         await useSentenceBank(DEFAULT_SENTENCE_BANK, 'Using the default sentence set.');
       }
 
@@ -1843,11 +1872,6 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       startBtn.addEventListener('click', startGame);
 
-      restartBtn.addEventListener('click', () => {
-        resetGame();
-        startGame();
-      });
-
       playAgainBtn.addEventListener('click', () => {
         resetGame();
         startGame();
@@ -1927,6 +1951,12 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       speedPercent = loadSpeedPercent();
       updateSpeedUi();
+      const storedCustomBank = loadCustomSentenceBank();
+      if (storedCustomBank && storedCustomBank.length > 0) {
+        sentenceBank = [...storedCustomBank];
+        customSentenceInput.value = storedCustomBank.join('\n');
+        refreshSentenceBankStatus(`Using ${storedCustomBank.length} saved custom sentence${storedCustomBank.length === 1 ? '' : 's'}.`);
+      }
       resetMobileKeyboardFloorState();
       updateTypingPrompt();
       updateTypingStatus();
