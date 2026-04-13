@@ -630,6 +630,9 @@ The library was silent except for turning pages.`.trim().split('\n');
       const MAX_MISSED = 5;
       const DANDELION_GUST = 34;
       const DANDELION_GRAVITY = 7;
+      const MOBILE_KEYBOARD_OPEN_THRESHOLD = 120;
+      const MOBILE_KEYBOARD_SETTLE_MS = 160;
+      const MOBILE_KEYBOARD_POSITION_TOLERANCE = 12;
 
       const sentencePalette = {
         fill: 'rgba(255, 255, 255, 0.95)',
@@ -673,6 +676,12 @@ The library was silent except for turning pages.`.trim().split('\n');
       let transientProgressMessage = '';
       let keyboardPromptTimer = 0;
       let dandelionParticles = [];
+      let mobileKeyboardFloorState = {
+        phase: 'closed',
+        stableBottom: null,
+        lastBottom: null,
+        lastChangeAt: 0
+      };
 
       let score = 0;
       let cleared = 0;
@@ -739,16 +748,66 @@ The library was silent except for turning pages.`.trim().split('\n');
         return game.clientHeight || window.innerHeight;
       }
 
+      function getVisualViewportBottom() {
+        return window.visualViewport
+          ? window.visualViewport.offsetTop + window.visualViewport.height
+          : getGameHeight();
+      }
+
+      function resetMobileKeyboardFloorState(now = performance.now()) {
+        mobileKeyboardFloorState = {
+          phase: 'closed',
+          stableBottom: null,
+          lastBottom: getVisualViewportBottom(),
+          lastChangeAt: now
+        };
+      }
+
+      function updateMobileKeyboardFloorState(now = performance.now()) {
+        if (!isMobileInputMode()) {
+          resetMobileKeyboardFloorState(now);
+          return;
+        }
+
+        const viewportBottom = getVisualViewportBottom();
+        const keyboardInset = getGameHeight() - viewportBottom;
+        const keyboardLikelyOpen = keyboardInset >= MOBILE_KEYBOARD_OPEN_THRESHOLD;
+
+        if (!keyboardLikelyOpen) {
+          mobileKeyboardFloorState.phase = 'closed';
+          mobileKeyboardFloorState.stableBottom = null;
+          mobileKeyboardFloorState.lastBottom = viewportBottom;
+          mobileKeyboardFloorState.lastChangeAt = now;
+          return;
+        }
+
+        if (
+          mobileKeyboardFloorState.lastBottom === null
+          || Math.abs(viewportBottom - mobileKeyboardFloorState.lastBottom) > MOBILE_KEYBOARD_POSITION_TOLERANCE
+        ) {
+          mobileKeyboardFloorState.lastBottom = viewportBottom;
+          mobileKeyboardFloorState.lastChangeAt = now;
+          mobileKeyboardFloorState.phase = 'opening';
+        } else if (mobileKeyboardFloorState.phase === 'closed') {
+          mobileKeyboardFloorState.phase = 'opening';
+        }
+
+        if (now - mobileKeyboardFloorState.lastChangeAt >= MOBILE_KEYBOARD_SETTLE_MS) {
+          mobileKeyboardFloorState.phase = 'open';
+          mobileKeyboardFloorState.stableBottom = viewportBottom;
+        }
+      }
+
       function getVisibleFloorTop() {
         const groundTop = getGameHeight() - GROUND_HEIGHT;
         if (!isMobileInputMode()) return groundTop;
 
-        const typingBarRect = typingBar.getBoundingClientRect();
-        const visualViewportBottom = window.visualViewport
-          ? window.visualViewport.offsetTop + window.visualViewport.height
-          : getGameHeight();
+        updateMobileKeyboardFloorState();
+        if (mobileKeyboardFloorState.phase !== 'open' || mobileKeyboardFloorState.stableBottom === null) {
+          return groundTop;
+        }
 
-        return Math.min(groundTop, typingBarRect.top, visualViewportBottom);
+        return Math.min(groundTop, mobileKeyboardFloorState.stableBottom);
       }
 
       function randomSentence() {
@@ -1474,6 +1533,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       function endGame() {
         running = false;
         dandelionParticles = [];
+        resetMobileKeyboardFloorState();
         if (keyboardPromptTimer) {
           window.clearTimeout(keyboardPromptTimer);
           keyboardPromptTimer = 0;
@@ -1500,6 +1560,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         lastTime = 0;
         nextId = 1;
         dandelionParticles = [];
+        resetMobileKeyboardFloorState();
         clearInput();
         score = 0;
         cleared = 0;
@@ -1569,6 +1630,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       function startGame() {
         if (running) return;
         running = true;
+        resetMobileKeyboardFloorState();
         overlay.style.display = 'none';
         closeConfigMenu();
         setGameplayHudState(true);
@@ -1696,8 +1758,13 @@ The library was silent except for turning pages.`.trim().split('\n');
       });
 
       const syncMobileMode = () => {
+        resetMobileKeyboardFloorState();
         updateTypingPrompt();
         updateTypingStatus();
+      };
+
+      const syncMobileKeyboardFloor = () => {
+        updateMobileKeyboardFloorState();
       };
 
       if (typeof mobileQuery.addEventListener === 'function') {
@@ -1706,6 +1773,12 @@ The library was silent except for turning pages.`.trim().split('\n');
         mobileQuery.addListener(syncMobileMode);
       }
 
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', syncMobileKeyboardFloor);
+        window.visualViewport.addEventListener('scroll', syncMobileKeyboardFloor);
+      }
+
+      resetMobileKeyboardFloorState();
       updateTypingPrompt();
       updateTypingStatus();
       updateStats();
