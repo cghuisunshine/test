@@ -774,6 +774,10 @@ The library was silent except for turning pages.`.trim().split('\n');
           : getGameHeight();
       }
 
+      function getVisualViewportTop() {
+        return window.visualViewport ? window.visualViewport.offsetTop : 0;
+      }
+
       function resetMobileKeyboardFloorState(now = performance.now()) {
         mobileKeyboardFloorState = {
           phase: 'closed',
@@ -828,6 +832,21 @@ The library was silent except for turning pages.`.trim().split('\n');
         }
 
         return Math.min(groundTop, mobileKeyboardFloorState.stableBottom);
+      }
+
+      function getVisibleCeilingTop() {
+        if (!isMobileInputMode()) return 0;
+        const viewportTop = getVisualViewportTop();
+        const hudBottom = hud.getBoundingClientRect().bottom + 12;
+        return Math.max(viewportTop, hudBottom);
+      }
+
+      function clampSentenceToVisibleRange(sentence) {
+        if (!sentence) return;
+        const visibleTop = getVisibleCeilingTop();
+        const visibleFloorTop = getVisibleFloorTop();
+        const maxY = Math.max(visibleTop, visibleFloorTop - sentence.boxHeight);
+        sentence.y = Math.min(Math.max(sentence.y, visibleTop), maxY);
       }
 
       function randomSentence() {
@@ -1042,6 +1061,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         layoutSentence(sentence);
         const maxLeft = Math.max(10, width - sentence.boxWidth - 10);
         sentence.x = maxLeft <= 10 ? 10 : 10 + Math.random() * (maxLeft - 10);
+        clampSentenceToVisibleRange(sentence);
         return sentence;
       }
 
@@ -1612,6 +1632,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         for (const sentence of sentences) {
           if (sentence.hitGround) continue;
           sentence.y += sentence.speed * dt;
+          clampSentenceToVisibleRange(sentence);
           if (sentence.y + sentence.boxHeight >= visibleFloorTop) {
             sentence.hitGround = true;
             missed += 1;
@@ -1772,6 +1793,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         for (const sentence of sentences) {
           layoutSentence(sentence);
           sentence.x = Math.min(sentence.x, Math.max(10, width - sentence.boxWidth - 10));
+          clampSentenceToVisibleRange(sentence);
         }
         updateTypingPrompt();
         updateTypingStatus();
