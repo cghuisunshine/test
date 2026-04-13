@@ -385,6 +385,41 @@
       box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.12);
     }
 
+    #speedControlGroup {
+      display: grid;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid #dde8ef;
+      border-radius: 12px;
+      background: #f7fbfe;
+    }
+
+    #speedControlMeta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: #44515a;
+    }
+
+    #speedSlider {
+      width: 100%;
+      accent-color: var(--primary);
+      margin: 0;
+    }
+
+    #speedHelpText {
+      font-size: 12px;
+      color: #60727d;
+    }
+
+    #speedValue {
+      font-weight: 700;
+      color: #1e88e5;
+      white-space: nowrap;
+    }
+
     #customPanelControls {
       display: flex;
       gap: 10px;
@@ -536,6 +571,15 @@
               <strong>Customize sentences</strong>
               <span class='small'>Paste one sentence per line, or upload a plain text file.</span>
             </div>
+            <span class='menuSectionLabel'>Fall speed</span>
+            <div id='speedControlGroup'>
+              <div id='speedControlMeta'>
+                <span>Sentence speed</span>
+                <span id='speedValue'>100%</span>
+              </div>
+              <input id='speedSlider' type='range' min='0' max='200' step='5' value='100' aria-label='Sentence fall speed' />
+              <div id='speedHelpText'>0% means the sentence appears and stays still.</div>
+            </div>
             <span class='menuSectionLabel'>Sentence list</span>
             <textarea id='customSentenceInput' placeholder='Paste custom sentences here, one per line'></textarea>
             <span class='menuSectionLabel'>Import or apply</span>
@@ -605,6 +649,8 @@ The library was silent except for turning pages.`.trim().split('\n');
       let sentenceBank = [...DEFAULT_SENTENCE_BANK];
 
       const MOBILE_QUERY = '(max-width: 640px), (hover: none) and (pointer: coarse)';
+      const SPEED_STORAGE_KEY = 'falling-sentences-speed-percent';
+      const DEFAULT_SPEED_PERCENT = 100;
 
       const game = document.getElementById('game');
       const hud = document.getElementById('hud');
@@ -615,6 +661,8 @@ The library was silent except for turning pages.`.trim().split('\n');
       const typingBar = document.getElementById('typingBar');
       const keyboardBadge = document.getElementById('keyboardBadge');
       const customSentenceInput = document.getElementById('customSentenceInput');
+      const speedSlider = document.getElementById('speedSlider');
+      const speedValue = document.getElementById('speedValue');
       const sentenceFileInput = document.getElementById('sentenceFileInput');
       const applySentenceBankBtn = document.getElementById('applySentenceBankBtn');
       const resetSentenceBankBtn = document.getElementById('resetSentenceBankBtn');
@@ -704,6 +752,54 @@ The library was silent except for turning pages.`.trim().split('\n');
       let missed = 0;
       let totalCharsTyped = 0;
       let correctCharsTyped = 0;
+      let speedPercent = DEFAULT_SPEED_PERCENT;
+
+      function normalizeSpeedPercent(value) {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue)) return DEFAULT_SPEED_PERCENT;
+        return Math.max(0, Math.min(200, Math.round(numericValue / 5) * 5));
+      }
+
+      function getSpeedMultiplier() {
+        return speedPercent / 100;
+      }
+
+      function updateSpeedUi() {
+        speedSlider.value = String(speedPercent);
+        speedValue.textContent = speedPercent === 0 ? '0% · still' : `${speedPercent}%`;
+      }
+
+      function applySpeedToSentence(sentence) {
+        if (!sentence) return;
+        sentence.speed = sentence.baseSpeed * getSpeedMultiplier();
+      }
+
+      function persistSpeedPercent() {
+        try {
+          window.localStorage.setItem(SPEED_STORAGE_KEY, String(speedPercent));
+        } catch {
+          // Ignore storage failures.
+        }
+      }
+
+      function setSpeedPercent(nextValue, { refresh = true } = {}) {
+        speedPercent = normalizeSpeedPercent(nextValue);
+        updateSpeedUi();
+        persistSpeedPercent();
+        for (const sentence of sentences) {
+          applySpeedToSentence(sentence);
+        }
+        if (refresh) renderScene();
+      }
+
+      function loadSpeedPercent() {
+        try {
+          const stored = window.localStorage.getItem(SPEED_STORAGE_KEY);
+          return stored === null ? DEFAULT_SPEED_PERCENT : normalizeSpeedPercent(stored);
+        } catch {
+          return DEFAULT_SPEED_PERCENT;
+        }
+      }
 
       function isMobileInputMode() {
         return mobileQuery.matches;
@@ -711,7 +807,7 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function getSpawnSpeed() {
         const baseSpeed = 24 + Math.random() * 14;
-        return isMobileInputMode() ? baseSpeed * 0.375 : baseSpeed;
+        return (isMobileInputMode() ? baseSpeed * 0.375 : baseSpeed) * getSpeedMultiplier();
       }
 
       function clearKeyboardPrompt() {
@@ -1042,6 +1138,9 @@ The library was silent except for turning pages.`.trim().split('\n');
         const wordCount = parts.filter(part => part.isWord).length;
         const width = getGameWidth();
 
+        const baseSpeed = 24 + Math.random() * 14;
+        const adjustedBaseSpeed = isMobileInputMode() ? baseSpeed * 0.375 : baseSpeed;
+
         const sentence = {
           id: nextId++,
           text,
@@ -1054,7 +1153,8 @@ The library was silent except for turning pages.`.trim().split('\n');
           boxHeight: 0,
           x: 0,
           y: -20,
-          speed: getSpawnSpeed(),
+          baseSpeed: adjustedBaseSpeed,
+          speed: adjustedBaseSpeed * getSpeedMultiplier(),
           hitGround: false
         };
 
@@ -1692,7 +1792,7 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function isEditingCustomSentences() {
         const active = document.activeElement;
-        return active === customSentenceInput || active === sentenceFileInput;
+        return active === customSentenceInput || active === sentenceFileInput || active === speedSlider;
       }
 
       menuBtn.addEventListener('click', event => {
@@ -1702,6 +1802,10 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       configMenu.addEventListener('click', event => {
         event.stopPropagation();
+      });
+
+      speedSlider.addEventListener('input', event => {
+        setSpeedPercent(event.target.value);
       });
 
       applySentenceBankBtn.addEventListener('click', async () => {
@@ -1821,6 +1925,8 @@ The library was silent except for turning pages.`.trim().split('\n');
         window.visualViewport.addEventListener('scroll', syncMobileKeyboardFloor);
       }
 
+      speedPercent = loadSpeedPercent();
+      updateSpeedUi();
       resetMobileKeyboardFloorState();
       updateTypingPrompt();
       updateTypingStatus();
