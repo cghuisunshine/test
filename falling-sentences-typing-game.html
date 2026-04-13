@@ -411,12 +411,14 @@
 
       #configMenu {
         position: fixed;
-        top: auto;
-        right: 12px;
-        left: 12px;
-        bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-        width: auto;
-        max-height: min(55vh, 420px);
+        top: 50%;
+        right: auto;
+        bottom: auto;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(440px, calc(100vw - 24px));
+        max-width: calc(100vw - 24px);
+        max-height: min(60dvh, 420px);
         overflow: auto;
       }
 
