@@ -411,14 +411,14 @@
 
       #configMenu {
         position: fixed;
-        top: 50%;
+        top: calc(12px + env(safe-area-inset-top, 0px));
         right: calc(12px + env(safe-area-inset-right, 0px));
-        bottom: auto;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
         left: auto;
-        transform: translateY(-50%);
+        transform: none;
         width: min(420px, calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
         max-width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-        max-height: min(60dvh, 420px);
+        max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
         overflow: auto;
       }
 
