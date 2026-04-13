@@ -82,6 +82,25 @@
       row-gap: 10px;
     }
 
+    #hud.is-playing {
+      justify-content: flex-end;
+    }
+
+    #hud.is-playing #stats,
+    #hud.is-playing #startBtn,
+    #hud.is-playing #restartBtn,
+    #hud.is-playing #modeHint {
+      display: none;
+    }
+
+    #hud.is-playing #controls {
+      gap: 0;
+      padding: 8px;
+      border-radius: 999px;
+      flex-wrap: nowrap;
+      row-gap: 0;
+    }
+
     button {
       border: none;
       border-radius: 12px;
@@ -533,6 +552,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       const MOBILE_QUERY = '(max-width: 640px), (hover: none) and (pointer: coarse)';
 
       const game = document.getElementById('game');
+      const hud = document.getElementById('hud');
       const sceneCanvas = document.getElementById('sceneCanvas');
       const input = document.getElementById('typingInput');
       const targetInfo = document.getElementById('targetInfo');
@@ -651,6 +671,10 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function refreshSentenceBankStatus(message) {
         sentenceBankStatus.textContent = message;
+      }
+
+      function setGameplayHudState(isPlaying) {
+        hud.classList.toggle('is-playing', isPlaying);
       }
 
       function setConfigMenuOpen(nextOpen) {
@@ -1154,6 +1178,7 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function endGame() {
         running = false;
+        setGameplayHudState(false);
         overlay.style.display = 'flex';
         const accuracy = currentAccuracy();
         const grade = getGrade(accuracy, cleared, missed);
@@ -1180,6 +1205,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         totalCharsTyped = 0;
         correctCharsTyped = 0;
         overlay.style.display = 'none';
+        setGameplayHudState(false);
         updateTypingPrompt();
         updateStats();
         renderScene();
@@ -1230,6 +1256,8 @@ The library was silent except for turning pages.`.trim().split('\n');
         if (running) return;
         running = true;
         overlay.style.display = 'none';
+        closeConfigMenu();
+        setGameplayHudState(true);
         chooseActiveSentence();
         void ensureSingleSentence();
         focusTyping();
