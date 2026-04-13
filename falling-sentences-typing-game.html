@@ -183,6 +183,10 @@
       color: #b24343;
     }
 
+    #progressInfo[data-tone='prompt'] {
+      color: #1e88e5;
+    }
+
     #keyboardBadge {
       display: none;
       flex: 0 0 auto;
@@ -196,6 +200,14 @@
       border-radius: 999px;
       padding: 6px 10px;
       user-select: none;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, opacity 160ms ease;
+    }
+
+    #keyboardBadge.is-prompt {
+      background: rgba(30, 136, 229, 0.18);
+      box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.14);
+      transform: scale(1.04);
+      opacity: 1;
     }
 
     #typingInput {
@@ -585,6 +597,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       const targetInfo = document.getElementById('targetInfo');
       const progressInfo = document.getElementById('progressInfo');
       const typingBar = document.getElementById('typingBar');
+      const keyboardBadge = document.getElementById('keyboardBadge');
       const customSentenceInput = document.getElementById('customSentenceInput');
       const sentenceFileInput = document.getElementById('sentenceFileInput');
       const applySentenceBankBtn = document.getElementById('applySentenceBankBtn');
@@ -655,6 +668,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       let lastInputValue = '';
       let transientProgressTimer = 0;
       let transientProgressMessage = '';
+      let keyboardPromptTimer = 0;
 
       let score = 0;
       let cleared = 0;
@@ -668,7 +682,25 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function getSpawnSpeed() {
         const baseSpeed = 24 + Math.random() * 14;
-        return isMobileInputMode() ? baseSpeed * 0.5 : baseSpeed;
+        return isMobileInputMode() ? baseSpeed * 0.375 : baseSpeed;
+      }
+
+      function clearKeyboardPrompt() {
+        keyboardBadge.classList.remove('is-prompt');
+      }
+
+      function showKeyboardPrompt(duration = 1200) {
+        if (!isMobileInputMode()) return;
+        if (keyboardPromptTimer) {
+          window.clearTimeout(keyboardPromptTimer);
+          keyboardPromptTimer = 0;
+        }
+
+        keyboardBadge.classList.add('is-prompt');
+        keyboardPromptTimer = window.setTimeout(() => {
+          keyboardPromptTimer = 0;
+          clearKeyboardPrompt();
+        }, duration);
       }
 
       function clearTransientProgress() {
@@ -701,6 +733,18 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function getGameHeight() {
         return game.clientHeight || window.innerHeight;
+      }
+
+      function getVisibleFloorTop() {
+        const groundTop = getGameHeight() - GROUND_HEIGHT;
+        if (!isMobileInputMode()) return groundTop;
+
+        const typingBarRect = typingBar.getBoundingClientRect();
+        const visualViewportBottom = window.visualViewport
+          ? window.visualViewport.offsetTop + window.visualViewport.height
+          : getGameHeight();
+
+        return Math.min(groundTop, typingBarRect.top, visualViewportBottom);
       }
 
       function randomSentence() {
@@ -1238,6 +1282,11 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function endGame() {
         running = false;
+        if (keyboardPromptTimer) {
+          window.clearTimeout(keyboardPromptTimer);
+          keyboardPromptTimer = 0;
+        }
+        clearKeyboardPrompt();
         setGameplayHudState(false);
         overlay.style.display = 'flex';
         const accuracy = currentAccuracy();
@@ -1269,7 +1318,12 @@ The library was silent except for turning pages.`.trim().split('\n');
           window.clearTimeout(transientProgressTimer);
           transientProgressTimer = 0;
         }
+        if (keyboardPromptTimer) {
+          window.clearTimeout(keyboardPromptTimer);
+          keyboardPromptTimer = 0;
+        }
         clearTransientProgress();
+        clearKeyboardPrompt();
         setGameplayHudState(false);
         updateTypingPrompt();
         updateStats();
@@ -1277,12 +1331,12 @@ The library was silent except for turning pages.`.trim().split('\n');
       }
 
       function update(dt) {
-        const groundTop = getGameHeight() - GROUND_HEIGHT;
+        const visibleFloorTop = getVisibleFloorTop();
 
         for (const sentence of sentences) {
           if (sentence.hitGround) continue;
           sentence.y += sentence.speed * dt;
-          if (sentence.y + sentence.boxHeight >= groundTop) {
+          if (sentence.y + sentence.boxHeight >= visibleFloorTop) {
             sentence.hitGround = true;
             missed += 1;
             updateStats();
@@ -1324,6 +1378,8 @@ The library was silent except for turning pages.`.trim().split('\n');
         overlay.style.display = 'none';
         closeConfigMenu();
         setGameplayHudState(true);
+        showTransientProgress('TAP TO TYPE', 'prompt', 1200);
+        showKeyboardPrompt();
         chooseActiveSentence();
         void ensureSingleSentence();
         focusTyping();
