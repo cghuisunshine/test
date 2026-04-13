@@ -1057,10 +1057,27 @@ The library was silent except for turning pages.`.trim().split('\n');
         return window.devicePixelRatio || 1;
       }
 
+      function canonicalizeTypedCharacter(char) {
+        switch (char) {
+          case '“':
+          case '”':
+            return '"';
+          case '‘':
+          case '’':
+            return "'";
+          default:
+            return char;
+        }
+      }
+
+      function charactersMatch(expectedChar, typedChar) {
+        return canonicalizeTypedCharacter(expectedChar) === canonicalizeTypedCharacter(typedChar);
+      }
+
       function commonPrefixLength(expected, typed) {
         const max = Math.min(expected.length, typed.length);
         let i = 0;
-        while (i < max && expected[i] === typed[i]) i += 1;
+        while (i < max && charactersMatch(expected[i], typed[i])) i += 1;
         return i;
       }
 
@@ -1325,7 +1342,7 @@ The library was silent except for turning pages.`.trim().split('\n');
 
         for (let i = lastInputValue.length; i < value.length; i += 1) {
           totalCharsTyped += 1;
-          if (value[i] === targetText[i]) correctCharsTyped += 1;
+          if (charactersMatch(targetText[i], value[i])) correctCharsTyped += 1;
         }
 
         lastInputValue = value;
@@ -1678,7 +1695,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         updateTypingStatus();
         renderScene();
 
-        if (typedValue === target.text) {
+        if (commonPrefixLength(target.text, typedValue) === target.text.length && typedValue.length === target.text.length) {
           handleSuccessfulClear(target);
         }
       }
