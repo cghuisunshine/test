@@ -628,6 +628,8 @@ The library was silent except for turning pages.`.trim().split('\n');
       const BOX_PADDING_X = 18;
       const BOX_PADDING_Y = 16;
       const MAX_MISSED = 5;
+      const DANDELION_GUST = 34;
+      const DANDELION_GRAVITY = 7;
 
       const sentencePalette = {
         fill: 'rgba(255, 255, 255, 0.95)',
@@ -669,6 +671,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       let transientProgressTimer = 0;
       let transientProgressMessage = '';
       let keyboardPromptTimer = 0;
+      let dandelionParticles = [];
 
       let score = 0;
       let cleared = 0;
@@ -1121,6 +1124,182 @@ The library was silent except for turning pages.`.trim().split('\n');
         ctx.fillText(segment, startX + offset, lineY);
       }
 
+      function getCharacterAnchor(sentence, charIndex) {
+        if (!sentence || !sentence.layout || charIndex < 0 || charIndex >= sentence.text.length) return null;
+
+        sceneCtx.save();
+        sceneCtx.font = SENTENCE_FONT;
+        sceneCtx.textBaseline = 'top';
+
+        let cursor = 0;
+        for (let index = 0; index < sentence.layout.lines.length; index += 1) {
+          const lineText = sentence.layout.lines[index].text;
+          const lineEnd = cursor + lineText.length;
+          if (charIndex >= lineEnd) {
+            cursor = lineEnd;
+            continue;
+          }
+
+          const localIndex = charIndex - cursor;
+          const leading = lineText.slice(0, localIndex);
+          const glyph = lineText[localIndex] || sentence.text[charIndex] || '';
+          const measuredGlyph = glyph === ' ' ? ' ' : glyph;
+          const leadingWidth = sceneCtx.measureText(leading).width;
+          const glyphWidth = Math.max(sceneCtx.measureText(measuredGlyph).width, glyph === ' ' ? 8 : 10);
+          sceneCtx.restore();
+
+          return {
+            x: sentence.x + BOX_PADDING_X + leadingWidth + glyphWidth * 0.5,
+            y: sentence.y + BOX_PADDING_Y + index * SENTENCE_LINE_HEIGHT + SENTENCE_LINE_HEIGHT * 0.5,
+            glyph
+          };
+        }
+
+        sceneCtx.restore();
+        return null;
+      }
+
+      function spawnDandelionBurst(sentence, charIndex) {
+        const anchor = getCharacterAnchor(sentence, charIndex);
+        if (!anchor) return;
+
+        const glyph = anchor.glyph && anchor.glyph !== ' ' ? anchor.glyph : '';
+        const burstSize = glyph ? 10 + Math.floor(Math.random() * 4) : 7;
+
+        if (glyph) {
+          dandelionParticles.push({
+            kind: 'glyph',
+            x: anchor.x,
+            y: anchor.y,
+            vx: (Math.random() - 0.5) * 16,
+            vy: -20 - Math.random() * 10,
+            rotation: (Math.random() - 0.5) * 0.35,
+            spin: (Math.random() - 0.5) * 1.8,
+            scale: 1,
+            growth: 1.1 + Math.random() * 0.35,
+            life: 0,
+            maxLife: 0.34 + Math.random() * 0.10,
+            glyph
+          });
+        }
+
+        for (let i = 0; i < burstSize; i += 1) {
+          const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.6;
+          const speed = 26 + Math.random() * 34;
+          dandelionParticles.push({
+            kind: 'seed',
+            x: anchor.x + (Math.random() - 0.5) * 5,
+            y: anchor.y + (Math.random() - 0.5) * 4,
+            vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 12,
+            vy: Math.sin(angle) * speed - 10 - Math.random() * 10,
+            sway: 9 + Math.random() * 12,
+            phase: Math.random() * Math.PI * 2,
+            rotation: (Math.random() - 0.5) * 0.8,
+            spin: (Math.random() - 0.5) * 1.5,
+            stem: 5 + Math.random() * 4.5,
+            tuft: 4 + Math.random() * 2.5,
+            life: 0,
+            maxLife: 0.7 + Math.random() * 0.45
+          });
+        }
+      }
+
+      function spawnMatchedCharBursts(sentence, previousValue, nextValue) {
+        if (!sentence || nextValue.length <= previousValue.length) return;
+
+        for (let index = previousValue.length; index < nextValue.length; index += 1) {
+          if (nextValue[index] === sentence.text[index]) {
+            spawnDandelionBurst(sentence, index);
+          }
+        }
+      }
+
+      function updateDandelionParticles(dt) {
+        if (dandelionParticles.length === 0) return;
+
+        dandelionParticles = dandelionParticles.filter(particle => {
+          particle.life += dt;
+          if (particle.kind === 'glyph') {
+            particle.x += particle.vx * dt;
+            particle.y += particle.vy * dt;
+            particle.rotation += particle.spin * dt;
+            particle.scale += particle.growth * dt;
+            return particle.life < particle.maxLife;
+          }
+
+          const sway = Math.sin(particle.phase + particle.life * 8) * particle.sway;
+          particle.x += (particle.vx + sway) * dt;
+          particle.y += particle.vy * dt;
+          particle.vy += DANDELION_GRAVITY * dt;
+          particle.vx += DANDELION_GUST * 0.02 * dt;
+          particle.rotation += particle.spin * dt;
+          return particle.life < particle.maxLife;
+        });
+      }
+
+      function drawSeedParticle(ctx, particle) {
+        const t = particle.life / particle.maxLife;
+        const alpha = Math.max(0, 1 - t);
+
+        ctx.save();
+        ctx.translate(particle.x, particle.y);
+        ctx.rotate(particle.rotation);
+        ctx.lineCap = 'round';
+
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.92 * alpha})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, particle.stem);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-particle.tuft, -particle.tuft * 0.95);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-particle.tuft * 0.55, -particle.tuft * 1.15);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -particle.tuft * 1.25);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(particle.tuft * 0.55, -particle.tuft * 1.15);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(particle.tuft, -particle.tuft * 0.95);
+        ctx.stroke();
+
+        ctx.fillStyle = `rgba(211, 225, 206, ${0.45 * alpha})`;
+        ctx.beginPath();
+        ctx.arc(0, particle.stem, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawGlyphParticle(ctx, particle) {
+        const t = particle.life / particle.maxLife;
+        const alpha = Math.max(0, 1 - t);
+
+        ctx.save();
+        ctx.translate(particle.x, particle.y);
+        ctx.rotate(particle.rotation);
+        ctx.scale(particle.scale, particle.scale);
+        ctx.font = SENTENCE_FONT;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.lineWidth = 1.4;
+        ctx.strokeStyle = `rgba(165, 199, 164, ${0.4 * alpha})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.85 * alpha})`;
+        ctx.strokeText(particle.glyph, 0, 0);
+        ctx.fillText(particle.glyph, 0, 0);
+        ctx.restore();
+      }
+
+      function renderDandelionParticles(ctx) {
+        if (dandelionParticles.length === 0) return;
+        for (const particle of dandelionParticles) {
+          if (particle.kind === 'glyph') {
+            drawGlyphParticle(ctx, particle);
+            continue;
+          }
+          drawSeedParticle(ctx, particle);
+        }
+      }
+
       function drawWrappedText(ctx, lines, sentence, typed, startX, startY, lineHeight, palette) {
         const { correct, typedEnd } = getHighlightState(sentence.text, typed, sentence.parts);
         let cursor = 0;
@@ -1240,6 +1419,8 @@ The library was silent except for turning pages.`.trim().split('\n');
             sentencePalette
           );
         }
+
+        renderDandelionParticles(sceneCtx);
       }
 
       function handleLiveTyping() {
@@ -1253,6 +1434,7 @@ The library was silent except for turning pages.`.trim().split('\n');
           return;
         }
 
+        spawnMatchedCharBursts(target, previous, typedValue);
         recordTypingDelta(target.text, typedValue);
         updateStats();
         updateTypingStatus();
@@ -1307,6 +1489,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         running = false;
         lastTime = 0;
         nextId = 1;
+        dandelionParticles = [];
         clearInput();
         score = 0;
         cleared = 0;
@@ -1331,6 +1514,8 @@ The library was silent except for turning pages.`.trim().split('\n');
       }
 
       function update(dt) {
+        updateDandelionParticles(dt);
+
         const visibleFloorTop = getVisibleFloorTop();
 
         for (const sentence of sentences) {
