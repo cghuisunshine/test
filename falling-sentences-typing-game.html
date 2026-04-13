@@ -210,6 +210,22 @@
       opacity: 1;
     }
 
+    #typingBar.show-mobile-prompt #keyboardBadge {
+      display: flex;
+      flex: 1 1 auto;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    #typingBar.show-mobile-prompt #typingMeta {
+      display: none;
+    }
+
     #typingInput {
       flex: 0 1 280px;
       min-width: 220px;
@@ -700,16 +716,20 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       function clearKeyboardPrompt() {
         keyboardBadge.classList.remove('is-prompt');
+        typingBar.classList.remove('show-mobile-prompt');
+        keyboardBadge.textContent = 'Tap to type';
       }
 
-      function showKeyboardPrompt(duration = 1200) {
+      function showKeyboardPrompt(duration = 1200, message = 'TAP TO TYPE') {
         if (!isMobileInputMode()) return;
         if (keyboardPromptTimer) {
           window.clearTimeout(keyboardPromptTimer);
           keyboardPromptTimer = 0;
         }
 
+        keyboardBadge.textContent = message;
         keyboardBadge.classList.add('is-prompt');
+        typingBar.classList.add('show-mobile-prompt');
         keyboardPromptTimer = window.setTimeout(() => {
           keyboardPromptTimer = 0;
           clearKeyboardPrompt();
@@ -1495,6 +1515,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         const target = getActiveSentence();
         if (!target) return;
 
+        clearKeyboardPrompt();
         const previous = typedValue;
         syncInputValue();
         if (typedValue === previous && typedValue !== '') {
@@ -1635,7 +1656,7 @@ The library was silent except for turning pages.`.trim().split('\n');
         closeConfigMenu();
         setGameplayHudState(true);
         showTransientProgress('TAP TO TYPE', 'prompt', 1200);
-        showKeyboardPrompt();
+        showKeyboardPrompt(2400);
         chooseActiveSentence();
         void ensureSingleSentence();
         focusTyping();
