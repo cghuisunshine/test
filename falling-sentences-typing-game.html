@@ -946,6 +946,15 @@ The library was silent except for turning pages.`.trim().split('\n');
         return sentenceBank[Math.floor(Math.random() * sentenceBank.length)];
       }
 
+      function splitIntoShortSentences(text) {
+        return String(text || '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .split(/(?<=[.?])(?:\s+|(?=["“”'‘’A-Z0-9]))/)
+          .map(line => line.trim())
+          .filter(Boolean);
+      }
+
       function parseSentenceText(rawText) {
         const normalized = String(rawText || '').replace(/\r/g, '\n');
         const lineBased = normalized
@@ -953,12 +962,10 @@ The library was silent except for turning pages.`.trim().split('\n');
           .map(line => line.trim())
           .filter(Boolean);
 
-        if (lineBased.length > 1) return lineBased;
+        const chunks = (lineBased.length > 0 ? lineBased : [normalized])
+          .flatMap(line => splitIntoShortSentences(line));
 
-        return normalized
-          .split(/(?<=[.!?])\s+/)
-          .map(line => line.trim())
-          .filter(Boolean);
+        return chunks.filter(Boolean);
       }
 
       function refreshSentenceBankStatus(message) {
