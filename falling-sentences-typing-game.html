@@ -372,6 +372,11 @@
         padding: 9px 12px;
       }
 
+      #controls {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
       #stats {
         font-size: 14px;
         gap: 10px;
@@ -412,14 +417,16 @@
       #configMenu {
         position: fixed;
         top: calc(12px + env(safe-area-inset-top, 0px));
-        right: calc(12px + env(safe-area-inset-right, 0px));
-        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-        left: auto;
-        transform: none;
+        right: auto;
+        bottom: auto;
+        left: 50%;
+        transform: translateX(-50%);
         width: min(420px, calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
         max-width: calc(100vw - 24px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
         max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
         overflow: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
       }
 
       #customSentenceInput {
