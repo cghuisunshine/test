@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bella — Uprising</title>
+  <style>
+:root { --bg:#f7f3ea; --card:#fffdf8; --ink:#241f1a; --muted:#6b6258; --accent:#7a2e2e; --border:#dfd3c2; --shadow:0 10px 30px rgba(60,40,20,.08); --max:820px; }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; font-family:Georgia, 'Times New Roman', serif; color:var(--ink); background:linear-gradient(180deg,#efe7da 0%,var(--bg) 120px); line-height:1.72; }
+a { color:var(--accent); }
+.shell { display:grid; grid-template-columns:300px minmax(0,1fr); gap:28px; max-width:1280px; margin:0 auto; padding:24px; }
+.sidebar { position:sticky; top:16px; align-self:start; max-height:calc(100vh - 32px); overflow:auto; background:rgba(255,253,248,.94); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:var(--shadow); }
+.sidebar h1 { margin:0 0 6px; font-size:1.5rem; line-height:1.2; }
+.sidebar p { margin:0 0 12px; color:var(--muted); font-size:.96rem; }
+.toc { margin:14px 0 0; padding-left:18px; }
+.toc li { margin:6px 0; }
+.toc a { text-decoration:none; }
+.toc a.current { font-weight:700; text-decoration:underline; }
+main { background:var(--card); border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow); padding:38px clamp(18px,4vw,54px); min-width:0; }
+.hero { border-bottom:1px solid var(--border); padding-bottom:18px; margin-bottom:28px; }
+.eyebrow { text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-size:.78rem; margin-bottom:8px; }
+.hero h1 { font-size:clamp(2rem,4vw,3rem); margin:0 0 8px; line-height:1.1; }
+.hero .meta { color:var(--muted); font-size:.96rem; }
+.reading { max-width:var(--max); }
+.reading p { margin:0 0 1.1em; font-size:1.08rem; text-wrap:pretty; }
+.dedication { font-style:italic; color:var(--muted); }
+.navlinks { display:flex; justify-content:space-between; gap:16px; margin-top:28px; padding-top:18px; border-top:1px solid var(--border); }
+.cardgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:20px; }
+.card { display:block; padding:16px; border:1px solid var(--border); border-radius:14px; background:#fffaf2; text-decoration:none; color:inherit; box-shadow:0 4px 12px rgba(0,0,0,.03); }
+.card:hover { border-color:#c6b39b; transform:translateY(-1px); }
+.card .kicker { color:var(--muted); font-size:.84rem; margin-bottom:6px; }
+.card h2 { margin:0 0 6px; color:var(--accent); font-size:1.2rem; }
+@media (max-width:980px) { .shell { grid-template-columns:1fr; } .sidebar { position:relative; top:0; max-height:none; } }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <h1>Uprising</h1>
+      <p>Browse the markitdown conversion as linked HTML pages.</p>
+      <p><a href="index.html">← Back to index</a></p>
+      <ol class="toc"><li><a href="01-prologue.html">1. Prologue</a></li><li><a href="02-bella.html">2. Bella</a></li><li><a href="03-yetta.html">3. Yetta</a></li><li><a href="04-jane.html">4. Jane</a></li><li><a href="05-bella-02.html">5. Bella</a></li><li><a href="06-yetta-02.html">6. Yetta</a></li><li><a href="07-jane-02.html">7. Jane</a></li><li><a href="08-bella-03.html">8. Bella</a></li><li><a href="09-yetta-03.html">9. Yetta</a></li><li><a href="10-jane-03.html">10. Jane</a></li><li><a href="11-bella-04.html">11. Bella</a></li><li><a href="12-yetta-04.html">12. Yetta</a></li><li><a href="13-jane-04.html">13. Jane</a></li><li><a href="14-bella-05.html">14. Bella</a></li><li><a href="15-yetta-05.html">15. Yetta</a></li><li><a href="16-jane-05.html">16. Jane</a></li><li><a href="17-bella-06.html">17. Bella</a></li><li><a href="18-yetta-06.html">18. Yetta</a></li><li><a href="19-jane-06.html">19. Jane</a></li><li><a href="20-bella-07.html">20. Bella</a></li><li><a href="21-yetta-07.html">21. Yetta</a></li><li><a href="22-jane-07.html">22. Jane</a></li><li><a class="current" href="23-bella-08.html">23. Bella</a></li><li><a href="24-yetta-08.html">24. Yetta</a></li><li><a href="25-jane-08.html">25. Jane</a></li><li><a href="26-bella-09.html">26. Bella</a></li><li><a href="27-yetta-09.html">27. Yetta</a></li><li><a href="28-jane-09.html">28. Jane</a></li><li><a href="29-bella-10.html">29. Bella</a></li><li><a href="30-yetta-10.html">30. Yetta</a></li><li><a href="31-jane-10.html">31. Jane</a></li><li><a href="32-bella-11.html">32. Bella</a></li><li><a href="33-yetta-11.html">33. Yetta</a></li><li><a href="34-jane-11.html">34. Jane</a></li><li><a href="35-bella-12.html">35. Bella</a></li><li><a href="36-mrs-livingston.html">36. Mrs. Livingston</a></li></ol>
+    </aside>
+    <main><section class="hero"><div class="eyebrow">Section 23 of 36</div><h1>Bella<\/h1></section><article class="reading"><p>Bella and Yetta were walking home from work. They’d been back at Triangle for a week now, and Bella was still rediscovering the twinges and aches that went along with hunching over a sewing machine all day. She stretched, twisting her head this way and that, raising and lowering her shoulders. This brought a puff of air up her skirt, but for once it didn’t seem unbearably cold. “I think spring is coming,” Bella said. “Can you feel it?” She held out her hand, experimentally. A snowflake immediately landed on her outstretched palm. “I think spring’s still a long way off,” Yetta said, kicking at the slush on the sidewalk. Yetta had been in a bad mood ever since the strike ended, ever since Rahel’s wedding, ever since she’d started back to work. Bella had tried again and again and again to cheer her up, and failed each time. Suddenly Bella heard a screech of brakes out in the street. The sound reminded her of the worst morning of her life, so she didn’t bother looking until she heard someone screaming, “Bella! Yetta! Wait for me!” It was Jane, the rich girl who’d rescued Bella that awful morning. She came rushing toward them through the traffic, prompting honking horns and more screeching brakes. She was wearing one of her usual fancy, frilly dresses, and her beautiful gold ring gleamed even in the weak winter light. But she looked crazy: wild-eyed, wild-haired, coatless, hatless, and dragging a gray blanket behind her through the snow. “Where are your picket signs?” she yelled. “I came to help you with your strike. I’ll stand with you every day on the picket line. I will! If I can’t give money, I’ll do what I can. And if I’m arrested—well, fine! That would serve my father right!” She was sobbing or gasping for air—Bella couldn’t really tell which. In New York, Bella had discovered, people rarely moved out of the way for anyone else. But the crowd on the sidewalk moved out of the way for Jane, as if they were all glad that she wasn’t yelling at them. When Jane was right in front of Bella and Yetta, blocking their path, Yetta finally replied in a flat voice: “The strike’s over. Go home.” Jane froze in her tracks. “What? It can’t be! I’ve been watching the Times every day—” “The Times didn’t even bother writing about us when the strike ended,” Yetta said, and Bella could hear the barely suppressed rage in her voice. “The Call did, the Forward did— do you want to know what the Forward wrote about Triangle? With blood this name will be written in the history of the American workers’ movement, and with feeling will this history recall the names of the strikers of this shop—of the crusaders.’ And yet the factory can reopen, just like the strike never happened, and do business with stores all over the country—who would do business with criminals like that?” “My father would,” Jane whispered. “My father is an evil man, and I never knew it until</p><p>your strike. It’s all wrong— everything I have was bought with blood—I can’t go back, I can’t. How can your strike be over?” The last part was a wail. For a moment Bella feared that Jane would just fall over, right there in the snow. She reached out a hand to steady the other girl. “You ran away from home?” Yetta asked. “For our strike?” Something like surprise crept over Jane’s face. “Why, yes, I suppose I did,” she said. “That’s what it’s called. Running away from home.” “Where will you go?” Bella asked. Jane turned to Bella in amazement. “Bella? You speak English now?” she marveled. “I learned it in the strike,” Bella said. “Some. But you— go where?” Jane slumped against the building behind her. “I don’t know,” she admitted. For a moment, Bella forgot that Jane was a rich girl. She forgot that Jane lived in a huge mansion with marble floors and puffy beds and servants waiting on her hand and foot. She only remembered what it was like to be alone and afraid, cut off from family, betrayed. “You come home with us,” she told Jane.</p><nav class="navlinks"><a href="22-jane-07.html">← Previous</a><a href="index.html">Index</a><a href="24-yetta-08.html">Next →</a></nav></article></main>
+  </div>
+</body>
+</html>
