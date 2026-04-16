@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# Interactive Tutorial & Practice</title>
+  <style>
+    :root {
+      --bg: #f7f9fc;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --ok: #15803d;
+      --bad: #b91c1c;
+      --border: #dbe3ee;
+      --code: #0f172a;
+      --soft: #eef4ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    header {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      color: white;
+      padding: 32px 20px;
+    }
+    header h1 { margin: 0 0 8px; font-size: 2rem; }
+    header p { margin: 0; max-width: 900px; }
+    .wrap {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 24px;
+    }
+    .nav a {
+      text-decoration: none;
+      color: var(--accent);
+      background: white;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+    }
+    h2 { margin-top: 0; }
+    h3 { margin-bottom: 8px; }
+    .note {
+      background: var(--soft);
+      border-left: 4px solid var(--accent);
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+    code, pre, textarea {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code);
+      color: #e5eefb;
+      padding: 14px;
+      border-radius: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .exercise {
+      border-top: 1px dashed var(--border);
+      padding-top: 16px;
+      margin-top: 14px;
+    }
+    .options label {
+      display: block;
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      background: #fafcff;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 1rem;
+      background: white;
+    }
+    textarea { min-height: 150px; }
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin: 8px 8px 0 0;
+    }
+    button.secondary {
+      background: #64748b;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .ok { color: var(--ok); }
+    .bad { color: var(--bad); }
+    .muted { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .mini {
+      background: #fbfdff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .scoreBox {
+      position: sticky;
+      top: 10px;
+      z-index: 2;
+      background: #0f172a;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+    }
+    .pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #e8f0ff;
+      color: #1d4ed8;
+      font-size: 0.84rem;
+      margin-right: 6px;
+    }
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 20px;
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>C# Interactive Tutorial & Practice</h1>
+    <p>Learn core C# ideas step by step, then check your understanding with interactive exercises. This page works locally in a browser and is designed for beginners.</p>
+  </header>
+
+  <div class="wrap">
+    <div class="scoreBox">
+      Progress: <span id="score">0</span> / <span id="total">0</span> correct
+    </div>
+
+    <div class="nav">
+      <a href="#intro">Start Here</a>
+      <a href="#variables">Variables</a>
+      <a href="#conditions">Conditions</a>
+      <a href="#loops">Loops</a>
+      <a href="#methods">Methods</a>
+      <a href="#arrays">Arrays</a>
+      <a href="#oop">Classes</a>
+      <a href="#final">Final Challenge</a>
+    </div>
+
+    <section class="card" id="intro">
+      <h2>1. Start Here</h2>
+      <p>C# is a programming language often used for web backends, desktop apps, games with Unity, cloud tools, and business software. It is strongly typed, which means variables have clear data types.</p>
+      <div class="note">
+        <strong>Main idea:</strong> In C#, you usually tell the computer what kind of data you are storing, such as <code>int</code>, <code>double</code>, <code>string</code>, or <code>bool</code>.
+      </div>
+      <pre>using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, C#");
+    }
+}</pre>
+      <p><span class="pill">using System</span> lets us use common built-in features like <code>Console</code>.</p>
+      <p><span class="pill">Main()</span> is the starting point of a normal C# console program.</p>
+      <p><span class="pill">Console.WriteLine()</span> prints text to the screen.</p>
+
+      <div class="exercise">
+        <h3>Practice 1</h3>
+        <p>What does <code>Console.WriteLine("Hi")</code> do?</p>
+        <div class="options" data-answer="b">
+          <label><input type="radio" name="q1" value="a"> Deletes the text Hi</label>
+          <label><input type="radio" name="q1" value="b"> Prints Hi on the screen</label>
+          <label><input type="radio" name="q1" value="c"> Creates a variable named Hi</label>
+        </div>
+        <button onclick="checkRadio('q1', 'b', 'r1')">Check</button>
+        <div id="r1" class="result"></div>
+      </div>
+    </section>
+
+    <section class="card" id="variables">
+      <h2>2. Variables and Data Types</h2>
+      <div class="grid">
+        <div class="mini">
+          <h3>Common types</h3>
+          <p><code>int</code> = whole number</p>
+          <p><code>double</code> = decimal number</p>
+          <p><code>string</code> = text</p>
+          <p><code>bool</code> = true or false</p>
+        </div>
+        <div class="mini">
+          <h3>Examples</h3>
+          <pre>int age = 16;
+double price = 9.99;
+string name = "Mia";
+bool isReady = true;</pre>
+        </div>
+      </div>
+      <p>You can also use <code>var</code> when C# can clearly figure out the type from the value.</p>
+      <pre>var city = "Vancouver"; // string
+var count = 3;          // int</pre>
+
+      <div class="exercise">
+        <h3>Practice 2</h3>
+        <p>Fill in the missing type to store a whole number.</p>
+        <pre>_____ score = 100;</pre>
+        <input type="text" id="q2" placeholder="Type your answer here" />
+        <button onclick="checkText('q2', ['int'], 'r2')">Check</button>
+        <div id="r2" class="result"></div>
+      </div>
+
+      <div class="exercise">
+        <h3>Practice 3</h3>
+        <p>Which variable stores text?</p>
+        <div class="options">
+          <label><input type="radio" name="q3" value="a"> <code>bool done = false;</code></label>
+          <label><input type="radio" name="q3" value="b"> <code>string title = "C# Basics";</code></label>
+          <label><input type="radio" name="q3" value="c"> <code>int level = 2;</code></label>
+        </div>
+        <button onclick="checkRadio('q3', 'b', 'r3')">Check</button>
+        <div id="r3" class="result"></div>
+      </div>
+    </section>
+
+    <section class="card" id="conditions">
+      <h2>3. Conditions: if / else</h2>
+      <p>Conditions let your program choose what to do.</p>
+      <pre>int age = 18;
+
+if (age >= 18)
+{
+    Console.WriteLine("Adult");
+}
+else
+{
+    Console.WriteLine("Minor");
+}</pre>
+      <p>Comparison operators include <code>==</code>, <code>!=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, and <code>&lt;=</code>.</p>
+
+      <div class="exercise">
+        <h3>Practice 4</h3>
+        <p>What will this print?</p>
+        <pre>int x = 5;
+if (x > 3)
+{
+    Console.WriteLine("Yes");
+}
+else
+{
+    Console.WriteLine("No");
+}</pre>
+        <input type="text" id="q4" placeholder="Enter the output" />
+        <button onclick="checkText('q4', ['Yes'], 'r4', true)">Check</button>
+        <div id="r4" class="result"></div>
+      </div>
+
+      <div class="exercise">
+        <h3>Practice 5</h3>
+        <p>Choose the correct condition to check whether <code>score</code> is exactly 10.</p>
+        <div class="options">
+          <label><input type="radio" name="q5" value="a"> <code>score = 10</code></label>
+          <label><input type="radio" name="q5" value="b"> <code>score == 10</code></label>
+          <label><input type="radio" name="q5" value="c"> <code>score === 10</code></label>
+        </div>
+        <button onclick="checkRadio('q5', 'b', 'r5')">Check</button>
+        <div id="r5" class="result"></div>
+      </div>
+    </section>
+
+    <section class="card" id="loops">
+      <h2>4. Loops</h2>
+      <p>Loops repeat code. Two common types are <code>for</code> and <code>while</code>.</p>
+      <pre>for (int i = 0; i < 3; i++)
+{
+    Console.WriteLine(i);
+}</pre>
+      <pre>int n = 1;
+while (n <= 3)
+{
+    Console.WriteLine(n);
+    n++;
+}</pre>
+      <div class="note">A <code>for</code> loop is great when you know how many times to repeat. A <code>while</code> loop is useful when you repeat until a condition becomes false.</div>
+
+      <div class="exercise">
+        <h3>Practice 6</h3>
+        <p>How many times will this loop run?</p>
+        <pre>for (int i = 0; i < 4; i++)</pre>
+        <input type="text" id="q6" placeholder="Number of times" />
+        <button onclick="checkText('q6', ['4', 'four'], 'r6')">Check</button>
+        <div id="r6" class="result"></div>
+      </div>
+
+      <div class="exercise">
+        <h3>Practice 7</h3>
+        <p>Write the missing update so the loop counts upward.</p>
+        <pre>int i = 0;
+while (i < 5)
+{
+    Console.WriteLine(i);
+    _____;
+}</pre>
+        <input type="text" id="q7" placeholder="Example: i++" />
+        <button onclick="checkTextLoose('q7', ['i++', 'i += 1', 'i=i+1', 'i = i + 1'], 'r7')">Check</button>
+        <div id="r7" class="result"></div>
+      </div>
+    </section>
+
+    <section class="card" id="methods">
+      <h2>5. Methods</h2>
+      <p>Methods group reusable code.</p>
+      <pre>static int Add(int a, int b)
+{
+    return a + b;
+}</pre>
+      <p>This method takes two integers and returns their sum.</p>
+      <pre>int result = Add(3, 4);
+Console.WriteLine(result);</pre>
+
+      <div class="exercise">
+        <h3>Practice 8</h3>
+        <p>What value is returned here?</p>
+        <pre>static int Multiply(int a, int b)
+{
+    return a * b;
+}
+
+Multiply(2, 5)</pre>
+        <input type="text" id="q8" placeholder="Enter the returned value" />
+        <button onclick="checkText('q8', ['10', 'ten'], 'r8')">Check</button>
+        <div id="r8" class="result"></div>
+      </div>
+
+      <div class="exercise">
+        <h3>Practice 9</h3>
+        <p>Which keyword sends a value back from a method?</p>
+        <div class="options">
+          <label><input type="radio" name="q9" value="a"> <code>return</code></label>
+          <label><input type="radio" name="q9" value="b"> <code>break</code></label>
+          <label><input type="radio" name="q9" value="c"> <code>output</code></label>
+        </div>
+        <button onclick="checkRadio('q9', 'a', 'r9')">Check</button>
+        <div id="r9" class="result"></div>
+      </div>
+    </section>
+
+    <section class="card" id="arrays">
+      <h2>6. Arrays and foreach</h2>
+      <p>An array stores multiple values of the same type.</p>
+      <pre>string[] colors = { "red", "green", "blue" };</pre>
+      <p>You can read an item by index. Arrays start at index <code>0</code>.</p>
+      <pre>Console.WriteLine(colors[0]); // red</pre>
+      <p>You can also loop through them:</p>
+      <pre>foreach (string color in colors)
+{
+    Console.WriteLine(color);
+}</pre>
+
+      <div class="exercise">
+        <h3>Practice 10</h3>
+        <p>For this array, what is <code>nums[1]</code>?</p>
+        <pre>int[] nums = { 10, 20, 30 };</pre>
+        <input type="text" id="q10" placeholder="Enter the value" />
+        <button onclick="checkText('q10', ['20'], 'r10')">Check</button>
+        <div id="r10" class="result"></div>
+      </div>
+    </section>
+
+    <section class="card" id="oop">
+      <h2>7. Classes and Objects</h2>
+      <p>C# is an object-oriented language. A class is like a blueprint. An object is a real thing made from that blueprint.</p>
+      <pre>class Dog
+{
+    public string Name;
+
+    public void Bark()
+    {
+        Console.WriteLine("Woof!");
+    }
+}</pre>
+      <pre>Dog d = new Dog();
+d.Name = "Coco";
+d.Bark();</pre>
+      <div class="note">A class can contain data, such as <code>Name</code>, and behavior, such as <code>Bark()</code>.</div>
+
+      <div class="exercise">
+        <h3>Practice 11</h3>
+        <p>What keyword creates a new object?</p>
+        <input type="text" id="q11" placeholder="Type the keyword" />
+        <button onclick="checkText('q11', ['new'], 'r11')">Check</button>
+        <div id="r11" class="result"></div>
+      </div>
+    </section>
+
+    <section class="card" id="final">
+      <h2>8. Final Challenge</h2>
+      <p>Read the code and answer the questions.</p>
+      <pre>using System;
+
+class Program
+{
+    static int Square(int x)
+    {
+        return x * x;
+    }
+
+    static void Main()
+    {
+        int[] nums = { 2, 3, 4 };
+        foreach (int n in nums)
+        {
+            if (n % 2 == 0)
+            {
+                Console.WriteLine(Square(n));
+            }
+        }
+    }
+}</pre>
+
+      <div class="exercise">
+        <h3>Practice 12</h3>
+        <p>Which numbers from the array will be printed after being squared?</p>
+        <input type="text" id="q12" placeholder="Example: 2 and 4" />
+        <button onclick="checkContains('q12', ['2', '4'], ['3'], 'r12')">Check</button>
+        <div id="r12" class="result"></div>
+      </div>
+
+      <div class="exercise">
+        <h3>Practice 13</h3>
+        <p>What output will appear?</p>
+        <input type="text" id="q13" placeholder="Example: 4, 16" />
+        <button onclick="checkContains('q13', ['4', '16'], ['9'], 'r13')">Check</button>
+        <div id="r13" class="result"></div>
+      </div>
+
+      <div class="exercise">
+        <h3>Practice 14: Write a small method</h3>
+        <p>Write a C# method named <code>Greet</code> that takes a string called <code>name</code> and prints <code>Hello, name</code>. This checker looks for the key ideas.</p>
+        <textarea id="q14" placeholder="Type your C# method here..."></textarea>
+        <button onclick="checkCode()">Check</button>
+        <button class="secondary" onclick="showSample()">Show Sample Answer</button>
+        <div id="r14" class="result"></div>
+        <pre id="sample" style="display:none; margin-top:12px;">static void Greet(string name)
+{
+    Console.WriteLine("Hello, " + name);
+}</pre>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>9. Next Steps</h2>
+      <ul>
+        <li>Practice writing short console programs.</li>
+        <li>Try <code>switch</code>, <code>List&lt;T&gt;</code>, properties, and constructors next.</li>
+        <li>Later, move to file input/output, LINQ, async programming, and ASP.NET.</li>
+      </ul>
+      <div class="note">
+        A good beginner workflow is: <strong>read example → predict output → modify code → test yourself → write your own small program</strong>.
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    Built as a self-contained interactive C# learning page.
+  </footer>
+
+  <script>
+    const solved = new Set();
+    const total = 14;
+    document.getElementById('total').textContent = total;
+
+    function normalize(s) {
+      return s.trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+
+    function mark(resultId, ok, message, qid) {
+      const el = document.getElementById(resultId);
+      el.textContent = message;
+      el.className = 'result ' + (ok ? 'ok' : 'bad');
+      if (ok) solved.add(qid);
+      updateScore();
+    }
+
+    function updateScore() {
+      document.getElementById('score').textContent = solved.size;
+    }
+
+    function checkRadio(name, answer, resultId) {
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      if (!selected) {
+        mark(resultId, false, 'Choose an answer first.', name);
+        return;
+      }
+      const ok = selected.value === answer;
+      mark(resultId, ok, ok ? 'Correct.' : 'Not quite. Try again.', name);
+    }
+
+    function checkText(inputId, answers, resultId, caseSensitive=false) {
+      const val = document.getElementById(inputId).value.trim();
+      if (!val) {
+        mark(resultId, false, 'Type an answer first.', inputId);
+        return;
+      }
+      const cleaned = caseSensitive ? val.trim() : normalize(val);
+      const ok = answers.some(a => (caseSensitive ? a.trim() : normalize(a)) === cleaned);
+      mark(resultId, ok, ok ? 'Correct.' : 'Not quite. Check the example and try again.', inputId);
+    }
+
+    function checkTextLoose(inputId, answers, resultId) {
+      const val = normalize(document.getElementById(inputId).value).replace(/;/g, '');
+      if (!val) {
+        mark(resultId, false, 'Type an answer first.', inputId);
+        return;
+      }
+      const ok = answers.some(a => normalize(a).replace(/;/g, '') === val);
+      mark(resultId, ok, ok ? 'Correct.' : 'Close, but the loop still needs the proper increment.', inputId);
+    }
+
+    function checkContains(inputId, required, forbidden, resultId) {
+      const val = normalize(document.getElementById(inputId).value);
+      if (!val) {
+        mark(resultId, false, 'Type an answer first.', inputId);
+        return;
+      }
+      const hasAll = required.every(x => val.includes(normalize(x)));
+      const hasForbidden = forbidden.some(x => val.includes(normalize(x)));
+      const ok = hasAll && !hasForbidden;
+      mark(resultId, ok, ok ? 'Correct.' : 'Not quite. Review which values pass the condition.', inputId);
+    }
+
+    function checkCode() {
+      const val = document.getElementById('q14').value.toLowerCase();
+      const ok = val.includes('greet') && val.includes('string name') && val.includes('console.writeline') && val.includes('hello');
+      mark('r14', ok, ok ? 'Nice work. Your method includes the main parts.' : 'Your answer is missing one or more key parts: method name, parameter, or output line.', 'q14');
+    }
+
+    function showSample() {
+      document.getElementById('sample').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
