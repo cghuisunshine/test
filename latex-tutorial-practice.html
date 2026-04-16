@@ -133,6 +133,21 @@
       word-break: break-word;
     }
 
+    .card textarea {
+      min-height: 86px;
+      margin-top: 10px;
+    }
+
+    .mini-preview {
+      min-height: 86px;
+      margin-top: 10px;
+    }
+
+    .mini-status {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
     .practice-card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -287,7 +302,7 @@
     <section class="section">
       <h2 class="section-title">1) Formula showcase</h2>
       <p class="section-subtitle">
-        Each card shows the rendered formula first, then the exact LaTeX text used to create it.
+        Each card shows the rendered formula first, then the exact LaTeX text used to create it. Each showcase card also has its own mini playground so the user can try edits immediately.
       </p>
       <div id="gallery" class="grid"></div>
     </section>
@@ -445,8 +460,47 @@
           <p>${item.description}</p>
           <div class="formula-box"></div>
           <div class="code-box">${item.latex.replace(/</g, '&lt;')}</div>
+          <div class="label" style="margin-top:12px">Try it yourself</div>
+          <textarea class="mini-input" spellcheck="false"></textarea>
+          <div class="label" style="margin-top:10px">Live result</div>
+          <div class="preview-box mini-preview"></div>
+          <div class="status-box mini-status">Edit the example above and the rendered result will update immediately.</div>
         `;
-        renderMathInto(card.querySelector('.formula-box'), item.latex);
+        const formulaBox = card.querySelector('.formula-box');
+        const input = card.querySelector('.mini-input');
+        const preview = card.querySelector('.mini-preview');
+        const status = card.querySelector('.mini-status');
+
+        renderMathInto(formulaBox, item.latex);
+        input.value = item.latex;
+
+        function updateMini() {
+          const value = input.value.trim();
+          if (!value) {
+            preview.innerHTML = '<span style="color:var(--muted)">Type some LaTeX to preview it here.</span>';
+            status.className = 'status-box mini-status';
+            status.textContent = 'Type some LaTeX to preview it here.';
+            return;
+          }
+
+          const rendered = renderMathInto(preview, value);
+          if (!rendered.ok) {
+            status.className = 'status-box mini-status';
+            status.textContent = 'There is a LaTeX syntax error. Fix it and the preview will refresh immediately.';
+            return;
+          }
+
+          if (normalizeLatex(value) === normalizeLatex(item.latex)) {
+            status.className = 'status-box mini-status good';
+            status.textContent = 'This matches the original showcase formula.';
+          } else {
+            status.className = 'status-box mini-status good';
+            status.textContent = 'Updated live. You can keep experimenting with this example.';
+          }
+        }
+
+        input.addEventListener('input', updateMini);
+        updateMini();
         gallery.appendChild(card);
       });
     }
