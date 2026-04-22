@@ -695,6 +695,7 @@ The library was silent except for turning pages.`.trim().split('\n');
       const MOBILE_KEYBOARD_OPEN_THRESHOLD = 120;
       const MOBILE_KEYBOARD_SETTLE_MS = 160;
       const MOBILE_KEYBOARD_POSITION_TOLERANCE = 12;
+      const SENTENCE_BANK_STORAGE_KEY = 'fallingSentencesTypingGame.sentenceBankPreference';
 
       const sentencePalette = {
         fill: 'rgba(255, 255, 255, 0.95)',
@@ -995,6 +996,29 @@ The library was silent except for turning pages.`.trim().split('\n');
         }
       }
 
+      function saveSentenceBankPreference(preference) {
+        try {
+          window.localStorage.setItem(SENTENCE_BANK_STORAGE_KEY, JSON.stringify(preference));
+        } catch (error) {
+          console.warn('Could not save sentence bank preference.', error);
+        }
+      }
+
+      function loadSentenceBankPreference() {
+        try {
+          const raw = window.localStorage.getItem(SENTENCE_BANK_STORAGE_KEY);
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== 'object') return null;
+          if (parsed.mode !== 'default' && parsed.mode !== 'custom') return null;
+          if (typeof parsed.customText !== 'string') return null;
+          return parsed;
+        } catch (error) {
+          console.warn('Could not load sentence bank preference.', error);
+          return null;
+        }
+      }
+
       function setGameplayHudState(isPlaying) {
         hud.classList.toggle('is-playing', isPlaying);
       }
@@ -1039,25 +1063,63 @@ The library was silent except for turning pages.`.trim().split('\n');
         return true;
       }
 
-      async function applyCustomSentences(rawText, sourceLabel = 'custom text') {
+      async function applyCustomSentences(rawText, sourceLabel = 'custom text', persistPreference = true) {
         const parsed = parseSentenceText(rawText);
         if (parsed.length === 0) {
           refreshSentenceBankStatus('No valid sentences found. Paste one sentence per line or upload a text file.');
           return false;
         }
-        customSentenceInput.value = parsed.join('\n');
+        const normalizedText = parsed.join('\n');
+        customSentenceInput.value = normalizedText;
+        if (persistPreference) {
+          saveSentenceBankPreference({
+            mode: 'custom',
+            customText: normalizedText
+          });
+        }
         return useSentenceBank(
           parsed,
           `Using ${parsed.length} custom sentence${parsed.length === 1 ? '' : 's'} from ${sourceLabel}.`,
-          { persist: true }
+          { persist: persistPreference }
         );
       }
 
-      async function resetSentenceBank() {
+      async function resetSentenceBank(persistPreference = true) {
         customSentenceInput.value = '';
         sentenceFileInput.value = '';
+        if (persistPreference) {
+          saveSentenceBankPreference({
+            mode: 'default',
+            customText: ''
+          });
+        }
         persistCustomSentenceBank(null);
         await useSentenceBank(DEFAULT_SENTENCE_BANK, 'Using the default sentence set.');
+      }
+
+      async function restoreSentenceBankPreference() {
+        const preference = loadSentenceBankPreference();
+        if (preference && preference.mode === 'custom' && preference.customText.trim()) {
+          const restored = await applyCustomSentences(preference.customText, 'saved settings', false);
+          if (restored) return;
+        }
+
+        const storedCustomBank = loadCustomSentenceBank();
+        if (storedCustomBank && storedCustomBank.length > 0) {
+          sentenceBank = [...storedCustomBank];
+          customSentenceInput.value = storedCustomBank.join('\n');
+          refreshSentenceBankStatus(`Using ${storedCustomBank.length} saved custom sentence${storedCustomBank.length === 1 ? '' : 's'}.`);
+          return;
+        }
+
+        if (preference && preference.mode === 'default') {
+          await resetSentenceBank(false);
+          return;
+        }
+
+        customSentenceInput.value = '';
+        refreshSentenceBankStatus('Using the default sentence set.');
+        sentenceBank = [...DEFAULT_SENTENCE_BANK];
       }
 
       function dpr() {
@@ -1975,13 +2037,8 @@ The library was silent except for turning pages.`.trim().split('\n');
 
       speedPercent = loadSpeedPercent();
       updateSpeedUi();
-      const storedCustomBank = loadCustomSentenceBank();
-      if (storedCustomBank && storedCustomBank.length > 0) {
-        sentenceBank = [...storedCustomBank];
-        customSentenceInput.value = storedCustomBank.join('\n');
-        refreshSentenceBankStatus(`Using ${storedCustomBank.length} saved custom sentence${storedCustomBank.length === 1 ? '' : 's'}.`);
-      }
       resetMobileKeyboardFloorState();
+      await restoreSentenceBankPreference();
       updateTypingPrompt();
       updateTypingStatus();
       updateStats();
