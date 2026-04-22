@@ -101,18 +101,19 @@
     }
 
     .answer-area{
-      display:grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap:14px;
-      align-items:start;
+      display:block;
       margin-top:10px;
     }
 
-    .student-box label,
-    .key-box label{
-      display:block;
-      font-weight:bold;
+    .answer-label-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
       margin-bottom:6px;
+    }
+
+    .student-box label{
+      font-weight:bold;
       font-size:0.96rem;
     }
 
@@ -131,21 +132,8 @@
     .medium-answer textarea{ min-height:150px; }
     .large-answer textarea{ min-height:220px; }
 
-    .key-box{
-      border:1px dashed #999;
-      background:#fff;
-      padding:10px;
-    }
-
     .answer-key{
       display:none;
-      white-space:pre-wrap;
-      color:#111;
-      font-size:0.98rem;
-    }
-
-    .answer-key.show{
-      display:block;
     }
 
     .btn-row{
@@ -166,6 +154,12 @@
 
     button:hover{
       background:#000;
+    }
+
+    .answer-key-button{
+      padding:3px 8px;
+      font-size:0.88rem;
+      line-height:1.2;
     }
 
     .secondary{
@@ -196,15 +190,11 @@
 
     @media print{
       button{ display:none; }
-      .answer-key{ display:block !important; }
       .page{ max-width:none; padding:0.4in; }
       .question, .meta, .section, .rubric{ page-break-inside:avoid; }
     }
 
     @media (max-width: 820px){
-      .answer-area{
-        grid-template-columns:1fr;
-      }
       h1{font-size:1.7rem;}
       .page{padding:18px 12px 40px;}
     }
@@ -212,18 +202,8 @@
 </head>
 <body>
   <div class="page">
-    <h1>Vent Final Exam</h1>
-    <div class="subtitle">Based on <em>The E-Myth Revisited</em>, <em>Start With Why</em>, and <em>The Lean Startup</em></div>
-
-    <div class="meta">
-      <div><strong>Time:</strong> 2 hours</div>
-      <div><strong>Total Marks:</strong> 100</div>
-      <div><strong>Name:</strong> ________________________________________</div>
-      <div><strong>Date:</strong> _________________________________________</div>
-    </div>
-
     <div class="instructions">
-      <strong>Instructions:</strong> Answer all sections. Write clearly and use complete sentences. Use ideas from the tutorials to support your answers. Click <strong>Show Answer Key</strong> to reveal the model answer for each question.
+      <strong>Instructions:</strong> Answer all sections. Write clearly and use complete sentences. Use ideas from the tutorials to support your answers. Click <strong>AnswerKey</strong> to place the model answer in the answer box for each question.
     </div>
 
     <section class="section">
@@ -235,14 +215,11 @@
         <div class="q-body">In <em>The E-Myth Revisited</em>, what is the main problem with confusing <em>doing the work</em> and <em>building the business</em>?</div>
         <div class="answer-area small-answer">
           <div class="student-box">
-            <label for="a1">Your Answer</label>
-            <textarea id="a1" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key1', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="a1">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="a1" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key1">The main problem is that the owner becomes the bottleneck. The business depends on personal output and decisions instead of a repeatable system, so growth and consistency become difficult.</div>
           </div>
         </div>
@@ -253,14 +230,11 @@
         <div class="q-body">Explain the difference between the <strong>Entrepreneur</strong>, <strong>Manager</strong>, and <strong>Technician</strong> roles. Give one risk for each role if it becomes too dominant.</div>
         <div class="answer-area medium-answer">
           <div class="student-box">
-            <label for="a2">Your Answer</label>
-            <textarea id="a2" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key2', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="a2">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="a2" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key2">Technician: focuses on doing the work; risk: builds a job, not a business.
 Manager: focuses on order, plans, and predictability; risk: becomes controlling without strong systems.
 Entrepreneur: focuses on vision, change, and future possibilities; risk: keeps changing direction without solid execution.</div>
@@ -273,14 +247,11 @@ Entrepreneur: focuses on vision, change, and future possibilities; risk: keeps c
         <div class="q-body">What does it mean to build a <strong>franchise prototype</strong>? Why is repeatability important?</div>
         <div class="answer-area small-answer">
           <div class="student-box">
-            <label for="a3">Your Answer</label>
-            <textarea id="a3" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key3', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="a3">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="a3" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key3">A franchise prototype means designing the operation so it is teachable, repeatable, and not dependent on one heroic person. Repeatability matters because it improves quality, consistency, training, and the owner’s ability to step away.</div>
           </div>
         </div>
@@ -291,14 +262,11 @@ Entrepreneur: focuses on vision, change, and future possibilities; risk: keeps c
         <div class="q-body">In <em>Start With Why</em>, explain the <strong>Golden Circle</strong>: Why, How, and What.</div>
         <div class="answer-area small-answer">
           <div class="student-box">
-            <label for="a4">Your Answer</label>
-            <textarea id="a4" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key4', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="a4">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="a4" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key4">Why is the purpose, belief, or cause behind the work.
 How is the set of principles or behaviors that bring the Why to life.
 What is the product, service, or visible output that people can see or buy.</div>
@@ -311,14 +279,11 @@ What is the product, service, or visible output that people can see or buy.</div
         <div class="q-body">What is the difference between a real <strong>Why statement</strong> and a slogan such as “to be the best”?</div>
         <div class="answer-area small-answer">
           <div class="student-box">
-            <label for="a5">Your Answer</label>
-            <textarea id="a5" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key5', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="a5">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="a5" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key5">A real Why statement is specific, belief-based, and meaningful beyond profit or status. A slogan like “to be the best” is only a goal or generic phrase, not a true purpose.</div>
           </div>
         </div>
@@ -329,14 +294,11 @@ What is the product, service, or visible output that people can see or buy.</div
         <div class="q-body">In <em>The Lean Startup</em>, what is <strong>Build–Measure–Learn</strong>? Why is the goal learning rather than simply shipping features?</div>
         <div class="answer-area medium-answer">
           <div class="student-box">
-            <label for="a6">Your Answer</label>
-            <textarea id="a6" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key6', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="a6">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="a6" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key6">Build–Measure–Learn means creating the smallest useful test, measuring user behavior tied to a hypothesis, and then using the results to make a decision. The goal is learning because evidence helps the team decide whether to improve, pivot, or stop, instead of building features blindly.</div>
           </div>
         </div>
@@ -347,14 +309,11 @@ What is the product, service, or visible output that people can see or buy.</div
         <div class="q-body">What is the difference between a <strong>value hypothesis</strong> and a <strong>growth hypothesis</strong>? Give one example of each.</div>
         <div class="answer-area medium-answer">
           <div class="student-box">
-            <label for="a7">Your Answer</label>
-            <textarea id="a7" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key7', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="a7">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="a7" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key7">A value hypothesis tests whether users truly get value from the product.
 Example: “At least 40% of new users complete onboarding without help.”
 A growth hypothesis tests whether the product can spread sustainably.
@@ -368,14 +327,11 @@ Example: “Referral invites convert at 10% or higher.”</div>
         <div class="q-body">Why are <strong>cohort-based metrics</strong> often more useful than total numbers?</div>
         <div class="answer-area small-answer">
           <div class="student-box">
-            <label for="a8">Your Answer</label>
-            <textarea id="a8" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key8', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="a8">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="a8" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key8">Cohort-based metrics show how a specific group behaves over time, especially for retention and repeat use. Total numbers can look good while hiding churn, weak engagement, or poor long-term value.</div>
           </div>
         </div>
@@ -398,14 +354,11 @@ Example: “Referral invites convert at 10% or higher.”</div>
         </ol>
         <div class="answer-area large-answer">
           <div class="student-box">
-            <label for="b1">Your Answer</label>
-            <textarea id="b1" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key9', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="b1">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="b1" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key9">The Technician role is probably dominating because the owner is doing too much personally.
 
 Two systems to document first:
@@ -436,14 +389,11 @@ A strong answer should explain that the business needs repeatability so quality 
         </ol>
         <div class="answer-area large-answer">
           <div class="student-box">
-            <label for="b2">Your Answer</label>
-            <textarea id="b2" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key10', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="b2">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="b2" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key10">The statement is weak because it is broad, generic, and goal-focused. “Become the leading platform” is a growth goal, not a real purpose.
 
 Better Why statement example:
@@ -471,14 +421,11 @@ A product demo, student improvement data, onboarding completion rate, or a testi
         </ol>
         <div class="answer-area large-answer">
           <div class="student-box">
-            <label for="b3">Your Answer</label>
-            <textarea id="b3" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key11', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="b3">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="b3" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key11">Example hypothesis:
 “At least 50% of students who try the homework planner will use it again the next week.”
 
@@ -506,14 +453,11 @@ A strong answer should connect the hypothesis, MVP, metric, and decision rule cl
         <div class="q-body">Compare <em>The E-Myth Revisited</em> and <em>The Lean Startup</em>. How are they similar, and how are they different, in the way they help a person build a stronger business or project? In your answer, discuss systems, metrics, experimentation, and decision-making.</div>
         <div class="answer-area large-answer">
           <div class="student-box">
-            <label for="c1">Your Answer</label>
-            <textarea id="c1" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key12', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="c1">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="c1" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key12">Model points:
 - Both focus on reducing chaos and making better decisions.
 - E-Myth focuses more on building repeatable systems, roles, SOPs, and owner independence.
@@ -529,14 +473,11 @@ A strong answer should connect the hypothesis, MVP, metric, and decision rule cl
         <div class="q-body">“Starting with Why creates clarity, but without systems and experiments, clarity alone is not enough.” Do you agree? Explain your answer using ideas from <em>Start With Why</em>, <em>The E-Myth Revisited</em>, and <em>The Lean Startup</em>.</div>
         <div class="answer-area large-answer">
           <div class="student-box">
-            <label for="c2">Your Answer</label>
-            <textarea id="c2" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key13', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="c2">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="c2" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key13">Model points:
 - Yes, Why creates direction, meaning, and message clarity.
 - But E-Myth shows that clarity alone does not create repeatable quality; systems, checklists, and accountability are needed.
@@ -551,14 +492,11 @@ A strong answer should connect the hypothesis, MVP, metric, and decision rule cl
         <div class="q-body">Imagine you are launching a small student service or online project. Write a plan that includes: a Why statement, 3–5 How principles, one MVP idea, one value hypothesis, one growth hypothesis, two useful metrics, and one repeatable system you would document early.</div>
         <div class="answer-area large-answer">
           <div class="student-box">
-            <label for="c3">Your Answer</label>
-            <textarea id="c3" placeholder="Type your answer here..."></textarea>
-          </div>
-          <div class="key-box">
-            <label>Answer Key</label>
-            <div class="btn-row">
-              <button type="button" onclick="toggleAnswer('key14', this)">Show Answer Key</button>
+            <div class="answer-label-row">
+              <label for="c3">Your Answer</label>
+              <button type="button" class="answer-key-button" onclick="toggleAnswer(this)">AnswerKey</button>
             </div>
+            <textarea id="c3" placeholder="Type your answer here..."></textarea>
             <div class="answer-key" id="key14">Model points:
 - Why statement should describe contribution and impact for a specific group.
 - How principles should be observable and practical.
@@ -578,33 +516,40 @@ A strong answer is specific, realistic, and clearly connects all parts into one 
       <h3>Marking Guide</h3>
       <p>Strong answers should use correct tutorial vocabulary, explain ideas clearly, apply concepts to the case, and connect Why, systems, metrics, and experimentation in a logical way.</p>
       <div class="btn-row">
-        <button type="button" class="secondary" onclick="showAllAnswers()">Show All Answer Keys</button>
-        <button type="button" class="secondary" onclick="hideAllAnswers()">Hide All Answer Keys</button>
+        <button type="button" class="secondary" onclick="fillAllAnswers()">Fill All Answer Keys</button>
+        <button type="button" class="secondary" onclick="clearAllAnswers()">Clear All Answers</button>
       </div>
     </div>
 
-    <div class="footer-note">This page is printable. In print view, all answer keys will appear automatically.</div>
+    <div class="footer-note">This page is printable. Answer boxes will print with any text currently entered.</div>
   </div>
 
   <script>
-    function toggleAnswer(id, btn){
-      const el = document.getElementById(id);
-      const isShown = el.classList.contains('show');
-      el.classList.toggle('show');
-      btn.textContent = isShown ? 'Show Answer Key' : 'Hide Answer Key';
+    function toggleAnswer(btn){
+      const box = btn.closest('.student-box');
+      const key = box.querySelector('.answer-key');
+      const textarea = box.querySelector('textarea');
+      const answer = key.textContent.trim();
+      textarea.value = textarea.value === answer ? '' : answer;
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+      textarea.focus();
     }
 
-    function showAllAnswers(){
-      document.querySelectorAll('.answer-key').forEach(el => el.classList.add('show'));
-      document.querySelectorAll('.key-box button').forEach(btn => {
-        if (!btn.classList.contains('secondary')) btn.textContent = 'Hide Answer Key';
+    function fillAllAnswers(){
+      document.querySelectorAll('.student-box').forEach(box => {
+        const key = box.querySelector('.answer-key');
+        const textarea = box.querySelector('textarea');
+        if (key && textarea) {
+          textarea.value = key.textContent.trim();
+          textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        }
       });
     }
 
-    function hideAllAnswers(){
-      document.querySelectorAll('.answer-key').forEach(el => el.classList.remove('show'));
-      document.querySelectorAll('.key-box button').forEach(btn => {
-        if (!btn.classList.contains('secondary')) btn.textContent = 'Show Answer Key';
+    function clearAllAnswers(){
+      document.querySelectorAll('.student-box textarea').forEach(textarea => {
+        textarea.value = '';
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
       });
     }
   </script>
