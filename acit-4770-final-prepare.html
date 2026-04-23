@@ -181,52 +181,56 @@
     }
 
     @media (max-width: 760px) {
+      html,
       body {
-        overflow: auto;
+        height: 100%;
+        overscroll-behavior: none;
+      }
+
+      body {
+        overflow: hidden;
+        background: #000;
       }
 
       .deck {
-        grid-template-rows: 52px minmax(0, 1fr) 84px;
-      }
-
-      .topbar {
-        padding: 0 12px;
-      }
-
-      .title {
-        font-size: 14px;
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
       }
 
       .stage {
-        height: calc(100vh - 136px);
-        height: calc(100dvh - 136px);
-        padding: 14px 12px 72px;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        padding: 0;
+        background: #000;
+        touch-action: pan-y;
       }
 
+      .topbar,
+      .filmstrip,
       .nav-button {
-        top: auto;
-        bottom: 14px;
-        width: 42px;
-        height: 42px;
-        transform: none;
+        display: none;
       }
 
-      .nav-button.prev {
-        left: calc(50% - 50px);
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
       }
 
-      .nav-button.next {
-        right: calc(50% - 50px);
-      }
-
-      .filmstrip {
-        justify-content: flex-start;
-        padding: 10px 12px;
-      }
-
-      .thumb {
-        width: 48px;
-        height: 60px;
+      .slide img {
+        width: 100vw;
+        max-width: none;
+        height: 100vh;
+        height: 100dvh;
+        max-height: none;
+        object-fit: contain;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
       }
     }
   </style>
@@ -291,7 +295,10 @@
     const status = document.querySelector("#status");
     const previous = document.querySelector(".prev");
     const next = document.querySelector(".next");
+    const stage = document.querySelector(".stage");
     let current = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
 
     function showSlide(index) {
       current = (index + slides.length) % slides.length;
@@ -325,6 +332,28 @@
         showSlide(current + 1);
       }
     });
+
+    stage.addEventListener("touchstart", (event) => {
+      if (event.touches.length !== 1) {
+        return;
+      }
+
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+
+    stage.addEventListener("touchend", (event) => {
+      const touch = event.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const isHorizontalSwipe = Math.abs(deltaX) > 48 && Math.abs(deltaX) > Math.abs(deltaY) * 1.35;
+
+      if (!isHorizontalSwipe) {
+        return;
+      }
+
+      showSlide(deltaX < 0 ? current + 1 : current - 1);
+    }, { passive: true });
   </script>
 </body>
 </html>
