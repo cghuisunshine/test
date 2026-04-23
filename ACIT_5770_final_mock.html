@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACIT 4770 Interactive Mock Final Exam</title>
+  <style>
+    :root{
+      --ink:#111827;
+      --muted:#6b7280;
+      --line:#d1d5db;
+      --accent:#1d4ed8;
+      --soft:#f8fafc;
+      --ans:#eff6ff;
+      --btn:#2563eb;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:#f6f8fb;
+      color:var(--ink);
+      line-height:1.6;
+    }
+    .page{
+      max-width:980px;
+      margin:0 auto;
+      padding:24px 16px 50px;
+    }
+    .hero{
+      background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+      color:white;
+      padding:24px;
+      border-radius:18px;
+      margin-bottom:20px;
+    }
+    .hero h1{margin:0 0 8px;font-size:2rem}
+    .hero p{margin:0}
+    .section{
+      background:white;
+      border:1px solid #e5e7eb;
+      border-radius:18px;
+      padding:20px;
+      margin:18px 0;
+      box-shadow:0 8px 22px rgba(0,0,0,.04);
+    }
+    .section h2{
+      margin:0 0 10px;
+      border-bottom:2px solid #111827;
+      padding-bottom:8px;
+    }
+    .q{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:16px;
+      margin:16px 0;
+      background:var(--soft);
+    }
+    .qhead{
+      font-weight:bold;
+      margin-bottom:8px;
+    }
+    .marks{
+      color:#1d4ed8;
+      font-weight:bold;
+    }
+    textarea{
+      width:100%;
+      min-height:120px;
+      resize:vertical;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      padding:12px;
+      font:inherit;
+      background:white;
+      margin-top:10px;
+    }
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    button{
+      background:var(--btn);
+      color:white;
+      border:none;
+      border-radius:10px;
+      padding:10px 14px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    button:hover{filter:brightness(.95)}
+    .answer{
+      display:none;
+      background:var(--ans);
+      border-left:5px solid var(--btn);
+      padding:14px;
+      border-radius:10px;
+      margin-top:12px;
+    }
+    .tip{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      margin-top:24px;
+      font-size:.95rem;
+    }
+  </style>
+  <script>
+    function toggleAnswer(id, btn){
+      const el = document.getElementById(id);
+      const shown = el.style.display === 'block';
+      el.style.display = shown ? 'none' : 'block';
+      btn.textContent = shown ? 'Check / Show Model Answer' : 'Hide Model Answer';
+    }
+  </script>
+</head>
+<body>
+  <div class="page">
+    <div class="hero">
+      <h1>ACIT 4770 Interactive Mock Final Exam</h1>
+      <p>Write your answer in each box, then click the button to reveal a model answer.</p>
+    </div>
+
+    <div class="section">
+      <h2>Part A – Definitions and Key Terms</h2>
+
+      <div class="q">
+        <div class="qhead">1. Define <strong>Offer</strong>. <span class="marks">(5 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('a1', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="a1">An <strong>offer</strong> is a clear expression by one party of a willingness to enter into a contract on certain terms. It must be specific enough that a reasonable person would see it as a real offer rather than a vague expression of interest. If accepted properly, it can create a binding agreement.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">2. Define <strong>Consideration</strong>. <span class="marks">(5 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('a2', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="a2"><strong>Consideration</strong> is the value exchanged between the parties in a contract. It is often money, goods, services, or a promise to do or not do something. Consideration helps show that both parties are giving something of value in the agreement.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">3. Define <strong>Accountability</strong>. <span class="marks">(5 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('a3', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="a3"><strong>Accountability</strong> means being answerable for actions and being willing or required to explain decisions and outcomes. In IT, accountability means a person or organization must take responsibility for how systems and information are managed.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">4. Define <strong>Consent</strong>. <span class="marks">(5 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('a4', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="a4"><strong>Consent</strong> means that an individual gives permission for their personal information to be collected, used, or disclosed. Valid consent should be informed and connected to a clear purpose, especially in privacy law and ethical data practices.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">5. Define <strong>Ethical Hacking</strong>. <span class="marks">(5 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('a5', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="a5"><strong>Ethical hacking</strong> is authorized testing of computer systems to find security weaknesses. It is ethical because it is done with permission and with feedback to improve security rather than to cause harm or gain unauthorized benefit.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">6. Define <strong>Quantum-safe encryption</strong>. <span class="marks">(5 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('a6', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="a6"><strong>Quantum-safe encryption</strong> refers to encryption methods designed to remain secure even if large-scale quantum computers become practical. These methods aim to resist attacks that could break traditional encryption more easily in a quantum future.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Part B – Short Answer Questions</h2>
+
+      <div class="q">
+        <div class="qhead">7. Explain the difference between <strong>responsibility</strong>, <strong>accountability</strong>, and <strong>liability</strong> in an IT workplace. Give one example. <span class="marks">(10 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('b1', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="b1"><strong>Responsibility</strong> refers to duties a person is expected to carry out. <strong>Accountability</strong> means being answerable for the results of those duties and being required to explain them. <strong>Liability</strong> is legal responsibility, especially when harm, loss, or breach leads to legal consequences. For example, a system administrator may be responsible for maintaining a server, a manager may be accountable for the team’s security practices, and the company may be liable if customer data is exposed through negligence.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">8. Compare <strong>GDPR</strong>, <strong>PIPEDA</strong>, and <strong>PIPA</strong>. What do they have in common, and why do these laws matter for organizations handling personal information? <span class="marks">(10 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('b2', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="b2">GDPR applies broadly to organizations dealing with personal data of people in the EU. PIPEDA applies to many Canadian private-sector organizations involved in commercial activity, especially across borders. BC’s PIPA applies to private-sector organizations in British Columbia. All three focus on protecting personal information through ideas such as accountability, clear purposes, consent, limiting collection and use, and safeguards. These laws matter because organizations that collect personal data must handle it lawfully, ethically, and securely.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">9. A computer system produces incorrect output. Explain three possible causes of faulty output and describe one practical way to reduce the risk of each cause. <span class="marks">(10 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('b3', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="b3">Three possible causes are a <strong>bug in the program</strong>, <strong>incorrect data input</strong>, and an <strong>incorrectly entered query</strong>. A program bug can be reduced through testing and code review. Incorrect data input can be reduced by input validation and better interface design. Incorrect queries can be reduced through user training, clearer prompts, and built-in error checking. These show that reliability depends on software quality, data quality, and correct human use.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Part C – Longer Questions</h2>
+
+      <div class="q">
+        <div class="qhead">10. Why is a clear process of <strong>offer</strong> and <strong>acceptance</strong> important in software or IT service contracts? Discuss what can go wrong when terms are vague or when one side makes a counter-offer. <span class="marks">(10 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('c1', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="c1">A clear process of offer and acceptance is important because contracts define what each side must do, what will be delivered, and what will be paid. In software or IT services, vague terms can cause disputes over scope, deadlines, support, security responsibilities, and ownership of work. Acceptance must be clear and unconditional. If one side changes the terms, that is usually a counter-offer, not acceptance. This matters because a contract may not actually exist yet, even if one side thinks it does. Clear offer and acceptance reduce confusion and legal risk.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">11. What makes hacking <strong>ethical</strong>? Explain the importance of <strong>permission</strong> and <strong>feedback</strong>, and discuss how ethical hacking can benefit organizations while still creating ethical concerns. <span class="marks">(10 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('c2', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="c2">Hacking is ethical when it is done with authorization and for a legitimate purpose, such as improving security. <strong>Permission</strong> is essential because testing a system without authorization can still be harmful or illegal. <strong>Feedback</strong> is important because the results should be reported so the organization can fix weaknesses. Ethical hacking benefits organizations by revealing vulnerabilities before criminals exploit them. However, it still raises ethical concerns if testing is reckless, if sensitive data is exposed during testing, or if the scope of permission is unclear.</div>
+      </div>
+
+      <div class="q">
+        <div class="qhead">12. Discuss the ethical and security implications of <strong>quantum computing</strong>. Include at least two of these ideas: quantum supremacy, quantum cryptography, unbreakable codes, or whether one company or country should control this technology. <span class="marks">(10 marks)</span></div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('c3', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="c3">Quantum computing could transform security because powerful quantum machines may eventually break some traditional encryption methods much faster than classical computers. This creates pressure to develop quantum-safe encryption. <strong>Quantum supremacy</strong> refers to a point where a quantum computer can do a task that classical systems cannot practically perform. <strong>Quantum cryptography</strong> offers new ways to protect communications. Ethically, these technologies raise questions about fairness, national power, privacy, and whether it is acceptable for one organization or country to control such powerful capabilities. They may improve security in some ways while threatening it in others.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Part D – Case Study</h2>
+      <div class="q">
+        <div class="qhead">13. Case Study <span class="marks">(20 marks total)</span></div>
+        <p>A Vancouver-based app company launches a new cloud service that stores user names, emails, location data, and usage history. The company did not clearly explain why some data was collected, kept the data longer than necessary, and allowed a third-party contractor to test the system without written authorization. Later, users complain that their personal information may have been exposed. The company says the issue happened because of a software bug and because staff entered some data incorrectly.</p>
+
+        <p><strong>a)</strong> Identify four legal, ethical, or operational issues in this case.</p>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('d1', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="d1">Possible issues include: unclear purpose for collecting data, keeping data longer than necessary, possible lack of proper consent, weak safeguards around personal information, unauthorized or poorly authorized security testing, software reliability problems, poor data handling by staff, and possible privacy-law non-compliance.</div>
+
+        <p><strong>b)</strong> Explain which privacy principles are most relevant here.</p>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('d2', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="d2">The most relevant privacy principles are <strong>identifying purposes</strong>, <strong>consent</strong>, <strong>limiting collection</strong>, <strong>limiting use, disclosure, and retention</strong>, <strong>safeguards</strong>, and <strong>accountability</strong>. The company needed to explain why data was collected, use only what was necessary, protect it properly, keep it only as long as justified, and ensure someone was accountable for compliance.</div>
+
+        <p><strong>c)</strong> Explain whether the contractor’s actions could be considered ethical hacking.</p>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('d3', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="d3">The contractor’s actions would only count as ethical hacking if there was proper permission and a clear testing scope. Without written authorization, the situation is questionable. Ethical hacking requires authorization and responsible feedback, so unclear or missing permission is a serious problem.</div>
+
+        <p><strong>d)</strong> Recommend three actions the company should take next.</p>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('d4', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="d4">The company should: (1) investigate the incident and fix the software bug, (2) review its privacy practices including consent, retention, and safeguards, and (3) create formal authorization and reporting procedures for any future security testing. It should also retrain staff and improve data-handling controls.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Bonus Practice</h2>
+      <div class="q">
+        <div class="qhead">14. Is it ethical to have encryption that governments cannot break?</div>
+        <textarea placeholder="Write your answer here..."></textarea>
+        <div class="controls"><button onclick="toggleAnswer('e1', this)">Check / Show Model Answer</button></div>
+        <div class="answer" id="e1">There are strong arguments on both sides. Very strong encryption protects privacy, financial information, personal safety, and freedom of communication. However, it can also make investigations harder for law enforcement. Ethically, this issue involves balancing privacy and civil liberties against public safety and legal enforcement needs.</div>
+      </div>
+    </div>
+
+    <div class="footer">Interactive version with a check button and model answer for every question.</div>
+  </div>
+</body>
+</html>
