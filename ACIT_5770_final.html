@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACIT 4770 Final Exam Prep Tutorial</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --accent:#1d4ed8;
+      --border:#dbe3f0;
+      --soft:#eef4ff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.65;
+    }
+    .container{
+      max-width:1000px;
+      margin:0 auto;
+      padding:32px 18px 60px;
+    }
+    .hero{
+      background:linear-gradient(135deg,#1d4ed8,#2563eb 55%,#60a5fa);
+      color:white;
+      padding:34px 28px;
+      border-radius:20px;
+      box-shadow:0 12px 30px rgba(29,78,216,.18);
+      margin-bottom:24px;
+    }
+    .hero h1{
+      margin:0 0 10px;
+      font-size:2rem;
+    }
+    .hero p{
+      margin:6px 0;
+      font-size:1.04rem;
+    }
+    .toc, .section, .note{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:22px;
+      margin:18px 0;
+      box-shadow:0 6px 18px rgba(15,23,42,.04);
+    }
+    h2{
+      margin-top:0;
+      color:var(--accent);
+      font-size:1.45rem;
+    }
+    h3{
+      margin-top:24px;
+      color:#1e3a8a;
+      font-size:1.08rem;
+    }
+    h4{
+      margin-bottom:8px;
+      color:#1f3b8b;
+      font-size:1rem;
+    }
+    ul, ol{
+      padding-left:22px;
+    }
+    li{ margin:6px 0; }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:18px;
+    }
+    .mini{
+      background:var(--soft);
+      border:1px solid #cfe0ff;
+      border-radius:14px;
+      padding:16px;
+    }
+    .question{
+      background:#f8fafc;
+      border-left:5px solid var(--accent);
+      padding:14px 16px;
+      border-radius:12px;
+      margin:14px 0;
+    }
+    .answer{
+      background:#f0f9ff;
+      border-left:5px solid #0284c7;
+      padding:14px 16px;
+      border-radius:12px;
+      margin:10px 0 0;
+    }
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#dbeafe;
+      color:#1e40af;
+      font-size:.85rem;
+      margin:4px 6px 4px 0;
+      font-weight:bold;
+    }
+    .footer{
+      color:var(--muted);
+      font-size:.95rem;
+      text-align:center;
+      margin-top:28px;
+    }
+    .source{
+      font-size:.95rem;
+      color:var(--muted);
+    }
+    .checklist{
+      columns:2;
+      column-gap:28px;
+    }
+    @media (max-width:700px){
+      .hero h1{font-size:1.6rem}
+      .checklist{columns:1}
+      .container{padding:18px 12px 40px}
+      .hero{padding:24px 18px}
+      .toc, .section, .note{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>ACIT 4770 Final Exam Prep Tutorial</h1>
+      <p><strong>Course:</strong> Legal and Ethical Issues in Information Technology</p>
+      <p><strong>Based on:</strong> Week 15 Final Exam Review PDF</p>
+      <p>This page turns the review content into a clearer study tutorial you can read before the exam.</p>
+    </div>
+
+    <div class="toc">
+      <h2>Quick Navigation</h2>
+      <div>
+        <span class="tag">Exam format</span>
+        <span class="tag">Week 9: Contracts</span>
+        <span class="tag">Week 10: Privacy</span>
+        <span class="tag">Week 12: Reliability</span>
+        <span class="tag">Week 13: Networked communications</span>
+        <span class="tag">Week 14: Encryption & quantum</span>
+        <span class="tag">Memorization checklist</span>
+        <span class="tag">Study strategy</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>1. What the Final Exam Looks Like</h2>
+      <ul>
+        <li><strong>Date and time:</strong> Thursday April 23, 10:30 AM–12:30 PM</li>
+        <li><strong>Format:</strong> Handwritten, in person, in the regular classroom</li>
+        <li><strong>Style:</strong> Same format as the midterm exam</li>
+        <li><strong>Includes:</strong> definition questions, key-term understanding, longer written questions, and one short case study</li>
+      </ul>
+      <p><strong>What that means for your prep:</strong></p>
+      <ol>
+        <li>Memorize key terms clearly.</li>
+        <li>Practice short handwritten explanations.</li>
+        <li>Practice applying concepts to small scenarios.</li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2>2. Topics You Need to Study</h2>
+      <div class="grid">
+        <div class="mini">
+          <h3>Week 9</h3>
+          <p>Liability, Contracts, and Agreements</p>
+        </div>
+        <div class="mini">
+          <h3>Week 10</h3>
+          <p>Information privacy, Canadian and international privacy regulations</p>
+        </div>
+        <div class="mini">
+          <h3>Week 12</h3>
+          <p>Computer reliability</p>
+        </div>
+        <div class="mini">
+          <h3>Week 13</h3>
+          <p>Networked communications</p>
+        </div>
+        <div class="mini">
+          <h3>Week 14</h3>
+          <p>Encryption and interception, ciphers, keys, and authentication</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>3. Week 9 Tutorial: Liability, Contracts, and Agreements</h2>
+
+      <h3>Essential Contract Elements</h3>
+
+      <h4>Offer</h4>
+      <p>An <strong>offer</strong> is when one party shows a real intention to enter into a contract on certain terms. It must be clear enough that a reasonable person would see it as a real offer, not just casual interest.</p>
+
+      <h4>Acceptance</h4>
+      <p><strong>Acceptance</strong> means the other party agrees to the offer clearly and unconditionally. If the terms are changed, that is usually a <strong>counter-offer</strong>, not acceptance.</p>
+
+      <h4>Consideration</h4>
+      <p><strong>Consideration</strong> is the value exchanged between parties. This is often money, but it can also be another benefit, service, or promise to refrain from an action.</p>
+
+      <h3>Related Terms</h3>
+      <ul>
+        <li><strong>Responsibility:</strong> being responsible morally, legally, or practically</li>
+        <li><strong>Accountability:</strong> being answerable for actions and willing to explain them</li>
+        <li><strong>Liability:</strong> legal obligation or legal responsibility</li>
+      </ul>
+
+      <div class="question">
+        <strong>Example question:</strong> A software company offers to build a website for $5,000. The client replies, “I accept, but only if you include hosting for free.” Is there a contract?
+        <div class="answer">
+          <strong>Model answer:</strong> No final contract yet. This is not unconditional acceptance. The client changed the terms, so this becomes a counter-offer.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>4. Week 10 Tutorial: Information Privacy</h2>
+
+      <h3>What Privacy Means</h3>
+      <p>Privacy relates to access, physical proximity, and knowledge about a person. The slides describe privacy as a <strong>zone of inaccessibility</strong>. Privacy is presented as a <strong>prudential right</strong>, meaning society recognizes privacy because doing so benefits society.</p>
+
+      <h3>Important Privacy Laws</h3>
+      <ul>
+        <li><strong>GDPR:</strong> applies broadly to organizations dealing with personal data of people in the EU</li>
+        <li><strong>PIPEDA:</strong> applies to many private-sector organizations in Canada involved in commercial activity</li>
+        <li><strong>PIPA (BC):</strong> applies to private-sector organizations in British Columbia that collect, use, or disclose personal information</li>
+      </ul>
+
+      <h3>Common Privacy Principles</h3>
+      <ul>
+        <li><strong>Accountability:</strong> who is responsible?</li>
+        <li><strong>Identifying Purposes:</strong> why is the information collected?</li>
+        <li><strong>Consent:</strong> does the person need to agree?</li>
+        <li><strong>Limiting Collection:</strong> what data can be collected?</li>
+        <li><strong>Limiting Use, Disclosure, and Retention:</strong> how can it be used and how long can it be kept?</li>
+        <li><strong>Safeguards:</strong> what security protections must be in place?</li>
+      </ul>
+
+      <div class="question">
+        <strong>Example question:</strong> A BC company collects customer names, emails, and purchase history. What privacy ideas should it consider?
+        <div class="answer">
+          <strong>Model answer:</strong> It should identify the purpose of collection, get proper consent where required, limit collection to what is necessary, protect the information with safeguards, and follow retention and disclosure limits.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>5. Week 12 Tutorial: Computer Reliability</h2>
+      <h3>Three Causes of Faulty Output</h3>
+      <ol>
+        <li>Bug in the program</li>
+        <li>Incorrect data input</li>
+        <li>Query entered incorrectly</li>
+      </ol>
+
+      <h3>Common Thread</h3>
+      <p>Computer output is not automatically trustworthy. Problems can come from software, data, or the user’s request. Reliability depends on both technical quality and human use.</p>
+
+      <h3>How to Manage Reliability</h3>
+      <ul>
+        <li>test programs carefully</li>
+        <li>validate inputs</li>
+        <li>train users</li>
+        <li>design clear interfaces</li>
+        <li>review outputs and logs</li>
+      </ul>
+
+      <div class="question">
+        <strong>Example question:</strong> Why can a computer system generate wrong output even if the hardware is fine?
+        <div class="answer">
+          <strong>Model answer:</strong> Because wrong output can still come from a program bug, bad data input, or an incorrectly entered query.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>6. Week 13 Tutorial: Networked Communications</h2>
+
+      <h3>Ethical Hacking</h3>
+      <p>The review highlights the <strong>Five Phases of Ethical Hacking</strong> and asks what makes hacking ethical. Two key ideas are:</p>
+      <ul>
+        <li><strong>Permission</strong></li>
+        <li><strong>Feedback</strong></li>
+      </ul>
+
+      <p>So hacking is ethical when it is authorized and when the results are used to improve security rather than cause harm.</p>
+
+      <h3>Security Threats</h3>
+      <p>The slides also show outside threats and inside threats. A major exam idea is that organizations now use connected systems in broader environments, so security risks come from both internal and external sources.</p>
+
+      <div class="question">
+        <strong>Example question:</strong> What makes hacking ethical?
+        <div class="answer">
+          <strong>Model answer:</strong> Hacking is ethical when it is done with permission and when the results are reported back as feedback to improve security.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>7. Week 14 Tutorial: Encryption, Interception, and Quantum Issues</h2>
+
+      <h3>Quantum Concepts to Know</h3>
+      <ul>
+        <li><strong>Quantum computing:</strong> computing based on quantum principles</li>
+        <li><strong>Quantum supremacy:</strong> when a quantum computer can do a task impractical for classical computers</li>
+        <li><strong>Quantum cryptography:</strong> secure communication using quantum principles</li>
+        <li><strong>Quantum-safe encryption:</strong> encryption designed to remain secure in a quantum future</li>
+      </ul>
+
+      <h3>Ethical and Practical Questions</h3>
+      <ul>
+        <li>What threats do these technologies protect against?</li>
+        <li>How do professionals know when to use them?</li>
+        <li>Is it ethical to have unbreakable codes?</li>
+        <li>What happens to security when quantum computing becomes practical?</li>
+        <li>Is it ethical for one company or country to control this technology?</li>
+      </ul>
+
+      <div class="question">
+        <strong>Example question:</strong> Is it ethical to have unbreakable encryption?
+        <div class="answer">
+          <strong>Model answer:</strong> There are arguments on both sides. Strong encryption protects privacy and security, but it may also make lawful investigations harder. The ethical issue is balancing privacy with public safety.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>8. Memorization Checklist</h2>
+      <div class="checklist">
+        <ul>
+          <li>offer</li>
+          <li>acceptance</li>
+          <li>consideration</li>
+          <li>responsibility</li>
+          <li>accountability</li>
+          <li>liability</li>
+          <li>privacy</li>
+          <li>GDPR</li>
+          <li>PIPEDA</li>
+          <li>PIPA</li>
+          <li>consent</li>
+          <li>accountability principle</li>
+          <li>limiting collection</li>
+          <li>limiting use, disclosure, and retention</li>
+          <li>safeguards</li>
+          <li>faulty output causes</li>
+          <li>ethical hacking</li>
+          <li>inside threats</li>
+          <li>outside threats</li>
+          <li>encryption</li>
+          <li>quantum computing</li>
+          <li>quantum supremacy</li>
+          <li>quantum cryptography</li>
+          <li>quantum-safe encryption</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>9. Best Way to Study This</h2>
+      <ol>
+        <li>Read one topic at a time and rewrite every key term in your own words.</li>
+        <li>Practice answering: What does this mean? Why does it matter in IT? Can I give one example?</li>
+        <li>Practice handwritten short answers because the exam is handwritten.</li>
+        <li>Practice one mini case study for each topic.</li>
+      </ol>
+    </div>
+
+    <div class="note">
+      <h2>10. Super Short Summary</h2>
+      <p>This final exam mainly tests whether you can <strong>define important legal and ethical IT concepts, explain them clearly, compare related ideas, and apply them to short scenarios</strong>.</p>
+      <p class="source">Source basis: ACIT 4770 Week 15 Final Exam Review PDF.</p>
+    </div>
+
+    <div class="footer">
+      HTML study page generated from your uploaded review content.
+    </div>
+  </div>
+</body>
+</html>
