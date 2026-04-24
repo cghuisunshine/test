@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Questions 19–20 | Scientific Notation Practice</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      background: #f4f6fb;
+      color: #222;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #264653, #2a9d8f);
+      color: white;
+      padding: 28px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 16px 40px;
+    }
+
+    .toolbar {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toolbar-title {
+      font-weight: bold;
+      color: #264653;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 15px;
+      cursor: pointer;
+      background: #e9ecef;
+      color: #222;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #d8dee3;
+    }
+
+    button.active {
+      background: #2a9d8f;
+      color: white;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border-left: 6px solid #2a9d8f;
+    }
+
+    .question-number {
+      font-size: 22px;
+      font-weight: bold;
+      color: #264653;
+      margin-bottom: 12px;
+    }
+
+    .zh {
+      font-size: 18px;
+      margin-bottom: 14px;
+    }
+
+    .en {
+      font-size: 17px;
+      background: #f1f8f7;
+      border-left: 4px solid #2a9d8f;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    .label {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: bold;
+      color: white;
+      background: #264653;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .answer-area {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px dashed #ccc;
+    }
+
+    input {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      margin: 8px 0 12px;
+      box-sizing: border-box;
+    }
+
+    .check-btn {
+      background: #e76f51;
+      color: white;
+    }
+
+    .check-btn:hover {
+      background: #d95e42;
+    }
+
+    .answer {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      background: #fff7e6;
+      border-left: 4px solid #f4a261;
+      border-radius: 8px;
+    }
+
+    .answer strong {
+      color: #c4512d;
+    }
+
+    .formula {
+      font-family: "Courier New", monospace;
+      background: #f3f3f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+      margin-top: 28px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Questions 19–20</h1>
+  <p>Scientific Notation Practice | 科学记数法练习</p>
+</header>
+
+<div class="container">
+
+  <div class="toolbar">
+    <div class="toolbar-title">Display Mode / 显示模式</div>
+    <div>
+      <button id="modeBoth" class="active" onclick="setMode('both')">En + Zh</button>
+      <button id="modeZh" onclick="setMode('zh')">中文 Only</button>
+    </div>
+  </div>
+
+  <!-- Question 19 -->
+  <div class="card">
+    <div class="question-number">Question 19</div>
+
+    <div class="zh">
+      <span class="label">中文</span><br>
+      芯片是指封装好的、包含完整电路的半导体微小基片（通常是硅片），广泛应用于电子设备。
+      近几年我国一直在芯片的工艺上进行技术攻坚，其中某芯片内核面积仅有
+      <strong>74.13 mm²</strong>，集成了约 <strong>69 亿个晶体管</strong>，
+      平均每个晶体管占有面积约为多少平方毫米？
+      （结果用科学记数法表示，保留两位小数。）
+    </div>
+
+    <div class="en">
+      <span class="label">English</span><br>
+      A chip is a packaged tiny semiconductor substrate, usually made of silicon, that contains a complete circuit
+      and is widely used in electronic devices. In recent years, China has been making technical advances in chip
+      manufacturing. One chip has a core area of only <strong>74.13 mm²</strong> and integrates about
+      <strong>6.9 billion transistors</strong>. What is the average area occupied by each transistor in square
+      millimetres? Express the answer in scientific notation and keep two decimal places.
+    </div>
+
+    <div class="answer-area">
+      <label>Answer / 答案：</label><br>
+      <input type="text" placeholder="Example: 1.07 × 10^-8 mm²">
+      <br>
+      <button class="check-btn" onclick="toggleAnswer('answer19')">Check / Show Answer</button>
+
+      <div id="answer19" class="answer">
+        <strong>Model Answer:</strong><br>
+        Number of transistors: 
+        <span class="formula">69 亿 = 6.9 × 10⁹</span><br><br>
+
+        Average area per transistor:<br>
+        <span class="formula">74.13 ÷ (6.9 × 10⁹)</span><br>
+        <span class="formula">= 10.743478... × 10⁻⁹</span><br>
+        <span class="formula">= 1.0743478... × 10⁻⁸</span><br><br>
+
+        Therefore, the average area is approximately:<br>
+        <strong>1.07 × 10⁻⁸ mm²</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question 20 -->
+  <div class="card">
+    <div class="question-number">Question 20</div>
+
+    <div class="zh">
+      <span class="label">中文</span><br>
+      地球表面平均 <strong>1 cm²</strong> 上的空气质量约为 <strong>1 kg</strong>，
+      地球表面的面积大约是 <strong>5 × 10⁸ km²</strong>，
+      地球表面全部空气的质量约为多少千克？
+      已知地球的质量约为 <strong>6 × 10²⁴ kg</strong>，
+      它的质量大约是地球表面全部空气质量的多少倍？
+    </div>
+
+    <div class="en">
+      <span class="label">English</span><br>
+      The mass of air above an average area of <strong>1 cm²</strong> on Earth’s surface is about
+      <strong>1 kg</strong>. The total surface area of Earth is about <strong>5 × 10⁸ km²</strong>.
+      What is the approximate total mass of all the air above Earth’s surface in kilograms?
+      Given that Earth’s mass is about <strong>6 × 10²⁴ kg</strong>, about how many times larger is
+      Earth’s mass than the total mass of the air above its surface?
+    </div>
+
+    <div class="answer-area">
+      <label>Answer / 答案：</label><br>
+      <input type="text" placeholder="Example: air mass = ..., ratio = ...">
+      <br>
+      <button class="check-btn" onclick="toggleAnswer('answer20')">Check / Show Answer</button>
+
+      <div id="answer20" class="answer">
+        <strong>Model Answer:</strong><br>
+
+        First convert square kilometres to square centimetres:<br>
+        <span class="formula">1 km = 10⁵ cm</span><br>
+        <span class="formula">1 km² = 10¹⁰ cm²</span><br><br>
+
+        Earth’s surface area:<br>
+        <span class="formula">5 × 10⁸ km² = 5 × 10⁸ × 10¹⁰ cm²</span><br>
+        <span class="formula">= 5 × 10¹⁸ cm²</span><br><br>
+
+        Since each <span class="formula">1 cm²</span> has about <span class="formula">1 kg</span> of air above it:<br>
+        <span class="formula">Total air mass = 5 × 10¹⁸ kg</span><br><br>
+
+        Compare Earth’s mass with the air mass:<br>
+        <span class="formula">(6 × 10²⁴) ÷ (5 × 10¹⁸)</span><br>
+        <span class="formula">= 1.2 × 10⁶</span><br><br>
+
+        Therefore:<br>
+        <strong>The total mass of air is about 5 × 10¹⁸ kg.</strong><br>
+        <strong>Earth’s mass is about 1.2 × 10⁶ times the total air mass.</strong>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Scientific Notation Practice Page
+  </footer>
+
+</div>
+
+<script>
+  function setMode(mode) {
+    const englishBlocks = document.querySelectorAll('.en');
+    const bothButton = document.getElementById('modeBoth');
+    const zhButton = document.getElementById('modeZh');
+
+    if (mode === 'both') {
+      englishBlocks.forEach(block => block.classList.remove('hidden'));
+      bothButton.classList.add('active');
+      zhButton.classList.remove('active');
+    }
+
+    if (mode === 'zh') {
+      englishBlocks.forEach(block => block.classList.add('hidden'));
+      zhButton.classList.add('active');
+      bothButton.classList.remove('active');
+    }
+  }
+
+  function toggleAnswer(id) {
+    const answer = document.getElementById(id);
+    if (answer.style.display === 'block') {
+      answer.style.display = 'none';
+    } else {
+      answer.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>
