@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Addition and Subtraction with Parentheses Practice</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --ink:#16324f;
+      --muted:#5b7083;
+      --accent:#1f7a8c;
+      --line:#d9e2ec;
+      --ok:#157347;
+      --bad:#b42318;
+      --soft:#eef7fa;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.55;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px 16px 40px;
+    }
+    .hero{
+      background:linear-gradient(135deg,#eef8fb,#ffffff);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:22px;
+      margin-bottom:18px;
+    }
+    h1{
+      margin:0 0 10px;
+      color:var(--accent);
+      font-size:2rem;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:1.05rem;
+    }
+    .rulebox{
+      margin-top:16px;
+      background:var(--soft);
+      border:1px solid #cfe3ea;
+      border-radius:14px;
+      padding:14px 16px;
+    }
+    .rulebox b{color:var(--accent)}
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:0 0 18px;
+    }
+    button{
+      border:none;
+      border-radius:10px;
+      padding:11px 16px;
+      font-weight:700;
+      cursor:pointer;
+      background:var(--accent);
+      color:#fff;
+    }
+    button.secondary{
+      background:#fff;
+      color:var(--accent);
+      border:1px solid var(--line);
+    }
+    .summary{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .stat{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      text-align:center;
+    }
+    .big{
+      font-size:1.8rem;
+      font-weight:800;
+      color:var(--accent);
+    }
+    .label{color:var(--muted)}
+    .section{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:20px;
+      margin-bottom:18px;
+    }
+    .section h2{
+      margin:0 0 8px;
+      color:var(--accent);
+      font-size:1.4rem;
+    }
+    .lead{
+      margin:0 0 16px;
+      color:var(--muted);
+      font-style:italic;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .q{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:#fcfeff;
+    }
+    .qtop{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:10px;
+    }
+    .num{
+      min-width:36px;
+      height:36px;
+      border-radius:50%;
+      background:#e8f5f8;
+      color:var(--accent);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+    }
+    .prompt{
+      font-size:1.08rem;
+      font-weight:700;
+      padding-top:3px;
+    }
+    .hint{
+      margin:0 0 10px 48px;
+      color:var(--muted);
+      font-size:.94rem;
+    }
+    .answer-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-left:48px;
+      align-items:center;
+    }
+    input[type="text"]{
+      flex:1 1 220px;
+      padding:11px 12px;
+      border:1px solid #bcccdc;
+      border-radius:10px;
+      font-size:1rem;
+      background:#fff;
+    }
+    .feedback{
+      margin:10px 0 0 48px;
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:.95rem;
+      display:none;
+      white-space:pre-wrap;
+    }
+    .feedback.ok{display:block;background:#ebfbee;color:var(--ok);border:1px solid #b7e4c7}
+    .feedback.bad{display:block;background:#fff5f5;color:var(--bad);border:1px solid #f5c2c7}
+    .note{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:.92rem;
+    }
+    @media (max-width:800px){
+      .summary,.grid{grid-template-columns:1fr}
+      h1{font-size:1.65rem}
+      .answer-row,.feedback,.hint{margin-left:0}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Addition and Subtraction with Parentheses</h1>
+      <p class="sub">Practice only these two forms: <b>a + (−b)</b> and <b>a − (−b)</b>. This page does not include <b>a − (+b)</b>.</p>
+      <div class="rulebox">
+        <div><b>Rule 1:</b> Adding a negative number is the same as subtracting that number. Example: <b>8 + (−3) = 8 − 3 = 5</b></div>
+        <div><b>Rule 2:</b> Subtracting a negative number is the same as adding that number. Example: <b>8 − (−3) = 8 + 3 = 11</b></div>
+      </div>
+    </div>
+    </div>
+
+    <div class="summary">
+      <div class="stat"><div class="big" id="correctCount">0</div><div class="label">Correct</div></div>
+      <div class="stat"><div class="big" id="checkedCount">0</div><div class="label">Checked</div></div>
+      <div class="stat"><div class="big" id="scorePct">0%</div><div class="label">Score</div></div>
+    </div>
+
+    <div class="toolbar">
+      <button id="checkAllBtn">Check All</button>
+      <button class="secondary" id="showAllBtn">Show All Answers</button>
+      <button class="secondary" id="resetBtn">Reset</button>
+    </div>
+
+    <div class="section">
+      <h2>Basic Practice</h2>
+      <p class="lead">First look at whether there is a plus sign or minus sign before the parentheses, then decide whether the expression becomes subtraction or addition.</p>
+      <div class="grid" id="basicGrid"></div>
+    </div>
+
+    <div class="section">
+      <h2>Harder Practice</h2>
+      <p class="lead">These problems use larger numbers and also include some that start with a negative number.</p>
+      <div class="grid" id="hardGrid"></div>
+      <div class="note">Type only the final answer, such as <b>-7</b> or <b>14</b>.</div>
+    </div>
+  </div>
+
+  <script>
+    const data = {
+      basic: [
+        {id:1, prompt:'7 + (−3) = ?', hint:'Adding a negative turns into subtraction', answers:['4']},
+        {id:2, prompt:'12 + (−5) = ?', hint:'Adding a negative turns into subtraction', answers:['7']},
+        {id:3, prompt:'9 − (−4) = ?', hint:'Subtracting a negative turns into addition', answers:['13']},
+        {id:4, prompt:'15 − (−6) = ?', hint:'Subtracting a negative turns into addition', answers:['21']},
+        {id:5, prompt:'10 + (−10) = ?', hint:'Same size, one positive and one negative', answers:['0']},
+        {id:6, prompt:'3 − (−8) = ?', hint:'Subtracting a negative turns into addition', answers:['11']},
+        {id:7, prompt:'18 + (−7) = ?', hint:'18 minus 7', answers:['11']},
+        {id:8, prompt:'20 − (−9) = ?', hint:'20 plus 9', answers:['29']},
+        {id:9, prompt:'5 + (−9) = ?', hint:'5 minus 9', answers:['-4']},
+        {id:10, prompt:'6 − (−6) = ?', hint:'6 plus 6', answers:['12']},
+        {id:11, prompt:'14 + (−2) = ?', hint:'14 minus 2', answers:['12']},
+        {id:12, prompt:'11 − (−1) = ?', hint:'11 plus 1', answers:['12']}
+      ],
+      hard: [
+        {id:13, prompt:'−4 + (−7) = ?', hint:'A negative plus a negative becomes more negative', answers:['-11']},
+        {id:14, prompt:'−9 − (−5) = ?', hint:'Subtracting a negative turns into addition', answers:['-4']},
+        {id:15, prompt:'25 + (−18) = ?', hint:'25 minus 18', answers:['7']},
+        {id:16, prompt:'−12 − (−9) = ?', hint:'-12 plus 9', answers:['-3']},
+        {id:17, prompt:'30 + (−14) = ?', hint:'30 minus 14', answers:['16']},
+        {id:18, prompt:'−20 − (−13) = ?', hint:'-20 plus 13', answers:['-7']},
+        {id:19, prompt:'48 + (−26) = ?', hint:'48 minus 26', answers:['22']},
+        {id:20, prompt:'−15 − (−15) = ?', hint:'-15 plus 15', answers:['0']},
+        {id:21, prompt:'100 + (−37) = ?', hint:'100 minus 37', answers:['63']},
+        {id:22, prompt:'−31 − (−8) = ?', hint:'-31 plus 8', answers:['-23']},
+        {id:23, prompt:'64 + (−29) = ?', hint:'64 minus 29', answers:['35']},
+        {id:24, prompt:'−50 − (−12) = ?', hint:'-50 plus 12', answers:['-38']}
+      ]
+    };
+
+    const state = {};
+
+    function normalize(s){
+      return String(s).trim().replace(/−/g,'-').replace(/\s+/g,'');
+    }
+
+    function allQuestions(){
+      return [...data.basic, ...data.hard];
+    }
+
+    function createQuestion(item, parentId){
+      const parent = document.getElementById(parentId);
+      const el = document.createElement('div');
+      el.className = 'q';
+      el.innerHTML = `
+        <div class="qtop">
+          <div class="num">${item.id}</div>
+          <div class="prompt">${item.prompt}</div>
+        </div>
+        <div class="hint">提示：${item.hint}</div>
+        <div class="answer-row">
+          <input type="text" id="input-${item.id}" placeholder="Type your answer" />
+          <button type="button" data-id="${item.id}">Check</button>
+        </div>
+        <div class="feedback" id="feedback-${item.id}"></div>
+      `;
+      parent.appendChild(el);
+      el.querySelector('button').addEventListener('click', () => checkOne(item));
+    }
+
+    function checkOne(item){
+      const input = document.getElementById(`input-${item.id}`);
+      const feedback = document.getElementById(`feedback-${item.id}`);
+      const user = input.value.trim();
+      const ok = item.answers.some(a => normalize(a) === normalize(user));
+      state[item.id] = {checked:true, correct:ok};
+
+      if(!user){
+        feedback.className = 'feedback bad';
+        feedback.textContent = `Please enter an answer.\nModel answer: ${item.answers[0]}`;
+      } else if(ok){
+        feedback.className = 'feedback ok';
+        feedback.textContent = `Correct.\nModel answer: ${item.answers[0]}`;
+      } else {
+        feedback.className = 'feedback bad';
+        feedback.textContent = `Try again.\nModel answer: ${item.answers[0]}`;
+      }
+      updateScore();
+    }
+
+    function updateScore(){
+      const checked = Object.values(state).filter(v => v.checked).length;
+      const correct = Object.values(state).filter(v => v.correct).length;
+      const pct = checked ? Math.round(correct / checked * 100) : 0;
+      document.getElementById('checkedCount').textContent = checked;
+      document.getElementById('correctCount').textContent = correct;
+      document.getElementById('scorePct').textContent = `${pct}%`;
+    }
+
+    function showAllAnswers(){
+      allQuestions().forEach(item => {
+        const feedback = document.getElementById(`feedback-${item.id}`);
+        feedback.className = 'feedback ok';
+        feedback.textContent = `Model answer: ${item.answers[0]}`;
+        if(!state[item.id]) state[item.id] = {checked:false, correct:false};
+      });
+      updateScore();
+    }
+
+    function resetAll(){
+      allQuestions().forEach(item => {
+        document.getElementById(`input-${item.id}`).value = '';
+        const feedback = document.getElementById(`feedback-${item.id}`);
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        delete state[item.id];
+      });
+      updateScore();
+    }
+
+    data.basic.forEach(q => createQuestion(q, 'basicGrid'));
+    data.hard.forEach(q => createQuestion(q, 'hardGrid'));
+    document.getElementById('checkAllBtn').addEventListener('click', () => allQuestions().forEach(q => checkOne(q)));
+    document.getElementById('showAllBtn').addEventListener('click', showAllAnswers);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+  </script>
+</body>
+</html>
