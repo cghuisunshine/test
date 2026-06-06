@@ -105,6 +105,27 @@
       transform: rotate(180deg);
     }
 
+    .custom-box {
+      margin-top: 8px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #f7f9ff;
+      border: 1px solid #dde5ff;
+    }
+
+    .custom-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #2948a8;
+    }
+
+    .custom-help {
+      color: #667;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
     .input-row {
       display: flex;
       gap: 10px;
@@ -220,6 +241,24 @@
 
     <section class="numbers" id="numbers"></section>
 
+    <section class="custom-box">
+      <div class="custom-title">自定义 4 张牌 / 4 个数字</div>
+
+      <div class="input-row">
+        <input
+          id="customCards"
+          placeholder="例如：A, K, 7, Q 或 1 13 7 12"
+          autocomplete="off"
+        />
+
+        <button class="secondary" onclick="applyCustomCards()">使用自定义题目</button>
+      </div>
+
+      <div class="custom-help">
+        可用逗号或空格分隔。数字模式请输入 1–10；扑克牌模式可输入 A/J/Q/K 或 1–13。
+      </div>
+    </section>
+
     <div class="input-row">
       <input
         id="expression"
@@ -245,7 +284,7 @@
     <div class="hint">
       说明：扑克牌版中 A 当作 1，J/Q/K 分别当作 11/12/13。<br>
       你可以直接输入 A、J、Q、K，也可以输入对应数字。<br>
-      小技巧：先想办法做出 3 和 8，或者 4 和 6，再相乘得到 24。
+      如果你使用自定义题目，而系统提示“暂时没找到答案”，也可以继续自己尝试。
     </div>
   </main>
 
@@ -277,6 +316,32 @@
       });
     }
 
+    function resetAnswerBox() {
+      const answer = document.getElementById("answer");
+      answer.style.display = "none";
+      answer.textContent = "";
+    }
+
+    function setGame(cards, source) {
+      currentCards = cards;
+      currentSolution = findSolution(cards.map(card => card.value)) || "";
+      renderNumbers();
+      document.getElementById("expression").value = "";
+      resetAnswerBox();
+
+      const message = document.getElementById("message");
+
+      if (source === "custom") {
+        if (currentSolution) {
+          message.textContent = "已载入自定义题目。这个题目有解，来试试看！";
+        } else {
+          message.textContent = "已载入自定义题目。系统暂时没找到 24 点答案，但你仍可继续尝试。";
+        }
+      } else {
+        message.textContent = "新题目来了！请写出一个等于 24 的表达式。";
+      }
+    }
+
     function randomCards() {
       const mode = document.getElementById("mode").value;
       const max = mode === "card" ? 13 : 10;
@@ -300,17 +365,7 @@
         solution = findSolution(cards.map(card => card.value));
       } while (!solution);
 
-      currentCards = cards;
-      currentSolution = solution;
-
-      renderNumbers();
-
-      document.getElementById("expression").value = "";
-      document.getElementById("message").textContent =
-        "新题目来了！请写出一个等于 24 的表达式。";
-
-      document.getElementById("answer").style.display = "none";
-      document.getElementById("answer").textContent = "";
+      setGame(cards, "random");
     }
 
     function clearInput() {
@@ -320,9 +375,13 @@
 
     function showAnswer() {
       const answer = document.getElementById("answer");
-
       answer.style.display = "block";
-      answer.textContent = "一种答案：" + currentSolution + " = 24";
+
+      if (currentSolution) {
+        answer.textContent = "一种答案：" + currentSolution + " = 24";
+      } else {
+        answer.textContent = "这个自定义题目，系统暂时没有找到可行的 24 点答案。";
+      }
     }
 
     function normalizeExpression(expression) {
@@ -347,6 +406,75 @@
       const y = [...b].sort((m, n) => m - n);
 
       return x.length === y.length && x.every((value, index) => value === y[index]);
+    }
+
+    function parseCustomCards(raw) {
+      const normalized = raw
+        .trim()
+        .toUpperCase()
+        .replace(/[，、；;]+/g, ",")
+        .replace(/\s+/g, " ");
+
+      if (!normalized) {
+        return { error: "请先输入 4 张牌或 4 个数字。" };
+      }
+
+      const parts = normalized
+        .split(/[\s,]+/)
+        .map(part => part.trim())
+        .filter(Boolean);
+
+      if (parts.length !== 4) {
+        return { error: "必须刚好输入 4 个值，例如：A, K, 7, Q。" };
+      }
+
+      const mode = document.getElementById("mode").value;
+      const max = mode === "card" ? 13 : 10;
+      const mapping = { A: 1, J: 11, Q: 12, K: 13 };
+      const values = [];
+
+      for (const part of parts) {
+        let value;
+
+        if (Object.prototype.hasOwnProperty.call(mapping, part)) {
+          value = mapping[part];
+        } else if (/^\d+$/.test(part)) {
+          value = Number(part);
+        } else {
+          return { error: "输入格式不对。请使用数字，或 A / J / Q / K。" };
+        }
+
+        if (!Number.isInteger(value) || value < 1 || value > max) {
+          return {
+            error:
+              mode === "card"
+                ? "扑克牌模式只支持 A–K，也就是 1–13。"
+                : "数字模式只支持 1–10。"
+          };
+        }
+
+        values.push(value);
+      }
+
+      return {
+        cards: values.map(value => ({
+          value,
+          label: cardLabel(value)
+        }))
+      };
+    }
+
+    function applyCustomCards() {
+      const raw = document.getElementById("customCards").value;
+      const parsed = parseCustomCards(raw);
+      const message = document.getElementById("message");
+
+      if (parsed.error) {
+        message.textContent = parsed.error;
+        return;
+      }
+
+      setGame(parsed.cards, "custom");
     }
 
     function checkAnswer() {
@@ -415,7 +543,6 @@
           if (i === j) continue;
 
           const rest = items.filter((_, index) => index !== i && index !== j);
-
           const a = items[i];
           const b = items[j];
 
@@ -453,6 +580,18 @@
 
       return null;
     }
+
+    document.getElementById("expression").addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        checkAnswer();
+      }
+    });
+
+    document.getElementById("customCards").addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        applyCustomCards();
+      }
+    });
 
     newGame();
   </script>
