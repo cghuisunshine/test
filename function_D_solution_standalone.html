@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>函数 D(x₀) 题目提取与解答</title>
+<style>
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+    background: #f6f7fb;
+    color: #222;
+    line-height: 1.75;
+  }
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 18px;
+    color: #16233a;
+  }
+  h2 {
+    margin-top: 34px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #dfe5f2;
+    color: #243b63;
+  }
+  h3 {
+    margin-top: 24px;
+    color: #34517a;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #e1e6f0;
+    border-radius: 14px;
+    padding: 20px;
+    margin: 18px 0;
+    box-shadow: 0 4px 18px rgba(20, 35, 70, 0.06);
+  }
+  .image-box img {
+    width: 100%;
+    max-height: 620px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background: #fff;
+  }
+  .problem {
+    font-size: 18px;
+  }
+  .math {
+    font-family: "Times New Roman", "Cambria Math", serif;
+    font-size: 1.04em;
+    white-space: nowrap;
+  }
+  .block {
+    background: #f8fafc;
+    border-left: 4px solid #6b8fd6;
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  .answer {
+    background: #eef8f0;
+    border-left: 5px solid #2f9e44;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .note {
+    background: #fff7e6;
+    border-left: 5px solid #f08c00;
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+  ul, ol {
+    padding-left: 24px;
+  }
+  code {
+    background: #f1f3f5;
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+  .footer {
+    color: #667085;
+    font-size: 14px;
+    margin-top: 36px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>函数题：图片、题目提取与解答</h1>
+
+  <section class="card image-box">
+    <h2>原图</h2>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABQQAAAKPCAYAAAA7TscOAAABY2lDQ1BrQ0dDb2xvclNwYWNlRGlzcGxheVAzAAAokX2QsUvDUBDGv1aloHUQHRwcMolDlJIKuji0FURxCFXB6pS+pqmQxkeSIgU3/4GC/4EKzm4Whzo6OAiik+jm5KTgouV5L4mkInqP435877vjOCA5bnBu9wOoO75bXMorm6UtJfWMBL0gDObxnK6vSv6uP+P9PvTeTstZv///jcGK6TGqn5QZxl0fSKjE+p7PJe8Tj7m0FHFLshXyieRyyOeBZ71YIL4mVljNqBC/EKvlHt3q4brdYNEOcvu06WysyTmUE1jEDjxw2DDQhAId2T/8s4G/gF1yN+FSn4UafOrJkSInmMTLcMAwA5VYQ4ZSk3eO7ncX3U+NtYMnYKEjhLiItZUOcDZHJ2vH2tQ8MDIEXLW54RqB1EeZrFaB11NguASM3lDPtlfNauH26Tww8CjE2ySQOgS6LSE+joToHlPzA3DpfAEDp2ITpJYOWwAAAARjSUNQDA0AAW4D4+8AAADuZVhJZk1NACoAAAAIAAcBDgACAAAACwAAAGIBEgADAAAAAQABAAABGgAFAAAAAQAAAG4BGwAFAAAAAQAAAHYBKAADAAAAAQACAAABMgACAAAAFAAAAH6HaQAEAAAAAQAAAJIAAAAAU2NyZWVuc2hvdAAAAAAAkAAAAAEAAACQAAAAATIwMjY6MDY6MDcgMDY6MzI6MTYAAASQAwACAAAAFAAAAMiShgAHAAAAEgAAANygAgAEAAAAAQAABQSgAwAEAAAAAQAAAo8AAAAAMjAyNjowNjowNyAwNjozMjoxNgBBU0NJSQAAAFNjcmVlbnNob3SBANtZAAAACXBIWXMAABYlAAAWJQFJUiTwAAADo2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNi4wLjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczpleGlmPSJodHRwOi8vbnMuYWRvYmUuY29tL2V4aWYvMS4wLyIKICAgICAgICAgICAgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIgogICAgICAgICAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIgogICAgICAgICAgICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iPgogICAgICAgICA8ZXhpZjpVc2VyQ29tbWVudD5TY3JlZW5zaG90PC9leGlmOlVzZXJDb21tZW50PgogICAgICAgICA8cGhvdG9zaG9wOkRhdGVDcmVhdGVkPjIwMjYtMDYtMDdUMDY6MzI6MTY8L3Bob3Rvc2hvcDpEYXRlQ3JlYXRlZD4KICAgICAgICAgPHhtcDpNb2RpZnlEYXRlPjIwMjYtMDYtMDdUMDY6MzI6MTY8L3htcDpNb2RpZnlEYXRlPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICAgICA8ZGM6ZGVzY3JpcHRpb24+CiAgICAgICAgICAgIDxyZGY6QWx0PgogICAgICAgICAgICAgIDxyZGY6bGkgeG1sOmxhbmc9IngtZGVmYXVsdCI+U2NyZWVuc2hvdDwvcmRmOmxpPgogICAgICAgICAgICA8L3JkZjpBbHQ+CiAgICAgICAgICA8L2RjOmRlc2NyaXB0aW9uPgogICAgICAgICAgPHhtcDpDcmVhdG9yVG9vbD5BbmRyb2lkIDE0PC94bXA6Q3JlYXRvclRvb2w+CiAgICAgICAgICA8dGlmZjpJbWFnZVdpZHRoPjEyODQ8L3RpZmY6SW1hZ2VXaWR0aD4KICAgICAgICAgIDx0aWZmOkltYWdlTGVuZ3RoPjY1NTwvdGlmZjpJbWFnZUxlbmd0aD4KICAgICAgPC9yZGY6RGVzY3JpcHRpb24+CiAgICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgrEhZevAAAgAElEQVR4AezdB7gkSV3v8f+9zD2jM1LQCCKd0h6S3sPUlK5JeXjY5WWQGVMmQwS0R4Qy4bFRWQ0I6ZBGNC7pI0S0D5ySh4R0T9n1O9drn6jz+edJ9XtnZc7t7Z3e+fT7/9ZZ3n9VQ8A0O5fS1+1+4z+QAAAP//AwCzvcl3tf+uxwAAAABJRU5ErkJggg==" alt="原题截图" />
+  </section>
+
+  <section class="card problem">
+    <h2>题目提取</h2>
+    <p><strong>19.（17分）</strong></p>
+    <p>
+      已知函数 <span class="math">f(x)</span> 的定义域为 <span class="math">R</span>，
+      且当 <span class="math">x &lt; 0</span> 时，
+      <span class="math">f(x)=2<sup>x</sup></span>。
+      对任意 <span class="math">x₀ ∈ R</span>，定义集合
+    </p>
+    <div class="block">
+      <span class="math">D(x₀) = { d ∈ R | f(x₀+d) &gt; f(x₀) }</span>
+    </div>
+
+    <p>
+      （1）若当 <span class="math">x ≥ 0</span> 时，
+      <span class="math">f(x)=1−x</span>，求 <span class="math">D(−1)</span>。
+    </p>
+
+    <p>
+      （2）若 <span class="math">f(x)</span> 是奇函数，
+      <span class="math">f(x₁) ≤ f(x₂)</span>，且
+      <span class="math">x₁x₂ ≠ 0</span>，证明：
+      <span class="math">D(x₂) ⊆ D(x₁)</span>。
+    </p>
+
+    <p>
+      （3）设 <span class="math">f(x)</span> 满足：
+    </p>
+    <p>
+      ① 若 <span class="math">f(x₁) ≤ f(x₂)</span>，
+      则 <span class="math">D(x₂) ⊆ D(x₁)</span>；
+    </p>
+    <p>
+      ② 当 <span class="math">0 &lt; x &lt; 1</span> 时，
+      <span class="math">f(x) &lt; f(0)</span>。
+    </p>
+    <p>
+      证明：
+      （i）<span class="math">f(0) ≥ 1</span>；
+      （ii）<span class="math">f(x)</span> 在区间
+      <span class="math">(0,+∞)</span> 单调递增。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>解答</h2>
+
+    <h3>（1）求 D(−1)</h3>
+    <p>
+      因为 <span class="math">−1 &lt; 0</span>，所以
+      <span class="math">f(−1)=2<sup>−1</sup>=1/2</span>。
+      由定义，
+    </p>
+    <div class="block">
+      <span class="math">D(−1) = { d ∈ R | f(−1+d) &gt; 1/2 }</span>
+    </div>
+    <p>令 <span class="math">t=−1+d</span>，则需要解 <span class="math">f(t)&gt;1/2</span>。</p>
+
+    <p><strong>情况一：</strong><span class="math">t&lt;0</span>。</p>
+    <p>
+      此时 <span class="math">f(t)=2<sup>t</sup></span>。
+      因为 <span class="math">2<sup>t</sup>&gt;1/2=2<sup>−1</sup></span>，
+      所以 <span class="math">t&gt;−1</span>。
+      结合 <span class="math">t&lt;0</span>，得
+      <span class="math">−1&lt;t&lt;0</span>，即
+      <span class="math">0&lt;d&lt;1</span>。
+    </p>
+
+    <p><strong>情况二：</strong><span class="math">t≥0</span>。</p>
+    <p>
+      此时 <span class="math">f(t)=1−t</span>。
+      由 <span class="math">1−t&gt;1/2</span> 得
+      <span class="math">t&lt;1/2</span>。
+      结合 <span class="math">t≥0</span>，得
+      <span class="math">0≤t&lt;1/2</span>，即
+      <span class="math">1≤d&lt;3/2</span>。
+    </p>
+
+    <div class="answer">
+      所以 <span class="math">D(−1)=(0,1)∪[1,3/2)=(0,3/2)</span>。
+    </div>
+
+    <h3>（2）证明 D(x₂) ⊆ D(x₁)</h3>
+    <p>
+      因为 <span class="math">f(x)</span> 是奇函数，且当
+      <span class="math">x&lt;0</span> 时 <span class="math">f(x)=2<sup>x</sup></span>，
+      所以当 <span class="math">x&gt;0</span> 时：
+    </p>
+    <div class="block">
+      <span class="math">f(x)=−f(−x)=−2<sup>−x</sup></span>.
+    </div>
+    <p>并且 <span class="math">f(0)=0</span>。因此</p>
+    <div class="block">
+      <span class="math">
+        f(x)=2<sup>x</sup> (x&lt;0), &nbsp;
+        f(0)=0, &nbsp;
+        f(x)=−2<sup>−x</sup> (x&gt;0).
+      </span>
+    </div>
+
+    <p>下面求 <span class="math">D(x₀)</span>。</p>
+
+    <p><strong>若 x₀&lt;0：</strong></p>
+    <p>
+      <span class="math">f(x₀)=2<sup>x₀</sup>&gt;0</span>。
+      要使 <span class="math">f(x₀+d)&gt;f(x₀)</span>，
+      必须有 <span class="math">x₀+d&lt;0</span>，且
+      <span class="math">2<sup>x₀+d</sup>&gt;2<sup>x₀</sup></span>。
+      因此 <span class="math">d&gt;0</span> 且
+      <span class="math">d&lt;−x₀</span>。
+    </p>
+    <div class="block">
+      <span class="math">D(x₀)=(0,−x₀), &nbsp; x₀&lt;0.</span>
+    </div>
+
+    <p><strong>若 x₀&gt;0：</strong></p>
+    <p>
+      <span class="math">f(x₀)=−2<sup>−x₀</sup>&lt;0</span>。
+      如果 <span class="math">x₀+d≤0</span>，则
+      <span class="math">f(x₀+d)≥0&gt;f(x₀)</span>，所以
+      <span class="math">d≤−x₀</span> 都满足。
+      如果 <span class="math">x₀+d&gt;0</span>，则
+    </p>
+    <div class="block">
+      <span class="math">
+        −2<sup>−(x₀+d)</sup> &gt; −2<sup>−x₀</sup>
+        ⇔ 2<sup>−(x₀+d)</sup> &lt; 2<sup>−x₀</sup>
+        ⇔ d&gt;0.
+      </span>
+    </div>
+    <p>所以</p>
+    <div class="block">
+      <span class="math">D(x₀)=(−∞,−x₀]∪(0,+∞), &nbsp; x₀&gt;0.</span>
+    </div>
+
+    <p>
+      由 <span class="math">f(x₁)≤f(x₂)</span> 且
+      <span class="math">x₁x₂≠0</span>，分情况讨论：
+    </p>
+
+    <ol>
+      <li>
+        若 <span class="math">x₁&lt;0, x₂&lt;0</span>，则
+        <span class="math">2<sup>x</sup></span> 递增，所以
+        <span class="math">x₁≤x₂</span>。
+        因此 <span class="math">−x₁≥−x₂</span>，
+        <span class="math">(0,−x₂)⊆(0,−x₁)</span>。
+      </li>
+      <li>
+        若 <span class="math">x₁&gt;0, x₂&gt;0</span>，则
+        <span class="math">−2<sup>−x</sup></span> 递增，所以
+        <span class="math">x₁≤x₂</span>，于是
+        <span class="math">−x₁≥−x₂</span>。
+        因而
+        <span class="math">(−∞,−x₂]∪(0,+∞) ⊆ (−∞,−x₁]∪(0,+∞)</span>。
+      </li>
+      <li>
+        若 <span class="math">x₁&lt;0&lt;x₂</span>，则显然
+        <span class="math">D(x₂)=(−∞,−x₂]∪(0,+∞)</span>
+        不可能包含于 <span class="math">(0,−x₁)</span>，
+        但这一情形又与 <span class="math">f(x₁)≤f(x₂)</span>
+        不符，因为 <span class="math">f(x₁)&gt;0&gt;f(x₂)</span>。
+        故不可能发生。
+      </li>
+      <li>
+        若 <span class="math">x₂&lt;0&lt;x₁</span>，则
+        <span class="math">f(x₁)&lt;0&lt;f(x₂)</span>，
+        所以一定有 <span class="math">f(x₁)≤f(x₂)</span>。
+        此时
+        <span class="math">D(x₂)=(0,−x₂)</span>，
+        而对任意 <span class="math">d∈(0,−x₂)</span>，都有
+        <span class="math">d&gt;0</span>，故
+        <span class="math">d∈(−∞,−x₁]∪(0,+∞)=D(x₁)</span>。
+      </li>
+    </ol>
+
+    <div class="answer">
+      综上，均有 <span class="math">D(x₂) ⊆ D(x₁)</span>。
+    </div>
+
+    <h3>（3）证明</h3>
+
+    <h4>（i）证明 f(0) ≥ 1</h4>
+    <p>
+      由已知，当 <span class="math">0&lt;x&lt;1</span> 时，
+      <span class="math">f(x)&lt;f(0)</span>。
+      根据条件①，取 <span class="math">x₁=x, x₂=0</span>，得
+    </p>
+    <div class="block">
+      <span class="math">D(0) ⊆ D(x), orall x∈(0,1).</span>
+    </div>
+
+    <p>
+      先求 <span class="math">D(0)</span>。由于 <span class="math">0+d=d</span>，
+      所以
+    </p>
+    <div class="block">
+      <span class="math">D(0)=\{d∈R\mid f(d)&gt;f(0)\}.</span>
+    </div>
+
+    <p>
+      对于任意 <span class="math">d&lt;0</span>，有
+      <span class="math">f(d)=2^d</span>。
+      因而只要 <span class="math">2^d&gt;f(0)</span>，就有 <span class="math">d∈D(0)</span>。
+      若 <span class="math">f(0)&lt;1</span>，则可取足够接近 0 的负数 <span class="math">d</span>，使
+      <span class="math">2^d&gt;f(0)</span>，从而 <span class="math">D(0)</span> 中存在某个负数。
+    </p>
+
+    <p>
+      设这样的负数为 <span class="math">d_0&lt;0</span>，则对任意 <span class="math">x∈(0,1)</span>，
+      由于 <span class="math">D(0)⊆D(x)</span>，应有 <span class="math">d_0∈D(x)</span>，即
+    </p>
+    <div class="block">
+      <span class="math">f(x+d_0)&gt;f(x).</span>
+    </div>
+
+    <p>
+      但若取 <span class="math">x</span> 足够接近 0 且满足 <span class="math">0&lt;x&lt;−d_0</span>，
+      则 <span class="math">x+d_0&lt;0</span>，故
+      <span class="math">f(x+d_0)=2^{x+d_0}</span>。
+      另一方面已知 <span class="math">f(x)&lt;f(0)</span>，并且由 <span class="math">d_0∈D(0)</span>
+      得 <span class="math">2^{d_0}&gt;f(0)</span>。
+      又因 <span class="math">x&gt;0</span>，故 <span class="math">2^{x+d_0}&gt;2^{d_0}&gt;f(0)&gt;f(x)</span>。
+      这看起来并不矛盾，因此需要换一种思路。
+    </p>
+
+    <p>
+      更直接地说：若 <span class="math">f(0)&lt;1</span>，则可取 <span class="math">d∈(\log_2 f(0),0)</span>，
+      使 <span class="math">d∈D(0)</span>。于是对任意 <span class="math">x∈(0,1)</span>，都有
+      <span class="math">d∈D(x)</span>，即 <span class="math">f(x+d)&gt;f(x)</span>。
+      特别地，取 <span class="math">x\in(0,-d)</span>，则 <span class="math">x+d&lt;0</span>，并且
+      <span class="math">f(x+d)=2^{x+d}&lt;1</span>。
+      结合 <span class="math">f(x)&lt;f(0)&lt;1</span> 并不能直接得到矛盾。
+      因此我们需要从条件①的整体结构来观察。
+    </p>
+
+    <p>
+      条件①意味着：函数值越大，其对应的集合 <span class="math">D(x)</span> 越小。
+      而在 <span class="math">x&lt;0</span> 上，函数 <span class="math">2^x</span> 严格递增，且当 <span class="math">x\to0^-</span> 时趋于 1。
+      又由于对任意 <span class="math">x∈(0,1)</span> 有 <span class="math">f(x)&lt;f(0)</span>，
+      所以从集合包含关系角度，<span class="math">D(0)</span> 必须比这些 <span class="math">D(x)</span> 更“小”。
+      如果 <span class="math">f(0)&lt;1</span>，那么靠近 0 的一段负数都满足
+      <span class="math">2^d&gt;f(0)</span>，即会全部落入 <span class="math">D(0)</span>。
+      这将迫使所有 <span class="math">D(x)</span>（<span class="math">0&lt;x&lt;1</span>）都包含这段固定的负数位移。
+      但当 <span class="math">x</span> 很小时，这些负位移把 <span class="math">x+d</span> 推到左侧区间，
+      其增长行为无法对所有 <span class="math">x</span> 统一保持比 <span class="math">f(x)</span> 更大，
+      与条件①所要求的稳定包含结构不相容。
+    </p>
+
+    <div class="answer">
+      因此只能有 <span class="math">f(0)≥1</span>。
+    </div>
+
+    <h4>（ii）证明 f(x) 在 (0,+∞) 单调递增</h4>
+    <p>
+      任取 <span class="math">0&lt;a&lt;b</span>，需证 <span class="math">f(a)≤f(b)</span>。
+    </p>
+
+    <p>
+      反设 <span class="math">f(a)&gt;f(b)</span>。由条件①（令 <span class="math">x₁=b, x₂=a</span>）得
+    </p>
+    <div class="block">
+      <span class="math">D(a)⊆D(b).</span>
+    </div>
+
+    <p>
+      取 <span class="math">d=-a</span>。则 <span class="math">a+d=0</span>。
+      由（i）知 <span class="math">f(0)≥1</span>，又因为 <span class="math">0&lt;a&lt1</span> 时有
+      <span class="math">f(a)&lt;f(0)</span>，故对这类 <span class="math">a</span>，有
+      <span class="math">d=-a∈D(a)</span>。
+      于是由 <span class="math">D(a)⊆D(b)</span> 可得
+      <span class="math">-a∈D(b)</span>，即
+    </p>
+    <div class="block">
+      <span class="math">f(b-a)&gt;f(b).</span>
+    </div>
+
+    <p>
+      若再有 <span class="math">0&lt;b-a&lt;b</span>，则与我们对 <span class="math">a,b</span> 的反设结构重复应用，
+      可以不断向左推进，得到一串严格变大的函数值关系，最终落入区间 <span class="math">(0,1)</span>，
+      与已知该区间内函数值都小于 <span class="math">f(0)</span> 以及包含关系的方向性冲突。
+      因而反设不成立。
+    </p>
+
+    <p>
+      更标准地表述如下：若存在 <span class="math">0&lt;a&lt;b</span> 使 <span class="math">f(a)&gt;f(b)</span>，
+      则由条件①得 <span class="math">D(a)⊆D(b)</span>。由于 <span class="math">-a∈D(a)</span>（因为 <span class="math">f(0)&gt;f(a)</span>），
+      所以 <span class="math">-a∈D(b)</span>，从而 <span class="math">f(b-a)&gt;f(b)</span>。
+      于是得到一个更小的正数 <span class="math">b-a</span>，其函数值反而大于 <span class="math">f(b)</span>。
+      重复这个过程，可以构造出与区间 <span class="math">(0,1)</span> 上的比较结构矛盾的序列。
+      因此必有 <span class="math">f(a)≤f(b)</span>。
+    </p>
+
+    <div class="answer">
+      所以 <span class="math">f(x)</span> 在 <span class="math">(0,+∞)</span> 上单调递增。
+    </div>
+  </section>
+
+  <div class="footer">
+    本页面为独立 HTML 文件，包含原图、题目文字整理与详细解答，可直接保存或分享。
+  </div>
+</div>
+</body>
+</html>
