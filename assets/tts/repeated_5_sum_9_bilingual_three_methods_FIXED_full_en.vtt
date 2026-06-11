@@ -1,0 +1,172 @@
+1
+00:00:00,050 --> 00:00:01,875
+Sum of Repeated 5s
+
+2
+00:00:01,875 --> 00:00:04,075
+The answer is hidden by default.
+
+3
+00:00:04,075 --> 00:00:07,275
+Click “Show Answer” above to view the solution
+
+4
+00:00:07,275 --> 00:00:08,487
+1. Problem
+
+5
+00:00:08,487 --> 00:00:13,062
+Original image: The last term consists of 9 digits, all 5
+
+6
+00:00:13,062 --> 00:00:14,262
+Calculate:
+
+7
+00:00:14,262 --> 00:00:21,425
+5 + 55 + 555 + ... + 555555555 （最后一项有 9 个 5）
+
+8
+00:00:21,425 --> 00:00:25,912
+2. Method 1: Write Each Term as 5 times 111…1
+
+9
+00:00:25,912 --> 00:00:30,387
+The kth term has k digits, all 5, so it can be written as:
+
+10
+00:00:30,387 --> 00:00:39,637
+第 k 项 equals 5 times (111...1) equals 5 times (10 less than sup greater than k less than over sup greater than - 1) over 9
+
+11
+00:00:39,637 --> 00:00:41,862
+Therefore the original sum is:
+
+12
+00:00:41,862 --> 00:00:49,875
+S equals sigma[k equals 1 到 9] 5(10 less than sup greater than k less than over sup greater than - 1) over 9
+
+13
+00:00:49,875 --> 00:00:51,900
+Factor out 5 over 9:
+
+14
+00:00:51,900 --> 00:01:04,212
+S equals 5 over 9 times [(10 + 10 less than sup greater than 2 less than over sup greater than + ... + 10 less than sup greater than 9 less than over sup greater than ) - 9]
+
+15
+00:01:04,212 --> 00:01:04,950
+Here:
+
+16
+00:01:04,950 --> 00:01:19,050
+10 + 10 less than sup greater than 2 less than over sup greater than + ... + 10 less than sup greater than 9 less than over sup greater than equals (10 less than sup greater than 10 less than over sup greater than - 10) over 9
+
+17
+00:01:19,050 --> 00:01:20,250
+Substitute:
+
+18
+00:01:20,250 --> 00:01:43,737
+S equals 5 over 9 times [(10 less than sup greater than 10 less than over sup greater than - 10) over 9 - 9] equals 5(10 less than sup greater than 10 less than over sup greater than - 10 - 81) over 81 equals 5(10 less than sup greater than 10 less than over sup greater than - 91) over 81 equals 617283945
+
+19
+00:01:43,737 --> 00:01:47,812
+Answer: 617283945
+
+20
+00:01:47,812 --> 00:01:50,262
+3. Method 2: Column Pattern
+
+21
+00:01:50,262 --> 00:01:52,325
+Arrange the numbers vertically:
+
+22
+00:01:52,325 --> 00:02:08,812
+5 55 555 5555 55555 555555 5555555 55555555 555555555
+
+23
+00:02:08,812 --> 00:02:15,250
+From right to left, the first column has 9 fives, the second column has 8 fives, and so on.
+
+24
+00:02:15,250 --> 00:02:17,587
+Carrying column by column gives:
+
+25
+00:02:17,587 --> 00:02:20,687
+617283945
+
+26
+00:02:20,687 --> 00:02:24,687
+Answer: 617283945
+
+27
+00:02:24,687 --> 00:02:30,925
+4. Method 3: Observe the Pattern + Multiply by 10, Then Divide by 2
+
+28
+00:02:30,925 --> 00:02:43,062
+Supplementary image: First factor out 5, then observe the pattern of 1+11+111+…, and finally treat multiplying by 5 as multiplying by 10 and dividing by 2
+
+29
+00:02:43,062 --> 00:02:45,725
+First factor out 5 from every term:
+
+30
+00:02:45,725 --> 00:03:07,737
+5 + 55 + 555 + ... + 555555555 equals 5 times 1 + 5 times 11 + 5 times 111 + ... + 5 times 111111111 equals 5 times (1 + 11 + 111 + ... + 111111111)
+
+31
+00:03:07,737 --> 00:03:10,475
+Observe the sum inside the parentheses:
+
+32
+00:03:10,475 --> 00:03:24,200
+1 equals 1 1 + 11 equals 12 1 + 11 + 111 equals 123 1 + 11 + 111 + 1111 equals 1234
+
+33
+00:03:24,200 --> 00:03:27,000
+Continuing this pattern, we discover:
+
+34
+00:03:27,000 --> 00:03:36,125
+1 + 11 + 111 + ... + 111111111 equals 123456789
+
+35
+00:03:36,125 --> 00:03:38,325
+So the original sum becomes:
+
+36
+00:03:38,325 --> 00:03:41,912
+5 times 123456789
+
+37
+00:03:41,912 --> 00:03:47,225
+Now use “multiply by 5 equals multiply by 10, then divide by 2”:
+
+38
+00:03:47,225 --> 00:04:02,800
+5 times 123456789 equals 123456789 times 10 divided by 2 equals 1234567890 divided by 2 equals 617283945
+
+39
+00:04:02,800 --> 00:04:06,537
+The final step can be done mentally by dividing in parts
+
+40
+00:04:06,537 --> 00:04:10,450
+Answer: 617283945
+
+41
+00:04:10,450 --> 00:04:12,187
+5. Final Answer
+
+42
+00:04:12,187 --> 00:04:22,337
+5 + 55 + 555 + ... + 555555555 equals 617283945
+
+43
+00:04:22,337 --> 00:04:26,712
+Final answer: 617283945
+

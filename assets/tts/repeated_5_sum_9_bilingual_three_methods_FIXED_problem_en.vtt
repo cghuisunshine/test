@@ -1,0 +1,28 @@
+1
+00:00:00,050 --> 00:00:01,837
+Sum of Repeated 5s
+
+2
+00:00:01,837 --> 00:00:04,100
+The answer is hidden by default.
+
+3
+00:00:04,100 --> 00:00:07,337
+Click “Show Answer” above to view the solution
+
+4
+00:00:07,337 --> 00:00:08,500
+1. Problem
+
+5
+00:00:08,500 --> 00:00:13,337
+Original image: The last term consists of 9 digits, all 5
+
+6
+00:00:13,337 --> 00:00:14,525
+Calculate:
+
+7
+00:00:14,525 --> 00:00:21,712
+5 + 55 + 555 + ... + 555555555 （最后一项有 9 个 5）
+

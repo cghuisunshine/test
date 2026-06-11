@@ -78,6 +78,11 @@
       <button id="answerBtn" type="button" onclick="toggleAnswers()">显示答案</button><button id="speakBtn" type="button" class="secondary speak-btn" onclick="toggleSpeak()">Speak</button>
     </div>
 
+    <div id="speechPanel" class="speech-panel idle">
+      <div class="speech-label">Now speaking</div>
+      <div id="speechLine" class="speech-line">Press Speak in English mode to start the narration.</div>
+    </div>
+
     <div class="card">
       <h1>
         <span class="zh">连续 5 的数列求和</span>
@@ -198,23 +203,103 @@
   <script>
 const problemAudioSrc='assets/tts/repeated_5_sum_9_bilingual_three_methods_FIXED_problem_en.mp3';
 const fullAudioSrc='assets/tts/repeated_5_sum_9_bilingual_three_methods_FIXED_full_en.mp3';
+const problemVttSrc='assets/tts/repeated_5_sum_9_bilingual_three_methods_FIXED_problem_en.vtt';
+const fullVttSrc='assets/tts/repeated_5_sum_9_bilingual_three_methods_FIXED_full_en.vtt';
 let speakAudio=null;
+let transcriptCache={};
+let activeCueIndex=-1;
 function currentLangIsEnglish(){return document.body.classList.contains('show-en');}
 function currentSpeakSrc(){return document.body.classList.contains('show-answers')?fullAudioSrc:problemAudioSrc;}
+function currentVttSrc(){return document.body.classList.contains('show-answers')?fullVttSrc:problemVttSrc;}
 function ensureAudio(){
   if(!speakAudio){
     speakAudio=new Audio();
-    speakAudio.addEventListener('ended', updateButtons);
-    speakAudio.addEventListener('pause', updateButtons);
+    speakAudio.addEventListener('ended', ()=>{activeCueIndex=-1;renderIdleTranscript('Playback finished.');updateButtons();});
+    speakAudio.addEventListener('pause', ()=>{if(speakAudio.currentTime===0){activeCueIndex=-1;} updateButtons();});
     speakAudio.addEventListener('play', updateButtons);
+    speakAudio.addEventListener('timeupdate', syncTranscript);
   }
   return speakAudio;
+}
+function getSpeechPanel(){return document.getElementById('speechPanel');}
+function getSpeechLine(){return document.getElementById('speechLine');}
+function renderIdleTranscript(message='Press Speak in English mode to start the narration.'){
+  const panel=getSpeechPanel(); const line=getSpeechLine();
+  if(!panel||!line) return;
+  panel.classList.remove('active');
+  panel.classList.add('idle');
+  line.textContent=message;
+}
+function renderCue(cue, currentWordIndex){
+  const panel=getSpeechPanel(); const line=getSpeechLine();
+  if(!panel||!line||!cue) return;
+  panel.classList.add('active');
+  panel.classList.remove('idle');
+  const words = cue.text.trim().split(/\s+/).filter(Boolean);
+  if(!words.length){ line.textContent=cue.text; return; }
+  line.innerHTML = words.map((word, idx)=>{
+    const cls = idx < currentWordIndex ? 'speech-word done' : idx === currentWordIndex ? 'speech-word current' : 'speech-word';
+    return `<span class="${cls}">${escapeHtml(word)}</span>`;
+  }).join(' ');
+}
+function escapeHtml(text){
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 function stopSpeak(resetSrc=false){
   if(!speakAudio) return;
   speakAudio.pause();
   speakAudio.currentTime=0;
   if(resetSrc) speakAudio.src='';
+  activeCueIndex=-1;
+  renderIdleTranscript();
+}
+async function loadVtt(url){
+  if(transcriptCache[url]) return transcriptCache[url];
+  const res = await fetch(url);
+  if(!res.ok) throw new Error(`Failed to load subtitles: ${url}`);
+  const raw = await res.text();
+  const cues = parseVtt(raw);
+  transcriptCache[url]=cues;
+  return cues;
+}
+function parseTime(value){
+  const m=value.match(/(\d+):(\d+):(\d+)[\.,](\d+)/);
+  if(!m) return 0;
+  return Number(m[1])*3600 + Number(m[2])*60 + Number(m[3]) + Number(m[4])/1000;
+}
+function parseVtt(raw){
+  const blocks = raw.trim().split(/
+\s*
+/);
+  const cues=[];
+  for(const block of blocks){
+    const lines=block.split(/
+/).map(x=>x.trim()).filter(Boolean);
+    const arrowIndex = lines.findIndex(line=>line.includes('-->'));
+    if(arrowIndex===-1) continue;
+    const [start,end]=lines[arrowIndex].split('-->').map(x=>x.trim());
+    const text=lines.slice(arrowIndex+1).join(' ').trim();
+    if(!text) continue;
+    cues.push({start:parseTime(start), end:parseTime(end), text});
+  }
+  return cues;
+}
+function syncTranscript(){
+  if(!speakAudio || speakAudio.paused) return;
+  const cues = transcriptCache[currentVttSrc()] || [];
+  const t = speakAudio.currentTime;
+  const idx = cues.findIndex(c=>t >= c.start && t <= c.end);
+  if(idx === -1){
+    if(cues.length && t < cues[0].start){ renderIdleTranscript('Starting narration...'); }
+    return;
+  }
+  const cue = cues[idx];
+  const duration = Math.max(cue.end - cue.start, 0.05);
+  const words = cue.text.trim().split(/\s+/).filter(Boolean);
+  const progress = Math.min(Math.max((t - cue.start) / duration, 0), 0.9999);
+  const currentWordIndex = words.length ? Math.min(words.length - 1, Math.floor(progress * words.length)) : 0;
+  if(idx !== activeCueIndex){ activeCueIndex = idx; }
+  renderCue(cue, currentWordIndex);
 }
 function updateButtons(){
   const langBtn=document.getElementById('langBtn');
@@ -228,6 +313,7 @@ function updateButtons(){
   if(!isEnglish){
     stopSpeak(true);
     if(speakBtn) speakBtn.textContent='Speak';
+    renderIdleTranscript();
   }else if(speakBtn){
     if(speakAudio && speakAudio.src && !speakAudio.paused && !speakAudio.src.endsWith(desiredSrc)){
       stopSpeak(true);
@@ -238,26 +324,36 @@ function updateButtons(){
   document.documentElement.lang=isEnglish?'en':'zh-CN';
 }
 function toggleLanguage(){document.body.classList.toggle('show-en');updateButtons();}
-function toggleAnswers(){document.body.classList.toggle('show-answers');updateButtons();}
+function toggleAnswers(){
+  const wasPlaying = !!(speakAudio && !speakAudio.paused);
+  document.body.classList.toggle('show-answers');
+  if(wasPlaying){ stopSpeak(true); }
+  updateButtons();
+}
 async function toggleSpeak(){
   if(!currentLangIsEnglish()) return;
   const audio=ensureAudio();
   const desiredSrc=currentSpeakSrc();
+  const desiredVtt=currentVttSrc();
   if(!audio.paused && audio.src.endsWith(desiredSrc)){
     stopSpeak();
     updateButtons();
     return;
   }
   if(!audio.paused){ stopSpeak(true); }
+  await loadVtt(desiredVtt);
   if(!audio.src || !audio.src.endsWith(desiredSrc)){ audio.src=desiredSrc; }
   try{
     await audio.play();
   }catch(err){
     console.error('Audio playback failed', err);
+    renderIdleTranscript('Audio playback failed.');
   }
   updateButtons();
+  syncTranscript();
 }
 updateButtons();
+renderIdleTranscript();
 </script>
 </body>
 </html>
