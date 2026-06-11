@@ -69,13 +69,13 @@
       h2 { font-size: 1.16rem; }
       .toolbar { justify-content: center; }
     }
-  </style>
+  .speak-btn{display:none}body.show-en .speak-btn{display:inline-block}.toolbar button.secondary{background:#0f766e;box-shadow:0 8px 20px rgba(15,118,110,.25)}.toolbar button.secondary:hover{background:#0d5f59}</style>
 </head>
 <body>
   <div class="container">
     <div class="toolbar">
       <button id="langBtn" type="button" onclick="toggleLanguage()">English</button>
-      <button id="answerBtn" type="button" onclick="toggleAnswers()">显示答案</button>
+      <button id="answerBtn" type="button" onclick="toggleAnswers()">显示答案</button><button id="speakBtn" type="button" class="secondary speak-btn" onclick="toggleSpeak()">Speak</button>
     </div>
 
     <div class="card">
@@ -196,29 +196,68 @@
   </div>
 
   <script>
-    function currentLangIsEnglish() {
-      return document.body.classList.contains('show-en');
+const problemAudioSrc='assets/tts/repeated_5_sum_9_bilingual_three_methods_FIXED_problem_en.mp3';
+const fullAudioSrc='assets/tts/repeated_5_sum_9_bilingual_three_methods_FIXED_full_en.mp3';
+let speakAudio=null;
+function currentLangIsEnglish(){return document.body.classList.contains('show-en');}
+function currentSpeakSrc(){return document.body.classList.contains('show-answers')?fullAudioSrc:problemAudioSrc;}
+function ensureAudio(){
+  if(!speakAudio){
+    speakAudio=new Audio();
+    speakAudio.addEventListener('ended', updateButtons);
+    speakAudio.addEventListener('pause', updateButtons);
+    speakAudio.addEventListener('play', updateButtons);
+  }
+  return speakAudio;
+}
+function stopSpeak(resetSrc=false){
+  if(!speakAudio) return;
+  speakAudio.pause();
+  speakAudio.currentTime=0;
+  if(resetSrc) speakAudio.src='';
+}
+function updateButtons(){
+  const langBtn=document.getElementById('langBtn');
+  const answerBtn=document.getElementById('answerBtn');
+  const speakBtn=document.getElementById('speakBtn');
+  const isEnglish=currentLangIsEnglish();
+  const showingAnswers=document.body.classList.contains('show-answers');
+  const desiredSrc=currentSpeakSrc();
+  langBtn.textContent=isEnglish?'中文':'English';
+  answerBtn.textContent=isEnglish?(showingAnswers?'Hide Answer':'Show Answer'):(showingAnswers?'隐藏答案':'显示答案');
+  if(!isEnglish){
+    stopSpeak(true);
+    if(speakBtn) speakBtn.textContent='Speak';
+  }else if(speakBtn){
+    if(speakAudio && speakAudio.src && !speakAudio.paused && !speakAudio.src.endsWith(desiredSrc)){
+      stopSpeak(true);
     }
-    function updateButtons() {
-      const langBtn = document.getElementById('langBtn');
-      const answerBtn = document.getElementById('answerBtn');
-      const isEnglish = currentLangIsEnglish();
-      const showingAnswers = document.body.classList.contains('show-answers');
-      langBtn.textContent = isEnglish ? '中文' : 'English';
-      answerBtn.textContent = isEnglish
-        ? (showingAnswers ? 'Hide Answer' : 'Show Answer')
-        : (showingAnswers ? '隐藏答案' : '显示答案');
-      document.documentElement.lang = isEnglish ? 'en' : 'zh-CN';
-    }
-    function toggleLanguage() {
-      document.body.classList.toggle('show-en');
-      updateButtons();
-    }
-    function toggleAnswers() {
-      document.body.classList.toggle('show-answers');
-      updateButtons();
-    }
+    const nowPlaying=!!(speakAudio && !speakAudio.paused);
+    speakBtn.textContent=nowPlaying?'Stop':'Speak';
+  }
+  document.documentElement.lang=isEnglish?'en':'zh-CN';
+}
+function toggleLanguage(){document.body.classList.toggle('show-en');updateButtons();}
+function toggleAnswers(){document.body.classList.toggle('show-answers');updateButtons();}
+async function toggleSpeak(){
+  if(!currentLangIsEnglish()) return;
+  const audio=ensureAudio();
+  const desiredSrc=currentSpeakSrc();
+  if(!audio.paused && audio.src.endsWith(desiredSrc)){
+    stopSpeak();
     updateButtons();
-  </script>
+    return;
+  }
+  if(!audio.paused){ stopSpeak(true); }
+  if(!audio.src || !audio.src.endsWith(desiredSrc)){ audio.src=desiredSrc; }
+  try{
+    await audio.play();
+  }catch(err){
+    console.error('Audio playback failed', err);
+  }
+  updateButtons();
+}
+updateButtons();
+</script>
 </body>
 </html>
