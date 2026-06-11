@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>数三角形 / Count the Triangles</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;color:#1f2937;background:#f4f7fb}.container{max-width:1000px;margin:0 auto;padding:28px 18px 60px}.toolbar{position:sticky;top:12px;z-index:10;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:14px}.toolbar button{border:0;border-radius:999px;padding:10px 18px;font-size:1rem;font-weight:700;cursor:pointer;background:#2563eb;color:white;box-shadow:0 8px 20px rgba(37,99,235,.25)}.toolbar button:hover{background:#1d4ed8}.card{background:#fff;border-radius:18px;padding:24px;margin-bottom:22px;box-shadow:0 10px 30px rgba(0,0,0,.08)}h1,h2{margin-top:0;color:#0f172a}h1{font-size:2rem;text-align:center;margin-bottom:14px}h2{font-size:1.4rem;border-left:6px solid #3b82f6;padding-left:12px}p{margin:10px 0}.img-wrap{text-align:center;margin:16px 0}img{max-width:100%;border-radius:12px;border:1px solid #dbe4f0}.caption{color:#475569;font-size:.95rem;margin-top:8px}.question-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 16px;margin-top:12px}.formula{background:#f8fafc;border-left:4px solid #94a3b8;padding:12px 14px;font-family:'Times New Roman',Georgia,serif;white-space:pre-line;margin:12px 0;border-radius:10px;overflow-x:auto;font-size:1.08rem}.answer{display:inline-block;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:8px 16px;font-weight:700;margin-top:8px}.hidden-note{background:#fff7ed;color:#9a3412;border:1px solid #fdba74;border-radius:12px;padding:12px 14px;margin-top:14px}.en{display:none}body.show-en .zh{display:none}body.show-en .en{display:revert}.answer-section{display:none}body.show-answers .answer-section{display:block}body.show-answers .hidden-note{display:none}@media(max-width:640px){.card{padding:18px;border-radius:14px}h1{font-size:1.55rem}h2{font-size:1.2rem}.toolbar{justify-content:center}}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;color:#1f2937;background:#f4f7fb}.container{max-width:1000px;margin:0 auto;padding:28px 18px 60px}.toolbar{position:sticky;top:12px;z-index:10;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:14px}.toolbar button{border:0;border-radius:999px;padding:10px 18px;font-size:1rem;font-weight:700;cursor:pointer;background:#2563eb;color:white;box-shadow:0 8px 20px rgba(37,99,235,.25)}.toolbar button:hover{background:#1d4ed8}.card{background:#fff;border-radius:18px;padding:24px;margin-bottom:22px;box-shadow:0 10px 30px rgba(0,0,0,.08)}h1,h2{margin-top:0;color:#0f172a}h1{font-size:2rem;text-align:center;margin-bottom:14px}h2{font-size:1.4rem;border-left:6px solid #3b82f6;padding-left:12px}p{margin:10px 0}.img-wrap{text-align:center;margin:16px 0}img{max-width:100%;border-radius:12px;border:1px solid #dbe4f0}.caption{color:#475569;font-size:.95rem;margin-top:8px}.question-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 16px;margin-top:12px}.formula{background:#f8fafc;border-left:4px solid #94a3b8;padding:12px 14px;font-family:'Times New Roman',Georgia,serif;white-space:pre-line;margin:12px 0;border-radius:10px;overflow-x:auto;font-size:1.08rem}.answer{display:inline-block;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:8px 16px;font-weight:700;margin-top:8px}.hidden-note{background:#fff7ed;color:#9a3412;border:1px solid #fdba74;border-radius:12px;padding:12px 14px;margin-top:14px}.en{display:none}body.show-en .zh{display:none}body.show-en .en{display:revert}.answer-section{display:none}body.show-answers .answer-section{display:block}body.show-answers .hidden-note{display:none}@media(max-width:640px){.card{padding:18px;border-radius:14px}h1{font-size:1.55rem}h2{font-size:1.2rem}.toolbar{justify-content:center}}.speak-btn{display:none}body.show-en .speak-btn{display:inline-block}.toolbar button.secondary{background:#0f766e;box-shadow:0 8px 20px rgba(15,118,110,.25)}.toolbar button.secondary:hover{background:#0d5f59}audio{display:none}
 </style>
 </head>
 <body>
@@ -13,6 +13,7 @@
   <div class="toolbar">
     <button id="langBtn" onclick="toggleLanguage()">English</button>
     <button id="answerBtn" onclick="toggleAnswers()">显示答案</button>
+    <button id="speakBtn" class="secondary speak-btn" onclick="toggleSpeak()">Speak</button>
   </div>
 
   <div class="card">
@@ -96,18 +97,68 @@ C(6, 2) = 15</div>
 </div>
 
 <script>
+const problemAudioSrc='assets/tts/count_triangles_problem_en.mp3';
+const fullAudioSrc='assets/tts/count_triangles_full_en.mp3';
+let speakAudio=null;
 function currentLangIsEnglish(){return document.body.classList.contains('show-en');}
+function currentSpeakSrc(){return document.body.classList.contains('show-answers')?fullAudioSrc:problemAudioSrc;}
+function ensureAudio(){
+  if(!speakAudio){
+    speakAudio=new Audio();
+    speakAudio.addEventListener('ended', updateButtons);
+    speakAudio.addEventListener('pause', updateButtons);
+    speakAudio.addEventListener('play', updateButtons);
+  }
+  return speakAudio;
+}
+function stopSpeak(resetSrc=false){
+  if(!speakAudio) return;
+  speakAudio.pause();
+  speakAudio.currentTime=0;
+  if(resetSrc) speakAudio.src='';
+}
 function updateButtons(){
   const langBtn=document.getElementById('langBtn');
   const answerBtn=document.getElementById('answerBtn');
+  const speakBtn=document.getElementById('speakBtn');
   const isEnglish=currentLangIsEnglish();
   const showingAnswers=document.body.classList.contains('show-answers');
+  const desiredSrc=currentSpeakSrc();
+  const audioPlaying=!!(speakAudio && !speakAudio.paused);
   langBtn.textContent=isEnglish?'中文':'English';
   answerBtn.textContent=isEnglish?(showingAnswers?'Hide Answer':'Show Answer'):(showingAnswers?'隐藏答案':'显示答案');
+  if(!isEnglish){
+    stopSpeak(true);
+    speakBtn.textContent='Speak';
+  }else{
+    if(speakAudio && speakAudio.src && !speakAudio.paused && !speakAudio.src.endsWith(desiredSrc)){
+      stopSpeak(true);
+    }
+    const nowPlaying=!!(speakAudio && !speakAudio.paused);
+    speakBtn.textContent=nowPlaying?'Stop':'Speak';
+  }
   document.documentElement.lang=isEnglish?'en':'zh-CN';
 }
 function toggleLanguage(){document.body.classList.toggle('show-en');updateButtons();}
 function toggleAnswers(){document.body.classList.toggle('show-answers');updateButtons();}
+async function toggleSpeak(){
+  if(!currentLangIsEnglish()) return;
+  const audio=ensureAudio();
+  const desiredSrc=currentSpeakSrc();
+  if(!audio.paused && audio.src.endsWith(desiredSrc)){
+    stopSpeak();
+    updateButtons();
+    return;
+  }
+  if(!audio.paused){ stopSpeak(true); }
+  if(!audio.src || !audio.src.endsWith(desiredSrc)){ audio.src=desiredSrc; }
+  try{
+    await audio.play();
+  }catch(err){
+    console.error('Audio playback failed', err);
+  }
+  updateButtons();
+}
 updateButtons();
 </script>
 </body>
