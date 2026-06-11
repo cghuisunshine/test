@@ -268,13 +268,10 @@ function parseTime(value){
   return Number(m[1])*3600 + Number(m[2])*60 + Number(m[3]) + Number(m[4])/1000;
 }
 function parseVtt(raw){
-  const blocks = raw.trim().split(/
-\s*
-/);
+  const blocks = raw.trim().split(/\n\s*\n/);
   const cues=[];
   for(const block of blocks){
-    const lines=block.split(/
-/).map(x=>x.trim()).filter(Boolean);
+    const lines=block.split(/\n/).map(x=>x.trim()).filter(Boolean);
     const arrowIndex = lines.findIndex(line=>line.includes('-->'));
     if(arrowIndex===-1) continue;
     const [start,end]=lines[arrowIndex].split('-->').map(x=>x.trim());
