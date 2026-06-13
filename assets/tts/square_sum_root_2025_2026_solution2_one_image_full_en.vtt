@@ -1,0 +1,146 @@
+WEBVTT
+
+1
+00:00:00.100 --> 00:00:02.375
+Square Sum and Square Root
+
+2
+00:00:02.325 --> 00:00:07.175
+The answer is hidden by default. click Show Answer above to view the solutions
+
+3
+00:00:07.175 --> 00:00:08.175
+Problem
+
+4
+00:00:08.175 --> 00:00:17.262
+Original image. given 2025 squared plus 2026 squared equals a. find the square root of 2a minus 1
+
+5
+00:00:17.262 --> 00:00:18.175
+Given
+
+6
+00:00:18.175 --> 00:00:22.775
+2025 squared plus 2026 squared equals a
+
+7
+00:00:22.775 --> 00:00:23.787
+Find
+
+8
+00:00:23.787 --> 00:00:26.437
+The square root of 2a minus 1
+
+9
+00:00:26.437 --> 00:00:28.500
+Solution 1. Algebra
+
+10
+00:00:28.500 --> 00:00:38.812
+The key is to notice that 2025 and 2026 are consecutive integers. let 2025 be n. so 2026 is n plus 1
+
+11
+00:00:38.812 --> 00:00:43.875
+2025 equals n. 2026 equals n plus 1
+
+12
+00:00:43.875 --> 00:00:45.150
+From the problem
+
+13
+00:00:45.150 --> 00:00:50.887
+a equals n squared plus open parenthesis n plus 1 close parenthesis squared
+
+14
+00:00:50.887 --> 00:00:52.962
+Compute 2a minus 1
+
+15
+00:00:52.962 --> 00:01:11.287
+2a minus 1 equals 2 times open bracket n squared plus open parenthesis n plus 1 close parenthesis squared close bracket minus 1. which simplifies to 4n squared plus 4n plus 1. equal to open parenthesis 2n plus 1 close parenthesis squared
+
+16
+00:01:11.287 --> 00:01:12.262
+Therefore
+
+17
+00:01:12.262 --> 00:01:22.175
+The square root of 2a minus 1 equals the square root of open parenthesis 2n plus 1 close parenthesis squared. equal to 2n plus 1
+
+18
+00:01:22.175 --> 00:01:25.050
+Substitute n equals 2025
+
+19
+00:01:25.050 --> 00:01:31.925
+2n plus 1 equals 2 times 2025 plus 1. equal to 4051
+
+20
+00:01:31.925 --> 00:01:34.425
+Answer. 4051
+
+21
+00:01:34.425 --> 00:01:37.762
+Solution 2. Geometry or Dissection Method
+
+22
+00:01:37.762 --> 00:01:49.650
+This method interprets the expression as area. in the figure below the parts 2026 squared. 2025 squared. and the center 1 are arranged into one large square
+
+23
+00:01:49.650 --> 00:01:57.737
+Geometry solution image. use this single diagram to observe the side length and area relationship of the large square
+
+24
+00:01:57.737 --> 00:02:09.575
+Observation. one side of the large square is made of two segments. 2026 and 2025. so the side length of the large square is 2026 plus 2025
+
+25
+00:02:09.575 --> 00:02:12.612
+Therefore. the area of the large square is
+
+26
+00:02:12.612 --> 00:02:18.137
+Open parenthesis 2026 plus 2025 close parenthesis squared
+
+27
+00:02:18.137 --> 00:02:21.387
+And all the pieces in the figure together represent
+
+28
+00:02:21.387 --> 00:02:23.012
+2a minus 1
+
+29
+00:02:23.012 --> 00:02:24.137
+So we have
+
+30
+00:02:24.137 --> 00:02:31.300
+2a minus 1 equals open parenthesis 2026 plus 2025 close parenthesis squared
+
+31
+00:02:31.300 --> 00:02:33.775
+Taking the square root of both sides
+
+32
+00:02:33.775 --> 00:02:48.500
+The square root of 2a minus 1 equals the square root of open parenthesis 2026 plus 2025 close parenthesis squared. equal to 2026 plus 2025. equal to 4051
+
+33
+00:02:48.500 --> 00:02:51.000
+Answer. 4051
+
+34
+00:02:51.000 --> 00:02:52.237
+Final Answer
+
+35
+00:02:52.237 --> 00:02:57.137
+The square root of 2a minus 1 equals 4051
+
+36
+00:02:57.137 --> 00:02:59.600
+Final answer. 4051
+
