@@ -14,22 +14,39 @@
       background: #f4f7fb;
     }
     .container { max-width: 1000px; margin: 0 auto; padding: 28px 18px 140px; }
-    .toolbar {
-      position: sticky; top: 12px; z-index: 10;
-      display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;
+    .menu-anchor {
+      position: sticky; top: 12px; z-index: 20;
+      display: flex; justify-content: flex-end;
       margin-bottom: 14px;
     }
-    .toolbar button {
+    .menu-wrap { position: relative; }
+    .menu-btn,
+    .menu-panel button {
       border: 0; border-radius: 999px; padding: 10px 18px;
       font-size: 1rem; font-weight: 700; cursor: pointer;
       background: #2563eb; color: white;
       box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
     }
-    .toolbar button:hover { background: #1d4ed8; }
-    .toolbar button.secondary{background:#0f766e;box-shadow:0 8px 20px rgba(15,118,110,.25)}
-    .toolbar button.secondary:hover{background:#0d5f59}
-    .speak-btn{display:none}
-    body.show-en .speak-btn{display:inline-block}
+    .menu-btn:hover,
+    .menu-panel button:hover { background: #1d4ed8; }
+    .menu-panel button.secondary{background:#0f766e;box-shadow:0 8px 20px rgba(15,118,110,.25)}
+    .menu-panel button.secondary:hover{background:#0d5f59}
+    .menu-btn {
+      width: 48px; height: 48px; padding: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; line-height: 1;
+    }
+    .menu-panel {
+      position: absolute; top: calc(100% + 10px); right: 0;
+      min-width: 200px; padding: 12px;
+      border-radius: 18px; background: rgba(255,255,255,0.98);
+      border: 1px solid #dbe4f0; box-shadow: 0 18px 40px rgba(15,23,42,0.16);
+      display: none; flex-direction: column; gap: 10px;
+      backdrop-filter: blur(10px);
+    }
+    .menu-wrap.open .menu-panel { display: flex; }
+    .menu-panel .speak-btn{display:none}
+    body.show-en .menu-panel .speak-btn{display:inline-block}
     .card {
       background: #fff; border-radius: 18px; padding: 24px; margin-bottom: 22px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.08);
@@ -104,16 +121,21 @@
       .card { padding: 18px; border-radius: 14px; }
       h1 { font-size: 1.55rem; }
       h2 { font-size: 1.16rem; }
-      .toolbar { justify-content: center; }
+      .menu-panel { min-width: 180px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="toolbar">
-      <button id="langBtn" type="button" onclick="toggleLanguage()">English</button>
-      <button id="answerBtn" type="button" onclick="toggleAnswers()">显示答案</button>
-      <button id="speakBtn" type="button" class="secondary speak-btn" onclick="toggleSpeak()">Speak</button>
+    <div class="menu-anchor">
+      <div id="menuWrap" class="menu-wrap">
+        <button id="menuBtn" class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()">☰</button>
+        <div id="menuPanel" class="menu-panel">
+          <button id="langBtn" type="button" onclick="toggleLanguage(); closeMenu();">English</button>
+          <button id="answerBtn" type="button" onclick="toggleAnswers(); closeMenu();">显示答案</button>
+          <button id="speakBtn" type="button" class="secondary speak-btn" onclick="toggleSpeak(); closeMenu();">Speak</button>
+        </div>
+      </div>
     </div>
 
     <div id="speechPanel" class="speech-panel idle">
@@ -338,6 +360,38 @@ function syncTranscript(){
   }
   renderCue(cue, currentWordIndex);
 }
+function getMenuWrap(){return document.getElementById('menuWrap');}
+function getMenuBtn(){return document.getElementById('menuBtn');}
+function closeMenu(){
+  const wrap=getMenuWrap();
+  const btn=getMenuBtn();
+  if(wrap) wrap.classList.remove('open');
+  if(btn) btn.setAttribute('aria-expanded','false');
+}
+function openMenu(){
+  const wrap=getMenuWrap();
+  const btn=getMenuBtn();
+  if(wrap) wrap.classList.add('open');
+  if(btn) btn.setAttribute('aria-expanded','true');
+}
+function toggleMenu(){
+  const wrap=getMenuWrap();
+  if(!wrap) return;
+  if(wrap.classList.contains('open')) closeMenu();
+  else openMenu();
+}
+function initializeMenuInteractions(){
+  if(document.body.dataset.menuReady==='1') return;
+  document.addEventListener('click', (event)=>{
+    const wrap=getMenuWrap();
+    if(!wrap || !wrap.classList.contains('open')) return;
+    if(!wrap.contains(event.target)) closeMenu();
+  });
+  document.addEventListener('keydown', (event)=>{
+    if(event.key==='Escape') closeMenu();
+  });
+  document.body.dataset.menuReady='1';
+}
 function updateButtons(){
   const langBtn=document.getElementById('langBtn');
   const answerBtn=document.getElementById('answerBtn');
@@ -402,6 +456,7 @@ async function toggleSpeak(){
   syncTranscript();
 }
 initializeSpeechPanelInteractions();
+initializeMenuInteractions();
 updateButtons();
 renderIdleTranscript();
   </script>
