@@ -46,6 +46,8 @@
       background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
       padding: 14px 16px; margin-top: 12px;
     }
+    .img-wrap { text-align: center; margin: 16px 0; }
+    img { max-width: 100%; border-radius: 12px; border: 1px solid #dbe4f0; }
     .formula {
       background: #f8fafc; border-left: 4px solid #94a3b8;
       padding: 12px 14px; font-family: "Times New Roman", Georgia, serif;
@@ -101,8 +103,6 @@
       display: inline-block;
       padding: 2px 6px;
     }
-    .diagram-wrap{display:flex;justify-content:center;margin:18px 0}
-    svg{max-width:100%;height:auto;background:#fff;border:1px solid #dbe4f0;border-radius:12px}
     .caption{ color: #475569; font-size: 0.95rem; margin-top: 8px; text-align:center; }
     @media (max-width: 640px) {
       .card { padding: 18px; border-radius: 14px; }
@@ -138,20 +138,8 @@
 
     <div class="card">
       <h2><span class="zh">一、题目</span><span class="en speaking-target">1. Problem</span></h2>
-      <div class="diagram-wrap">
-        <svg viewBox="0 0 520 290" aria-label="Overlapping triangles with a shaded trapezoid">
-          <polygon points="80,240 240,60 400,240" fill="#e0f2fe" stroke="#0f172a" stroke-width="3"></polygon>
-          <polygon points="120,240 280,60 440,240" fill="none" stroke="#2563eb" stroke-width="3"></polygon>
-          <polygon points="160,240 240,150 360,150 400,240" fill="#fde68a" stroke="#b45309" stroke-width="3"></polygon>
-          <line x1="240" y1="60" x2="240" y2="150" stroke="#475569" stroke-width="2" stroke-dasharray="6 6"></line>
-          <line x1="280" y1="60" x2="280" y2="150" stroke="#475569" stroke-width="2" stroke-dasharray="6 6"></line>
-          <text x="210" y="145" font-size="20" fill="#0f172a">6</text>
-          <text x="316" y="145" font-size="20" fill="#0f172a">9</text>
-          <text x="250" y="205" font-size="20" fill="#0f172a">6</text>
-          <text x="176" y="194" font-size="22" fill="#0f172a">①</text>
-          <text x="250" y="188" font-size="22" fill="#0f172a">②</text>
-          <text x="352" y="194" font-size="22" fill="#0f172a">③</text>
-        </svg>
+      <div class="img-wrap">
+        <img src="assets/images/overlapping_triangles_question.jpg" alt="Original question image for overlapping triangles shaded area" />
       </div>
       <div class="caption">
         <span class="zh">示意图：两个全等三角形重叠，中间阴影部分是一个梯形。</span>
@@ -171,6 +159,13 @@
 
     <div class="card answer-section">
       <h2><span class="zh">二、思路</span><span class="en speaking-target">2. Main idea</span></h2>
+      <div class="img-wrap">
+        <img src="assets/images/overlapping_triangles_solution.jpg" alt="Original solution image for overlapping triangles shaded area" />
+      </div>
+      <div class="caption">
+        <span class="zh">原始解答图：保留老师板书中的 ①、②、③ 标注与计算过程。</span>
+        <span class="en">Original solution image: keeps the teacher’s labels 1, 2, and 3, together with the handwritten calculation steps.</span>
+      </div>
       <p><span class="zh">把阴影梯形周围分成三块，分别记作 ①、②、③。</span><span class="en speaking-target">Split the figure around the shaded trapezoid into three parts, labeled 1, 2, and 3.</span></p>
       <p><span class="zh">因为两个三角形全等，所以它们面积相等。</span><span class="en speaking-target">Because the two triangles are congruent, their areas are equal.</span></p>
       <div class="formula speaking-target">① + ② = ② + ③</div>
