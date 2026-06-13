@@ -17,6 +17,8 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
         "Microsoft YaHei", Arial, sans-serif;
       background: #ffffff;
+      color: #111827;
+      overflow: hidden;
     }
 
     .top {
@@ -25,24 +27,76 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 0 16px;
+      padding: 0 14px;
       border-bottom: 1px solid #e5e7eb;
       background: #ffffff;
+      position: relative;
+      z-index: 20;
+    }
+
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .menu-btn {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 12px;
+      background: #f3f4f6;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .menu-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .hamburger {
+      width: 20px;
+      height: 14px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 2px;
+      border-radius: 999px;
+      background: #111827;
+    }
+
+    .title-wrap {
+      min-width: 0;
     }
 
     .title {
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 850;
+      line-height: 1.15;
       white-space: nowrap;
     }
 
     .info {
       color: #667085;
-      font-size: 14px;
+      font-size: 13px;
+      line-height: 1.2;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      text-align: right;
+      max-width: 58vw;
+    }
+
+    .today-tag {
+      color: #2563eb;
+      font-weight: 750;
+      font-size: 13px;
+      white-space: nowrap;
     }
 
     iframe {
@@ -53,10 +107,150 @@
       background: #ffffff;
     }
 
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.42);
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+
+    .drawer {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: min(360px, 88vw);
+      background: #ffffff;
+      z-index: 40;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      box-shadow: 16px 0 36px rgba(15, 23, 42, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.menu-open .drawer-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.menu-open .drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-head {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 14px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .drawer-title {
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .close-btn {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 999px;
+      background: #f3f4f6;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .question-list {
+      overflow: auto;
+      padding: 10px;
+    }
+
+    .question-btn {
+      width: 100%;
+      border: 1px solid transparent;
+      background: #ffffff;
+      text-align: left;
+      padding: 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      display: grid;
+      gap: 4px;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .question-btn:hover {
+      background: #f8fafc;
+      border-color: #e5e7eb;
+    }
+
+    .question-btn.active {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .question-num {
+      color: #2563eb;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .question-name {
+      font-size: 16px;
+      font-weight: 780;
+    }
+
+    .question-date {
+      color: #667085;
+      font-size: 12px;
+    }
+
+    .fallback {
+      display: none;
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 25;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #fed7aa;
+      background: #fff7ed;
+      color: #9a3412;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .fallback.show {
+      display: block;
+    }
+
+    .fallback a {
+      color: #1d4ed8;
+      font-weight: 800;
+    }
+
     @media (max-width: 600px) {
       .top {
-        height: 48px;
-        padding: 0 10px;
+        height: 50px;
+        padding: 0 8px;
+      }
+
+      .menu-btn {
+        width: 40px;
+        height: 40px;
       }
 
       .title {
@@ -65,22 +259,56 @@
 
       .info {
         font-size: 12px;
+        max-width: 62vw;
+      }
+
+      .today-tag {
+        display: none;
       }
 
       iframe {
-        height: calc(100vh - 48px);
+        height: calc(100vh - 50px);
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="top">
-    <div class="title">每日一题</div>
-    <div class="info" id="info">Loading...</div>
-  </div>
+  <header class="top">
+    <div class="left">
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Open question menu" aria-expanded="false">
+        <span class="hamburger" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
+      <div class="title-wrap">
+        <div class="title">每日一题</div>
+        <div class="info" id="info">Loading...</div>
+      </div>
+    </div>
+
+    <div class="today-tag" id="todayTag">Today</div>
+  </header>
+
+  <aside class="drawer" id="drawer" aria-label="Question menu">
+    <div class="drawer-head">
+      <div class="drawer-title">选择题目</div>
+      <button class="close-btn" id="closeBtn" type="button" aria-label="Close menu">×</button>
+    </div>
+    <nav class="question-list" id="questionList"></nav>
+  </aside>
+
+  <div class="drawer-backdrop" id="backdrop"></div>
 
   <iframe id="questionFrame" title="今日题目"></iframe>
+
+  <div class="fallback" id="fallback">
+    如果题目没有显示，请点击
+    <a id="fallbackLink" href="#" target="_blank" rel="noopener">这里打开题目</a>。
+  </div>
 
   <script>
     const QUESTIONS = [
@@ -146,33 +374,129 @@
     const BASE_DATE = new Date(2026, 5, 13);
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+    const body = document.body;
+    const menuBtn = document.getElementById("menuBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const backdrop = document.getElementById("backdrop");
+    const questionList = document.getElementById("questionList");
+    const frame = document.getElementById("questionFrame");
+    const info = document.getElementById("info");
+    const todayTag = document.getElementById("todayTag");
+    const fallback = document.getElementById("fallback");
+    const fallbackLink = document.getElementById("fallbackLink");
+
+    let currentIndex = 0;
+    let loadTimer = null;
+
     function startOfLocalDay(date) {
       return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function normalizeIndex(index) {
+      return ((index % QUESTIONS.length) + QUESTIONS.length) % QUESTIONS.length;
     }
 
     function getTodayQuestionIndex() {
       const today = startOfLocalDay(new Date());
       const days = Math.floor((today - BASE_DATE) / MS_PER_DAY);
-      return ((days % QUESTIONS.length) + QUESTIONS.length) % QUESTIONS.length;
+      return normalizeIndex(days);
     }
 
-    function formatToday() {
+    function formatDate(date) {
       return new Intl.DateTimeFormat(undefined, {
         year: "numeric",
         month: "short",
         day: "numeric",
         weekday: "short"
-      }).format(new Date());
+      }).format(date);
     }
 
-    const index = getTodayQuestionIndex();
-    const question = QUESTIONS[index];
+    function getHashIndex() {
+      const match = location.hash.match(/q=(\d+)/);
+      if (!match) return null;
+      const number = Number(match[1]);
+      if (!Number.isInteger(number) || number < 1 || number > QUESTIONS.length) return null;
+      return number - 1;
+    }
 
-    document.title = "每日一题 - " + question.title;
-    document.getElementById("info").textContent =
-      formatToday() + " · 第 " + (index + 1) + " 题 · " + question.title;
+    function openMenu() {
+      body.classList.add("menu-open");
+      menuBtn.setAttribute("aria-expanded", "true");
+    }
 
-    document.getElementById("questionFrame").src = question.url;
+    function closeMenu() {
+      body.classList.remove("menu-open");
+      menuBtn.setAttribute("aria-expanded", "false");
+    }
+
+    function showQuestion(index, saveHash = true) {
+      currentIndex = normalizeIndex(index);
+      const question = QUESTIONS[currentIndex];
+      const todayIndex = getTodayQuestionIndex();
+      const isToday = currentIndex === todayIndex;
+
+      document.title = "每日一题 - " + question.title;
+      info.textContent = formatDate(new Date()) + " · 第 " + (currentIndex + 1) + " 题 · " + question.title;
+      todayTag.textContent = isToday ? "今日题目" : "已选择题目";
+      fallbackLink.href = question.url;
+
+      Array.from(document.querySelectorAll(".question-btn")).forEach((btn, i) => {
+        btn.classList.toggle("active", i === currentIndex);
+      });
+
+      clearTimeout(loadTimer);
+      fallback.classList.remove("show");
+      loadTimer = setTimeout(() => {
+        fallback.classList.add("show");
+      }, 2500);
+
+      frame.onload = function () {
+        clearTimeout(loadTimer);
+        fallback.classList.remove("show");
+      };
+
+      frame.src = question.url;
+
+      if (saveHash) {
+        history.replaceState(null, "", "#q=" + (currentIndex + 1));
+      }
+
+      closeMenu();
+    }
+
+    function buildMenu() {
+      const todayIndex = getTodayQuestionIndex();
+
+      questionList.innerHTML = "";
+      QUESTIONS.forEach((question, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "question-btn";
+        button.innerHTML = `
+          <div class="question-num">第 ${index + 1} 题${index === todayIndex ? " · 今日" : ""}</div>
+          <div class="question-name">${question.title}</div>
+          <div class="question-date">${question.url}</div>
+        `;
+        button.addEventListener("click", () => showQuestion(index, true));
+        questionList.appendChild(button);
+      });
+    }
+
+    menuBtn.addEventListener("click", openMenu);
+    closeBtn.addEventListener("click", closeMenu);
+    backdrop.addEventListener("click", closeMenu);
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeMenu();
+    });
+
+    window.addEventListener("hashchange", () => {
+      const index = getHashIndex();
+      if (index !== null) showQuestion(index, false);
+    });
+
+    buildMenu();
+    showQuestion(getHashIndex() ?? getTodayQuestionIndex(), false);
   </script>
 </body>
 </html>
