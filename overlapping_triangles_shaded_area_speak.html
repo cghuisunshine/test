@@ -242,6 +242,29 @@ function ensureAudio(){
 }
 function getSpeechPanel(){return document.getElementById('speechPanel');}
 function getSpeechLine(){return document.getElementById('speechLine');}
+function togglePauseResumeFromPanel(){
+  if(!currentLangIsEnglish()) return;
+  const audio=ensureAudio();
+  if(!audio.src) return;
+  if(audio.paused && audio.currentTime > 0){
+    audio.play().catch(err=>{
+      console.error('Audio resume failed', err);
+      renderIdleTranscript('Audio playback failed.');
+    });
+    updateButtons();
+    return;
+  }
+  if(!audio.paused){
+    audio.pause();
+    updateButtons();
+  }
+}
+function initializeSpeechPanelInteractions(){
+  const panel=getSpeechPanel();
+  if(!panel || panel.dataset.dblclickReady==='1') return;
+  panel.addEventListener('dblclick', togglePauseResumeFromPanel);
+  panel.dataset.dblclickReady='1';
+}
 function renderIdleTranscript(message='Press Speak in English mode to start the narration.'){
   const panel=getSpeechPanel(); const line=getSpeechLine();
   clearSpeechHighlight();
@@ -339,7 +362,8 @@ function updateButtons(){
       stopSpeak(true);
     }
     const nowPlaying=!!(speakAudio && !speakAudio.paused);
-    speakBtn.textContent=nowPlaying?'Stop':'Speak';
+    const canResume=!!(speakAudio && speakAudio.paused && speakAudio.currentTime > 0 && speakAudio.src && speakAudio.src.endsWith(desiredSrc));
+    speakBtn.textContent=nowPlaying?'Stop':(canResume?'Resume':'Speak');
   }
   document.documentElement.lang=isEnglish?'en':'zh-CN';
 }
@@ -355,6 +379,17 @@ async function toggleSpeak(){
   const audio=ensureAudio();
   const desiredSrc=currentSpeakSrc();
   const desiredVtt=currentVttSrc();
+  if(audio.paused && audio.currentTime > 0 && audio.src && audio.src.endsWith(desiredSrc)){
+    try{
+      await audio.play();
+    }catch(err){
+      console.error('Audio resume failed', err);
+      renderIdleTranscript('Audio playback failed.');
+    }
+    updateButtons();
+    syncTranscript();
+    return;
+  }
   if(!audio.paused && audio.src.endsWith(desiredSrc)){
     stopSpeak();
     updateButtons();
@@ -372,6 +407,7 @@ async function toggleSpeak(){
   updateButtons();
   syncTranscript();
 }
+initializeSpeechPanelInteractions();
 updateButtons();
 renderIdleTranscript();
   </script>
