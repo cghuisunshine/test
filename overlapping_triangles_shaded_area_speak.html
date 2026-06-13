@@ -249,7 +249,7 @@ function activateSpeechTarget(index){
 function ensureAudio(){
   if(!speakAudio){
     speakAudio=new Audio();
-    speakAudio.addEventListener('ended', ()=>{activeCueIndex=-1;renderIdleTranscript('Playback finished.');updateButtons();});
+    speakAudio.addEventListener('ended', ()=>{activeCueIndex=-1;renderIdleTranscript();updateButtons();});
     speakAudio.addEventListener('pause', ()=>{if(speakAudio.currentTime===0){activeCueIndex=-1;} updateButtons();});
     speakAudio.addEventListener('play', updateButtons);
     speakAudio.addEventListener('timeupdate', syncTranscript);
