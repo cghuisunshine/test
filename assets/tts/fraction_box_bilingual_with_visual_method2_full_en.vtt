@@ -1,0 +1,97 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.699
+What Number Does the Box Represent?
+
+2
+00:00:05.699 --> 00:00:08.956
+1. Problem
+
+3
+00:00:08.956 --> 00:00:18.075
+Original image: The two boxes represent the same number.
+
+4
+00:00:18.075 --> 00:00:21.332
+Given:
+
+5
+00:00:21.332 --> 00:00:24.752
+Find: the value of □.
+
+6
+00:00:24.752 --> 00:00:29.149
+2. Method 1: Use a Variable
+
+7
+00:00:29.149 --> 00:00:33.057
+Let the box represent x.
+
+8
+00:00:33.057 --> 00:00:36.314
+Cross multiply:
+
+9
+00:00:36.314 --> 00:00:39.570
+Expand:
+
+10
+00:00:39.570 --> 00:00:42.827
+Move terms:
+
+11
+00:00:42.827 --> 00:00:46.084
+□ = 11
+
+12
+00:00:46.084 --> 00:00:51.946
+3. Method 2: Ratio Difference Method
+
+13
+00:00:51.946 --> 00:01:11.813
+Visual aid: View 2:7 as 2 parts and 7 parts. Their difference is 5 parts; the actual difference is 65, so each part is 13.
+
+14
+00:01:11.813 --> 00:01:15.070
+From the equation:
+
+15
+00:01:15.070 --> 00:01:22.886
+The denominator is larger than the numerator by:
+
+16
+00:01:22.886 --> 00:01:30.865
+The boxes cancel, so the difference is always 65.
+
+17
+00:01:30.865 --> 00:01:36.891
+The difference in the ratio 2 : 7 is:
+
+18
+00:01:36.891 --> 00:01:41.450
+So 5 parts correspond to 65:
+
+19
+00:01:41.450 --> 00:01:45.521
+The numerator is 2 parts:
+
+20
+00:01:45.521 --> 00:01:48.778
+Therefore:
+
+21
+00:01:48.778 --> 00:01:52.035
+□ = 11
+
+22
+00:01:52.035 --> 00:01:55.292
+4. Check
+
+23
+00:01:55.292 --> 00:02:02.945
+The equation is true, so the answer is correct.
+
+24
+00:02:02.945 --> 00:02:06.202
+Final answer: □ = 11
