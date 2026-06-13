@@ -1,0 +1,141 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.871
+Shape Digit Puzzle
+
+2
+00:00:02.871 --> 00:00:05.742
+1. Problem
+
+3
+00:00:05.742 --> 00:00:12.633
+Original image: Each shape represents one digit.
+
+4
+00:00:12.633 --> 00:00:15.504
+Given:
+
+5
+00:00:15.504 --> 00:00:21.677
+Find: the digit represented by △, ○, and □.
+
+6
+00:00:21.677 --> 00:00:29.142
+2. Solution: Use Column Addition from the Ones Place
+
+7
+00:00:29.142 --> 00:00:32.013
+Let:
+
+8
+00:00:32.013 --> 00:00:36.463
+The equation can be written as:
+
+9
+00:00:36.463 --> 00:00:39.334
+3. Ones Place
+
+10
+00:00:39.334 --> 00:00:42.205
+In the ones place:
+
+11
+00:00:42.205 --> 00:00:51.823
+The tens place must create a carry, so the ones place must carry 1:
+
+12
+00:00:51.823 --> 00:00:54.695
+4. Tens Place
+
+13
+00:00:54.695 --> 00:01:00.867
+The ones place carries 1 to the tens place:
+
+14
+00:01:00.867 --> 00:01:03.739
+5. Hundreds Place
+
+15
+00:01:03.739 --> 00:01:11.203
+The tens place also carries 1 to the hundreds place:
+
+16
+00:01:11.203 --> 00:01:14.075
+6. Find the Square
+
+17
+00:01:14.075 --> 00:01:17.663
+Return to the ones place:
+
+18
+00:01:17.663 --> 00:01:20.535
+Since ○ = 8:
+
+19
+00:01:20.535 --> 00:01:27.425
+7. Method 2: Work from Hundreds, Tens, then Ones
+
+20
+00:01:27.425 --> 00:01:41.637
+Additional solution image: Start from the hundreds place, then the tens place, then the ones place.
+
+21
+00:01:41.637 --> 00:02:00.874
+This method starts from the hundreds place, because the hundreds digit of the sum is 7, and both addends have △ in the hundreds place.
+
+22
+00:02:00.874 --> 00:02:04.032
+Step 1: Hundreds Place
+
+23
+00:02:04.032 --> 00:02:07.190
+In the hundreds place:
+
+24
+00:02:07.190 --> 00:02:14.799
+The tens place may carry 1 to the hundreds place, so:
+
+25
+00:02:14.799 --> 00:02:17.670
+Therefore:
+
+26
+00:02:17.670 --> 00:02:20.541
+Step 2: Tens Place
+
+27
+00:02:20.541 --> 00:02:35.040
+Since the hundreds place received a carry, the tens-place sum must be at least 10. In the tens place:
+
+28
+00:02:35.040 --> 00:02:42.505
+The ones place also carries 1 to the tens place, so:
+
+29
+00:02:42.505 --> 00:02:45.376
+Therefore:
+
+30
+00:02:45.376 --> 00:02:48.247
+Step 3: Ones Place
+
+31
+00:02:48.247 --> 00:02:51.118
+In the ones place:
+
+32
+00:02:51.118 --> 00:02:53.989
+Since ○ = 8:
+
+33
+00:02:53.989 --> 00:02:56.860
+8. Check
+
+34
+00:02:56.860 --> 00:03:05.761
+Substitute △ = 3, ○ = 8, and □ = 9 into the original equation:
+
+35
+00:03:05.761 --> 00:03:10.498
+Final answer: △ = 3, ○ = 8, □ = 9

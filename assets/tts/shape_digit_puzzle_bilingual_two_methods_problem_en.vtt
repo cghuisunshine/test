@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.008
+Shape Digit Puzzle
+
+2
+00:00:03.008 --> 00:00:06.017
+1. Problem
+
+3
+00:00:06.017 --> 00:00:13.237
+Original image: Each shape represents one digit.
+
+4
+00:00:13.237 --> 00:00:16.246
+Given:
+
+5
+00:00:16.246 --> 00:00:22.714
+Find: the digit represented by △, ○, and □.
