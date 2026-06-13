@@ -13,7 +13,7 @@
       color: #1f2937;
       background: #f4f7fb;
     }
-    .container { max-width: 1000px; margin: 0 auto; padding: 28px 18px 60px; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 28px 18px 140px; }
     .toolbar {
       position: sticky; top: 12px; z-index: 10;
       display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;
@@ -66,11 +66,12 @@
     body.show-answers .answer-section { display: block; }
     body.show-answers .hidden-note { display: none; }
     .speech-panel {
-      position: sticky; top: 72px; z-index: 9;
-      margin: 0 0 18px;
+      position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
+      z-index: 50; width: min(960px, calc(100vw - 24px));
+      margin: 0;
       padding: 14px 16px; border-radius: 16px;
       background: #ecfeff; border: 1px solid #a5f3fc;
-      box-shadow: 0 10px 24px rgba(14, 116, 144, 0.12);
+      box-shadow: 0 10px 24px rgba(14, 116, 144, 0.18);
     }
     .speech-panel.idle { background: #f8fafc; border-color: #dbe4f0; box-shadow: none; }
     .speech-label {
