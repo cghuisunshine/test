@@ -1,0 +1,94 @@
+WEBVTT
+
+1
+00:00:00.100 --> 00:00:03.600
+Overlapping Triangles: Find the Shaded Area.
+
+2
+00:00:03.550 --> 00:00:08.450
+The answer is hidden by default. so click Show Answer above to view the solution.
+
+3
+00:00:08.450 --> 00:00:09.450
+Problem.
+
+4
+00:00:09.450 --> 00:00:15.762
+Diagram: two congruent triangles overlap. and the shaded region in the middle is a trapezoid.
+
+5
+00:00:15.762 --> 00:00:22.637
+Given: the two triangles are congruent. and the diagram shows lengths six and nine. with height six.
+
+6
+00:00:22.637 --> 00:00:25.125
+Find the area of the shaded region.
+
+7
+00:00:25.125 --> 00:00:26.287
+Main idea.
+
+8
+00:00:26.287 --> 00:00:32.450
+Split the figure around the shaded trapezoid into three parts. labeled one. two. and three.
+
+9
+00:00:32.450 --> 00:00:36.600
+Because the two triangles are congruent. their areas are equal.
+
+10
+00:00:36.600 --> 00:00:40.100
+Part one plus part two equals part two plus part three.
+
+11
+00:00:40.100 --> 00:00:44.287
+Subtract part two from both sides. and we get the next equation.
+
+12
+00:00:44.287 --> 00:00:46.450
+Part one equals part three.
+
+13
+00:00:46.450 --> 00:00:50.787
+So the shaded trapezoid can be computed directly as one trapezoid.
+
+14
+00:00:50.787 --> 00:00:52.075
+Calculation.
+
+15
+00:00:52.075 --> 00:00:56.762
+The trapezoid has top base six. bottom base nine. and height six.
+
+16
+00:00:56.762 --> 00:00:59.287
+Use the trapezoid area formula.
+
+17
+00:00:59.287 --> 00:01:05.825
+Area equals open parenthesis top base plus bottom base close parenthesis times height divided by two.
+
+18
+00:01:05.825 --> 00:01:11.850
+Area equals open parenthesis six plus nine close parenthesis times six divided by two.
+
+19
+00:01:11.850 --> 00:01:17.162
+Area equals fifteen times six divided by two. which equals forty-five.
+
+20
+00:01:17.162 --> 00:01:19.862
+Shaded area equals forty-five.
+
+21
+00:01:19.862 --> 00:01:20.900
+Summary.
+
+22
+00:01:20.900 --> 00:01:30.237
+The key is not brute force: first use congruent triangles to get part one equals part three. then treat the shaded part as an ordinary trapezoid.
+
+23
+00:01:30.237 --> 00:01:32.600
+Final answer: forty-five.
+
