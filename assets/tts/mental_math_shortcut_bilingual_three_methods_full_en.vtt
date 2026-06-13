@@ -1,0 +1,121 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:05.565
+Mental Math Shortcut
+
+2
+00:00:05.565 --> 00:00:11.130
+1. Problem
+
+3
+00:00:11.130 --> 00:00:23.095
+Original image: Calculate using a shortcut.
+
+4
+00:00:23.095 --> 00:00:28.661
+Calculate:
+
+5
+00:00:28.661 --> 00:00:36.452
+2. Method 1: Use the Average
+
+6
+00:00:36.452 --> 00:00:48.973
+Look at the 4 numbers inside the parentheses:
+
+7
+00:00:48.973 --> 00:00:56.208
+They are all close to 784:
+
+8
+00:00:56.208 --> 00:01:09.843
+The extra amounts and missing amounts cancel out:
+
+9
+00:01:09.843 --> 00:01:20.138
+So the sum inside the parentheses is:
+
+10
+00:01:20.138 --> 00:01:29.043
+The original expression becomes:
+
+11
+00:01:29.043 --> 00:01:34.608
+Since 25 × 4 = 100:
+
+12
+00:01:34.608 --> 00:01:40.173
+Answer: 78400
+
+13
+00:01:40.173 --> 00:01:48.242
+3. Method 2: Pair the Numbers
+
+14
+00:01:48.242 --> 00:01:59.373
+Pair the numbers inside the parentheses:
+
+15
+00:01:59.373 --> 00:02:07.164
+Both pair sums are the same:
+
+16
+00:02:07.164 --> 00:02:17.460
+So the sum inside the parentheses is:
+
+17
+00:02:17.460 --> 00:02:23.025
+Now multiply by 25:
+
+18
+00:02:23.025 --> 00:02:29.425
+Think of 25 as 100 ÷ 4:
+
+19
+00:02:29.425 --> 00:02:34.990
+Answer: 78400
+
+20
+00:02:34.990 --> 00:02:48.346
+4. Method 3: Break into Hundreds, Tens, and Ones
+
+21
+00:02:48.346 --> 00:03:05.598
+Visual aid: Break each number into 700, 80, and the ones part.
+
+22
+00:03:05.598 --> 00:03:22.015
+Break each number inside the parentheses into place values:
+
+23
+00:03:22.015 --> 00:03:36.485
+So the sum inside the parentheses can be written as:
+
+24
+00:03:36.485 --> 00:03:44.833
+Combine the same place values:
+
+25
+00:03:44.833 --> 00:03:50.398
+Add the ones digits:
+
+26
+00:03:50.398 --> 00:04:00.693
+So the sum inside the parentheses is:
+
+27
+00:04:00.693 --> 00:04:06.259
+Now multiply by 25:
+
+28
+00:04:06.259 --> 00:04:11.824
+Answer: 78400
+
+29
+00:04:11.824 --> 00:04:17.389
+5. Final Answer
+
+30
+00:04:17.389 --> 00:04:22.954
+Final answer: 78400
