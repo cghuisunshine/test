@@ -1,0 +1,29 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:01.691
+Find the Shaded Area
+
+2
+00:00:01.691 --> 00:00:03.381
+1. Problem
+
+3
+00:00:03.381 --> 00:00:07.692
+Original image: Find the area of the shaded region.
+
+4
+00:00:07.692 --> 00:00:19.441
+Meaning: The figure is a right triangle. A shaded rectangle is placed at the lower left, and its upper-right corner lies on the hypotenuse.
+
+5
+00:00:19.441 --> 00:00:24.428
+The remaining height above the rectangle on the left is 2 .
+
+6
+00:00:24.428 --> 00:00:29.161
+The remaining base to the right of the rectangle is 10 .
+
+7
+00:00:29.161 --> 00:00:32.458
+Find: the area of the shaded rectangle.
