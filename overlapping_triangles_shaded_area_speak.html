@@ -281,6 +281,43 @@ function initializeSpeechPanelInteractions(){
   panel.addEventListener('dblclick', togglePauseResumeFromPanel);
   panel.dataset.dblclickReady='1';
 }
+async function jumpToSpeakingTarget(targetEl){
+  if(!currentLangIsEnglish()) return;
+  const audio=ensureAudio();
+  const desiredSrc=currentSpeakSrc();
+  const desiredVtt=currentVttSrc();
+  const canJump=!!(audio.paused && audio.currentTime > 0 && audio.src && audio.src.endsWith(desiredSrc));
+  if(!canJump) return;
+  const targets=getSpeechTargets();
+  const idx=targets.indexOf(targetEl);
+  if(idx===-1) return;
+  const cues=await loadVtt(desiredVtt);
+  const cue=cues[idx];
+  if(!cue) return;
+  activeCueIndex=-1;
+  audio.currentTime=Math.max(cue.start + 0.01, 0);
+  activateSpeechTarget(idx);
+  renderCue(cue, 0);
+  try{
+    await audio.play();
+  }catch(err){
+    console.error('Audio jump resume failed', err);
+    renderIdleTranscript('Audio playback failed.');
+  }
+  updateButtons();
+  syncTranscript();
+}
+function initializeSpeakingTargetInteractions(){
+  if(document.body.dataset.targetJumpReady==='1') return;
+  document.addEventListener('dblclick', (event)=>{
+    const panel=getSpeechPanel();
+    if(panel && panel.contains(event.target)) return;
+    const target=event.target.closest('.speaking-target');
+    if(!target) return;
+    jumpToSpeakingTarget(target);
+  });
+  document.body.dataset.targetJumpReady='1';
+}
 function renderIdleTranscript(message='Press Speak in English mode to start the narration.'){
   const panel=getSpeechPanel(); const line=getSpeechLine();
   clearSpeechHighlight();
@@ -456,6 +493,7 @@ async function toggleSpeak(){
   syncTranscript();
 }
 initializeSpeechPanelInteractions();
+initializeSpeakingTargetInteractions();
 initializeMenuInteractions();
 updateButtons();
 renderIdleTranscript();
