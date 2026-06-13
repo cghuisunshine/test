@@ -1,0 +1,53 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.997
+Find the Shaded Area
+
+2
+00:00:02.997 --> 00:00:05.994
+1. Problem
+
+3
+00:00:05.994 --> 00:00:14.686
+Original image: AB = 10 and BC = 20. Find the shaded area.
+
+4
+00:00:14.686 --> 00:00:38.962
+Meaning: In right triangle ABC, AB = 10 and BC = 20. Semicircles are drawn on AB and BC. The shaded area equals the two semicircles minus the right triangle area.
+
+5
+00:00:38.962 --> 00:00:46.155
+2. Method 1: Find the Two Semicircles Separately
+
+6
+00:00:46.155 --> 00:01:00.391
+Shaded area = area of semicircle on AB + area of semicircle on BC − area of right triangle ABC.
+
+7
+00:01:00.391 --> 00:01:04.587
+AB = 10, so the radius is 5:
+
+8
+00:01:04.587 --> 00:01:08.933
+BC = 20, so the radius is 10:
+
+9
+00:01:08.933 --> 00:01:12.979
+Area of the right triangle:
+
+10
+00:01:12.979 --> 00:01:15.976
+Therefore:
+
+11
+00:01:15.976 --> 00:01:19.873
+Shaded area = 125π/2 − 100
+
+12
+00:01:19.873 --> 00:01:22.870
+3. Final Answer
+
+13
+00:01:22.870 --> 00:01:28.714
+Final answer: 125π/2 − 100, about 96.25
