@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:01.865
+3×3 Magic Square
+
+2
+00:00:01.865 --> 00:00:03.729
+1. Problem
+
+3
+00:00:03.729 --> 00:00:12.028
+Original image: Fill in numbers so that every row, column, and diagonal has the same sum.
+
+4
+00:00:12.028 --> 00:00:18.927
+Given: The top-middle is 9, the top-right is 4, and the middle-right is 3.
+
+5
+00:00:18.927 --> 00:00:26.386
+Task: Complete the 3×3 grid so every row, column, and diagonal has the same sum.

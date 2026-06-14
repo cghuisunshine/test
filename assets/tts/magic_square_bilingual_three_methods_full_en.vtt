@@ -1,0 +1,101 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.044
+3×3 Magic Square
+
+2
+00:00:03.044 --> 00:00:06.088
+1. Problem
+
+3
+00:00:06.088 --> 00:00:19.635
+Original image: Fill in numbers so that every row, column, and diagonal has the same sum.
+
+4
+00:00:19.635 --> 00:00:30.899
+Given: The top-middle is 9, the top-right is 4, and the middle-right is 3.
+
+5
+00:00:30.899 --> 00:00:43.075
+Task: Complete the 3×3 grid so every row, column, and diagonal has the same sum.
+
+6
+00:00:43.075 --> 00:00:50.077
+2. Method 1: Use the 1–9 Magic Square Property
+
+7
+00:00:50.077 --> 00:00:59.057
+If the square uses the numbers 1 to 9, the total sum is 45.
+
+8
+00:00:59.057 --> 00:01:06.516
+So each row, column, and diagonal must sum to 15.
+
+9
+00:01:06.516 --> 00:01:11.386
+This completes the magic square.
+
+10
+00:01:11.386 --> 00:01:16.866
+3. Method 2: Let the Common Sum Be S
+
+11
+00:01:16.866 --> 00:01:25.694
+Let the top-left number be a, and let the common sum be S.
+
+12
+00:01:25.694 --> 00:01:29.499
+Now use the first column:
+
+13
+00:01:29.499 --> 00:01:37.567
+So S = 15, and the remaining cells can then be found.
+
+14
+00:01:37.567 --> 00:01:42.590
+This gives the same final square.
+
+15
+00:01:42.590 --> 00:01:49.135
+4. Method 3: Derive a Position Relationship
+
+16
+00:01:49.135 --> 00:02:12.575
+Supplementary image: Compare one column, one diagonal, and one row with the total sum to derive a relationship between a corner and two edge-middle cells.
+
+17
+00:02:12.575 --> 00:02:24.143
+As shown, label the cells a,b,c / d,e,f / g,h,i and let the common sum be S.
+
+18
+00:02:24.143 --> 00:02:39.212
+Add the three equations above, then subtract the total of all nine cells, which is also 3S. We get:
+
+19
+00:02:39.212 --> 00:02:52.302
+So the top-left number equals the average of the middle-right and bottom-middle cells.
+
+20
+00:02:52.302 --> 00:03:06.153
+In this puzzle, the middle-right cell is 3. Since the center is 5, the second column gives:
+
+21
+00:03:06.153 --> 00:03:09.197
+Therefore:
+
+22
+00:03:09.197 --> 00:03:19.547
+Then continue filling by rows and columns to obtain the full square.
+
+23
+00:03:19.547 --> 00:03:28.223
+This is a very useful magic-square position relationship.
+
+24
+00:03:28.223 --> 00:03:31.268
+5. Final Answer
+
+25
+00:03:31.268 --> 00:03:41.770
+Final answer shown above. Every row, column, and diagonal sums to 15.
