@@ -1,0 +1,181 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:01.788
+Compare Powers.
+
+2
+00:00:01.788 --> 00:00:03.439
+1. Problem.
+
+3
+00:00:03.439 --> 00:00:11.279
+Original image: Fill the circle with greater than , less than , or equals.
+
+4
+00:00:11.279 --> 00:00:12.930
+Compare:.
+
+5
+00:00:12.930 --> 00:00:16.506
+1.005 to the power of 200 circle 2.
+
+6
+00:00:16.506 --> 00:00:22.008
+2. Solution 1: Use the Positive Terms in Expansion.
+
+7
+00:00:22.008 --> 00:00:23.658
+Write 1.005 as:.
+
+8
+00:00:23.658 --> 00:00:25.722
+1.005 equals 1 + 0.005.
+
+9
+00:00:25.722 --> 00:00:27.372
+So:.
+
+10
+00:00:27.372 --> 00:00:33.562
+1.005 to the power of 200 equals (1 + 0.005) to the power of 200.
+
+11
+00:00:33.562 --> 00:00:39.064
+When expanding, first look at the first two parts:.
+
+12
+00:00:39.064 --> 00:00:44.428
+(1 + 0.005) to the power of 200 equals 1 + 200 times 0.005 + 其他正项.
+
+13
+00:00:44.428 --> 00:00:46.079
+Because:.
+
+14
+00:00:46.079 --> 00:00:48.692
+200 times 0.005 equals 1.
+
+15
+00:00:48.692 --> 00:00:50.343
+Therefore:.
+
+16
+00:00:50.343 --> 00:00:56.808
+(1 + 0.005) to the power of 200 equals 1 + 1 + 其他正项 equals 2 + 其他正项 greater than 2.
+
+17
+00:00:56.808 --> 00:00:59.146
+Fill in: greater than.
+
+18
+00:00:59.146 --> 00:01:04.373
+3. Solution 2: Use the "At Least First Growth" Idea.
+
+19
+00:01:04.373 --> 00:01:14.139
+1.005 is 0.005 more than 1. Over 200 factors, the basic first-order growth already reaches:.
+
+20
+00:01:14.139 --> 00:01:16.752
+200 times 0.005 equals 1.
+
+21
+00:01:16.752 --> 00:01:20.879
+Considering only this growth gives:.
+
+22
+00:01:20.879 --> 00:01:23.630
+1 + 200 times 0.005 equals 2.
+
+23
+00:01:23.630 --> 00:01:32.846
+The actual power also includes more positive product terms, so it must be greater:.
+
+24
+00:01:32.846 --> 00:01:37.110
+1.005 to the power of 200 greater than 2.
+
+25
+00:01:37.110 --> 00:01:39.448
+Fill in: greater than.
+
+26
+00:01:39.448 --> 00:01:44.125
+4. Solution 3: Telescoping Product Method.
+
+27
+00:01:44.125 --> 00:01:53.753
+Solution 3 illustration: Compare 1.005 to the power of 200 with a telescoping product.
+
+28
+00:01:53.753 --> 00:01:55.954
+First write 1.005 as:.
+
+29
+00:01:55.954 --> 00:02:00.080
+1.005 equals 1 + 0.005 equals 1 + 1 over 200.
+
+30
+00:02:00.080 --> 00:02:01.731
+So:.
+
+31
+00:02:01.731 --> 00:02:08.471
+1.005 to the power of 200 equals (1 + 1 over 200) to the power of 200.
+
+32
+00:02:08.471 --> 00:02:10.122
+Because.
+
+33
+00:02:10.122 --> 00:02:22.088
+1 + 1 over 200 greater than 1 + 1 over 201 greater than 1 + 1 over 202 greater than and so on greater than 1 + 1 over 399.
+
+34
+00:02:22.088 --> 00:02:34.055
+the product of 200 equal factors is greater than the following product of 200 gradually smaller factors:.
+
+35
+00:02:34.055 --> 00:02:44.784
+(1 + 1 over 200) to the power of 200 greater than (1 + 1 over 200)(1 + 1 over 201)(1 + 1 over 202) and so on (1 + 1 over 399).
+
+36
+00:02:44.784 --> 00:02:48.910
+Convert each factor into a fraction:.
+
+37
+00:02:48.910 --> 00:03:03.628
+(1 + 1 over 200)(1 + 1 over 201) and so on (1 + 1 over 399) equals 201 over 200 times 202 over 201 times 203 over 202 times and so on times 400 over 399.
+
+38
+00:03:03.628 --> 00:03:15.595
+This is a telescoping product. After cancellation, only the first denominator and last numerator remain:.
+
+39
+00:03:15.595 --> 00:03:27.974
+201 over 200 times 202 over 201 times 203 over 202 times and so on times 400 over 399 equals 400 over 200 equals 2.
+
+40
+00:03:27.974 --> 00:03:29.625
+Therefore:.
+
+41
+00:03:29.625 --> 00:03:33.889
+1.005 to the power of 200 greater than 2.
+
+42
+00:03:33.889 --> 00:03:36.227
+Fill in: greater than.
+
+43
+00:03:36.227 --> 00:03:37.878
+5. Final Answer.
+
+44
+00:03:37.878 --> 00:03:42.142
+1.005 to the power of 200 greater than 2.
+
+45
+00:03:42.142 --> 00:03:45.168
+Final answer: greater than.
