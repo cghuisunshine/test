@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:01.282
+Count the Triangles
+
+2
+00:00:01.282 --> 00:00:02.564
+1. Problem
+
+3
+00:00:02.564 --> 00:00:06.346
+Original image: Count how many triangles are in the figure.
+
+4
+00:00:06.346 --> 00:00:16.090
+Problem: Several lines are drawn from the top vertex to the base, and two horizontal lines are parallel to the base. Find the total number of triangles.

@@ -1,0 +1,65 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.024
+Count the Triangles
+
+2
+00:00:02.024 --> 00:00:04.047
+1. Problem
+
+3
+00:00:04.047 --> 00:00:10.017
+Original image: Count how many triangles are in the figure.
+
+4
+00:00:10.017 --> 00:00:25.397
+Problem: Several lines are drawn from the top vertex to the base, and two horizontal lines are parallel to the base. Find the total number of triangles.
+
+5
+00:00:25.397 --> 00:00:30.962
+2. Method 1: Choose Two Slanted Lines and One Base Line
+
+6
+00:00:30.962 --> 00:00:36.021
+All countable triangles share the same top vertex.
+
+7
+00:00:36.021 --> 00:00:46.949
+There are 6 lines from the top vertex to the base. Choosing any 2 of them gives the two sides of a triangle.
+
+8
+00:00:46.949 --> 00:01:02.430
+For each pair of slanted lines, the base can be the upper horizontal line, the lower horizontal line, or the bottom base. So each pair forms 3 triangles.
+
+9
+00:01:02.430 --> 00:01:04.656
+There are 45 triangles
+
+10
+00:01:04.656 --> 00:01:07.995
+3. Method 2: Count Layer by Layer
+
+11
+00:01:07.995 --> 00:01:18.720
+Look at one horizontal line as the base. The 6 lines from the top vertex divide it into 5 small intervals.
+
+12
+00:01:18.720 --> 00:01:25.398
+On this one layer, a triangle may span 1, 2, 3, 4, or 5 intervals:
+
+13
+00:01:25.398 --> 00:01:37.338
+There are 3 possible horizontal base lines: the upper horizontal line, the lower horizontal line, and the bottom base.
+
+14
+00:01:37.338 --> 00:01:39.564
+There are 45 triangles
+
+15
+00:01:39.564 --> 00:01:41.587
+4. Final Answer
+
+16
+00:01:41.587 --> 00:01:44.218
+Final answer: 45 triangles
