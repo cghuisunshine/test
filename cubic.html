@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Three.js Cube Net Folding</title>
+
   <style>
     body {
       margin: 0;
@@ -11,12 +12,19 @@
       background: #eef2f7;
     }
 
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      display: block;
+    }
+
     #panel {
       position: absolute;
       top: 16px;
       left: 16px;
       width: 360px;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       padding: 16px;
       border-radius: 16px;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
@@ -66,7 +74,7 @@
       position: absolute;
       right: 16px;
       bottom: 16px;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       padding: 10px 14px;
       border-radius: 999px;
       color: #6b7280;
@@ -74,10 +82,22 @@
       z-index: 10;
     }
   </style>
+
+  <!-- This import map is important. It makes OrbitControls work. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
+
 <body>
   <div id="panel">
     <h1>Folding a Cube from Plane Squares</h1>
+
     <p>
       A cube can be folded from a flat net of six congruent squares.
       The shared edges act like hinges.
@@ -105,8 +125,8 @@
   <div id="hint">Drag to rotate. Scroll to zoom.</div>
 
   <script type="module">
-    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js";
-    import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/controls/OrbitControls.js";
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
     const slider = document.getElementById("slider");
     const stepText = document.getElementById("stepText");
@@ -161,6 +181,7 @@
 
     function makeFace(color, labelText) {
       const geometry = new THREE.PlaneGeometry(side, side);
+
       const material = new THREE.MeshStandardMaterial({
         color,
         side: THREE.DoubleSide,
@@ -188,7 +209,8 @@
       canvas.height = 128;
 
       const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
       ctx.fillRect(38, 38, 180, 52);
 
       ctx.fillStyle = "#111827";
@@ -198,6 +220,7 @@
       ctx.fillText(text, 128, 64);
 
       const texture = new THREE.CanvasTexture(canvas);
+
       const material = new THREE.SpriteMaterial({
         map: texture,
         transparent: true,
@@ -206,6 +229,7 @@
 
       const sprite = new THREE.Sprite(material);
       sprite.scale.set(1.2, 0.6, 1);
+
       return sprite;
     }
 
@@ -216,6 +240,7 @@
       ];
 
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
       const material = new THREE.LineDashedMaterial({
         color: 0x111827,
         dashSize: 0.12,
@@ -225,6 +250,7 @@
       const line = new THREE.Line(geometry, material);
       line.computeLineDistances();
       parent.add(line);
+
       return line;
     }
 
@@ -287,6 +313,7 @@
     // Target cube outline.
     const boxGeometry = new THREE.BoxGeometry(side, side, side);
     const boxEdges = new THREE.EdgesGeometry(boxGeometry);
+
     const boxLine = new THREE.LineSegments(
       boxEdges,
       new THREE.LineDashedMaterial({
@@ -325,11 +352,14 @@
       if (foldValue < 0.05) {
         stepText.innerHTML = "Step 1: The six squares start flat in one plane.";
       } else if (foldValue < 0.75) {
-        stepText.innerHTML = `Step 2: The side squares rotate around their shared edges. Fold angle: ${degrees}°.`;
+        stepText.innerHTML =
+          `Step 2: The side squares rotate around their shared edges. Fold angle: ${degrees}°.`;
       } else if (foldValue < 0.98) {
-        stepText.innerHTML = `Step 3: The top square folds over to close the cube. Fold angle: ${degrees}°.`;
+        stepText.innerHTML =
+          `Step 3: The top square folds over to close the cube. Fold angle: ${degrees}°.`;
       } else {
-        stepText.innerHTML = "Finished: The six plane squares have folded into the six faces of a cube.";
+        stepText.innerHTML =
+          "Finished: The six plane squares have folded into the six faces of a cube.";
       }
     }
 
@@ -340,12 +370,11 @@
     });
 
     playBtn.addEventListener("click", () => {
-      playing = !playing;
-
       if (foldValue >= 1) {
         setFold(0);
       }
 
+      playing = !playing;
       playBtn.textContent = playing ? "Pause" : "Play";
     });
 
