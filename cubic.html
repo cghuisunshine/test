@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Three.js Cube Net Folding</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+    }
+
+    #panel {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 360px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+      z-index: 10;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 1.45;
+      color: #4b5563;
+    }
+
+    #stepText {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f9fafb;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    button {
+      margin-top: 8px;
+      margin-right: 6px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #f3f4f6;
+    }
+
+    #hint {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: #6b7280;
+      font-size: 13px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div id="panel">
+    <h1>Folding a Cube from Plane Squares</h1>
+    <p>
+      A cube can be folded from a flat net of six congruent squares.
+      The shared edges act like hinges.
+    </p>
+
+    <div id="stepText">
+      Step 1: The six squares start flat in one plane.
+    </div>
+
+    <input id="slider" type="range" min="0" max="100" value="0" />
+
+    <div>
+      <button id="playBtn">Play</button>
+      <button id="flatBtn">Flat net</button>
+      <button id="cubeBtn">Cube</button>
+    </div>
+
+    <div>
+      <button id="view3dBtn">3D view</button>
+      <button id="topViewBtn">Top view</button>
+      <button id="sideViewBtn">Side view</button>
+    </div>
+  </div>
+
+  <div id="hint">Drag to rotate. Scroll to zoom.</div>
+
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js";
+    import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/controls/OrbitControls.js";
+
+    const slider = document.getElementById("slider");
+    const stepText = document.getElementById("stepText");
+    const playBtn = document.getElementById("playBtn");
+    const flatBtn = document.getElementById("flatBtn");
+    const cubeBtn = document.getElementById("cubeBtn");
+    const view3dBtn = document.getElementById("view3dBtn");
+    const topViewBtn = document.getElementById("topViewBtn");
+    const sideViewBtn = document.getElementById("sideViewBtn");
+
+    let foldValue = 0;
+    let playing = false;
+
+    const side = 2;
+    const half = side / 2;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xeef2f7);
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+
+    camera.position.set(5, -7, 5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0, 0.8);
+    controls.enableDamping = true;
+
+    const light = new THREE.HemisphereLight(0xffffff, 0x444444, 2.4);
+    scene.add(light);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight.position.set(4, -5, 8);
+    scene.add(dirLight);
+
+    const grid = new THREE.GridHelper(10, 10);
+    grid.rotation.x = Math.PI / 2;
+    grid.position.z = -0.02;
+    scene.add(grid);
+
+    const netGroup = new THREE.Group();
+    scene.add(netGroup);
+
+    function makeFace(color, labelText) {
+      const geometry = new THREE.PlaneGeometry(side, side);
+      const material = new THREE.MeshStandardMaterial({
+        color,
+        side: THREE.DoubleSide,
+        roughness: 0.55
+      });
+
+      const face = new THREE.Mesh(geometry, material);
+
+      const edgeGeometry = new THREE.EdgesGeometry(geometry);
+      const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x111827 });
+      const edges = new THREE.LineSegments(edgeGeometry, edgeMaterial);
+      edges.position.z = 0.01;
+      face.add(edges);
+
+      const label = makeLabel(labelText);
+      label.position.set(0, 0, 0.04);
+      face.add(label);
+
+      return face;
+    }
+
+    function makeLabel(text) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 256;
+      canvas.height = 128;
+
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+      ctx.fillRect(38, 38, 180, 52);
+
+      ctx.fillStyle = "#111827";
+      ctx.font = "bold 28px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 128, 64);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const material = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthTest: false
+      });
+
+      const sprite = new THREE.Sprite(material);
+      sprite.scale.set(1.2, 0.6, 1);
+      return sprite;
+    }
+
+    function makeHinge(x1, y1, x2, y2, parent = netGroup) {
+      const points = [
+        new THREE.Vector3(x1, y1, 0.04),
+        new THREE.Vector3(x2, y2, 0.04)
+      ];
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      const material = new THREE.LineDashedMaterial({
+        color: 0x111827,
+        dashSize: 0.12,
+        gapSize: 0.08
+      });
+
+      const line = new THREE.Line(geometry, material);
+      line.computeLineDistances();
+      parent.add(line);
+      return line;
+    }
+
+    // Base face stays flat.
+    const base = makeFace(0x93c5fd, "Base");
+    netGroup.add(base);
+
+    // North side.
+    const northPivot = new THREE.Group();
+    northPivot.position.set(0, half, 0);
+    netGroup.add(northPivot);
+
+    const north = makeFace(0xfca5a5, "Side");
+    north.position.set(0, half, 0);
+    northPivot.add(north);
+
+    // South side.
+    const southPivot = new THREE.Group();
+    southPivot.position.set(0, -half, 0);
+    netGroup.add(southPivot);
+
+    const south = makeFace(0xfca5a5, "Side");
+    south.position.set(0, -half, 0);
+    southPivot.add(south);
+
+    // East side.
+    const eastPivot = new THREE.Group();
+    eastPivot.position.set(half, 0, 0);
+    netGroup.add(eastPivot);
+
+    const east = makeFace(0xfca5a5, "Side");
+    east.position.set(half, 0, 0);
+    eastPivot.add(east);
+
+    // West side.
+    const westPivot = new THREE.Group();
+    westPivot.position.set(-half, 0, 0);
+    netGroup.add(westPivot);
+
+    const west = makeFace(0xfca5a5, "Side");
+    west.position.set(-half, 0, 0);
+    westPivot.add(west);
+
+    // Top face attaches to the outer edge of the north face.
+    const topPivot = new THREE.Group();
+    topPivot.position.set(0, side, 0);
+    northPivot.add(topPivot);
+
+    const top = makeFace(0x86efac, "Top");
+    top.position.set(0, half, 0);
+    topPivot.add(top);
+
+    // Dashed hinge lines on the flat net.
+    makeHinge(-half, half, half, half);
+    makeHinge(-half, -half, half, -half);
+    makeHinge(half, -half, half, half);
+    makeHinge(-half, -half, -half, half);
+    makeHinge(-half, side, half, side, northPivot);
+
+    // Target cube outline.
+    const boxGeometry = new THREE.BoxGeometry(side, side, side);
+    const boxEdges = new THREE.EdgesGeometry(boxGeometry);
+    const boxLine = new THREE.LineSegments(
+      boxEdges,
+      new THREE.LineDashedMaterial({
+        color: 0x111827,
+        dashSize: 0.1,
+        gapSize: 0.08,
+        transparent: true,
+        opacity: 0.25
+      })
+    );
+
+    boxLine.position.z = half;
+    boxLine.computeLineDistances();
+    scene.add(boxLine);
+
+    function smooth(t) {
+      return t * t * (3 - 2 * t);
+    }
+
+    function setFold(value) {
+      foldValue = Math.max(0, Math.min(1, value));
+
+      const t = smooth(foldValue);
+      const angle = t * Math.PI / 2;
+      const degrees = Math.round(t * 90);
+
+      northPivot.rotation.x = angle;
+      southPivot.rotation.x = -angle;
+      eastPivot.rotation.y = -angle;
+      westPivot.rotation.y = angle;
+
+      topPivot.rotation.x = angle;
+
+      slider.value = Math.round(foldValue * 100);
+
+      if (foldValue < 0.05) {
+        stepText.innerHTML = "Step 1: The six squares start flat in one plane.";
+      } else if (foldValue < 0.75) {
+        stepText.innerHTML = `Step 2: The side squares rotate around their shared edges. Fold angle: ${degrees}°.`;
+      } else if (foldValue < 0.98) {
+        stepText.innerHTML = `Step 3: The top square folds over to close the cube. Fold angle: ${degrees}°.`;
+      } else {
+        stepText.innerHTML = "Finished: The six plane squares have folded into the six faces of a cube.";
+      }
+    }
+
+    slider.addEventListener("input", () => {
+      playing = false;
+      playBtn.textContent = "Play";
+      setFold(Number(slider.value) / 100);
+    });
+
+    playBtn.addEventListener("click", () => {
+      playing = !playing;
+
+      if (foldValue >= 1) {
+        setFold(0);
+      }
+
+      playBtn.textContent = playing ? "Pause" : "Play";
+    });
+
+    flatBtn.addEventListener("click", () => {
+      playing = false;
+      playBtn.textContent = "Play";
+      setFold(0);
+    });
+
+    cubeBtn.addEventListener("click", () => {
+      playing = false;
+      playBtn.textContent = "Play";
+      setFold(1);
+    });
+
+    view3dBtn.addEventListener("click", () => {
+      camera.position.set(5, -7, 5);
+      controls.target.set(0, 0, 0.8);
+      controls.update();
+    });
+
+    topViewBtn.addEventListener("click", () => {
+      camera.position.set(0, 0, 10);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    });
+
+    sideViewBtn.addEventListener("click", () => {
+      camera.position.set(7, 0, 3);
+      controls.target.set(0, 0, 1);
+      controls.update();
+    });
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const delta = clock.getDelta();
+
+      if (playing) {
+        setFold(foldValue + delta * 0.3);
+
+        if (foldValue >= 1) {
+          playing = false;
+          playBtn.textContent = "Replay";
+        }
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    setFold(0);
+    animate();
+  </script>
+</body>
+</html>
