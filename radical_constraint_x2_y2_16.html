@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>根式条件求值</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']], processEscapes: true },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75;color:#1f2937;background:#f4f7fb}
+.topbar{position:sticky;top:0;z-index:10;background:rgba(244,247,251,.96);border-bottom:1px solid #dbe4f0}
+.topbar-inner{max-width:1000px;margin:auto;padding:12px 18px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+button{border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;background:#2563eb;color:white}
+.container{max-width:1000px;margin:auto;padding:22px 18px 60px}
+.card{background:white;border-radius:18px;padding:24px;margin-bottom:22px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.hero{text-align:center} h1,h2{color:#0f172a;margin-top:0} h1{font-size:2rem}
+h2{font-size:1.35rem;border-left:6px solid #2563eb;padding-left:12px}
+.img-wrap{text-align:center;margin:16px 0} img{max-width:100%;border-radius:12px;border:1px solid #dbe4f0;background:white}
+.caption{color:#64748b;font-size:.95rem;margin-top:8px}
+.question-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 16px}
+.formula{background:#f8fafc;border-left:4px solid #94a3b8;padding:12px 14px;margin:12px 0;border-radius:10px;overflow-x:auto;font-size:1.08rem}
+.answer{display:inline-block;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:999px;padding:8px 16px;font-weight:700}
+.hidden-note{background:#fff7ed;color:#9a3412;border:1px solid #fdba74;border-radius:12px;padding:12px 14px;text-align:left}
+.key{background:#ecfdf5;color:#166534;border:1px solid #86efac;border-radius:12px;padding:12px 14px;margin-top:12px}
+.en{display:none} body.show-en .zh{display:none} body.show-en .en{display:revert}
+.answer-section{display:none} body.show-answers .answer-section{display:block} body.show-answers .hidden-note{display:none}
+@media(max-width:640px){.topbar-inner{justify-content:center}.card{padding:18px}h1{font-size:1.55rem}h2{font-size:1.16rem}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner">
+<button id="langBtn" onclick="toggleLanguage()">English</button>
+<button id="answerBtn" onclick="toggleAnswers()">显示答案</button>
+</div></header>
+
+<main class="container">
+<section class="card hero">
+<h1><span class="zh">根式条件求值</span><span class="en">Radical Expression Under a Constraint</span></h1>
+<div class="hidden-note"><span class="zh">答案默认隐藏。点击上方“显示答案”按钮查看解法。</span><span class="en">The answer is hidden by default. Click “Show Answer” above to view the solution.</span></div>
+</section>
+
+<section class="card">
+<h2><span class="zh">一、题目</span><span class="en">1. Problem</span></h2>
+<div class="img-wrap">
+<img src="data:image/jpeg;base64,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" alt="若x平方加y平方等于16，求根式表达式">
+<div class="caption"><span class="zh">题目原图：若 \(x^2+y^2=16\)，求根式表达式的值。</span><span class="en">Original image: Given \(x^2+y^2=16\), find the value of the radical expression.</span></div>
+</div>
+<div class="question-box"><div class="formula">\[
+\text{若 }x^2+y^2=16,\quad
+\text{求 }\sqrt{y^2-8y+16}+\sqrt{xy-5y+4x-20}.
+\]</div></div>
+</section>
+
+<section class="card answer-section">
+<h2><span class="zh">二、第一项化简</span><span class="en">2. Simplify the First Radical</span></h2>
+<div class="formula">\[
+y^2-8y+16=(y-4)^2
+\]</div>
+<div class="formula">\[
+\sqrt{y^2-8y+16}=|y-4|
+\]</div>
+<p><span class="zh">又因为 \(x^2+y^2=16\)，所以 \(-4\le y\le4\)。因此：</span><span class="en">Since \(x^2+y^2=16\), we have \(-4\le y\le4\). Therefore:</span></p>
+<div class="formula">\[
+|y-4|=4-y
+\]</div>
+</section>
+
+<section class="card answer-section">
+<h2><span class="zh">三、第二项的关键分解</span><span class="en">3. Key Factorization of the Second Radical</span></h2>
+<div class="formula">\[
+xy-5y+4x-20
+\]</div>
+<div class="formula">\[
+=xy+4x-5y-20
+\]</div>
+<div class="formula">\[
+=(x-5)(y+4)
+\]</div>
+
+<p><span class="zh">由 \(x^2+y^2=16\)，可知：</span><span class="en">From \(x^2+y^2=16\), we know:</span></p>
+<div class="formula">\[
+-4\le x\le4,\qquad -4\le y\le4
+\]</div>
+
+<p><span class="zh">所以：</span><span class="en">Thus:</span></p>
+<div class="formula">\[
+x-5\le -1\lt0,\qquad y+4\ge0
+\]</div>
+
+<p><span class="zh">因此：</span><span class="en">Therefore:</span></p>
+<div class="formula">\[
+(x-5)(y+4)\le0
+\]</div>
+
+<p><span class="zh">但它在根号里面，必须满足：</span><span class="en">But it is inside a square root, so it must satisfy:</span></p>
+<div class="formula">\[
+(x-5)(y+4)\ge0
+\]</div>
+
+<p><span class="zh">两者合起来，只能是：</span><span class="en">Together, this means it can only be:</span></p>
+<div class="formula">\[
+(x-5)(y+4)=0
+\]</div>
+
+<p><span class="zh">因为 \(x\le4\)，不可能 \(x=5\)，所以：</span><span class="en">Since \(x\le4\), it is impossible that \(x=5\), so:</span></p>
+<div class="formula">\[
+y+4=0
+\]</div>
+<div class="formula">\[
+y=-4
+\]</div>
+</section>
+
+<section class="card answer-section">
+<h2><span class="zh">四、求出 \(x,y\) 并代入</span><span class="en">4. Find \(x,y\) and Substitute</span></h2>
+<p><span class="zh">把 \(y=-4\) 代入 \(x^2+y^2=16\)：</span><span class="en">Substitute \(y=-4\) into \(x^2+y^2=16\):</span></p>
+<div class="formula">\[
+x^2+(-4)^2=16
+\]</div>
+<div class="formula">\[
+x^2=0
+\]</div>
+<div class="formula">\[
+x=0
+\]</div>
+
+<p><span class="zh">原式为：</span><span class="en">The original expression becomes:</span></p>
+<div class="formula">\[
+\sqrt{(-4)^2-8(-4)+16}+\sqrt{0}
+\]</div>
+<div class="formula">\[
+=\sqrt{64}+0=8
+\]</div>
+
+<div class="answer"><span class="zh">答案：8</span><span class="en">Answer: 8</span></div>
+</section>
+
+<section class="card answer-section">
+<h2><span class="zh">五、最终答案</span><span class="en">5. Final Answer</span></h2>
+<div class="formula">\[
+\boxed{8}
+\]</div>
+<div class="key"><span class="zh">关键点：第二个根号不是随便取值，而是迫使 \((x-5)(y+4)=0\)，从而只能得到 \((x,y)=(0,-4)\)。</span><span class="en">Key point: the second radical forces \((x-5)(y+4)=0\), so the only possible point is \((x,y)=(0,-4)\).</span></div>
+</section>
+</main>
+
+<script>
+function currentLangIsEnglish(){return document.body.classList.contains('show-en')}
+function updateButtons(){
+  const e=currentLangIsEnglish();
+  const a=document.body.classList.contains('show-answers');
+  document.getElementById('langBtn').textContent=e?'中文':'English';
+  document.getElementById('answerBtn').textContent=e?(a?'Hide Answer':'Show Answer'):(a?'隐藏答案':'显示答案');
+  document.documentElement.lang=e?'en':'zh-CN';
+  if(window.MathJax && typeof MathJax.typesetPromise === 'function'){MathJax.typesetPromise();}
+}
+function toggleLanguage(){document.body.classList.toggle('show-en');updateButtons()}
+function toggleAnswers(){document.body.classList.toggle('show-answers');updateButtons()}
+updateButtons();
+</script>
+</body>
+</html>
