@@ -99,7 +99,7 @@
       white-space: nowrap;
     }
 
-    .question-select {
+    .question-quick-search {
       width: min(360px, 38vw);
       min-width: 190px;
       height: 36px;
@@ -109,10 +109,10 @@
       color: #111827;
       font-size: 14px;
       padding: 0 34px 0 10px;
-      cursor: pointer;
+      cursor: text;
     }
 
-    .question-select:focus,
+    .question-quick-search:focus,
     .question-search:focus {
       outline: 2px solid #bfdbfe;
       outline-offset: 1px;
@@ -247,6 +247,10 @@
       border-color: #93c5fd;
     }
 
+    .question-btn[hidden] {
+      display: none !important;
+    }
+
     .question-num {
       color: #2563eb;
       font-size: 13px;
@@ -313,7 +317,7 @@
         display: none;
       }
 
-      .question-select {
+      .question-quick-search {
         width: 44vw;
         min-width: 128px;
         height: 38px;
@@ -344,7 +348,7 @@
       </div>
     </div>
 
-    <select class="question-select" id="questionSelect" aria-label="选择题目"></select>
+    <input class="question-quick-search" id="questionQuickSearch" type="search" placeholder="搜索题目" autocomplete="off" aria-label="搜索题目" />
     <div class="today-tag" id="todayTag">Today</div>
   </header>
 
@@ -639,7 +643,7 @@
     const closeBtn = document.getElementById("closeBtn");
     const backdrop = document.getElementById("backdrop");
     const questionList = document.getElementById("questionList");
-    const questionSelect = document.getElementById("questionSelect");
+    const questionQuickSearch = document.getElementById("questionQuickSearch");
     const questionSearch = document.getElementById("questionSearch");
     const questionEmpty = document.getElementById("questionEmpty");
     const frame = document.getElementById("questionFrame");
@@ -701,12 +705,14 @@
       document.title = "每日一题 - " + question.title;
       info.textContent = formatDate(new Date()) + " · 第 " + (currentIndex + 1) + " 题 · " + question.title;
       todayTag.textContent = isToday ? "今日题目" : "已选择题目";
-      questionSelect.value = String(currentIndex);
+      questionQuickSearch.value = "";
+      questionSearch.value = "";
       fallbackLink.href = question.url;
 
       Array.from(document.querySelectorAll(".question-btn")).forEach((btn, i) => {
         btn.classList.toggle("active", i === currentIndex);
       });
+      filterMenu();
 
       clearTimeout(loadTimer);
       fallback.classList.remove("show");
@@ -730,14 +736,6 @@
 
     function buildMenu() {
       const todayIndex = getTodayQuestionIndex();
-
-      questionSelect.innerHTML = "";
-      QUESTIONS.forEach((question, index) => {
-        const option = document.createElement("option");
-        option.value = String(index);
-        option.textContent = `${index + 1}. ${question.title}${index === todayIndex ? "（今日）" : ""}`;
-        questionSelect.appendChild(option);
-      });
 
       questionList.innerHTML = "";
       QUESTIONS.forEach((question, index) => {
@@ -771,15 +769,36 @@
         .split(/[\/_\-]+/)
         .filter(Boolean)
         .join(" ");
-      return `${index + 1} ${question.title} ${pathWords}`.toLowerCase();
+      return normalizeSearchText(`${index + 1} ${question.title} ${pathWords} ${question.keywords || ""}`);
+    }
+
+    function normalizeSearchText(text) {
+      return text
+        .toLowerCase()
+        .replace(/[²₂]/g, "2")
+        .replace(/[³₃]/g, "3")
+        .replace(/[⁴₄]/g, "4")
+        .replace(/[⁵₅]/g, "5")
+        .replace(/[⁶₆]/g, "6")
+        .replace(/[⁷₇]/g, "7")
+        .replace(/[⁸₈]/g, "8")
+        .replace(/[⁹₉]/g, "9")
+        .replace(/[⁰₀]/g, "0")
+        .replace(/[¹₁]/g, "1")
+        .replace(/[√]/g, " sqrt ")
+        .replace(/[−–—]/g, "-")
+        .replace(/[^a-z0-9\u4e00-\u9fff]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
     }
 
     function filterMenu() {
-      const query = questionSearch.value.trim().toLowerCase();
+      const query = normalizeSearchText(questionSearch.value);
+      const terms = query.split(" ").filter(Boolean);
       let matchCount = 0;
 
       Array.from(document.querySelectorAll(".question-btn")).forEach((button) => {
-        const isMatch = query.length === 0 || button.dataset.search.includes(query);
+        const isMatch = terms.length === 0 || terms.every((term) => button.dataset.search.includes(term));
         button.hidden = !isMatch;
         if (isMatch) matchCount += 1;
       });
@@ -787,11 +806,19 @@
       questionEmpty.classList.toggle("show", matchCount === 0);
     }
 
+    function applySearch(value, openDrawer = false) {
+      questionQuickSearch.value = value;
+      questionSearch.value = value;
+      filterMenu();
+      if (openDrawer) openMenu();
+    }
+
     menuBtn.addEventListener("click", openMenu);
     closeBtn.addEventListener("click", closeMenu);
     backdrop.addEventListener("click", closeMenu);
-    questionSelect.addEventListener("change", () => showQuestion(Number(questionSelect.value), true));
-    questionSearch.addEventListener("input", filterMenu);
+    questionQuickSearch.addEventListener("focus", openMenu);
+    questionQuickSearch.addEventListener("input", () => applySearch(questionQuickSearch.value, true));
+    questionSearch.addEventListener("input", () => applySearch(questionSearch.value, false));
 
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape") closeMenu();
