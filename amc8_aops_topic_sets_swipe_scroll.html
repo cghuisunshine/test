@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en" data-enhanced-page="amc8-swipe-scroll">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>AMC 8 AoPS Topic Sets — Swipe Section Browser</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --text: #182033;
+      --muted: #667085;
+      --line: #dfe4ee;
+      --accent: #2f6fed;
+      --accent-soft: #e9f0ff;
+      --shadow: 0 12px 30px rgba(16, 24, 40, 0.10);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Noto Sans", sans-serif;
+    }
+
+    body {
+      min-height: 100svh;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app {
+      height: 100svh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .top {
+      flex: 0 0 auto;
+      padding: calc(12px + env(safe-area-inset-top)) 14px 10px;
+      background: rgba(246, 247, 251, 0.96);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+      z-index: 5;
+    }
+
+    .titleRow {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: clamp(20px, 5vw, 30px);
+      line-height: 1.1;
+      margin: 0;
+      letter-spacing: -0.03em;
+    }
+
+    .sourceLink {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .note {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    select,
+    input[type="search"] {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0 12px;
+      background: var(--panel);
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+    }
+
+    select:focus,
+    input[type="search"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    .buttonRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    button {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chips {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 10px 0 2px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      flex: 0 0 auto;
+      min-height: 34px;
+      border-radius: 999px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .chip.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: rgba(47, 111, 237, 0.35);
+    }
+
+    .main {
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+      overflow: hidden;
+    }
+
+    .sectionPanel {
+      height: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sectionHead {
+      flex: 0 0 auto;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fbfcff);
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(18px, 4.6vw, 24px);
+      line-height: 1.22;
+      letter-spacing: -0.02em;
+    }
+
+    .sectionSub {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .questionScroll {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      padding: 10px 12px 22px;
+      background:
+        linear-gradient(#fff 30%, rgba(255,255,255,0)) top,
+        linear-gradient(rgba(255,255,255,0), #fff 70%) bottom,
+        radial-gradient(farthest-side at 50% 0, rgba(16,24,40,.13), rgba(16,24,40,0)) top,
+        radial-gradient(farthest-side at 50% 100%, rgba(16,24,40,.10), rgba(16,24,40,0)) bottom;
+      background-repeat: no-repeat;
+      background-size: 100% 24px, 100% 24px, 100% 8px, 100% 8px;
+      background-attachment: local, local, scroll, scroll;
+    }
+
+    .questions {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .question a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 12px 13px;
+      text-decoration: none;
+    }
+
+    .num {
+      flex: 0 0 auto;
+      min-width: 35px;
+      height: 30px;
+      padding: 0 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .qtitle {
+      flex: 1 1 auto;
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 750;
+      line-height: 1.25;
+    }
+
+    .arrow {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .status {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .status strong {
+      color: var(--text);
+    }
+
+    .status code {
+      background: #eef2f7;
+      padding: 2px 5px;
+      border-radius: 6px;
+      color: #344054;
+    }
+
+    @media (min-width: 760px) {
+      .top {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+
+      .controls {
+        grid-template-columns: minmax(260px, 1.15fr) minmax(220px, 0.85fr) minmax(270px, auto);
+        align-items: center;
+      }
+
+      .buttonRow {
+        grid-template-columns: repeat(3, minmax(82px, 1fr));
+      }
+
+      .main {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101828;
+        --panel: #172033;
+        --text: #eef4ff;
+        --muted: #a9b4c8;
+        --line: #2b364f;
+        --accent: #8ab4ff;
+        --accent-soft: rgba(138, 180, 255, 0.15);
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+      }
+
+      .top {
+        background: rgba(16, 24, 40, 0.95);
+      }
+
+      .sectionHead {
+        background: linear-gradient(180deg, #172033, #141d2f);
+      }
+
+      .questionScroll {
+        background:
+          linear-gradient(#172033 30%, rgba(23,32,51,0)) top,
+          linear-gradient(rgba(23,32,51,0), #172033 70%) bottom,
+          radial-gradient(farthest-side at 50% 0, rgba(255,255,255,.12), rgba(255,255,255,0)) top,
+          radial-gradient(farthest-side at 50% 100%, rgba(255,255,255,.10), rgba(255,255,255,0)) bottom;
+        background-repeat: no-repeat;
+        background-size: 100% 24px, 100% 24px, 100% 8px, 100% 8px;
+        background-attachment: local, local, scroll, scroll;
+      }
+
+      .question {
+        background: #172033;
+      }
+
+      .status code {
+        background: #24304a;
+        color: #d8e2f7;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div class="titleRow">
+        <h1>AMC 8 AoPS Topic Sets</h1>
+        <a class="sourceLink" href="https://cghuisunshine.github.io/test/amc8_aops_topic_sets.html" target="_blank" rel="noopener">Original</a>
+      </div>
+      <p class="note">Choose a topic, then swipe up/down inside the question list. The page will stay inside the selected topic instead of jumping to other sections.</p>
+
+      <div class="controls">
+        <select id="topicSelect" aria-label="Choose topic">
+          <option>Loading topic sets…</option>
+        </select>
+
+        <input id="searchBox" type="search" placeholder="Search in this topic, e.g. 2018 or Problem 24" autocomplete="off" />
+
+        <div class="buttonRow">
+          <button id="prevTopic" type="button">← Topic</button>
+          <button id="topButton" type="button" class="primary">Top</button>
+          <button id="nextTopic" type="button">Topic →</button>
+        </div>
+      </div>
+
+      <div class="meta">
+        <span id="topicCount">Loading…</span>
+        <span id="scrollHint">Swipe inside list</span>
+      </div>
+
+      <nav id="chips" class="chips" aria-label="Topic shortcuts"></nav>
+    </header>
+
+    <main class="main">
+      <section class="sectionPanel">
+        <div class="sectionHead">
+          <h2 id="sectionTitle">Loading…</h2>
+          <div id="sectionSub" class="sectionSub">Reading the original topic-set page.</div>
+        </div>
+
+        <div id="questionScroll" class="questionScroll">
+          <div class="status">
+            <div>
+              <strong>Loading the question sets…</strong><br>
+              This file reads <code>amc8_aops_topic_sets.html</code> and rebuilds it as a mobile section browser.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const SOURCE_URLS = [
+      new URL("amc8_aops_topic_sets.html", location.href).href,
+      "https://cghuisunshine.github.io/test/amc8_aops_topic_sets.html"
+    ];
+
+    const state = {
+      topics: [],
+      activeIndex: 0,
+      scrollPositions: new Map(),
+      filter: ""
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const topicSelect = $("topicSelect");
+    const searchBox = $("searchBox");
+    const chips = $("chips");
+    const questionScroll = $("questionScroll");
+    const sectionTitle = $("sectionTitle");
+    const sectionSub = $("sectionSub");
+    const topicCount = $("topicCount");
+
+    function slugify(text) {
+      return text
+        .toLowerCase()
+        .replace(/\(\d+\)/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")
+        .slice(0, 80);
+    }
+
+    function normalizeTitle(text) {
+      return text.replace(/\s+/g, " ").trim();
+    }
+
+    async function fetchOriginalPage() {
+      let lastError = null;
+
+      for (const url of SOURCE_URLS) {
+        try {
+          const response = await fetch(url, { cache: "no-store" });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const html = await response.text();
+
+          // Avoid accidentally parsing this enhanced page if the file is renamed over the original.
+          if (html.includes('data-enhanced-page="amc8-swipe-scroll"')) {
+            throw new Error("This URL points to the enhanced page itself, not the original list.");
+          }
+
+          return { html, url };
+        } catch (error) {
+          lastError = error;
+        }
+      }
+
+      throw lastError || new Error("Could not fetch the original page.");
+    }
+
+    function extractTopics(html, sourceUrl) {
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const headings = [...doc.querySelectorAll("h2")];
+      const topics = [];
+
+      for (const heading of headings) {
+        const rawTitle = normalizeTitle(heading.textContent || "");
+        if (!rawTitle) continue;
+
+        const questions = [];
+        let node = heading.nextElementSibling;
+
+        while (node && node.tagName !== "H2") {
+          const links = [...node.querySelectorAll("ol li a, li a")];
+
+          for (const link of links) {
+            const text = normalizeTitle(link.textContent || "");
+            if (!text || !/Problem\s+\d+/i.test(text)) continue;
+
+            const href = new URL(link.getAttribute("href"), sourceUrl).href;
+            questions.push({ text, href });
+          }
+
+          node = node.nextElementSibling;
+        }
+
+        if (questions.length > 0) {
+          topics.push({
+            id: slugify(rawTitle) || `topic-${topics.length + 1}`,
+            title: rawTitle,
+            questions
+          });
+        }
+      }
+
+      return topics;
+    }
+
+    function renderControls() {
+      topicSelect.innerHTML = "";
+
+      state.topics.forEach((topic, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = `${topic.title} — ${topic.questions.length}`;
+        topicSelect.appendChild(option);
+      });
+
+      chips.innerHTML = "";
+      state.topics.forEach((topic, index) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip";
+        chip.textContent = topic.title.replace(/\s*\(\d+\)\s*$/, "");
+        chip.title = topic.title;
+        chip.addEventListener("click", () => showTopic(index));
+        chips.appendChild(chip);
+      });
+    }
+
+    function getFilteredQuestions(topic) {
+      const query = state.filter.trim().toLowerCase();
+      if (!query) return topic.questions;
+
+      return topic.questions.filter((q) => q.text.toLowerCase().includes(query));
+    }
+
+    function saveCurrentScroll() {
+      const current = state.topics[state.activeIndex];
+      if (!current) return;
+      state.scrollPositions.set(current.id, questionScroll.scrollTop);
+    }
+
+    function showTopic(index, options = {}) {
+      if (!state.topics.length) return;
+
+      saveCurrentScroll();
+
+      const max = state.topics.length - 1;
+      state.activeIndex = Math.max(0, Math.min(index, max));
+
+      const topic = state.topics[state.activeIndex];
+      const filtered = getFilteredQuestions(topic);
+
+      topicSelect.value = String(state.activeIndex);
+      sectionTitle.textContent = topic.title;
+      sectionSub.textContent = `${filtered.length} shown / ${topic.questions.length} total. Tap a problem to open AoPS in a new tab.`;
+      topicCount.textContent = `Topic ${state.activeIndex + 1} of ${state.topics.length}`;
+
+      [...chips.children].forEach((chip, chipIndex) => {
+        chip.classList.toggle("active", chipIndex === state.activeIndex);
+        if (chipIndex === state.activeIndex && options.scrollChip !== false) {
+          chip.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+        }
+      });
+
+      const list = document.createElement("ol");
+      list.className = "questions";
+
+      if (filtered.length === 0) {
+        questionScroll.innerHTML = `
+          <div class="status">
+            <div>
+              <strong>No matching questions in this topic.</strong><br>
+              Clear the search box or try a year like <code>2018</code>.
+            </div>
+          </div>
+        `;
+      } else {
+        filtered.forEach((question, visibleIndex) => {
+          const originalIndex = topic.questions.indexOf(question) + 1;
+          const li = document.createElement("li");
+          li.className = "question";
+
+          const a = document.createElement("a");
+          a.href = question.href;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+
+          const num = document.createElement("span");
+          num.className = "num";
+          num.textContent = originalIndex;
+
+          const title = document.createElement("span");
+          title.className = "qtitle";
+          title.textContent = question.text;
+
+          const arrow = document.createElement("span");
+          arrow.className = "arrow";
+          arrow.textContent = "›";
+
+          a.append(num, title, arrow);
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+
+        questionScroll.innerHTML = "";
+        questionScroll.appendChild(list);
+      }
+
+      if (options.keepScroll) {
+        questionScroll.scrollTop = state.scrollPositions.get(topic.id) || 0;
+      } else {
+        questionScroll.scrollTop = 0;
+      }
+
+      if (history.replaceState) {
+        history.replaceState(null, "", `#${topic.id}`);
+      }
+    }
+
+    function showError(error) {
+      sectionTitle.textContent = "Could not load the source page";
+      sectionSub.textContent = "The mobile browser file is ready, but it needs access to the original list.";
+      topicCount.textContent = "Load failed";
+      questionScroll.innerHTML = `
+        <div class="status">
+          <div>
+            <strong>How to use this file:</strong><br><br>
+            Upload this file into the same <code>/test/</code> folder as
+            <code>amc8_aops_topic_sets.html</code>, then open it from GitHub Pages.
+            <br><br>
+            Error detail: <code>${String(error.message || error).replace(/[<>&]/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]))}</code>
+          </div>
+        </div>
+      `;
+    }
+
+    $("prevTopic").addEventListener("click", () => showTopic(state.activeIndex - 1));
+    $("nextTopic").addEventListener("click", () => showTopic(state.activeIndex + 1));
+    $("topButton").addEventListener("click", () => {
+      questionScroll.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    topicSelect.addEventListener("change", () => showTopic(Number(topicSelect.value)));
+    searchBox.addEventListener("input", () => {
+      state.filter = searchBox.value;
+      showTopic(state.activeIndex, { scrollChip: false });
+    });
+
+    questionScroll.addEventListener("scroll", () => {
+      const topic = state.topics[state.activeIndex];
+      if (topic) state.scrollPositions.set(topic.id, questionScroll.scrollTop);
+    }, { passive: true });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") showTopic(state.activeIndex - 1);
+      if (event.key === "ArrowRight") showTopic(state.activeIndex + 1);
+    });
+
+    (async function init() {
+      try {
+        const { html, url } = await fetchOriginalPage();
+        const topics = extractTopics(html, url);
+
+        if (!topics.length) {
+          throw new Error("No topic sections with problem links were found.");
+        }
+
+        state.topics = topics;
+        renderControls();
+
+        const hash = decodeURIComponent(location.hash.replace(/^#/, ""));
+        const startIndex = Math.max(0, topics.findIndex((topic) => topic.id === hash));
+        showTopic(startIndex, { keepScroll: true, scrollChip: false });
+      } catch (error) {
+        showError(error);
+      }
+    })();
+  </script>
+</body>
+</html>
