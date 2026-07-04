@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>54岁中等强度训练计划｜CDC 成人运动指南</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --blue: #2563eb;
+      --blue-soft: #e8f0ff;
+      --green: #15803d;
+      --green-soft: #e9f8ef;
+      --orange: #c2410c;
+      --orange-soft: #fff1e8;
+      --purple: #7c3aed;
+      --purple-soft: #f2eaff;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      background: radial-gradient(circle at top left, #e0ecff 0, rgba(224,236,255,0) 32rem), var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 32px 18px 64px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 52%, #0f766e);
+      color: #fff;
+      border-radius: 30px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      right: -90px;
+      top: -100px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.25);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 5vw, 50px);
+      line-height: 1.12;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0 0 22px;
+      color: rgba(255,255,255,0.88);
+      font-size: 18px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: #fff;
+      color: #0f172a;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(15,23,42,0.18);
+      font-size: 15px;
+    }
+
+    .button.secondary {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.28);
+      box-shadow: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 25px;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin: 18px 0 8px;
+      font-size: 19px;
+    }
+
+    .metric {
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric strong {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .metric small, .muted { color: var(--muted); }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--blue-soft);
+      color: #1d4ed8;
+    }
+
+    .pill.green { background: var(--green-soft); color: var(--green); }
+    .pill.orange { background: var(--orange-soft); color: var(--orange); }
+    .pill.purple { background: var(--purple-soft); color: var(--purple); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 4px;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+    }
+
+    th, td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-size: 14px;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .person-card {
+      border-left: 7px solid var(--blue);
+    }
+
+    .person-card.run {
+      border-left-color: var(--orange);
+    }
+
+    .week-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .week-list li {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .day {
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    label.check {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      background: #fbfdff;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--blue);
+    }
+
+    .notice {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid #fed7aa;
+      background: #fff7ed;
+      color: #7c2d12;
+    }
+
+    .source-box {
+      background: #eef6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .source-box a {
+      font-weight: 800;
+    }
+
+    .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+
+    .progress {
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e2e8f0;
+      margin-top: 12px;
+    }
+
+    .progress > div {
+      height: 100%;
+      width: 64%;
+      background: linear-gradient(90deg, #22c55e, #2563eb);
+    }
+
+    .footer {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .span-4, .span-6, .span-8 { grid-column: span 12; }
+      .hero { padding: 25px; border-radius: 24px; }
+      .check-grid { grid-template-columns: 1fr; }
+      table { font-size: 14px; }
+      th, td { padding: 10px 9px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; max-width: none; }
+      .hero, .card { box-shadow: none; }
+      .actions, .footer { display: none; }
+      .card, .hero { break-inside: avoid; }
+      a { color: #000; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="badge">🏃‍♀️ 适合 54 岁成人 · 中等强度 · 两人训练版</div>
+      <h1>54岁中等强度训练计划</h1>
+      <p>基于 CDC 成人运动建议：每周累计至少 150 分钟中等强度有氧运动，并且每周至少 2 天肌肉强化训练。以下计划分别适合“游泳 + 肌肉训练”和“跑步/快走 + 肌肉训练”。</p>
+      <div class="actions">
+        <a class="button" href="https://www.cdc.gov/physical-activity-basics/guidelines/adults.html" target="_blank" rel="noopener">打开 CDC 成人运动指南 ↗</a>
+        <button class="button secondary" onclick="window.print()">打印 / 保存 PDF</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card span-4 metric">
+        <h2>核心目标</h2>
+        <strong>150 分钟/周</strong>
+        <span>中等强度有氧运动</span>
+        <small>可分成每天 30 分钟、每周 5 天。也可以分成更短时间段累计完成。</small>
+        <div class="pill-row">
+          <span class="pill">有氧 ≥150 分钟</span>
+          <span class="pill green">力量 ≥2 天</span>
+          <span class="pill purple">主要肌群都要练</span>
+        </div>
+      </article>
+
+      <article class="card span-4 metric">
+        <h2>心率参考</h2>
+        <strong>106 次/分</strong>
+        <span>约为估算最大心率的 64%</span>
+        <div class="formula">估算最大心率 = 220 − 54 = 166<br>106 ÷ 166 ≈ 64%</div>
+        <div class="progress"><div></div></div>
+        <small>如果这是运动中的心率，通常接近中等强度下限；如果这是静息心率，应先咨询医生。</small>
+      </article>
+
+      <article class="card span-4">
+        <h2>中等强度判断</h2>
+        <p><strong>说话测试：</strong>运动时可以说话，但不能轻松唱歌，通常就是中等强度。</p>
+        <p><strong>身体感觉：</strong>呼吸加快、微微出汗，但不应胸痛、头晕、异常气短或心跳不规则。</p>
+        <div class="notice">注意：54 岁开始或恢复训练时，前 2 周以“容易坚持、不受伤”为目标，不追求速度和强度。</div>
+      </article>
+
+      <article class="card span-12 source-box">
+        <h2>CDC 来源</h2>
+        <p>本计划参考 CDC 成人运动指南：成年人每周需要至少 150 分钟中等强度身体活动，并且每周至少 2 天肌肉强化活动，训练腿、髋、背、腹、胸、肩、手臂等主要肌群。</p>
+        <p>原文链接：<a href="https://www.cdc.gov/physical-activity-basics/guidelines/adults.html" target="_blank" rel="noopener">https://www.cdc.gov/physical-activity-basics/guidelines/adults.html</a></p>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card span-6 person-card">
+        <h2>Person 1：游泳 + 肌肉训练</h2>
+        <p class="muted">适合喜欢低冲击运动、关节负担较小的人。游泳时以轻松连续游为主，不做冲刺。</p>
+        <ul class="week-list">
+          <li><span class="day">周一</span><span>轻松游泳 30 分钟：自由泳、蛙泳或水中走路，保持均匀呼吸。</span></li>
+          <li><span class="day">周二</span><span>力量训练 A 25 分钟：下肢、胸肩手臂、背部、核心。</span></li>
+          <li><span class="day">周三</span><span>游泳 30 分钟：游 2–4 分钟，休息 30–60 秒，循环完成。</span></li>
+          <li><span class="day">周四</span><span>休息或轻松散步 15–20 分钟。</span></li>
+          <li><span class="day">周五</span><span>游泳 30 分钟：保持中等强度，可以说话但不能唱歌。</span></li>
+          <li><span class="day">周六</span><span>力量训练 B 20–25 分钟，可加轻松游泳 15–20 分钟。</span></li>
+          <li><span class="day">周日</span><span>游泳 30 分钟或完全休息，根据疲劳程度调整。</span></li>
+        </ul>
+
+        <h3>力量训练 A</h3>
+        <table>
+          <thead><tr><th>动作</th><th>次数</th><th>主要训练部位</th></tr></thead>
+          <tbody>
+            <tr><td>椅子坐站</td><td>2 组 × 8–12 次</td><td>腿、髋</td></tr>
+            <tr><td>墙壁俯卧撑</td><td>2 组 × 8–12 次</td><td>胸、肩、手臂</td></tr>
+            <tr><td>弹力带划船</td><td>2 组 × 8–12 次</td><td>背部</td></tr>
+            <tr><td>站姿提踵</td><td>2 组 × 10–15 次</td><td>小腿</td></tr>
+            <tr><td>死虫式或腹部收紧</td><td>2 组 × 8–10 次</td><td>腹部核心</td></tr>
+          </tbody>
+        </table>
+
+        <h3>力量训练 B</h3>
+        <table>
+          <thead><tr><th>动作</th><th>次数</th><th>主要训练部位</th></tr></thead>
+          <tbody>
+            <tr><td>台阶上步</td><td>2 组 × 8–10 次/侧</td><td>腿、髋</td></tr>
+            <tr><td>轻哑铃或弹力带肩推</td><td>2 组 × 8–12 次</td><td>肩、手臂</td></tr>
+            <tr><td>臀桥</td><td>2 组 × 10–12 次</td><td>臀部、下背</td></tr>
+            <tr><td>鸟狗式</td><td>2 组 × 8–10 次/侧</td><td>背、核心</td></tr>
+            <tr><td>侧向抬腿</td><td>2 组 × 10 次/侧</td><td>髋部稳定</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card span-6 person-card run">
+        <h2>Person 2：跑步/快走 + 肌肉训练</h2>
+        <p class="muted">跑步容易进入较高强度。为了保持中等强度，建议采用“快走 + 慢跑间歇”。</p>
+        <ul class="week-list">
+          <li><span class="day">周一</span><span>快走 5 分钟热身，然后慢跑/快走交替，总计 30 分钟。</span></li>
+          <li><span class="day">周二</span><span>力量训练 A 25 分钟：动作慢、稳定，不做到力竭。</span></li>
+          <li><span class="day">周三</span><span>快走 + 慢跑间歇 30 分钟，保持能说完整句子。</span></li>
+          <li><span class="day">周四</span><span>休息或轻松散步 15–20 分钟。</span></li>
+          <li><span class="day">周五</span><span>慢跑/快走 30 分钟，心率过高时立刻改成快走。</span></li>
+          <li><span class="day">周六</span><span>力量训练 B 25 分钟。</span></li>
+          <li><span class="day">周日</span><span>快走 + 慢跑 30 分钟，或根据疲劳改为散步。</span></li>
+        </ul>
+
+        <h3>跑步间歇安排</h3>
+        <table>
+          <thead><tr><th>阶段</th><th>第 1–2 周</th><th>第 3–4 周</th></tr></thead>
+          <tbody>
+            <tr><td>热身</td><td>快走 5 分钟</td><td>快走 5 分钟</td></tr>
+            <tr><td>主训练</td><td>慢跑 1 分钟 + 快走 2 分钟，重复 8 次</td><td>慢跑 2 分钟 + 快走 2 分钟，重复 6 次</td></tr>
+            <tr><td>放松</td><td>慢走 5 分钟</td><td>慢走 5 分钟</td></tr>
+          </tbody>
+        </table>
+
+        <h3>力量训练 A</h3>
+        <table>
+          <thead><tr><th>动作</th><th>次数</th><th>主要训练部位</th></tr></thead>
+          <tbody>
+            <tr><td>深蹲到椅子</td><td>2 组 × 8–12 次</td><td>腿、髋</td></tr>
+            <tr><td>墙壁或桌边俯卧撑</td><td>2 组 × 8–12 次</td><td>胸、肩、手臂</td></tr>
+            <tr><td>弹力带划船</td><td>2 组 × 8–12 次</td><td>背部</td></tr>
+            <tr><td>平板支撑</td><td>2 组 × 10–20 秒</td><td>核心</td></tr>
+            <tr><td>提踵</td><td>2 组 × 10–15 次</td><td>小腿</td></tr>
+          </tbody>
+        </table>
+
+        <h3>力量训练 B</h3>
+        <table>
+          <thead><tr><th>动作</th><th>次数</th><th>主要训练部位</th></tr></thead>
+          <tbody>
+            <tr><td>扶墙后撤步</td><td>2 组 × 8–10 次/侧</td><td>腿、髋</td></tr>
+            <tr><td>臀桥</td><td>2 组 × 10–12 次</td><td>臀部、下背</td></tr>
+            <tr><td>水瓶或轻哑铃肩推</td><td>2 组 × 8–12 次</td><td>肩、手臂</td></tr>
+            <tr><td>鸟狗式</td><td>2 组 × 8–10 次/侧</td><td>背、核心</td></tr>
+            <tr><td>侧平板</td><td>2 组 × 10–15 秒/侧</td><td>核心</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card span-8">
+        <h2>每次训练流程</h2>
+        <table>
+          <thead><tr><th>步骤</th><th>时间</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>热身</td><td>5 分钟</td><td>轻松走路、肩颈活动、髋膝踝活动，让心率慢慢上升。</td></tr>
+            <tr><td>主训练</td><td>20–30 分钟</td><td>保持中等强度：可以说话，但不能唱歌。</td></tr>
+            <tr><td>放松</td><td>5 分钟</td><td>慢走或慢游，直到呼吸明显恢复。</td></tr>
+            <tr><td>拉伸</td><td>3–5 分钟</td><td>轻柔拉伸小腿、大腿前后侧、胸肩、背部；不要弹震。</td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card span-4">
+        <h2>安全停止信号</h2>
+        <p>如果出现以下情况，应停止运动并寻求医疗建议：</p>
+        <ul>
+          <li>胸痛、胸闷或明显压迫感</li>
+          <li>头晕、快要晕倒</li>
+          <li>异常气短，无法说话</li>
+          <li>心跳明显不规则</li>
+          <li>运动后很久不能恢复</li>
+        </ul>
+      </article>
+
+      <article class="card span-12">
+        <h2>一周打卡表</h2>
+        <p class="muted">可以直接在浏览器中勾选；打印时也可作为纸质打卡表。</p>
+        <div class="check-grid">
+          <label class="check"><input type="checkbox"><span>Person 1 周一：游泳 30 分钟</span></label>
+          <label class="check"><input type="checkbox"><span>Person 2 周一：快走/慢跑 30 分钟</span></label>
+          <label class="check"><input type="checkbox"><span>Person 1 周二：力量训练 A</span></label>
+          <label class="check"><input type="checkbox"><span>Person 2 周二：力量训练 A</span></label>
+          <label class="check"><input type="checkbox"><span>Person 1 周三：游泳 30 分钟</span></label>
+          <label class="check"><input type="checkbox"><span>Person 2 周三：快走/慢跑 30 分钟</span></label>
+          <label class="check"><input type="checkbox"><span>周四：休息或轻松散步</span></label>
+          <label class="check"><input type="checkbox"><span>周五：有氧 30 分钟</span></label>
+          <label class="check"><input type="checkbox"><span>Person 1 周六：力量 B，可加轻松游泳</span></label>
+          <label class="check"><input type="checkbox"><span>Person 2 周六：力量训练 B</span></label>
+          <label class="check"><input type="checkbox"><span>周日：有氧 30 分钟或恢复休息</span></label>
+          <label class="check"><input type="checkbox"><span>本周完成：有氧约 150 分钟 + 力量训练 2 天</span></label>
+        </div>
+      </article>
+    </section>
+
+    <p class="footer">本页面为一般健康训练计划，不替代医生或物理治疗师建议。若有心血管疾病、长期用药、近期不适或静息心率偏高，请先咨询专业人员。</p>
+  </main>
+</body>
+</html>
