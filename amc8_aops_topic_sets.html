@@ -1160,6 +1160,56 @@ const topicColors = [
   "#be123c"
 ];
 const lastOpenedQuestionKey = "amc8LastOpenedQuestionUrl";
+const filterSettingsKey = "amc8FilterSettings";
+
+function getStoredFilterSettings() {
+  try {
+    const raw = window.localStorage.getItem(filterSettingsKey);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+
+    return {
+      pageFilter: typeof parsed.pageFilter === "string" ? parsed.pageFilter : "all",
+      topicFilters: parsed.topicFilters && typeof parsed.topicFilters === "object" ? parsed.topicFilters : {}
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
+function storeFilterSettings(settings) {
+  try {
+    window.localStorage.setItem(filterSettingsKey, JSON.stringify(settings));
+  } catch (error) {
+    return;
+  }
+}
+
+function syncPageButtons(value) {
+  document.querySelectorAll("[data-page-filter]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.pageFilter === value);
+  });
+}
+
+function getActiveTopicFilters() {
+  const topicFilters = {};
+  document.querySelectorAll("[data-topic-section]").forEach((section) => {
+    const topic = section.dataset.topic;
+    const active = section.querySelector("[data-filter].active");
+    if (topic && active) topicFilters[topic] = active.dataset.filter || "all";
+  });
+  return topicFilters;
+}
+
+function storePageFilter(value) {
+  storeFilterSettings({ pageFilter: value, topicFilters: {} });
+}
+
+function storeTopicFilters() {
+  storeFilterSettings({ pageFilter: "all", topicFilters: getActiveTopicFilters() });
+}
 
 function getStoredLastOpenedQuestion() {
   try {
@@ -1221,7 +1271,7 @@ function getTopicDistribution(value) {
     .map((section) => {
       const topic = section.dataset.topic || "Untitled topic";
       const count = Array.from(section.querySelectorAll("[data-contest]"))
-        .filter((item) => value === "all" || item.dataset.contest === value)
+        .filter((item) => value ? value === "all" || item.dataset.contest === value : !item.classList.contains("hidden"))
         .length;
       return { topic, count };
     })
@@ -1307,7 +1357,30 @@ function applyPageFilter(value) {
     applyContestFilter(section, value);
     syncSectionButtons(section, value);
   });
-  renderTopicPie(value);
+  syncPageButtons(value);
+  renderTopicPie();
+}
+
+function restoreFilterSettings() {
+  const settings = getStoredFilterSettings();
+  if (!settings) {
+    applyPageFilter("all");
+    return;
+  }
+
+  const topicFilters = settings.topicFilters || {};
+  if (Object.keys(topicFilters).length === 0) {
+    applyPageFilter(settings.pageFilter || "all");
+    return;
+  }
+
+  document.querySelectorAll("[data-topic-section]").forEach((section) => {
+    const value = topicFilters[section.dataset.topic] || settings.pageFilter || "all";
+    applyContestFilter(section, value);
+    syncSectionButtons(section, value);
+  });
+  syncPageButtons(settings.pageFilter || "all");
+  renderTopicPie();
 }
 
 document.querySelectorAll("[data-topic-section]").forEach((section) => {
@@ -1317,22 +1390,21 @@ document.querySelectorAll("[data-topic-section]").forEach((section) => {
       section.querySelectorAll("[data-filter]").forEach((b) => b.classList.remove("active"));
       button.classList.add("active");
       applyContestFilter(section, button.dataset.filter);
-      document.querySelectorAll("[data-page-filter]").forEach((b) => b.classList.remove("active"));
-      const allButton = document.querySelector('[data-page-filter="all"]');
-      if (allButton) allButton.classList.add("active");
+      syncPageButtons("all");
+      renderTopicPie();
+      storeTopicFilters();
     });
   });
 });
 
 document.querySelectorAll("[data-page-filter]").forEach((button) => {
   button.addEventListener("click", () => {
-    document.querySelectorAll("[data-page-filter]").forEach((b) => b.classList.remove("active"));
-    button.classList.add("active");
     applyPageFilter(button.dataset.pageFilter);
+    storePageFilter(button.dataset.pageFilter);
   });
 });
 
-renderTopicPie("all");
+restoreFilterSettings();
 markLastOpenedQuestion();
 window.addEventListener("pageshow", markLastOpenedQuestion);
 </script></body></html>
