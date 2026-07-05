@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>髋关节骨质增生疼痛时如何安全锻炼</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --green: #047857;
+      --green-soft: #d1fae5;
+      --orange: #b45309;
+      --orange-soft: #fef3c7;
+      --red: #b91c1c;
+      --red-soft: #fee2e2;
+      --border: #e5e7eb;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.75;
+      background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 280px);
+      color: var(--ink);
+    }
+
+    header {
+      padding: 48px 20px 28px;
+      text-align: center;
+    }
+
+    header .label {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 auto 14px;
+      max-width: 900px;
+      font-size: clamp(28px, 5vw, 44px);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    main {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto 64px;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(246, 247, 251, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 10px;
+      margin: 0 auto 22px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    nav a {
+      white-space: nowrap;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 9px 13px;
+      border-radius: 12px;
+    }
+
+    nav a:hover { background: var(--accent-soft); color: var(--accent); }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: clamp(20px, 4vw, 34px);
+      margin: 18px 0;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+
+    p { margin: 0 0 14px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: #fbfdff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .span-12 { grid-column: span 12; }
+
+    .callout {
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin: 16px 0;
+      border: 1px solid transparent;
+    }
+
+    .blue { background: var(--accent-soft); border-color: #bfdbfe; }
+    .green { background: var(--green-soft); border-color: #a7f3d0; }
+    .orange { background: var(--orange-soft); border-color: #fde68a; }
+    .red { background: var(--red-soft); border-color: #fecaca; }
+
+    .pill {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      margin-bottom: 8px;
+    }
+
+    ul, ol { margin: 8px 0 0; padding-left: 1.25em; }
+    li { margin: 6px 0; }
+
+    .pain-scale {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+      margin: 14px 0 6px;
+    }
+
+    .pain-scale span {
+      text-align: center;
+      padding: 8px 0;
+      border-radius: 10px;
+      font-weight: 800;
+      background: #f3f4f6;
+      font-size: 13px;
+    }
+
+    .pain-scale span.ok { background: #dcfce7; color: #166534; }
+    .pain-scale span.warn { background: #fef3c7; color: #92400e; }
+    .pain-scale span.stop { background: #fee2e2; color: #991b1b; }
+
+    .exercise {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 210px;
+    }
+
+    .exercise .dose {
+      margin-top: auto;
+      background: #f3f4f6;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      font-size: 15px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th { background: #f3f4f6; }
+
+    .checklist label {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .checklist label:last-child { border-bottom: none; }
+    input[type="checkbox"] { transform: translateY(6px) scale(1.15); }
+
+    a { color: var(--accent); }
+
+    .sources li { word-break: break-word; }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 780px) {
+      .span-4, .span-6 { grid-column: span 12; }
+      nav { border-radius: 14px; }
+      section { border-radius: 20px; }
+      .pain-scale { grid-template-columns: repeat(5, 1fr); }
+      table { font-size: 14px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      nav { display: none; }
+      section { box-shadow: none; break-inside: avoid; }
+      a::after { content: " (" attr(href) ")"; font-size: 11px; color: #555; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="label">髋关节骨质增生 / 走路疼痛 / 防肌肉退化</div>
+    <h1>髋关节疼痛时，如何安全锻炼？</h1>
+    <p class="subtitle">核心原则：不要完全不动，也不要硬走。先减痛，再恢复活动，最后用低冲击运动和髋周力量训练防止肌肉退化。</p>
+  </header>
+
+  <main>
+    <nav aria-label="页面导航">
+      <a href="#principles">安全原则</a>
+      <a href="#walking">走路怎么安排</a>
+      <a href="#low-impact">低冲击运动</a>
+      <a href="#strength">力量动作</a>
+      <a href="#weekly">一周安排</a>
+      <a href="#medical">何时就医</a>
+      <a href="#sources">参考链接</a>
+    </nav>
+
+    <section id="principles">
+      <h2>1. 先明确目标：减痛 + 保肌肉</h2>
+      <p>髋关节骨质增生、走多就痛时，最怕的是因为害怕疼痛而完全不动，导致臀肌、大腿肌肉越来越弱；但也不能硬撑长距离走路，因为疼痛加重会让活动更少。</p>
+      <div class="callout blue">
+        <strong>推荐策略：</strong>减少负重走路量，用游泳、水中运动、固定自行车等低冲击运动维持心肺，再配合臀肌和大腿肌肉训练。
+      </div>
+      <p>运动中可以有轻微酸痛，但不应该出现明显刺痛、跛行，或第二天疼痛明显增加。</p>
+      <div class="pain-scale" aria-label="疼痛评分">
+        <span class="ok">1</span><span class="ok">2</span><span class="ok">3</span>
+        <span class="warn">4</span><span class="warn">5</span><span class="warn">6</span>
+        <span class="stop">7</span><span class="stop">8</span><span class="stop">9</span><span class="stop">10</span>
+      </div>
+      <p><strong>简单判断：</strong>0–3 分通常可以继续；4–6 分要减量或停止；7 分以上、明显跛行、第二天更痛，应停止并评估。</p>
+    </section>
+
+    <section id="walking">
+      <h2>2. 走路：改成“分段走”，不要追求步数</h2>
+      <div class="grid">
+        <div class="card span-6">
+          <span class="pill">第一周</span>
+          <h3>目标：不加重疼痛</h3>
+          <p>每次走 <strong>3–5 分钟</strong>，一天 <strong>3–6 次</strong>。走到疼痛达到 3–4 分就停，不要走到明显跛行。</p>
+        </div>
+        <div class="card span-6">
+          <span class="pill">逐渐增加</span>
+          <h3>第二天不更痛，再加量</h3>
+          <p>如果第二天没有更痛，每次增加 <strong>1–2 分钟</strong>。宁可一天多次短走，也不要一次走很久。</p>
+        </div>
+      </div>
+      <div class="callout orange">
+        <strong>暂时避免：</strong>长距离快走、爬山、很多楼梯、跑步、负重深蹲、深弓步。这些动作会增加髋关节压力。
+      </div>
+    </section>
+
+    <section id="low-impact">
+      <h2>3. 用“不太压髋”的运动防止退化</h2>
+      <div class="grid">
+        <div class="card span-4">
+          <span class="pill">最推荐</span>
+          <h3>游泳 / 水中走路</h3>
+          <p>水的浮力可以减少髋关节承重，同时练心肺和肌肉。可以从 10 分钟开始。</p>
+        </div>
+        <div class="card span-4">
+          <span class="pill">推荐</span>
+          <h3>固定自行车</h3>
+          <p>阻力调低，座位略高，避免髋关节弯曲太深。先 5–10 分钟，逐渐到 15–20 分钟。</p>
+        </div>
+        <div class="card span-4">
+          <span class="pill">可选</span>
+          <h3>椭圆机 / 轻柔活动</h3>
+          <p>如果使用椭圆机不痛，可以少量尝试；若髋部疼痛加重，应立即停止。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="strength">
+      <h2>4. 每天 10–15 分钟：髋周力量训练</h2>
+      <p>从下面选择 4 个动作，每天或隔天做。动作要慢、幅度小、不要憋气。疼痛超过 3–4 分就减量。</p>
+      <div class="grid">
+        <article class="card span-4 exercise">
+          <h3>A. 坐站训练</h3>
+          <p>坐在椅子上，双脚踩地，慢慢站起来，再慢慢坐下。可以用手扶椅子，或把椅子垫高。</p>
+          <div class="dose">5–8 次 × 1–2 组</div>
+        </article>
+        <article class="card span-4 exercise">
+          <h3>B. 臀桥</h3>
+          <p>仰卧屈膝，脚踩床或地面，慢慢把臀部抬起一点，不需要抬很高。髋前方痛就降低高度。</p>
+          <div class="dose">6–10 次 × 1–2 组</div>
+        </article>
+        <article class="card span-4 exercise">
+          <h3>C. 侧卧蚌式</h3>
+          <p>侧卧，双膝微弯，脚跟并拢，上侧膝盖轻轻打开，再放下。主要练臀中肌，帮助走路稳定。</p>
+          <div class="dose">8–10 次 × 1–2 组</div>
+        </article>
+        <article class="card span-4 exercise">
+          <h3>D. 站姿后抬腿</h3>
+          <p>扶桌子站立，患侧腿慢慢向后抬一点，身体不要前倾，感受臀部用力。</p>
+          <div class="dose">8–10 次 × 1–2 组</div>
+        </article>
+        <article class="card span-4 exercise">
+          <h3>E. 站姿侧抬腿</h3>
+          <p>扶桌子，腿向侧面轻轻抬起，再慢慢放下。不要把脚尖外翻太多。</p>
+          <div class="dose">8–10 次 × 1–2 组</div>
+        </article>
+        <article class="card span-4 exercise">
+          <h3>F. 脚跟抬起</h3>
+          <p>扶桌子，双脚站稳，慢慢踮脚再放下。这个动作对小腿和站立稳定性有帮助。</p>
+          <div class="dose">8–12 次 × 1–2 组</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="weekly">
+      <h2>5. 一个安全的一周安排</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>内容</th>
+            <th>建议</th>
+            <th>注意</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>每天</td>
+            <td>热敷髋部 10–15 分钟 → 轻柔活动 → 4 个力量动作</td>
+            <td>如果运动后痛，可冰敷 10 分钟。</td>
+          </tr>
+          <tr>
+            <td>每周 3–5 次</td>
+            <td>游泳、水中走路或固定自行车 10–20 分钟</td>
+            <td>先从短时间开始，第二天不更痛再增加。</td>
+          </tr>
+          <tr>
+            <td>走路</td>
+            <td>每次 3–5 分钟，一天 3–6 次，逐渐加量</td>
+            <td>不要用步数硬逼自己；避免走到跛行。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout green">
+        <strong>记住一句话：</strong>用短时间、多次数、低冲击运动保持活动；用臀肌和大腿力量训练保护髋关节。
+      </div>
+
+      <div class="checklist">
+        <h3>今天完成了吗？</h3>
+        <label><input type="checkbox" /> 热敷 10–15 分钟</label>
+        <label><input type="checkbox" /> 走路 3–5 分钟，分段完成</label>
+        <label><input type="checkbox" /> 完成 4 个力量动作</label>
+        <label><input type="checkbox" /> 记录运动后疼痛是否增加</label>
+      </div>
+    </section>
+
+    <section id="medical">
+      <h2>6. 什么时候需要尽快看医生或物理治疗师？</h2>
+      <p>如果已经“走多一点就疼到不敢走”，建议找家庭医生、骨科医生或物理治疗师评估一次，确认疼痛主要来自髋关节骨关节炎/骨质增生，还是滑囊炎、肌腱问题、腰椎放射痛、股骨头问题等。</p>
+      <div class="callout red">
+        <strong>这些情况不要只靠锻炼：</strong>
+        <ul>
+          <li>突然不能负重或走路；</li>
+          <li>摔倒后髋部剧痛；</li>
+          <li>髋关节明显肿胀、发热，或伴随发烧；</li>
+          <li>夜间痛明显，或疼痛越来越重；</li>
+          <li>腿麻、无力、明显跛行；</li>
+          <li>如果长期使用激素，髋痛应让医生排除股骨头坏死等问题。</li>
+        </ul>
+      </div>
+      <p><strong>说明：</strong>本页面是一般锻炼建议，不能替代医生诊断。如果疼痛明显或病情复杂，应由专业人员根据影像和体检制定训练方案。</p>
+    </section>
+
+    <section id="sources">
+      <h2>参考链接</h2>
+      <ul class="sources">
+        <li><a href="https://orthoinfo.aaos.org/en/diseases--conditions/osteoarthritis-of-the-hip/" target="_blank" rel="noopener">AAOS OrthoInfo：Osteoarthritis of the Hip</a></li>
+        <li><a href="https://roh.nhs.uk/services-information/therapy/exercises-for-osteoarthritis-of-the-hip" target="_blank" rel="noopener">Royal Orthopaedic Hospital NHS：Exercises for Osteoarthritis of the Hip</a></li>
+        <li><a href="https://www.nhsinform.scot/illnesses-and-conditions/muscle-bone-and-joints/leg-and-foot-problems-and-conditions/exercises-for-osteoarthritis-of-the-hip" target="_blank" rel="noopener">NHS Inform：Exercises for Osteoarthritis of the Hip</a></li>
+        <li><a href="https://www.mayoclinic.org/diseases-conditions/arthritis/in-depth/arthritis/art-20047971" target="_blank" rel="noopener">Mayo Clinic：Exercise helps ease arthritis pain and stiffness</a></li>
+        <li><a href="https://www.mayoclinic.org/diseases-conditions/osteoarthritis/diagnosis-treatment/drc-20351930" target="_blank" rel="noopener">Mayo Clinic：Osteoarthritis diagnosis and treatment</a></li>
+        <li><a href="https://www.nhs.uk/symptoms/hip-pain/" target="_blank" rel="noopener">NHS：Hip pain</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    适合打印或保存到手机查看。运动时以“不加重第二天疼痛”为核心标准。
+  </footer>
+</body>
+</html>
