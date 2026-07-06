@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AMC 8 Topic-Balanced Exam Generator</title>
+  <style>
+    :root {
+      --bg: #fcfcfc;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #5b6472;
+      --line: #d9dee7;
+      --strong: #24292f;
+      --link: #075985;
+      --soft: #f3f5f8;
+      --warn: #7c2d12;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 32px auto;
+      max-width: 1120px;
+      padding: 0 20px 40px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    a { color: var(--link); }
+
+    .meta {
+      margin: 6px 0;
+      color: var(--muted);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 12px;
+      align-items: end;
+      margin: 20px 0 24px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    select,
+    input,
+    button {
+      min-height: 38px;
+      border: 1px solid #c6ccd6;
+      border-radius: 6px;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 7px 9px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    button {
+      padding: 7px 12px;
+      background: #fff;
+      color: var(--strong);
+      cursor: pointer;
+    }
+
+    button:hover { background: var(--soft); }
+
+    .primary {
+      border-color: var(--strong);
+      background: var(--strong);
+      color: #fff;
+    }
+
+    .primary:hover { background: #111827; }
+
+    .status {
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .result-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.8fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f8f9fb;
+    }
+
+    .panel-body { padding: 14px; }
+
+    .exam-list {
+      margin: 0;
+      padding-left: 28px;
+    }
+
+    .exam-list li {
+      margin: 8px 0;
+      padding-left: 4px;
+    }
+
+    .question-row {
+      display: grid;
+      gap: 2px;
+    }
+
+    .question-topic {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #e7eaf0;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #374151;
+      font-weight: 600;
+      background: #fafafa;
+    }
+
+    td.number,
+    th.number {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .topic-cell {
+      max-width: 260px;
+    }
+
+    .shortage {
+      color: var(--warn);
+      font-weight: 600;
+    }
+
+    .empty {
+      padding: 24px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    @media (max-width: 800px) {
+      body { margin-top: 20px; }
+      .controls,
+      .result-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>AMC 8 topic-balanced exam generator</h1>
+  <p class="meta">Generates a linked practice exam using the topic percentages from the categorized AoPS question sets.</p>
+  <p class="meta">Problem text remains on AoPS; this page selects and organizes links.</p>
+
+  <div class="top-actions">
+    <a href="amc8_aops_topic_sets.html">Back to topic sets</a>
+    <a href="https://artofproblemsolving.com/wiki/index.php?title=AMC_8_Problems_and_Solutions">AoPS source index</a>
+  </div>
+
+  <form class="controls" data-generator-form>
+    <label>
+      Problem source
+      <select data-contest>
+        <option value="AMC 8" selected>AMC 8 only</option>
+        <option value="all">AMC 8 + AJHSME</option>
+        <option value="AJHSME">AJHSME only</option>
+      </select>
+    </label>
+    <label>
+      Exam size
+      <input data-size type="number" min="1" max="50" step="1" value="25">
+    </label>
+    <button class="primary" type="submit">Generate exam</button>
+    <button type="button" data-copy>Copy links</button>
+  </form>
+
+  <p class="status" data-status></p>
+
+  <main class="result-layout" data-results hidden>
+    <section class="panel">
+      <div class="panel-header">
+        <h2 data-exam-title>Generated exam</h2>
+        <button type="button" data-regenerate>Regenerate</button>
+      </div>
+      <div class="panel-body">
+        <ol class="exam-list" data-question-list></ol>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Topic match</h2>
+      </div>
+      <div class="panel-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th class="number">Target</th>
+              <th class="number">Actual</th>
+              <th class="number">Share</th>
+            </tr>
+          </thead>
+          <tbody data-summary></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="empty" data-empty>
+    Choose a source and click Generate exam.
+  </div>
+
+  <script src="amc8_exam_generator_core.js"></script>
+  <script src="amc8_exam_generator_data.js"></script>
+  <script>
+    const form = document.querySelector("[data-generator-form]");
+    const contestInput = document.querySelector("[data-contest]");
+    const sizeInput = document.querySelector("[data-size]");
+    const statusNode = document.querySelector("[data-status]");
+    const resultsNode = document.querySelector("[data-results]");
+    const emptyNode = document.querySelector("[data-empty]");
+    const titleNode = document.querySelector("[data-exam-title]");
+    const questionList = document.querySelector("[data-question-list]");
+    const summaryBody = document.querySelector("[data-summary]");
+    const regenerateButton = document.querySelector("[data-regenerate]");
+    const copyButton = document.querySelector("[data-copy]");
+    const core = window.Amc8ExamGeneratorCore;
+    const problems = window.AMC8_EXAM_PROBLEMS || [];
+    let currentExam = null;
+
+    function sourceLabel(value) {
+      if (value === "all") return "AMC 8 + AJHSME";
+      return value;
+    }
+
+    function clearNode(node) {
+      while (node.firstChild) node.removeChild(node.firstChild);
+    }
+
+    function renderExam(exam, contest, size) {
+      currentExam = exam;
+      clearNode(questionList);
+      clearNode(summaryBody);
+
+      titleNode.textContent = `${exam.questions.length}-question exam`;
+      statusNode.textContent = `Source: ${sourceLabel(contest)}. Target size: ${size}. Available linked problems: ${exam.totalAvailable}.`;
+
+      exam.questions.forEach((problem) => {
+        const item = document.createElement("li");
+        const row = document.createElement("div");
+        const link = document.createElement("a");
+        const topic = document.createElement("span");
+
+        row.className = "question-row";
+        link.href = problem.url;
+        link.textContent = problem.title;
+        link.target = "_blank";
+        link.rel = "noopener";
+        topic.className = "question-topic";
+        topic.textContent = problem.topic;
+
+        row.append(link, topic);
+        item.append(row);
+        questionList.append(item);
+      });
+
+      exam.summary
+        .filter((row) => row.targetCount > 0 || row.actualCount > 0)
+        .sort((a, b) => b.targetCount - a.targetCount || b.actualCount - a.actualCount || a.topic.localeCompare(b.topic))
+        .forEach((row) => {
+          const tr = document.createElement("tr");
+          const topic = document.createElement("td");
+          const target = document.createElement("td");
+          const actual = document.createElement("td");
+          const share = document.createElement("td");
+
+          topic.className = "topic-cell";
+          target.className = "number";
+          actual.className = "number";
+          share.className = "number";
+
+          topic.textContent = row.topic;
+          target.textContent = row.targetCount;
+          actual.textContent = row.actualCount;
+          share.textContent = `${row.actualPercentage.toFixed(1)}%`;
+          if (row.actualCount !== row.targetCount) actual.classList.add("shortage");
+
+          tr.append(topic, target, actual, share);
+          summaryBody.append(tr);
+        });
+
+      resultsNode.hidden = false;
+      emptyNode.hidden = true;
+    }
+
+    function generateFromControls() {
+      const contest = contestInput.value;
+      const requestedSize = Math.max(1, Math.min(50, Number.parseInt(sizeInput.value, 10) || 25));
+      sizeInput.value = requestedSize;
+      const exam = core.generateExam(problems, {
+        contest,
+        size: requestedSize
+      });
+      renderExam(exam, contest, requestedSize);
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      generateFromControls();
+    });
+
+    regenerateButton.addEventListener("click", generateFromControls);
+
+    copyButton.addEventListener("click", async () => {
+      if (!currentExam) return;
+      const text = currentExam.questions
+        .map((problem) => `${problem.examNumber}. ${problem.title} - ${problem.url}`)
+        .join("\n");
+
+      try {
+        await navigator.clipboard.writeText(text);
+        statusNode.textContent = "Copied generated exam links to clipboard.";
+      } catch (error) {
+        statusNode.textContent = text;
+      }
+    });
+  </script>
+</body>
+</html>
