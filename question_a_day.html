@@ -369,8 +369,8 @@
   <iframe id="questionFrame" title="今日题目"></iframe>
 
   <div class="fallback" id="fallback">
-    如果题目没有显示，请点击
-    <a id="fallbackLink" href="#" target="_blank" rel="noopener">这里打开题目</a>。
+    <span id="fallbackText">如果题目没有显示，请点击</span>
+    <a id="fallbackLink" href="#" target="_blank" rel="noopener">这里打开题目</a><span id="fallbackSuffix">。</span>
   </div>
 
   <script>
@@ -541,7 +541,7 @@
     },
     {
         "title": "工程剩余75天分数问题",
-        "url": "https://cghuisunshine.github.io/Math_middle/work_project_fraction_remaining_75_days.html"
+        "url": ""
     },
     {
         "title": "半圆中 AP + 1/2 BP 的最大值",
@@ -711,7 +711,9 @@
     const info = document.getElementById("info");
     const todayTag = document.getElementById("todayTag");
     const fallback = document.getElementById("fallback");
+    const fallbackText = document.getElementById("fallbackText");
     const fallbackLink = document.getElementById("fallbackLink");
+    const fallbackSuffix = document.getElementById("fallbackSuffix");
 
     let currentIndex = 0;
     let loadTimer = null;
@@ -762,13 +764,21 @@
       const question = QUESTIONS[currentIndex];
       const todayIndex = getTodayQuestionIndex();
       const isToday = currentIndex === todayIndex;
+      const hasUrl = Boolean(question.url);
 
       document.title = "每日一题 - " + question.title;
       info.textContent = formatDate(new Date()) + " · 第 " + (currentIndex + 1) + " 题 · " + question.title;
       todayTag.textContent = isToday ? "今日题目" : "已选择题目";
       questionQuickSearch.value = "";
       questionSearch.value = "";
-      fallbackLink.href = question.url;
+      fallbackText.textContent = hasUrl ? "如果题目没有显示，请点击" : "这道题目前没有链接。";
+      fallbackLink.hidden = !hasUrl;
+      fallbackSuffix.textContent = hasUrl ? "。" : "";
+      if (hasUrl) {
+        fallbackLink.href = question.url;
+      } else {
+        fallbackLink.removeAttribute("href");
+      }
 
       Array.from(document.querySelectorAll(".question-btn")).forEach((btn, i) => {
         btn.classList.toggle("active", i === currentIndex);
@@ -777,16 +787,22 @@
 
       clearTimeout(loadTimer);
       fallback.classList.remove("show");
-      loadTimer = setTimeout(() => {
+      if (hasUrl) {
+        loadTimer = setTimeout(() => {
+          fallback.classList.add("show");
+        }, 2500);
+      } else {
         fallback.classList.add("show");
-      }, 2500);
+      }
 
       frame.onload = function () {
         clearTimeout(loadTimer);
-        fallback.classList.remove("show");
+        if (hasUrl) {
+          fallback.classList.remove("show");
+        }
       };
 
-      frame.src = question.url;
+      frame.src = hasUrl ? question.url : "about:blank";
 
       if (saveHash) {
         history.replaceState(null, "", "#q=" + (currentIndex + 1));
@@ -824,12 +840,13 @@
     }
 
     function getQuestionSearchText(question, index) {
-      const url = new URL(question.url);
-      const pathWords = url.pathname
-        .replace(/\.html$/i, "")
-        .split(/[\/_\-]+/)
-        .filter(Boolean)
-        .join(" ");
+      const pathWords = question.url
+        ? new URL(question.url).pathname
+          .replace(/\.html$/i, "")
+          .split(/[\/_\-]+/)
+          .filter(Boolean)
+          .join(" ")
+        : "";
       return normalizeSearchText(`${index + 1} ${question.title} ${pathWords} ${question.keywords || ""}`);
     }
 
