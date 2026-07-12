@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>北京 --:-- - 温哥华 --:--</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --beijing:#a33a16;
+      --beijing-soft:#fff2df;
+      --vancouver:#164a8a;
+      --vancouver-soft:#e8f2ff;
+      --text:#17324d;
+      --muted:#6c7a89;
+      --line:#d8e0e8;
+      --available:#20a464;
+      --available-soft:rgba(32,164,100,.28);
+      --shadow:0 18px 50px rgba(32,58,86,.14);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      background:radial-gradient(circle at top,#fff 0,#f4f7fb 45%,#eaf0f6 100%);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    .app{width:min(1320px,100%)}
+    h1{margin:0 0 18px;text-align:center;font-size:clamp(28px,4vw,52px);letter-spacing:.02em}
+    .panel{
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.8);
+      box-shadow:var(--shadow);
+      border-radius:28px;
+      padding:clamp(12px,2vw,24px);
+      backdrop-filter:blur(10px);
+    }
+    .clock-wrap{position:relative;width:min(92vw,960px);aspect-ratio:1;margin:0 auto}
+    .clock{
+      position:absolute;inset:0;border-radius:50%;
+      background:radial-gradient(circle at 50% 45%,#fff 0 38%,#f6f9fc 39% 44%,var(--vancouver-soft) 45% 63%,#fff 64% 67%,var(--beijing-soft) 68% 92%,#fff 93% 100%);
+      border:1px solid #dbe3eb;
+      box-shadow:inset 0 0 0 10px rgba(255,255,255,.65),0 10px 30px rgba(38,60,84,.12);
+      overflow:hidden;
+    }
+    .ring-label{position:absolute;left:50%;transform:translateX(-50%);font-weight:800;letter-spacing:.04em;white-space:nowrap;text-align:center}
+    .ring-label .ring-date{display:block;font-size:clamp(10px,1.25vw,14px);font-weight:700;letter-spacing:0;color:var(--muted);margin-bottom:2px;min-height:1.2em}
+    .ring-label .ring-city{display:block}
+    .ring-label.outer{top:1.6%;color:var(--beijing);font-size:clamp(14px,2vw,22px)}
+    .ring-label.inner{top:26.8%;color:var(--vancouver);font-size:clamp(13px,1.8vw,20px)}
+    .availability-ring{
+      position:absolute;inset:18.5%;border-radius:50%;z-index:1;pointer-events:none;
+      background:conic-gradient(from 0deg,transparent 0 75%,var(--available-soft) 75% 91.6667%,transparent 91.6667% 100%);
+      -webkit-mask:radial-gradient(circle,transparent 0 66%,#000 67% 83%,transparent 84% 100%);
+      mask:radial-gradient(circle,transparent 0 66%,#000 67% 83%,transparent 84% 100%);
+      filter:drop-shadow(0 0 5px rgba(32,164,100,.25));
+    }
+    .availability-label{
+      position:absolute;left:20.5%;top:70.5%;z-index:5;pointer-events:none;
+      color:#087746;background:rgba(235,255,245,.94);border:1px solid rgba(32,164,100,.35);
+      padding:6px 9px;border-radius:9px;font-size:clamp(9px,1.25vw,14px);font-weight:800;
+      box-shadow:0 4px 12px rgba(32,164,100,.14);
+    }
+    .hour{position:absolute;z-index:5;left:50%;top:50%;transform-origin:0 0;font-weight:700;line-height:1;text-align:center;white-space:nowrap}
+    .hour span{display:block;transform:translate(-50%,-50%);padding:6px 7px;border-radius:9px;transition:.18s ease;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+    .hour span:hover{transform:translate(-50%,-50%) scale(1.08);background:rgba(255,255,255,.78)}
+    .hour.selected span{color:#fff;transform:translate(-50%,-50%) scale(1.14);box-shadow:0 5px 14px rgba(22,50,77,.24)}
+    .hour.outer.selected span{background:var(--beijing)}
+    .hour.inner.selected span{background:var(--vancouver)}
+    .hour.outer{color:var(--beijing);font-size:clamp(12px,1.75vw,21px)}
+    .hour.inner{color:var(--vancouver);font-size:clamp(11px,1.6vw,20px)}
+    .tick{position:absolute;left:50%;top:50%;width:2px;background:#8395a7;transform-origin:50% 0;border-radius:2px;opacity:.7}
+    .tick.minor{height:7px;width:1px;opacity:.35}
+    .tick.major{height:13px}
+    .center{
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      width:38%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.95);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+      box-shadow:0 6px 18px rgba(52,74,96,.12);
+      padding:12px;
+      z-index:4;
+    }
+    .center .local{font-size:clamp(12px,1.7vw,18px);font-weight:800;color:var(--vancouver)}
+    .center .time{font-size:clamp(30px,6vw,64px);font-weight:900;letter-spacing:.02em;margin:4px 0}
+    .center .bj{font-size:clamp(14px,2vw,24px);font-weight:800;color:var(--beijing)}
+    .hand{position:absolute;left:50%;top:50%;height:3px;width:43%;transform-origin:0 50%;background:linear-gradient(90deg,#1e2c3a,#ff7a2f);border-radius:10px;z-index:7}
+    .selection-hand{position:absolute;left:50%;top:50%;height:5px;width:43%;transform-origin:0 50%;background:linear-gradient(90deg,#7b2cbf,#d946ef);border-radius:10px;z-index:2;display:none;box-shadow:0 0 0 2px rgba(255,255,255,.8),0 0 18px rgba(123,44,191,.35)}
+    .selection-hand::after{content:"";position:absolute;right:-7px;top:50%;transform:translateY(-50%);border-left:13px solid #d946ef;border-top:8px solid transparent;border-bottom:8px solid transparent}
+    .hand::after{content:"";position:absolute;right:-6px;top:50%;transform:translateY(-50%);border-left:12px solid #ff7a2f;border-top:7px solid transparent;border-bottom:7px solid transparent}
+    .hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#17324d;border:4px solid #fff;box-shadow:0 0 0 2px #17324d;z-index:8}
+    .badge{position:absolute;z-index:9;padding:8px 12px;border-radius:10px;font-weight:900;box-shadow:0 4px 12px rgba(0,0,0,.16);font-size:clamp(12px,1.6vw,18px)}
+    .badge.bj{background:var(--beijing);color:#fff}
+    .badge.van{background:var(--vancouver);color:#fff}
+    .note{text-align:center;margin-top:16px;color:var(--muted);line-height:1.7}
+    .note b{color:var(--text)}
+    @media (max-width:640px){body{padding:4px}.app{width:100%}.panel{padding:6px;border-radius:16px}.clock-wrap{width:min(98vw,960px)}.badge{padding:5px 7px}.ring-label.inner{top:28%}h1{margin-bottom:8px}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1 id="pageTitle">北京 --:-- - 温哥华 --:--</h1>
+    <section class="panel">
+      <div class="clock-wrap">
+        <div class="clock" id="clock">
+          <div class="ring-label outer"><span class="ring-date" id="bjDate"></span><span class="ring-city">北京</span></div>
+          <div class="ring-label inner"><span class="ring-date" id="vanDate"></span><span class="ring-city">温哥华</span></div>
+          <div class="availability-ring" aria-hidden="true"></div>
+          <div class="availability-label">较可能有空：18:00–22:00</div>
+          <div class="selection-hand" id="selectionHand"></div>
+          <div class="hand" id="hand"></div>
+          <div class="hub"></div>
+          <div class="badge bj" id="bjBadge"></div>
+          <div class="badge van" id="vanBadge"></div>
+          <div class="center">
+            <div class="local">温哥华</div>
+            <div class="time" id="vanTime">--:--</div>
+            <div class="bj" id="bjTime">--:--</div>
+          </div>
+        </div>
+      </div>
+      <div class="note" id="selectionInfo" hidden></div>
+    </section>
+  </main>
+<script>
+  const clock = document.getElementById('clock');
+  const hand = document.getElementById('hand');
+  const bjBadge = document.getElementById('bjBadge');
+  const vanBadge = document.getElementById('vanBadge');
+  const selectionHand = document.getElementById('selectionHand');
+  const selectionInfo = document.getElementById('selectionInfo');
+  const currentOffset = 15;
+  let selectedVanHour = null;
+
+  function getParts(date, timeZone){
+    const parts = new Intl.DateTimeFormat('en-CA',{
+      timeZone, hour12:false, year:'numeric', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', second:'2-digit', weekday:'short'
+    }).formatToParts(date);
+    return Object.fromEntries(parts.map(p=>[p.type,p.value]));
+  }
+
+  function polarPlace(el, angleDeg, radiusPct){
+    const a=(angleDeg-90)*Math.PI/180;
+    el.style.left=(50+Math.cos(a)*radiusPct)+'%';
+    el.style.top=(50+Math.sin(a)*radiusPct)+'%';
+    el.style.transform='translate(-50%,-50%)';
+    el.querySelector('span').style.transform='none';
+  }
+
+  function buildDial(){
+    for(let i=0;i<60;i++){
+      const tick=document.createElement('div');
+      tick.className='tick '+(i%5===0?'major':'minor');
+      const a=(i*6-90)*Math.PI/180;
+      const radius=i%5===0?46.2:46.8;
+      tick.style.left=(50+Math.cos(a)*radius)+'%';
+      tick.style.top=(50+Math.sin(a)*radius)+'%';
+      tick.style.transform=`translate(-50%,-50%) rotate(${i*6}deg)`;
+      clock.appendChild(tick);
+    }
+
+    for(let vanHour=0;vanHour<24;vanHour++){
+      const angle=(vanHour/24)*360;
+
+      const inner=document.createElement('div');
+      inner.className='hour inner';
+      inner.dataset.vanHour=vanHour;
+      inner.setAttribute('role','button');
+      inner.setAttribute('tabindex','0');
+      inner.setAttribute('aria-label',`温哥华 ${String(vanHour).padStart(2,'0')}:00`);
+      inner.innerHTML=`<span>${vanHour}</span>`;
+      polarPlace(inner,angle,30.5);
+      clock.appendChild(inner);
+
+      const outer=document.createElement('div');
+      outer.className='hour outer';
+      outer.dataset.vanHour=vanHour;
+      outer.setAttribute('role','button');
+      outer.setAttribute('tabindex','0');
+      outer.innerHTML='<span></span>';
+      polarPlace(outer,angle,42.2);
+      clock.appendChild(outer);
+    }
+  }
+
+  function positionBadge(el, angleDeg, radius){
+    const box=clock.getBoundingClientRect();
+    const r=box.width*radius;
+    const a=(angleDeg-90)*Math.PI/180;
+    const x=box.width/2+Math.cos(a)*r;
+    const y=box.height/2+Math.sin(a)*r;
+    el.style.left=x+'px';
+    el.style.top=y+'px';
+    el.style.transform='translate(-50%,-50%)';
+  }
+
+  function update(){
+    const now=new Date();
+    const van=getParts(now,'Etc/GMT+7');
+    const bj=getParts(now,'Asia/Shanghai');
+    const vanHour=+van.hour%24, vanMinute=+van.minute, vanSecond=+van.second;
+    const bjHour=+bj.hour%24;
+    const angle=((vanHour+vanMinute/60+vanSecond/3600)/24)*360;
+
+    hand.style.transform=`rotate(${angle-90}deg)`;
+    const liveTitle=`北京 ${String(bjHour).padStart(2,'0')}:${bj.minute} - 温哥华 ${String(vanHour).padStart(2,'0')}:${van.minute}`;
+    document.getElementById('pageTitle').textContent=liveTitle;
+    document.title=liveTitle;
+    document.getElementById('vanTime').textContent=`${String(vanHour).padStart(2,'0')}:${van.minute}`;
+    document.getElementById('bjTime').textContent=`${String(bjHour).padStart(2,'0')}:${bj.minute}`;
+    const vanDate=`${van.year}-${van.month}-${van.day}`;
+    const bjDate=`${bj.year}-${bj.month}-${bj.day}`;
+    document.getElementById('bjDate').textContent=bjDate;
+    document.getElementById('vanDate').textContent=vanDate===bjDate ? '' : vanDate;
+
+    const offset=currentOffset;
+
+    document.querySelectorAll('.hour.outer').forEach(el=>{
+      const vh=+el.dataset.vanHour;
+      const bh=(vh+offset+24)%24;
+      el.querySelector('span').textContent=String(bh);
+      el.setAttribute('aria-label',`北京 ${String(bh).padStart(2,'0')}:00，对应温哥华 ${String(vh).padStart(2,'0')}:00`);
+    });
+
+    bjBadge.textContent=`${String(bjHour).padStart(2,'0')}:${bj.minute}`;
+    vanBadge.textContent=`${String(vanHour).padStart(2,'0')}:${van.minute}`;
+    positionBadge(bjBadge,angle,0.46);
+    positionBadge(vanBadge,angle,0.31);
+    if(selectedVanHour!==null) renderSelection();
+  }
+
+  function renderSelection(){
+    document.querySelectorAll('.hour').forEach(el=>{
+      el.classList.toggle('selected', +el.dataset.vanHour===selectedVanHour);
+    });
+    if(selectedVanHour===null){
+      selectionHand.style.display='none';
+      selectionInfo.hidden=true;
+      selectionInfo.textContent='';
+      return;
+    }
+    const angle=(selectedVanHour/24)*360;
+    const bjHour=(selectedVanHour+currentOffset+24)%24;
+    selectionHand.style.display='block';
+    selectionHand.style.transform=`rotate(${angle-90}deg)`;
+    selectionInfo.hidden=false;
+    selectionInfo.innerHTML=`<b style="color:var(--vancouver)">温哥华 ${String(selectedVanHour).padStart(2,'0')}:00</b> ↔ <b style="color:var(--beijing)">北京 ${String(bjHour).padStart(2,'0')}:00</b>`;
+  }
+
+  function selectHour(vanHour){
+    selectedVanHour = selectedVanHour===vanHour ? null : vanHour;
+    renderSelection();
+  }
+
+
+  clock.addEventListener('click',e=>{
+    const hour=e.target.closest('.hour');
+    if(hour) selectHour(+hour.dataset.vanHour);
+  });
+  clock.addEventListener('keydown',e=>{
+    const hour=e.target.closest('.hour');
+    if(hour && (e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      selectHour(+hour.dataset.vanHour);
+    }
+  });
+
+  buildDial();
+  update();
+  setInterval(update,1000);
+  addEventListener('resize',update);
+</script>
+</body>
+</html>
