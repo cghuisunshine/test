@@ -6,11 +6,11 @@ Update `vancouver_beijing_dual_clock.html` so the Vancouver availability ring ma
 
 ## Design
 
-Use the Vancouver `weekday` value already returned by `getParts()` to determine whether the current Vancouver date is Saturday or Sunday. During each clock update, toggle a `weekend` class on the existing `.availability-ring` and on the availability-label container.
+Use the displayed Vancouver `weekday` value already returned by `getParts()` to determine whether the current clock date is Saturday or Sunday. During each clock update, toggle one `weekend` class on the existing `#clock` element. The availability ring and labels use descendant CSS selectors for that state, so no wrapper or duplicate ring is needed.
 
-The default CSS remains the weekday split-sector gradient. The weekend class changes it to one continuous conic-gradient sector from 25% through 91.6667%, corresponding to 06:00–22:00 on the 24-hour dial. Weekends show one centered `较可能有空` label; weekdays retain the two existing labels.
+The default CSS remains the weekday split-sector gradient. The weekend class changes it to one continuous conic-gradient sector from 25% through 91.6667%, corresponding to 06:00–22:00 on the 24-hour dial. On weekends, hide the `.morning` label and reposition the remaining label to `left:35%; top:76%`, near the midpoint of the continuous arc. Removing the class restores both existing weekday label positions.
 
-This keeps date logic in JavaScript and visual details in CSS. Using Vancouver's weekday ensures the display switches at Vancouver midnight rather than the viewer's system midnight or Beijing midnight.
+This keeps date logic in JavaScript and visual details in CSS. The existing clock uses `Etc/GMT+7` as its displayed Vancouver time source; using the weekday from that same source guarantees that the availability state agrees with the date shown on the clock. Changing the clock to seasonal `America/Vancouver` time is outside this change's scope.
 
 ## Testing
 
