@@ -68,6 +68,11 @@
       box-shadow:0 4px 12px rgba(32,164,100,.14);
     }
     .availability-label.morning{left:73.2%;top:54.6%}
+    .clock.weekend .availability-ring{
+      background:conic-gradient(from 0deg,transparent 0 25%,var(--available-soft) 25% 91.6667%,transparent 91.6667% 100%);
+    }
+    .clock.weekend .availability-label{left:35%;top:76%}
+    .clock.weekend .availability-label.morning{display:none}
     .hour{position:absolute;z-index:5;left:50%;top:50%;transform-origin:0 0;font-weight:700;line-height:1;text-align:center;white-space:nowrap}
     .hour span{display:block;transform:translate(-50%,-50%);padding:6px 7px;border-radius:9px;transition:.18s ease;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
     .hour span:hover{transform:translate(-50%,-50%) scale(1.08);background:rgba(255,255,255,.78)}
@@ -142,6 +147,10 @@
     return Object.fromEntries(parts.map(p=>[p.type,p.value]));
   }
 
+  function isWeekend(weekday){
+    return weekday==='Sat'||weekday==='Sun';
+  }
+
   function polarPlace(el, angleDeg, radiusPct){
     const a=(angleDeg-90)*Math.PI/180;
     el.style.left=(50+Math.cos(a)*radiusPct)+'%';
@@ -205,6 +214,7 @@
     const bjHour=+bj.hour%24;
     const angle=((vanHour+vanMinute/60+vanSecond/3600)/24)*360;
 
+    clock.classList.toggle('weekend',isWeekend(van.weekday));
     hand.style.transform=`rotate(${angle-90}deg)`;
     const liveTitle=`北京 ${String(bjHour).padStart(2,'0')}:${bj.minute} - 温哥华 ${String(vanHour).padStart(2,'0')}:${van.minute}`;
     document.getElementById('pageTitle').textContent=liveTitle;

@@ -45,3 +45,29 @@ test("labels the morning availability range", () => {
     2
   );
 });
+
+test("recognizes Saturday and Sunday as weekend days", () => {
+  assert.match(
+    html,
+    /function isWeekend\(weekday\)\{\s*return weekday==='Sat'\|\|weekday==='Sun';\s*\}/
+  );
+});
+
+test("switches availability using the displayed Vancouver weekday", () => {
+  assert.match(
+    html,
+    /clock\.classList\.toggle\('weekend',isWeekend\(van\.weekday\)\);/
+  );
+});
+
+test("marks 06:00 through 22:00 as continuously available on weekends", () => {
+  assert.match(
+    html,
+    /\.clock\.weekend \.availability-ring\{\s*background:conic-gradient\(from 0deg,transparent 0 25%,var\(--available-soft\) 25% 91\.6667%,transparent 91\.6667% 100%\);\s*\}/
+  );
+});
+
+test("shows one repositioned availability label on weekends", () => {
+  assert.match(html, /\.clock\.weekend \.availability-label\{left:35%;top:76%\}/);
+  assert.match(html, /\.clock\.weekend \.availability-label\.morning\{display:none\}/);
+});
