@@ -37,3 +37,11 @@ test("places a concise availability label at the green sector", () => {
   assert.match(html, /<div class="availability-label">较可能有空<\/div>/);
   assert.doesNotMatch(html, /较可能有空：18:00–22:00/);
 });
+
+test("labels the morning availability range", () => {
+  assert.match(html, /\.availability-label\.morning\{left:73\.2%;top:54\.6%\}/);
+  assert.equal(
+    (html.match(/<div class="availability-label(?: morning)?">较可能有空<\/div>/g) || []).length,
+    2
+  );
+});
