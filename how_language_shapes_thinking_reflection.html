@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How Language Shapes the Way We Think – Reflection</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #243044;
+      --muted: #627087;
+      --primary: #315f9c;
+      --primary-light: #eaf2fc;
+      --border: #dbe4ef;
+      --shadow: 0 12px 30px rgba(31, 55, 86, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #eef4fb 0%, var(--bg) 45%, #f9fbfd 100%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.72;
+    }
+
+    .page {
+      width: min(940px, calc(100% - 32px));
+      margin: 42px auto;
+    }
+
+    header {
+      padding: 38px 42px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #264f84, #4f7fb7);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.15rem);
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin: 14px 0 0;
+      max-width: 700px;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 1.05rem;
+    }
+
+    main {
+      margin-top: 26px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .reflection-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 30px;
+      box-shadow: 0 8px 22px rgba(31, 55, 86, 0.07);
+    }
+
+    .question-heading {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .number {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    h2 {
+      margin: 2px 0 0;
+      color: #243b5c;
+      font-size: 1.25rem;
+      line-height: 1.45;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.03rem;
+    }
+
+    .key-point {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--primary);
+      border-radius: 0 10px 10px 0;
+      background: #f7faff;
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 25px;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+      }
+
+      header,
+      .reflection-card {
+        box-shadow: none;
+      }
+
+      header {
+        border-radius: 0;
+      }
+
+      .reflection-card {
+        break-inside: avoid;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 20px, 940px);
+        margin: 18px auto;
+      }
+
+      header {
+        padding: 28px 24px;
+        border-radius: 16px;
+      }
+
+      .reflection-card {
+        padding: 22px 20px;
+      }
+
+      .question-heading {
+        grid-template-columns: 40px 1fr;
+        gap: 12px;
+      }
+
+      .number {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>How Language Shapes the Way We Think</h1>
+      <p>A reflection on language, cognition, assessment, and cultural bias based on Lera Boroditsky’s TED Talk.</p>
+    </header>
+
+    <main>
+      <section class="reflection-card">
+        <div class="question-heading">
+          <div class="number">1</div>
+          <h2>Explain how the language we speak shapes the way we think.</h2>
+        </div>
+        <p>
+          The language we speak influences how we understand and organize the world around us. Different languages focus on different aspects of experience, which can guide our attention and thinking. In the TED Talk, Boroditsky describes the Kuuk Thaayorre people of Australia, whose language uses cardinal directions—north, south, east, and west—instead of words like “left” and “right.” Because of this, speakers are constantly aware of their surroundings and direction. This example shows that language can shape how people perceive space, time, and everyday experiences.
+        </p>
+        <div class="key-point"><strong>Key idea:</strong> Language directs attention and can influence how people experience space and time.</div>
+      </section>
+
+      <section class="reflection-card">
+        <div class="question-heading">
+          <div class="number">2</div>
+          <h2>Explain how language changes our cognitive abilities and why we think the way we do.</h2>
+        </div>
+        <p>
+          Language affects cognitive abilities by providing tools that help us process information. For example, number words allow people to count and perform mathematical reasoning. Boroditsky explains that some languages do not have exact number words, and speakers of those languages often have difficulty tracking exact quantities. Language also influences memory and perception. Russian speakers, who have separate words for light blue and dark blue, can distinguish between these shades more quickly than English speakers. These examples suggest that language does not simply express our thoughts—it can also influence how we remember, categorize, and understand information.
+        </p>
+        <div class="key-point"><strong>Key idea:</strong> Language provides mental tools for counting, remembering, categorizing, and perceiving differences.</div>
+      </section>
+
+      <section class="reflection-card">
+        <div class="question-heading">
+          <div class="number">3</div>
+          <h2>How could a first language impact cognitive or language assessments given in another language? Would such an assessment be valid? What do we need to be mindful of when reading assessments of an ELL?</h2>
+        </div>
+        <p>
+          A person’s first language can have a significant impact on assessments conducted in another language. An English Language Learner (ELL) may have strong cognitive abilities but may struggle to demonstrate them if they do not fully understand the language used in the assessment. As a result, the test may measure English proficiency rather than actual intelligence, reasoning, or knowledge. Therefore, such assessments may not always provide a valid picture of an individual’s true abilities. When reading assessments of an ELL, we need to consider the student’s language background, cultural experiences, length of exposure to English, and whether language barriers may have affected performance. It is important not to confuse language difficulties with cognitive difficulties.
+        </p>
+        <div class="key-point"><strong>Key idea:</strong> Assessment results must be interpreted in light of language proficiency, culture, and educational experience.</div>
+      </section>
+
+      <section class="reflection-card">
+        <div class="question-heading">
+          <div class="number">4</div>
+          <h2>Explain why what we know about language is possibly narrow and biased.</h2>
+        </div>
+        <p>
+          Boroditsky argues that much of what researchers know about language and the human mind comes from studies involving English-speaking university students, particularly in North America. This represents only a small portion of the world’s population. Since there are about 7,000 languages spoken around the world, relying on a limited group can create a narrow and biased understanding of human cognition. Different languages organize ideas in different ways, and speakers may develop different cognitive strengths as a result. To better understand the human mind, researchers need to study a wider range of languages, cultures, and communities.
+        </p>
+        <div class="key-point"><strong>Key idea:</strong> Research should include more linguistic and cultural diversity to represent human thinking accurately.</div>
+      </section>
+    </main>
+
+    <footer>
+      Reflection: How Language Shapes the Way We Think
+    </footer>
+  </div>
+</body>
+</html>
