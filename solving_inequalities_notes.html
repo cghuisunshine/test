@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>解不等式｜知识大纲、例题与解答</title>
+  <style>
+    :root {
+      --ink: #17231f;
+      --muted: #62706a;
+      --paper: #fffdf8;
+      --canvas: #f3efe6;
+      --green: #19755d;
+      --green-soft: #e6f2ed;
+      --amber: #d98d2b;
+      --amber-soft: #fff2da;
+      --line: #d9d4c9;
+      --shadow: 0 16px 45px rgba(42, 47, 40, .09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 4%, rgba(217,141,43,.12), transparent 24rem),
+        radial-gradient(circle at 92% 20%, rgba(25,117,93,.10), transparent 28rem),
+        var(--canvas);
+      font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+      line-height: 1.78;
+    }
+    button, input { font: inherit; }
+    a { color: inherit; }
+    var, .math { font-family: Cambria, "Times New Roman", serif; font-style: italic; }
+    .upright { font-style: normal; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 70px 24px 56px;
+      color: #fff;
+      background: linear-gradient(125deg, #123f35 0%, #19755d 56%, #2a9779 100%);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -90px;
+      top: -155px;
+      width: 420px;
+      height: 420px;
+      border: 52px solid rgba(255,255,255,.08);
+      border-radius: 50%;
+    }
+    .hero-inner, .layout, .footer-inner { max-width: 1180px; margin: 0 auto; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 6px 12px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      font-size: 13px;
+      letter-spacing: .08em;
+    }
+    h1 { margin: 0; max-width: 760px; font-size: clamp(38px, 7vw, 70px); line-height: 1.08; letter-spacing: -.04em; }
+    .subtitle { max-width: 720px; margin: 22px 0 0; color: rgba(255,255,255,.82); font-size: 17px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .hero-meta span { padding: 7px 12px; border-radius: 10px; background: rgba(6,39,31,.34); font-size: 14px; }
+
+    .layout { display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 30px; padding: 36px 24px 72px; }
+    .toc { position: sticky; top: 20px; align-self: start; padding: 22px; border: 1px solid var(--line); border-radius: 20px; background: rgba(255,253,248,.92); box-shadow: var(--shadow); }
+    .toc strong { display: block; margin-bottom: 12px; font-size: 14px; color: var(--green); letter-spacing: .08em; }
+    .toc a { display: block; padding: 8px 0; color: #42514b; text-decoration: none; font-size: 14px; border-bottom: 1px dashed #e2ddd3; }
+    .toc a:last-of-type { border-bottom: 0; }
+    .toc a:hover { color: var(--green); }
+    .toc button { width: 100%; margin-top: 18px; padding: 10px 12px; border: 0; border-radius: 12px; color: #fff; background: var(--green); cursor: pointer; }
+
+    main.content { min-width: 0; }
+    section { scroll-margin-top: 24px; margin-bottom: 30px; }
+    .panel { border: 1px solid var(--line); border-radius: 24px; background: var(--paper); box-shadow: var(--shadow); }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    .section-head h2 { margin: 0; font-size: clamp(25px, 4vw, 34px); line-height: 1.25; }
+    .section-kicker { margin: 0 0 4px; color: var(--green); font-size: 13px; font-weight: 700; letter-spacing: .12em; }
+    .section-note { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .course-map { display: grid; grid-template-columns: 1.2fr 2fr; overflow: hidden; }
+    .course-map > div { padding: 25px 28px; }
+    .course-map .lesson { color: #fff; background: #1b705c; }
+    .course-map h3 { margin: 5px 0 8px; font-size: 28px; }
+    .course-map p { margin: 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 9px; align-content: center; }
+    .chip { padding: 8px 12px; border-radius: 999px; color: #325046; background: var(--green-soft); font-size: 14px; }
+    .chip.active { color: #fff; background: var(--amber); }
+
+    .property-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .property { display: grid; grid-template-columns: 42px 1fr; gap: 13px; padding: 18px; border: 1px solid var(--line); border-radius: 17px; background: var(--paper); }
+    .property .num { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; color: var(--green); background: var(--green-soft); font-weight: 800; }
+    .property p { margin: 0; }
+    .property small { display: block; margin-top: 5px; color: var(--muted); }
+
+    .tip { margin-top: 14px; padding: 14px 17px; border-left: 4px solid var(--amber); border-radius: 8px 14px 14px 8px; background: var(--amber-soft); color: #5f4828; }
+
+    .table-wrap { overflow-x: auto; border-radius: 18px; }
+    table { width: 100%; min-width: 760px; border-collapse: collapse; background: var(--paper); }
+    th, td { padding: 14px 13px; text-align: center; border: 1px solid var(--line); }
+    th { color: #fff; background: #1a6e59; }
+    th:first-child { width: 190px; }
+    tr:nth-child(even) td { background: #fbf8f1; }
+    td:first-child { text-align: left; font-weight: 700; }
+    .empty { color: #a44; }
+    .all { color: var(--green); font-weight: 800; }
+
+    .problems { display: grid; gap: 16px; }
+    .problem { overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); box-shadow: 0 8px 22px rgba(42,47,40,.06); }
+    .problem-top { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; padding: 22px; }
+    .badge { display: grid; place-items: center; min-width: 44px; height: 34px; padding: 0 10px; border-radius: 10px; color: #fff; background: var(--amber); font-size: 13px; font-weight: 800; }
+    .question h3 { margin: 0 0 7px; font-size: 19px; }
+    .question p { margin: 0; }
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 16px; margin-top: 12px; color: #46534e; }
+    .toggle { border: 1px solid #b8c9c2; border-radius: 12px; padding: 8px 12px; color: var(--green); background: #fff; cursor: pointer; white-space: nowrap; }
+    .toggle:hover, .toggle[aria-expanded="true"] { color: #fff; background: var(--green); border-color: var(--green); }
+    .answer { display: none; padding: 0 22px 24px 80px; }
+    .answer.open { display: block; }
+    .answer-inner { padding: 18px 20px; border-radius: 15px; background: var(--green-soft); }
+    .answer h4 { margin: 0 0 9px; color: var(--green); }
+    .answer p { margin: 8px 0; }
+    .answer ol { margin: 8px 0 0; padding-left: 22px; }
+    .result { display: inline-block; margin-top: 8px; padding: 7px 11px; border-radius: 9px; color: #6e4619; background: var(--amber-soft); font-weight: 800; }
+    .formula-line { overflow-x: auto; padding: 6px 0; font-family: Cambria, "Times New Roman", serif; font-size: 17px; }
+
+    footer { padding: 28px 24px 42px; color: #63716b; text-align: center; }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static; }
+      .toc-links { display: grid; grid-template-columns: repeat(2,1fr); gap: 0 14px; }
+      .course-map { grid-template-columns: 1fr; }
+      .property-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 580px) {
+      .hero { padding-top: 50px; }
+      .layout { padding-inline: 14px; }
+      .toc-links { grid-template-columns: 1fr; }
+      .problem-top { grid-template-columns: auto 1fr; }
+      .toggle { grid-column: 1 / -1; width: 100%; }
+      .answer { padding: 0 14px 18px; }
+      .options { grid-template-columns: 1fr; }
+      .section-head { display: block; }
+      .section-note { margin-top: 6px; }
+    }
+    @media print {
+      body { background: #fff; font-size: 11pt; }
+      .hero { padding: 28px; background: #fff; color: #000; border-bottom: 2px solid #000; }
+      .subtitle, .hero-meta span { color: #333; }
+      .layout { display: block; max-width: none; padding: 24px; }
+      .toc, .toggle { display: none !important; }
+      .panel, .problem { box-shadow: none; }
+      .answer { display: block !important; }
+      .problem { break-inside: avoid; }
+      section { break-inside: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">高中数学 · 第五讲</p>
+      <h1>解不等式</h1>
+      <p class="subtitle">从不等式的基本性质出发，建立一元二次不等式的判别框架，并通过典型例题训练“条件转换—符号判断—范围求解”。</p>
+      <div class="hero-meta"><span>8 条基本性质</span><span>1 张判别总表</span><span>4 道题目</span><span>答案可折叠</span><span>可离线打印</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="toc" aria-label="页面目录">
+      <strong>本页目录</strong>
+      <div class="toc-links">
+        <a href="#position">课程定位</a>
+        <a href="#properties">不等式性质</a>
+        <a href="#quadratic">二次不等式</a>
+        <a href="#examples">问题与解答</a>
+      </div>
+      <button type="button" id="toggleAll">展开全部解答</button>
+    </aside>
+
+    <main class="content">
+      <section id="position">
+        <div class="section-head"><div><p class="section-kicker">COURSE MAP</p><h2>课程定位</h2></div><p class="section-note">对应必修第一册 · 第 5 课</p></div>
+        <div class="course-map panel">
+          <div class="lesson"><p>大标题</p><h3>解不等式</h3><p>本页重点：性质与一元二次不等式</p></div>
+          <div class="chips"><span class="chip active">二次不等式 · 难度 3</span><span class="chip">高次不等式 · 难度 2</span><span class="chip">绝对值不等式 · 难度 2</span><span class="chip">根式不等式 · 难度 3</span></div>
+        </div>
+      </section>
+
+      <section id="properties">
+        <div class="section-head"><div><p class="section-kicker">PART 01</p><h2>不等式的基本性质</h2></div><p class="section-note">进行等价变形时，先检查符号条件</p></div>
+        <div class="property-grid">
+          <article class="property"><span class="num">1</span><p>若 <var>a &gt; b</var>，<var>b &gt; c</var>，则 <var>a &gt; c</var>。<small>传递性</small></p></article>
+          <article class="property"><span class="num">2</span><p>若 <var>a &gt; b</var>，则 <var>a+c &gt; b+c</var>。<small>加法单调性</small></p></article>
+          <article class="property"><span class="num">3</span><p>若 <var>a &gt; b</var>，<var>c&gt;0</var>，则 <var>ac&gt;bc</var>；若 <var>c&lt;0</var>，则 <var>ac&lt;bc</var>。<small>乘法单调性</small></p></article>
+          <article class="property"><span class="num">4</span><p>若 <var>a&gt;b</var>，<var>c&gt;d</var>，则 <var>a+c&gt;b+d</var>。<small>同向相加性</small></p></article>
+          <article class="property"><span class="num">5</span><p>若 <var>a&gt;b&gt;0</var>，<var>c&gt;d&gt;0</var>，则 <var>ac&gt;bd</var>。<small>同向相乘性</small></p></article>
+          <article class="property"><span class="num">6</span><p>若 <var>a&gt;b</var> 且 <var>ab&gt;0</var>，则 <var>1/b&gt;1/a</var>。<small>倒数反向性</small></p></article>
+          <article class="property"><span class="num">7</span><p>若 <var>a&gt;b&gt;0</var>，则 <var>a<sup>n</sup>&gt;b<sup>n</sup></var>（<var>n∈N*</var>）。<small>乘方性质</small></p></article>
+          <article class="property"><span class="num">8</span><p>若 <var>a&gt;b&gt;0</var>，则 <var><sup>n</sup>√a&gt;<sup>n</sup>√b</var>（<var>n∈N*</var>，<var>n&gt;1</var>）。<small>开方性质</small></p></article>
+        </div>
+        <div class="tip"><strong>核心提醒：</strong>不等式两边同乘或同除一个数时，必须先判断该数的正负；负数会使不等号方向改变。</div>
+      </section>
+
+      <section id="quadratic">
+        <div class="section-head"><div><p class="section-kicker">PART 02</p><h2>一元二次不等式的解法</h2></div><p class="section-note">以下总表设 <var>a&gt;0</var>，<var>Δ=b²−4ac</var></p></div>
+        <div class="table-wrap panel">
+          <table>
+            <thead><tr><th>判别与不等式</th><th><var>Δ&gt;0</var><br>两根 <var>x₁&lt;x₂</var></th><th><var>Δ=0</var><br><var>x₀=−b/(2a)</var></th><th><var>Δ&lt;0</var><br>无实根</th></tr></thead>
+            <tbody>
+              <tr><td><var>ax²+bx+c&gt;0</var></td><td><var>x&lt;x₁</var> 或 <var>x&gt;x₂</var></td><td><var>x∈R</var> 且 <var>x≠x₀</var></td><td class="all">R</td></tr>
+              <tr><td><var>ax²+bx+c&lt;0</var></td><td><var>x₁&lt;x&lt;x₂</var></td><td class="empty">∅</td><td class="empty">∅</td></tr>
+              <tr><td><var>ax²+bx+c≥0</var></td><td><var>x≤x₁</var> 或 <var>x≥x₂</var></td><td class="all">R</td><td class="all">R</td></tr>
+              <tr><td><var>ax²+bx+c≤0</var></td><td><var>x₁≤x≤x₂</var></td><td><var>{x₀}</var></td><td class="empty">∅</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip"><strong>口诀：</strong><var>a&gt;0</var> 且有两根时，“大于取两边，小于取中间”；带等号时把根包含进去。若 <var>a&lt;0</var>，先把不等式两边乘以 −1，再使用此表。</div>
+      </section>
+
+      <section id="examples">
+        <div class="section-head"><div><p class="section-kicker">PRACTICE</p><h2>问题与解答</h2></div><p class="section-note">建议先独立完成，再展开解答</p></div>
+        <div class="problems">
+          <article class="problem">
+            <div class="problem-top"><span class="badge">口答</span><div class="question"><h3>倒数不等式的符号条件</h3><p>不等式 <var>a&gt;b</var> 与 <var>1/a&gt;1/b</var> 能同时成立的充分条件是（　）。</p><div class="options"><span>A. <var>a&gt;b&gt;0</var></span><span>B. <var>a&gt;0&gt;b</var></span><span>C. <var>1/b&lt;1/a&lt;0</var></span><span>D. <var>1/a&gt;1/b&gt;0</var></span></div></div><button class="toggle" aria-expanded="false" aria-controls="answer-0">查看解答</button></div>
+            <div class="answer" id="answer-0"><div class="answer-inner"><h4>解答</h4><p class="formula-line"><var>1/a−1/b=(b−a)/(ab)</var>。</p><p>因为 <var>a&gt;b</var>，所以 <var>b−a&lt;0</var>。要使上式大于 0，必须有 <var>ab&lt;0</var>。再结合 <var>a&gt;b</var>，可得 <var>a&gt;0&gt;b</var>。</p><span class="result">答案：B</span></div></div>
+          </article>
+
+          <article class="problem">
+            <div class="problem-top"><span class="badge">例 1</span><div class="question"><h3>由函数值范围求另一函数值范围</h3><p>设 <var>f(x)=ax²+bx</var>，且 <var>1≤f(−1)≤2</var>，<var>2≤f(1)≤4</var>，求 <var>f(−2)</var> 的取值范围。</p></div><button class="toggle" aria-expanded="false" aria-controls="answer-1">查看解答</button></div>
+            <div class="answer" id="answer-1"><div class="answer-inner"><h4>解答</h4><p>令 <var>p=f(−1)=a−b</var>，<var>q=f(1)=a+b</var>，则 <var>p∈[1,2]</var>，<var>q∈[2,4]</var>。</p><p class="formula-line"><var>f(−2)=4a−2b=3(a−b)+(a+b)=3p+q</var>。</p><p>由于 <var>p</var>、<var>q</var> 的系数均为正，最小值在 <var>p=1,q=2</var> 时取得，最大值在 <var>p=2,q=4</var> 时取得。</p><p class="formula-line"><var>5=3×1+2≤f(−2)≤3×2+4=10</var>。</p><span class="result">取值范围：[5, 10]</span></div></div>
+          </article>
+
+          <article class="problem">
+            <div class="problem-top"><span class="badge">例 2</span><div class="question"><h3>三个不等式之间的逻辑关系</h3><p>已知三个不等式：① <var>ab&gt;0</var>；② <var>c/a&gt;d/b</var>；③ <var>bc&gt;ad</var>。以其中两个作为条件、余下一个作为结论，可组成多少个正确命题？</p></div><button class="toggle" aria-expanded="false" aria-controls="answer-2">查看解答</button></div>
+            <div class="answer" id="answer-2"><div class="answer-inner"><h4>解答</h4><ol><li>由①②：因 <var>ab&gt;0</var>，将②两边乘以 <var>ab</var>，不等号不变，得 <var>bc&gt;ad</var>，即③。</li><li>由①③：将③两边除以正数 <var>ab</var>，得 <var>c/a&gt;d/b</var>，即②。</li><li>由②③：若 <var>ab&lt;0</var>，②两边乘以 <var>ab</var> 后不等号反向，得到 <var>bc&lt;ad</var>，与③矛盾；故必有 <var>ab&gt;0</var>，即①。</li></ol><p>三种“选两个推一个”的命题都成立。</p><span class="result">可组成 3 个正确命题</span></div></div>
+          </article>
+
+          <article class="problem">
+            <div class="problem-top"><span class="badge">例 3</span><div class="question"><h3>由等式与不等式判断大小关系</h3><p>若 <var>a&gt;0</var>，<var>a²−2ab+c²=0</var>，<var>bc&gt;a²</var>，则 <var>a,b,c</var> 的大小关系是 ______。</p></div><button class="toggle" aria-expanded="false" aria-controls="answer-3">查看解答</button></div>
+            <div class="answer" id="answer-3"><div class="answer-inner"><h4>解答</h4><p>由 <var>a²−2ab+c²=0</var> 得 <var>2ab=a²+c²&gt;0</var>。因 <var>a&gt;0</var>，所以 <var>b&gt;0</var>；再由 <var>bc&gt;a²&gt;0</var> 得 <var>c&gt;0</var>。</p><p>设 <var>t=c/a&gt;0</var>，则由等式可得 <var>b/a=(1+t²)/2</var>。条件 <var>bc&gt;a²</var> 化为：</p><p class="formula-line"><var>t(1+t²)/2&gt;1 ⇔ t³+t−2&gt;0 ⇔ (t−1)(t²+t+2)&gt;0</var>。</p><p>因为 <var>t²+t+2&gt;0</var>，所以 <var>t&gt;1</var>，即 <var>c&gt;a</var>。同时</p><p class="formula-line"><var>b/a−c/a=(1+t²)/2−t=(t−1)²/2&gt;0</var>，</p><p>故 <var>b&gt;c</var>。</p><span class="result">大小关系：b &gt; c &gt; a</span></div></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer><div class="footer-inner">根据所给图片整理 · 单文件离线网页 · 打印时自动展开全部解答</div></footer>
+
+  <script>
+    const toggles = [...document.querySelectorAll('.toggle')];
+    const allButton = document.getElementById('toggleAll');
+    function setOpen(button, open) {
+      const answer = document.getElementById(button.getAttribute('aria-controls'));
+      button.setAttribute('aria-expanded', String(open));
+      button.textContent = open ? '收起解答' : '查看解答';
+      answer.classList.toggle('open', open);
+    }
+    toggles.forEach(button => button.addEventListener('click', () => {
+      setOpen(button, button.getAttribute('aria-expanded') !== 'true');
+      allButton.textContent = toggles.every(b => b.getAttribute('aria-expanded') === 'true') ? '收起全部解答' : '展开全部解答';
+    }));
+    allButton.addEventListener('click', () => {
+      const shouldOpen = !toggles.every(b => b.getAttribute('aria-expanded') === 'true');
+      toggles.forEach(button => setOpen(button, shouldOpen));
+      allButton.textContent = shouldOpen ? '收起全部解答' : '展开全部解答';
+    });
+  </script>
+</body>
+</html>
