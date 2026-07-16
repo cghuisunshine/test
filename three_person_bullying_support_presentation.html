@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supporting a Student Experiencing Bullying</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #5f6b7a;
+      --accent: #315efb;
+      --accent-soft: #e9efff;
+      --border: #dce3ee;
+      --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #eef3ff 0%, var(--bg) 260px);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .page {
+      width: min(1000px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 64px;
+    }
+
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 36px;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .speaker-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .speaker {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .speaker-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .number {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+
+    p {
+      margin: 0 0 16px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    .conclusion {
+      margin-top: 28px;
+      background: #172554;
+      color: white;
+      border-radius: 20px;
+      padding: 28px 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .conclusion h2 {
+      margin-bottom: 10px;
+    }
+
+    .timing {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 20px, 1000px);
+        padding-top: 20px;
+      }
+
+      .hero,
+      .speaker,
+      .conclusion {
+        padding: 22px;
+        border-radius: 16px;
+      }
+
+      .speaker-header {
+        align-items: flex-start;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .page {
+        width: 100%;
+        padding: 0;
+      }
+
+      .hero,
+      .speaker,
+      .conclusion {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow">Three-Person Group Presentation</div>
+      <h1>Supporting a Student Experiencing Bullying Based on Sexual Orientation</h1>
+      <p class="subtitle">
+        This presentation explains how an Education Assistant can respond, provide support,
+        and adapt strategies according to age and developmental needs.
+      </p>
+    </section>
+
+    <section class="speaker-grid">
+      <article class="speaker">
+        <div class="speaker-header">
+          <div class="number">1</div>
+          <h2>Presenter 1: Immediate Support and EA Responsibilities</h2>
+        </div>
+
+        <p>
+          Imagine a student approaches you and says they are being bullied because of their
+          sexual orientation. As an Education Assistant, the first thing I would do is listen
+          carefully and respectfully. I would thank the student for trusting me and reassure
+          them that bullying is not acceptable.
+        </p>
+
+        <p>
+          My role is to help the student feel safe and supported. I would document what the
+          student tells me and follow school procedures by informing the supervising teacher,
+          counselor, or administrator. I would also help the student identify trusted adults
+          and safe places in the school where they can go if they feel unsafe.
+        </p>
+
+        <p>
+          The most important message is that every student deserves respect and has the right
+          to learn in a safe environment.
+        </p>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-header">
+          <div class="number">2</div>
+          <h2>Presenter 2: Strategies for Support</h2>
+        </div>
+
+        <p>
+          There are several ways an EA can support a student experiencing bullying.
+        </p>
+
+        <p>
+          First, we can provide emotional support by listening without judgment and validating
+          the student’s feelings. Second, we can work with teachers, counselors, and
+          administrators to ensure that incidents are addressed appropriately.
+        </p>
+
+        <p>
+          We can also encourage inclusion by helping create a welcoming classroom environment
+          where diversity is respected. If the school has a Gender and Sexuality Alliance,
+          or GSA, students may benefit from connecting with peers who provide support and
+          understanding.
+        </p>
+
+        <p>
+          Finally, we should encourage students to report bullying and remind them that seeking
+          help is a sign of strength, not weakness.
+        </p>
+      </article>
+
+      <article class="speaker">
+        <div class="speaker-header">
+          <div class="number">3</div>
+          <h2>Presenter 3: Age and Disability Considerations</h2>
+        </div>
+
+        <p>
+          The basic approach to supporting a student remains the same regardless of age or
+          ability: ensure safety, provide support, and follow school policies.
+        </p>
+
+        <p>
+          However, the way we provide support may change depending on the student’s age.
+          Younger students may need simpler explanations and more direct guidance, while
+          teenagers may want more privacy and independence when discussing their experiences.
+        </p>
+
+        <p>
+          Support is also not dependent on whether a student has a developmental disability.
+          Every student deserves protection from bullying. However, some students may need
+          additional supports, such as visual aids, social stories, or communication assistance,
+          to help them understand the situation and express their feelings.
+        </p>
+      </article>
+    </section>
+
+    <section class="conclusion">
+      <h2>Conclusion</h2>
+      <p>
+        Education Assistants play an important role in creating safe and inclusive schools.
+        While support strategies may be adapted to a student’s age, communication style, or
+        developmental needs, every student deserves respect, acceptance, and protection from
+        bullying.
+      </p>
+    </section>
+
+    <p class="timing">
+      Suggested speaking time: about 1–1.5 minutes per presenter.
+    </p>
+  </main>
+</body>
+</html>
