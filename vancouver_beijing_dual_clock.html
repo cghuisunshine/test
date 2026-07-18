@@ -55,24 +55,18 @@
     .ring-label.inner{top:26.8%;color:var(--vancouver);font-size:clamp(13px,1.8vw,20px)}
     .availability-ring{
       position:absolute;inset:18.5%;border-radius:50%;z-index:1;pointer-events:none;
-      background:conic-gradient(from 0deg,transparent 0 25%,var(--available-soft) 25% 31.25%,transparent 31.25% 75%,var(--available-soft) 75% 91.6667%,transparent 91.6667% 100%);
+      background:transparent;
       -webkit-mask:radial-gradient(circle,transparent 0 66%,#000 67% 83%,transparent 84% 100%);
       mask:radial-gradient(circle,transparent 0 66%,#000 67% 83%,transparent 84% 100%);
       filter:drop-shadow(0 0 5px rgba(32,164,100,.25));
     }
     .availability-label{
-      position:absolute;left:29.5%;top:38.2%;z-index:5;pointer-events:none;
+      position:absolute;z-index:5;pointer-events:none;
       transform:translate(-50%,-50%);
       color:#087746;background:rgba(235,255,245,.94);border:1px solid rgba(32,164,100,.35);
       padding:6px 9px;border-radius:9px;font-size:clamp(9px,1.25vw,14px);font-weight:800;
       box-shadow:0 4px 12px rgba(32,164,100,.14);
     }
-    .availability-label.morning{left:73.2%;top:54.6%}
-    .clock.weekend .availability-ring{
-      background:conic-gradient(from 0deg,transparent 0 25%,var(--available-soft) 25% 91.6667%,transparent 91.6667% 100%);
-    }
-    .clock.weekend .availability-label{left:35%;top:76%}
-    .clock.weekend .availability-label.morning{display:none}
     .hour{position:absolute;z-index:5;left:50%;top:50%;transform-origin:0 0;font-weight:700;line-height:1;text-align:center;white-space:nowrap}
     .hour span{display:block;transform:translate(-50%,-50%);padding:6px 7px;border-radius:9px;transition:.18s ease;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
     .hour span:hover{transform:translate(-50%,-50%) scale(1.08);background:rgba(255,255,255,.78)}
@@ -114,9 +108,8 @@
         <div class="clock" id="clock">
           <div class="ring-label outer"><span class="ring-date" id="bjDate"></span><span class="ring-city">北京</span></div>
           <div class="ring-label inner"><span class="ring-date" id="vanDate"></span><span class="ring-city">温哥华</span></div>
-          <div class="availability-ring" aria-hidden="true"></div>
-          <div class="availability-label">较可能有空</div>
-          <div class="availability-label morning">较可能有空</div>
+          <div class="availability-ring" id="availabilityRing" aria-hidden="true"></div>
+          <div id="availabilityLabels"></div>
           <div class="selection-hand" id="selectionHand"></div>
           <div class="hand" id="hand"></div>
           <div class="hub"></div>
@@ -259,36 +252,84 @@
     return { ok:true, ranges:sorted, error:'' };
   }
 
+  function rangesForInstant(parts, overrideMap){
+    if(Object.prototype.hasOwnProperty.call(overrideMap || {},parts.date)){
+      return overrideMap[parts.date] || [];
+    }
+    return defaultRangesForWeekday(parts.weekday);
+  }
+
+  function wallTimeInRanges(parts, ranges){
+    const minute = +parts.hour*60 + +parts.minute;
+    return ranges.some(range=>minute>=timeToMinutes(range.start) && minute<timeToMinutes(range.end));
+  }
+
+  function buildAvailabilitySegments(panel, overrideMap){
+    const startMs = Date.parse(panel.start);
+    const endMs = Date.parse(panel.end);
+    const durationMs = endMs-startMs;
+    const steps = [];
+    for(let time=startMs;time<endMs;time+=1800000){
+      const parts = getZonedParts(new Date(time),ZONES.Vancouver);
+      steps.push({
+        start:time,
+        end:Math.min(time+1800000,endMs),
+        parts,
+        available:wallTimeInRanges(parts,rangesForInstant(parts,overrideMap))
+      });
+    }
+    const segments=[];
+    for(const step of steps){
+      const previous=segments[segments.length-1];
+      if(step.available && previous && previous.end===step.start && previous.date===step.parts.date){
+        previous.end=step.end;
+        continue;
+      }
+      if(step.available){
+        segments.push({start:step.start,end:step.end,date:step.parts.date});
+      }
+    }
+    return segments.map(segment=>{
+      const startParts=getZonedParts(new Date(segment.start),ZONES.Vancouver);
+      const endParts=getZonedParts(new Date(segment.end),ZONES.Vancouver);
+      const startTime=`${startParts.hour}:${startParts.minute}`;
+      const endTime=segment.end===endMs && endParts.date!==segment.date ? '24:00' : `${endParts.hour}:${endParts.minute}`;
+      const dated=panel.vancouverDates.length>1;
+      return {
+        ...segment,
+        startPct:(segment.start-startMs)/durationMs*100,
+        endPct:(segment.end-startMs)/durationMs*100,
+        startTime,
+        endTime,
+        label:`${dated ? segment.date+' ' : ''}${startTime}–${endTime}`
+      };
+    });
+  }
+
   return {
     ZONES,
     getZonedParts,
     zonedDateTimeToInstant,
     buildPanel,
     validateRanges,
-    defaultRangesForWeekday
+    defaultRangesForWeekday,
+    buildAvailabilitySegments
   };
 });
 </script>
 <script>
+  const core = window.dualClockCore;
   const clock = document.getElementById('clock');
   const hand = document.getElementById('hand');
   const bjBadge = document.getElementById('bjBadge');
   const selectionHand = document.getElementById('selectionHand');
   const selectionInfo = document.getElementById('selectionInfo');
-  const currentOffset = 15;
-  let selectedVanHour = null;
-
-  function getParts(date, timeZone){
-    const parts = new Intl.DateTimeFormat('en-CA',{
-      timeZone, hour12:false, year:'numeric', month:'2-digit', day:'2-digit',
-      hour:'2-digit', minute:'2-digit', second:'2-digit', weekday:'short'
-    }).formatToParts(date);
-    return Object.fromEntries(parts.map(p=>[p.type,p.value]));
-  }
-
-  function isWeekend(weekday){
-    return weekday==='Sat'||weekday==='Sun';
-  }
+  const availabilityRing = document.getElementById('availabilityRing');
+  const availabilityLabels = document.getElementById('availabilityLabels');
+  let selectedSlotIndex = null;
+  let currentPanel = null;
+  let currentPanelKey = '';
+  const overrideMap = {};
 
   function polarPlace(el, angleDeg, radiusPct){
     const a=(angleDeg-90)*Math.PI/180;
@@ -298,7 +339,7 @@
     el.querySelector('span').style.transform='none';
   }
 
-  function buildDial(){
+  function buildTicks(){
     for(let i=0;i<60;i++){
       const tick=document.createElement('div');
       tick.className='tick '+(i%5===0?'major':'minor');
@@ -309,29 +350,65 @@
       tick.style.transform=`translate(-50%,-50%) rotate(${i*6}deg)`;
       clock.appendChild(tick);
     }
+  }
 
-    for(let vanHour=0;vanHour<24;vanHour++){
-      const angle=(vanHour/24)*360;
+  function renderAvailability(panel){
+    const segments=core.buildAvailabilitySegments(panel,overrideMap);
+    const stops=[];
+    let cursor=0;
+    segments.forEach(segment=>{
+      if(segment.startPct>cursor) stops.push(`transparent ${cursor}% ${segment.startPct}%`);
+      stops.push(`var(--available-soft) ${segment.startPct}% ${segment.endPct}%`);
+      cursor=segment.endPct;
+    });
+    if(cursor<100) stops.push(`transparent ${cursor}% 100%`);
+    availabilityRing.style.background=segments.length ? `conic-gradient(from 0deg,${stops.join(',')})` : 'transparent';
+    availabilityLabels.replaceChildren();
+    segments.forEach(segment=>{
+      const label=document.createElement('div');
+      label.className='availability-label';
+      label.textContent=segment.label;
+      const angle=((segment.startPct+segment.endPct)/2)/100*360;
+      const a=(angle-90)*Math.PI/180;
+      label.style.left=(50+Math.cos(a)*35)+'%';
+      label.style.top=(50+Math.sin(a)*35)+'%';
+      label.style.transform='translate(-50%,-50%)';
+      availabilityLabels.appendChild(label);
+    });
+  }
+
+  function renderDial(panel){
+    clock.querySelectorAll('.hour').forEach(node=>node.remove());
+    const repeatedHours=new Map();
+    panel.slots.forEach(slot=>{
+      const key=`${slot.vancouver.date}-${slot.vancouver.hour}`;
+      repeatedHours.set(key,(repeatedHours.get(key)||0)+1);
+    });
+    panel.slots.forEach((slot,index)=>{
+      const angle=(index/panel.slots.length)*360;
+      const repeated=repeatedHours.get(`${slot.vancouver.date}-${slot.vancouver.hour}`)>1;
 
       const inner=document.createElement('div');
       inner.className='hour inner';
-      inner.dataset.vanHour=vanHour;
+      inner.dataset.slotIndex=index;
       inner.setAttribute('role','button');
       inner.setAttribute('tabindex','0');
-      inner.setAttribute('aria-label',`温哥华 ${String(vanHour).padStart(2,'0')}:00`);
-      inner.innerHTML=`<span>${vanHour}</span>`;
+      inner.setAttribute('aria-label',`温哥华 ${slot.vancouver.date} ${slot.vancouver.hour}:00 UTC${slot.vancouver.offset}`);
+      inner.innerHTML=`<span>${+slot.vancouver.hour}${repeated ? '<sup>•</sup>' : ''}</span>`;
       polarPlace(inner,angle,30.5);
       clock.appendChild(inner);
 
       const outer=document.createElement('div');
       outer.className='hour outer';
-      outer.dataset.vanHour=vanHour;
+      outer.dataset.slotIndex=index;
       outer.setAttribute('role','button');
       outer.setAttribute('tabindex','0');
-      outer.innerHTML='<span></span>';
+      outer.setAttribute('aria-label',`北京 ${slot.beijing.date} ${slot.beijing.hour}:00，对应温哥华 ${slot.vancouver.date} ${slot.vancouver.hour}:00`);
+      outer.innerHTML=`<span>${+slot.beijing.hour}</span>`;
       polarPlace(outer,angle,42.2);
       clock.appendChild(outer);
-    }
+    });
+    renderAvailability(panel);
   }
 
   function positionBadge(el, angleDeg, radius){
@@ -347,74 +424,71 @@
 
   function update(){
     const now=new Date();
-    const van=getParts(now,'Etc/GMT+7');
-    const bj=getParts(now,'Asia/Shanghai');
+    const van=core.getZonedParts(now,core.ZONES.Vancouver);
+    const bj=core.getZonedParts(now,core.ZONES.Beijing);
     const vanHour=+van.hour%24, vanMinute=+van.minute, vanSecond=+van.second;
     const bjHour=+bj.hour%24;
-    const angle=((vanHour+vanMinute/60+vanSecond/3600)/24)*360;
+    const panelKey=`Vancouver:${van.date}`;
+    if(panelKey!==currentPanelKey){
+      currentPanel=core.buildPanel('Vancouver',van.date);
+      currentPanelKey=panelKey;
+      selectedSlotIndex=null;
+      renderDial(currentPanel);
+    }
+    const angle=(now-Date.parse(currentPanel.start))/(Date.parse(currentPanel.end)-Date.parse(currentPanel.start))*360;
 
-    clock.classList.toggle('weekend',isWeekend(van.weekday));
     hand.style.transform=`rotate(${angle-90}deg)`;
     const liveTitle=`北京 ${String(bjHour).padStart(2,'0')}:${bj.minute} - 温哥华 ${String(vanHour).padStart(2,'0')}:${van.minute}`;
     document.getElementById('pageTitle').textContent=liveTitle;
     document.title=liveTitle;
     document.getElementById('vanTime').textContent=`${String(vanHour).padStart(2,'0')}:${van.minute}`;
-    const vanDate=`${van.year}-${van.month}-${van.day}`;
-    const bjDate=`${bj.year}-${bj.month}-${bj.day}`;
+    const vanDate=van.date;
+    const bjDate=bj.date;
     document.getElementById('bjDate').textContent=bjDate;
     document.getElementById('vanDate').textContent=vanDate===bjDate ? '' : vanDate;
 
-    const offset=currentOffset;
-
-    document.querySelectorAll('.hour.outer').forEach(el=>{
-      const vh=+el.dataset.vanHour;
-      const bh=(vh+offset+24)%24;
-      el.querySelector('span').textContent=String(bh);
-      el.setAttribute('aria-label',`北京 ${String(bh).padStart(2,'0')}:00，对应温哥华 ${String(vh).padStart(2,'0')}:00`);
-    });
-
     bjBadge.textContent=`${String(bjHour).padStart(2,'0')}:${bj.minute}`;
     positionBadge(bjBadge,angle,0.46);
-    if(selectedVanHour!==null) renderSelection();
+    if(selectedSlotIndex!==null) renderSelection();
   }
 
   function renderSelection(){
     document.querySelectorAll('.hour').forEach(el=>{
-      el.classList.toggle('selected', +el.dataset.vanHour===selectedVanHour);
+      el.classList.toggle('selected', +el.dataset.slotIndex===selectedSlotIndex);
     });
-    if(selectedVanHour===null){
+    if(selectedSlotIndex===null || !currentPanel || !currentPanel.slots[selectedSlotIndex]){
       selectionHand.style.display='none';
       selectionInfo.hidden=true;
       selectionInfo.textContent='';
       return;
     }
-    const angle=(selectedVanHour/24)*360;
-    const bjHour=(selectedVanHour+currentOffset+24)%24;
+    const slot=currentPanel.slots[selectedSlotIndex];
+    const angle=(selectedSlotIndex/currentPanel.slots.length)*360;
     selectionHand.style.display='block';
     selectionHand.style.transform=`rotate(${angle-90}deg)`;
     selectionInfo.hidden=false;
-    selectionInfo.innerHTML=`<b style="color:var(--vancouver)">温哥华 ${String(selectedVanHour).padStart(2,'0')}:00</b> ↔ <b style="color:var(--beijing)">北京 ${String(bjHour).padStart(2,'0')}:00</b>`;
+    selectionInfo.innerHTML=`<b style="color:var(--vancouver)">温哥华 ${slot.vancouver.date} ${slot.vancouver.hour}:00</b> ↔ <b style="color:var(--beijing)">北京 ${slot.beijing.date} ${slot.beijing.hour}:00</b>`;
   }
 
-  function selectHour(vanHour){
-    selectedVanHour = selectedVanHour===vanHour ? null : vanHour;
+  function selectHour(slotIndex){
+    selectedSlotIndex = selectedSlotIndex===slotIndex ? null : slotIndex;
     renderSelection();
   }
 
 
   clock.addEventListener('click',e=>{
     const hour=e.target.closest('.hour');
-    if(hour) selectHour(+hour.dataset.vanHour);
+    if(hour) selectHour(+hour.dataset.slotIndex);
   });
   clock.addEventListener('keydown',e=>{
     const hour=e.target.closest('.hour');
     if(hour && (e.key==='Enter'||e.key===' ')){
       e.preventDefault();
-      selectHour(+hour.dataset.vanHour);
+      selectHour(+hour.dataset.slotIndex);
     }
   });
 
-  buildDial();
+  buildTicks();
   update();
   setInterval(update,1000);
   addEventListener('resize',update);

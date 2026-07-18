@@ -32,56 +32,8 @@ test("shows the live Beijing time only on the arrow", () => {
   assert.doesNotMatch(html, /getElementById\('bjTime'\)/);
 });
 
-test("uses a clearly visible green fill for the most available sector", () => {
+test("keeps the availability color clearly visible", () => {
   assert.match(html, /--available-soft:rgba\(32,164,100,\.55\)/);
-});
-
-test("shows both Vancouver availability ranges on the ring", () => {
-  assert.match(
-    html,
-    /background:conic-gradient\(from 0deg,transparent 0 25%,var\(--available-soft\) 25% 31\.25%,transparent 31\.25% 75%,var\(--available-soft\) 75% 91\.6667%,transparent 91\.6667% 100%\)/
-  );
-});
-
-test("places a concise availability label at the green sector", () => {
-  assert.match(html, /\.availability-label\{\s*position:absolute;left:29\.5%;top:38\.2%/);
-  assert.match(html, /\.availability-label\{[^}]*transform:translate\(-50%,-50%\)[^}]*\}/);
-  assert.match(html, /<div class="availability-label">较可能有空<\/div>/);
-  assert.doesNotMatch(html, /较可能有空：18:00–22:00/);
-});
-
-test("labels the morning availability range", () => {
-  assert.match(html, /\.availability-label\.morning\{left:73\.2%;top:54\.6%\}/);
-  assert.equal(
-    (html.match(/<div class="availability-label(?: morning)?">较可能有空<\/div>/g) || []).length,
-    2
-  );
-});
-
-test("recognizes Saturday and Sunday as weekend days", () => {
-  assert.match(
-    html,
-    /function isWeekend\(weekday\)\{\s*return weekday==='Sat'\|\|weekday==='Sun';\s*\}/
-  );
-});
-
-test("switches availability using the displayed Vancouver weekday", () => {
-  assert.match(
-    html,
-    /clock\.classList\.toggle\('weekend',isWeekend\(van\.weekday\)\);/
-  );
-});
-
-test("marks 06:00 through 22:00 as continuously available on weekends", () => {
-  assert.match(
-    html,
-    /\.clock\.weekend \.availability-ring\{\s*background:conic-gradient\(from 0deg,transparent 0 25%,var\(--available-soft\) 25% 91\.6667%,transparent 91\.6667% 100%\);\s*\}/
-  );
-});
-
-test("shows one repositioned availability label on weekends", () => {
-  assert.match(html, /\.clock\.weekend \.availability-label\{left:35%;top:76%\}/);
-  assert.match(html, /\.clock\.weekend \.availability-label\.morning\{display:none\}/);
 });
 
 test("provides sorted weekday and weekend fallback rules", () => {
@@ -138,4 +90,59 @@ test("builds DST-aware Vancouver and Beijing day panels", () => {
   const repeated = fall.slots.filter(slot => slot.vancouver.hour === "01");
   assert.equal(repeated.length, 2);
   assert.notEqual(repeated[0].vancouver.offset, repeated[1].vancouver.offset);
+});
+
+test("builds dynamic weekday, weekend, and empty-override sectors", () => {
+  const core = loadCore();
+  const weekday = core.buildPanel("Vancouver", "2026-07-17");
+  const weekend = core.buildPanel("Vancouver", "2026-07-18");
+  const weekdaySegments = core.buildAvailabilitySegments(weekday, {});
+  const weekendSegments = core.buildAvailabilitySegments(weekend, {});
+  const emptySegments = core.buildAvailabilitySegments(weekday, { "2026-07-17": [] });
+
+  assert.deepEqual(plain(weekdaySegments.map(segment => [segment.startTime, segment.endTime])), [
+    ["06:00", "07:30"],
+    ["18:00", "22:00"]
+  ]);
+  assert.deepEqual(plain(weekendSegments.map(segment => [segment.startTime, segment.endTime])), [
+    ["06:00", "22:00"]
+  ]);
+  assert.deepEqual(plain(emptySegments), []);
+});
+
+test("uses both Vancouver dates and dated labels on a Beijing panel", () => {
+  const core = loadCore();
+  const panel = core.buildPanel("Beijing", "2026-07-18");
+  const segments = core.buildAvailabilitySegments(panel, {});
+  assert.deepEqual(plain(panel.vancouverDates), ["2026-07-17", "2026-07-18"]);
+  assert.ok(segments.some(segment => segment.label.includes("2026-07-17")));
+  assert.ok(segments.some(segment => segment.label.includes("2026-07-18")));
+});
+
+test("renders repeated fall ranges as disjoint non-overlapping sectors", () => {
+  const core = loadCore();
+  const panel = core.buildPanel("Vancouver", "2026-11-01");
+  const repeated = core.buildAvailabilitySegments(panel, {
+    "2026-11-01": [{ start: "01:00", end: "01:30" }]
+  });
+  assert.equal(repeated.length, 2);
+  assert.ok(repeated.every(segment => segment.endPct - segment.startPct === 2));
+
+  const adjacent = core.buildAvailabilitySegments(panel, {
+    "2026-11-01": [
+      { start: "00:00", end: "01:00" },
+      { start: "01:00", end: "02:00" }
+    ]
+  });
+  assert.equal(adjacent.reduce((sum, segment) => sum + segment.endPct - segment.startPct, 0), 12);
+});
+
+test("uses actual spring-day duration for sector percentages", () => {
+  const core = loadCore();
+  const panel = core.buildPanel("Vancouver", "2026-03-08");
+  const segments = core.buildAvailabilitySegments(panel, {
+    "2026-03-08": [{ start: "03:00", end: "04:00" }]
+  });
+  assert.equal(panel.durationHours, 23);
+  assert.ok(Math.abs((segments[0].endPct - segments[0].startPct) - 100 / 23) < 0.0001);
 });
