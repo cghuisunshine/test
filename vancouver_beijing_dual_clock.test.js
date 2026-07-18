@@ -312,3 +312,49 @@ test("handles Firebase API keys through URL and storage", () => {
   assert.equal(values.has("firebaseApiKey"), false);
   assert.equal(core.buildShareUrl({ origin: "https://example.test", pathname: "/clock.html" }, "a+b"), "https://example.test/clock.html?apiKey=a%2Bb");
 });
+
+test("provides availability editor and Firebase settings controls", () => {
+  for (const id of [
+    "editAvailabilityBtn", "availabilityEditor", "editorDateSelect", "rangeRows",
+    "addRangeBtn", "saveOverrideBtn", "deleteOverrideBtn", "editorStatus",
+    "settingsBtn", "settingsPanel", "firebaseKeyInput", "saveFirebaseKeyBtn",
+    "testFirebaseBtn", "clearFirebaseKeyBtn", "shareFirebaseBtn"
+  ]) {
+    assert.match(html, new RegExp(`id=["']${id}["']`));
+  }
+});
+
+test("offers half-hour choices, 24:00 ends, and disables spring gaps", () => {
+  const core = loadCore();
+  const starts = core.timeOptionsForDate("2026-03-08", "start");
+  const ends = core.timeOptionsForDate("2026-03-08", "end");
+  assert.equal(starts.find(option => option.value === "02:00").disabled, true);
+  assert.equal(starts.find(option => option.value === "02:30").disabled, true);
+  assert.equal(ends.find(option => option.value === "24:00").disabled, false);
+});
+
+test("keeps empty overrides valid and invalid ranges write-free", async () => {
+  const core = loadCore();
+  const fake = createFakeRefs();
+  const store = core.createOverrideStore({
+    docRefForDate: fake.docRefForDate,
+    now: () => "2026-07-17T12:00:00.000Z",
+    onUpdate() {}, onError() {}
+  });
+  await store.save("2026-07-17", []);
+  assert.deepEqual(plain(fake.refs.get("2026-07-17").writes[0].ranges), []);
+  await assert.rejects(store.save("2026-07-17", [
+    { start: "08:00", end: "09:00" },
+    { start: "08:30", end: "10:00" }
+  ]));
+  assert.equal(fake.refs.get("2026-07-17").writes.length, 1);
+});
+
+test("contains clear synchronization and data-source status messages", () => {
+  assert.match(html, /正在加载/);
+  assert.match(html, /使用默认规则/);
+  assert.match(html, /Firebase 自定义/);
+  assert.match(html, /已保存/);
+  assert.match(html, /数据无效/);
+  assert.match(html, /保存失败/);
+});

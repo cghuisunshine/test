@@ -37,6 +37,15 @@
     select,input,button{font:inherit;color:var(--text);background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 11px}
     button{cursor:pointer;font-weight:800}
     button:hover{background:#f3f6f9}
+    .control-panel{max-width:760px;margin:0 auto 12px;padding:14px;background:#fff;border:1px solid var(--line);border-radius:10px}
+    .control-panel[hidden]{display:none}
+    .control-panel h2{margin:0 0 12px;font-size:18px}
+    .settings-grid{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+    .settings-actions,.editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .status{min-height:20px;margin-top:8px;color:var(--muted);font-size:13px}
+    .editor-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap}
+    .range-row{display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:center;margin-top:8px}
+    .range-row button{padding:8px 10px;color:#9b2c2c}
     .panel{
       background:rgba(255,255,255,.92);
       border:1px solid rgba(255,255,255,.8);
@@ -80,6 +89,7 @@
     .hour.inner.selected span{background:var(--vancouver)}
     .hour.outer{color:var(--beijing);font-size:clamp(12px,1.75vw,21px)}
     .hour.inner{color:var(--vancouver);font-size:clamp(11px,1.6vw,20px)}
+    .hour.inner sup{font-size:.45em;margin-left:1px;vertical-align:super}
     .tick{position:absolute;left:50%;top:50%;width:2px;background:#8395a7;transform-origin:50% 0;border-radius:2px;opacity:.7}
     .tick.minor{height:7px;width:1px;opacity:.35}
     .tick.major{height:13px}
@@ -102,7 +112,7 @@
     .badge.bj{background:var(--beijing);color:#fff}
     .note{text-align:center;margin-top:16px;color:var(--muted);line-height:1.7}
     .note b{color:var(--text)}
-    @media (max-width:640px){body{padding:4px}.app{width:100%}.panel{padding:6px;border-radius:16px}.clock-wrap{width:min(98vw,960px)}.badge{padding:5px 7px}.ring-label.inner{top:28%}h1{margin-bottom:8px}.toolbar{gap:6px}.control{font-size:11px}select,input,button{padding:7px 8px}}
+    @media (max-width:640px){body{padding:4px}.app{width:100%}.panel{padding:6px;border-radius:16px}.clock-wrap{width:min(98vw,960px)}.badge{padding:5px 7px}.ring-label.inner{top:28%}h1{margin-bottom:8px}.toolbar{gap:6px}.control{font-size:11px}select,input,button{padding:7px 8px}.control-panel{padding:10px}.settings-grid{grid-template-columns:1fr}.range-row{grid-template-columns:1fr auto 1fr auto}}
   </style>
 </head>
 <body>
@@ -119,7 +129,24 @@
         <input id="dateInput" type="date" />
       </label>
       <button id="todayBtn" type="button">今天</button>
+      <button id="editAvailabilityBtn" type="button">可用时间</button>
+      <button id="settingsBtn" type="button" aria-label="Firebase 设置">设置</button>
     </div>
+    <section class="control-panel" id="settingsPanel" hidden>
+      <h2>Firebase 设置</h2>
+      <div class="settings-grid">
+        <label class="control" for="firebaseKeyInput">Firebase API key
+          <input id="firebaseKeyInput" type="password" autocomplete="off" />
+        </label>
+        <div class="settings-actions">
+          <button id="saveFirebaseKeyBtn" type="button">保存 key</button>
+          <button id="testFirebaseBtn" type="button">测试</button>
+          <button id="clearFirebaseKeyBtn" type="button">清除</button>
+          <button id="shareFirebaseBtn" type="button">分享</button>
+        </div>
+      </div>
+      <div class="status" id="settingsStatus"></div>
+    </section>
     <section class="panel">
       <div class="clock-wrap">
         <div class="clock" id="clock">
@@ -138,6 +165,21 @@
         </div>
       </div>
       <div class="note" id="selectionInfo" hidden></div>
+    </section>
+    <section class="control-panel" id="availabilityEditor" hidden>
+      <div class="editor-head">
+        <h2>自定义可用时间</h2>
+        <label class="control" for="editorDateSelect">温哥华日期
+          <select id="editorDateSelect"></select>
+        </label>
+      </div>
+      <div id="rangeRows"></div>
+      <div class="editor-actions">
+        <button id="addRangeBtn" type="button">添加时段</button>
+        <button id="saveOverrideBtn" type="button">保存自定义</button>
+        <button id="deleteOverrideBtn" type="button">删除自定义</button>
+      </div>
+      <div class="status" id="editorStatus">正在加载…</div>
     </section>
   </main>
 <script id="dualClockCoreSource">
@@ -429,12 +471,13 @@
     async function save(date,ranges){
       const validation=validateRanges(ranges,date);
       if(!validation.ok) throw new Error(validation.error);
+      const nowValue=now();
       const payload={
         app:'vancouver-beijing-dual-clock',
         version:1,
         vancouverDate:date,
         ranges:validation.ranges,
-        updatedAt:typeof now()==='string' ? now() : new Date(now()).toISOString()
+        updatedAt:typeof nowValue==='string' ? nowValue : new Date(nowValue).toISOString()
       };
       await docRefForDate(date).set(payload);
       return payload;
@@ -455,6 +498,17 @@
     const base=`${locationLike.origin}${locationLike.pathname}`;
     return key ? `${base}?apiKey=${encodeURIComponent(key)}` : base;
   }
+  function timeOptionsForDate(vancouverDate,kind){
+    const available=availableWallTimes(vancouverDate);
+    const options=[];
+    const start=kind==='end' ? 30 : 0;
+    const finish=kind==='end' ? 1440 : 1410;
+    for(let minute=start;minute<=finish;minute+=30){
+      const value=minute===1440 ? '24:00' : `${String(Math.floor(minute/60)).padStart(2,'0')}:${String(minute%60).padStart(2,'0')}`;
+      options.push({value,disabled:value!=='24:00' && !available.has(value)});
+    }
+    return options;
+  }
 
   return {
     ZONES,
@@ -470,7 +524,8 @@
     createOverrideStore,
     resolveFirebaseApiKey,
     clearFirebaseApiKey,
-    buildShareUrl
+    buildShareUrl,
+    timeOptionsForDate
   };
 });
 </script>
@@ -496,12 +551,30 @@
   const basisSelect = document.getElementById('basisSelect');
   const dateInput = document.getElementById('dateInput');
   const todayBtn = document.getElementById('todayBtn');
+  const editAvailabilityBtn = document.getElementById('editAvailabilityBtn');
+  const availabilityEditor = document.getElementById('availabilityEditor');
+  const editorDateSelect = document.getElementById('editorDateSelect');
+  const rangeRows = document.getElementById('rangeRows');
+  const addRangeBtn = document.getElementById('addRangeBtn');
+  const saveOverrideBtn = document.getElementById('saveOverrideBtn');
+  const deleteOverrideBtn = document.getElementById('deleteOverrideBtn');
+  const editorStatus = document.getElementById('editorStatus');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsPanel = document.getElementById('settingsPanel');
+  const firebaseKeyInput = document.getElementById('firebaseKeyInput');
+  const saveFirebaseKeyBtn = document.getElementById('saveFirebaseKeyBtn');
+  const testFirebaseBtn = document.getElementById('testFirebaseBtn');
+  const clearFirebaseKeyBtn = document.getElementById('clearFirebaseKeyBtn');
+  const shareFirebaseBtn = document.getElementById('shareFirebaseBtn');
+  const settingsStatus = document.getElementById('settingsStatus');
   let selectedSlotIndex = null;
   let currentPanel = null;
   let currentPanelKey = '';
   let viewState = core.createViewState({basis:'Vancouver'});
   const overrideMap = {};
+  const overrideDocuments = {};
   let overrideStore = null;
+  let firebaseConfigured = false;
 
   function polarPlace(el, angleDeg, radiusPct){
     const a=(angleDeg-90)*Math.PI/180;
@@ -558,7 +631,9 @@
     });
     panel.slots.forEach((slot,index)=>{
       const angle=(index/panel.slots.length)*360;
-      const repeated=repeatedHours.get(`${slot.vancouver.date}-${slot.vancouver.hour}`)>1;
+      const repeatedKey=`${slot.vancouver.date}-${slot.vancouver.hour}`;
+      const repeated=repeatedHours.get(repeatedKey)>1;
+      const repeatedSuffix=repeated ? `<sup>${slot.vancouver.offset}</sup>` : '';
 
       const inner=document.createElement('div');
       inner.className='hour inner';
@@ -566,7 +641,7 @@
       inner.setAttribute('role','button');
       inner.setAttribute('tabindex','0');
       inner.setAttribute('aria-label',`温哥华 ${slot.vancouver.date} ${slot.vancouver.hour}:00 UTC${slot.vancouver.offset}`);
-      inner.innerHTML=`<span>${+slot.vancouver.hour}${repeated ? '<sup>•</sup>' : ''}</span>`;
+      inner.innerHTML=`<span>${+slot.vancouver.hour}${repeatedSuffix}</span>`;
       polarPlace(inner,angle,30.5);
       clock.appendChild(inner);
 
@@ -581,6 +656,103 @@
       clock.appendChild(outer);
     });
     renderAvailability(panel);
+  }
+
+  function defaultRangesForDate(date){
+    const panel=core.buildPanel('Vancouver',date);
+    return core.defaultRangesForWeekday(panel.slots[0].vancouver.weekday);
+  }
+
+  function syncEditorDates(){
+    if(!currentPanel) return;
+    const previous=editorDateSelect.value;
+    editorDateSelect.replaceChildren(...currentPanel.vancouverDates.map(date=>new Option(date,date)));
+    editorDateSelect.value=currentPanel.vancouverDates.includes(previous) ? previous : currentPanel.vancouverDates[0];
+    if(!availabilityEditor.hidden) loadEditorDate();
+  }
+
+  function makeTimeSelect(date,kind,value){
+    const select=document.createElement('select');
+    select.className=`range-${kind}`;
+    core.timeOptionsForDate(date,kind).forEach(item=>{
+      const option=new Option(item.value,item.value);
+      option.disabled=item.disabled;
+      option.selected=item.value===value;
+      select.appendChild(option);
+    });
+    return select;
+  }
+
+  function addRangeRow(range={start:'09:00',end:'10:00'}){
+    const date=editorDateSelect.value;
+    const row=document.createElement('div');
+    row.className='range-row';
+    row.append(makeTimeSelect(date,'start',range.start),document.createTextNode('至'),makeTimeSelect(date,'end',range.end));
+    const remove=document.createElement('button');
+    remove.type='button';
+    remove.textContent='删除';
+    remove.setAttribute('aria-label','删除时段');
+    remove.addEventListener('click',()=>row.remove());
+    row.appendChild(remove);
+    rangeRows.appendChild(row);
+  }
+
+  function loadEditorDate(){
+    const date=editorDateSelect.value;
+    if(!date) return;
+    rangeRows.replaceChildren();
+    const hasOverride=Object.prototype.hasOwnProperty.call(overrideMap,date);
+    const ranges=hasOverride ? overrideMap[date] : defaultRangesForDate(date);
+    ranges.forEach(addRangeRow);
+    if(hasOverride){
+      editorStatus.textContent=`${date}：Firebase 自定义`;
+    }else if(firebaseConfigured && overrideDocuments[date]===undefined){
+      editorStatus.textContent=`${date}：正在加载…`;
+    }else{
+      editorStatus.textContent=`${date}：使用默认规则`;
+    }
+  }
+
+  function collectEditorRanges(){
+    return [...rangeRows.querySelectorAll('.range-row')].map(row=>({
+      start:row.querySelector('.range-start').value,
+      end:row.querySelector('.range-end').value
+    }));
+  }
+
+  async function saveEditorOverride(){
+    const date=editorDateSelect.value;
+    const validation=core.validateRanges(collectEditorRanges(),date);
+    if(!validation.ok){ editorStatus.textContent=`${date}：数据无效（${validation.error}）`; return; }
+    if(!overrideStore){ editorStatus.textContent='保存失败：请先配置 Firebase API key'; return; }
+    try{
+      editorStatus.textContent='正在保存…';
+      const document=await overrideStore.save(date,validation.ranges);
+      overrideDocuments[date]=document;
+      overrideMap[date]=document.ranges;
+      renderAvailability(currentPanel);
+      loadEditorDate();
+      editorStatus.textContent=`${date}：已保存 Firebase 自定义`;
+    }catch(error){
+      console.error(error);
+      editorStatus.textContent=`${date}：保存失败`;
+    }
+  }
+
+  async function deleteEditorOverride(){
+    const date=editorDateSelect.value;
+    if(!overrideStore){ editorStatus.textContent='删除失败：请先配置 Firebase API key'; return; }
+    try{
+      await overrideStore.remove(date);
+      overrideDocuments[date]=null;
+      delete overrideMap[date];
+      renderAvailability(currentPanel);
+      loadEditorDate();
+      editorStatus.textContent=`${date}：已删除自定义，使用默认规则`;
+    }catch(error){
+      console.error(error);
+      editorStatus.textContent=`${date}：删除失败`;
+    }
   }
 
   function positionBadge(el, angleDeg, radius){
@@ -602,7 +774,7 @@
     const displayInstant=viewState.liveMode ? now : new Date(viewState.anchor);
     const van=core.getZonedParts(displayInstant,core.ZONES.Vancouver);
     const bj=core.getZonedParts(displayInstant,core.ZONES.Beijing);
-    const vanHour=+van.hour%24, vanMinute=+van.minute, vanSecond=+van.second;
+    const vanHour=+van.hour%24;
     const bjHour=+bj.hour%24;
     const panelKey=`${viewState.basis}:${viewState.date}:${viewState.panelRevision}`;
     if(panelKey!==currentPanelKey){
@@ -610,6 +782,7 @@
       currentPanelKey=panelKey;
       selectedSlotIndex=null;
       renderDial(currentPanel);
+      syncEditorDates();
       if(overrideStore) overrideStore.setDates(currentPanel.vancouverDates);
     }
     const angle=(displayInstant-Date.parse(currentPanel.start))/(Date.parse(currentPanel.end)-Date.parse(currentPanel.start))*360;
@@ -677,27 +850,109 @@
     viewState=core.reduceViewState(viewState,{type:'TODAY'},new Date());
     update();
   });
+  editAvailabilityBtn.addEventListener('click',()=>{
+    availabilityEditor.hidden=!availabilityEditor.hidden;
+    if(!availabilityEditor.hidden){ syncEditorDates(); loadEditorDate(); }
+  });
+  editorDateSelect.addEventListener('change',loadEditorDate);
+  addRangeBtn.addEventListener('click',()=>addRangeRow());
+  saveOverrideBtn.addEventListener('click',saveEditorOverride);
+  deleteOverrideBtn.addEventListener('click',deleteEditorOverride);
+  settingsBtn.addEventListener('click',()=>{
+    settingsPanel.hidden=!settingsPanel.hidden;
+    firebaseKeyInput.value=localStorage.getItem(FIREBASE_API_KEY_KEY) || '';
+  });
 
-  function startFirebaseSync(){
-    const apiKey=core.resolveFirebaseApiKey(location,localStorage);
-    if(!apiKey || !window.firebase) return;
+  async function stopFirebaseSync(){
+    if(overrideStore) overrideStore.stop();
+    overrideStore=null;
+    firebaseConfigured=false;
+    if(window.firebase && firebase.apps.length && firebase.app().delete) await firebase.app().delete();
+    Object.keys(overrideMap).forEach(date=>delete overrideMap[date]);
+    Object.keys(overrideDocuments).forEach(date=>delete overrideDocuments[date]);
+    if(currentPanel) renderAvailability(currentPanel);
+  }
+
+  async function startFirebaseSync(apiKey=core.resolveFirebaseApiKey(location,localStorage)){
+    if(!apiKey || !window.firebase){
+      settingsStatus.textContent='未配置 Firebase；当前使用默认规则';
+      if(!availabilityEditor.hidden) loadEditorDate();
+      return;
+    }
     try{
       if(!firebase.apps.length) firebase.initializeApp({...FIREBASE_CONFIG,apiKey});
       const db=firebase.firestore();
+      firebaseConfigured=true;
+      settingsStatus.textContent='Firebase 已连接';
       overrideStore=core.createOverrideStore({
         docRefForDate:date=>db.collection('dualClockAvailability').doc(date),
         onUpdate:(date,document)=>{
-          if(document) overrideMap[date]=document.ranges;
-          else delete overrideMap[date];
+          overrideDocuments[date]=document;
+          if(document) overrideMap[date]=document.ranges; else delete overrideMap[date];
           if(currentPanel && currentPanel.vancouverDates.includes(date)) renderAvailability(currentPanel);
+          if(!availabilityEditor.hidden && editorDateSelect.value===date) loadEditorDate();
         },
-        onError:(date,error)=>console.error(`Firebase availability ${date}`,error)
+        onError:(date,error)=>{
+          console.error(`Firebase availability ${date}`,error);
+          if(error.message.startsWith('invalid-override')){
+            overrideDocuments[date]=null;
+            delete overrideMap[date];
+            if(currentPanel && currentPanel.vancouverDates.includes(date)) renderAvailability(currentPanel);
+          }
+          if(!availabilityEditor.hidden && editorDateSelect.value===date){
+            editorStatus.textContent=error.message.startsWith('invalid-override') ? `${date}：Firebase 数据无效，使用默认规则` : `${date}：加载失败，保留当前显示`;
+          }
+        }
       });
       if(currentPanel) overrideStore.setDates(currentPanel.vancouverDates);
     }catch(error){
       console.error('Firebase initialization failed',error);
+      firebaseConfigured=false;
+      settingsStatus.textContent='Firebase 初始化失败';
+      if(!availabilityEditor.hidden) loadEditorDate();
     }
   }
+
+  saveFirebaseKeyBtn.addEventListener('click',async()=>{
+    const apiKey=firebaseKeyInput.value.trim();
+    if(!apiKey){ settingsStatus.textContent='请输入 Firebase API key'; return; }
+    localStorage.setItem(FIREBASE_API_KEY_KEY,apiKey);
+    settingsStatus.textContent='API key 已保存，正在连接…';
+    await stopFirebaseSync();
+    await startFirebaseSync(apiKey);
+  });
+  clearFirebaseKeyBtn.addEventListener('click',async()=>{
+    core.clearFirebaseApiKey(localStorage);
+    firebaseKeyInput.value='';
+    await stopFirebaseSync();
+    settingsStatus.textContent='API key 已清除；当前使用默认规则';
+    if(!availabilityEditor.hidden) loadEditorDate();
+  });
+  testFirebaseBtn.addEventListener('click',async()=>{
+    const apiKey=firebaseKeyInput.value.trim() || localStorage.getItem(FIREBASE_API_KEY_KEY) || '';
+    if(!apiKey){ settingsStatus.textContent='请输入 Firebase API key'; return; }
+    if(!window.firebase){ settingsStatus.textContent='Firebase 脚本加载失败'; return; }
+    const name=`dualClockTest-${Date.now()}`;
+    let testApp=null;
+    try{
+      settingsStatus.textContent='正在测试…';
+      testApp=firebase.initializeApp({...FIREBASE_CONFIG,apiKey},name);
+      const date=(currentPanel && currentPanel.vancouverDates[0]) || core.getZonedParts(new Date(),core.ZONES.Vancouver).date;
+      await firebase.firestore(testApp).collection('dualClockAvailability').doc(date).get();
+      settingsStatus.textContent='Firebase 测试成功';
+    }catch(error){
+      console.error(error);
+      settingsStatus.textContent='Firebase 测试失败';
+    }finally{
+      if(testApp && testApp.delete) await testApp.delete();
+    }
+  });
+  shareFirebaseBtn.addEventListener('click',()=>{
+    const key=localStorage.getItem(FIREBASE_API_KEY_KEY) || firebaseKeyInput.value.trim();
+    const url=core.buildShareUrl(location,key);
+    if(navigator.share) navigator.share({title:'北京－温哥华双时钟',url}).catch(()=>{});
+    else prompt('复制这个链接：',url);
+  });
 
   buildTicks();
   update();
