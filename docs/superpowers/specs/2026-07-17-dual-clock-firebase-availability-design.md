@@ -76,11 +76,13 @@ Browser `Intl.DateTimeFormat` supplies zone-local parts. A small conversion help
 
 Each dial position represents an elapsed-hour instant and independently formats its Vancouver and Beijing labels. A Vancouver-selected ordinary day has 24 positions, the spring-forward day has 23 (no nonexistent local hour), and the fall-back day has 25 (the repeated local hour appears twice with an offset disambiguator). A Beijing-selected day always has 24 positions, with Vancouver labels independently reflecting any transition. This avoids applying one offset to an entire transition day.
 
+Range boundaries are resolved against their specific Vancouver date. On the spring-forward date, nonexistent `02:00` and `02:30` boundaries are disabled in the editor and make a remote document invalid rather than being silently normalized. On the fall-back date, a repeated start boundary selects its earlier occurrence and a repeated end boundary selects its later occurrence; therefore a range such as `01:00–02:00` includes both occurrences of the repeated hour. The wall-time conversion helper exposes explicit `earlier`/`later` disambiguation and sector tests cover both transition rules.
+
 ## Live and anchored state
 
 The page has an explicit `liveMode` state:
 
-- Initial load and the Today button enter live mode. The picker shows the current date in the selected basis, the arrow follows the current instant, and a Vancouver-date rollover rebuilds subscriptions automatically.
+- Initial load and the Today button enter live mode. The picker shows the current date in the selected basis and the arrow follows the current instant. Whenever the selected basis's local date changes, the page rebuilds the panel interval, picker, intersecting Vancouver-date set, and subscriptions; this handles Beijing midnight independently of Vancouver midnight.
 - Any direct date-input change exits live mode, even if the chosen value happens to equal today's date. The arrow remains at `00:00` in the selected basis.
 - While anchored, switching the Beijing/Vancouver basis first finds the new city's calendar date containing the old anchor, then re-anchors the panel at `00:00` on that date and rewrites the picker. While live, switching basis keeps live mode and simply shows that city's current date.
 
@@ -109,6 +111,7 @@ Extend `vancouver_beijing_dual_clock.test.js` with behavior-oriented tests for:
 - API-key URL/local-storage flow,
 - Beijing and Vancouver date anchoring,
 - ordinary +15/+16 offsets plus 23-hour and 25-hour DST transition dials,
+- spring-gap rejection and fall-repeat availability-sector semantics,
 - Today/live versus selected-date midnight display.
 
 Run the Node test file, then open the page locally and verify desktop and narrow-screen layouts, date changes, editor actions, and the browser console.
