@@ -386,6 +386,76 @@
     return {...state};
   }
 
+  function validateOverrideDocument(data, documentId){
+    if(!data || data.app!=='vancouver-beijing-dual-clock') return {ok:false,error:'app'};
+    if(data.version!==1) return {ok:false,error:'version'};
+    if(data.vancouverDate!==documentId) return {ok:false,error:'date'};
+    if(typeof data.updatedAt!=='string' || !Number.isFinite(Date.parse(data.updatedAt)) || new Date(data.updatedAt).toISOString()!==data.updatedAt){
+      return {ok:false,error:'updatedAt'};
+    }
+    const validation=validateRanges(data.ranges,documentId);
+    if(!validation.ok) return {ok:false,error:validation.error};
+    return {ok:true,value:{...data,ranges:validation.ranges},error:''};
+  }
+
+  function createOverrideStore({docRefForDate,now=()=>new Date().toISOString(),onUpdate=()=>{},onError=()=>{}}){
+    let generation=0;
+    let unsubscribers=[];
+    function setDates(dates){
+      generation+=1;
+      const activeGeneration=generation;
+      unsubscribers.forEach(unsubscribe=>unsubscribe());
+      unsubscribers=[];
+      [...new Set(dates)].forEach(date=>{
+        const ref=docRefForDate(date);
+        const unsubscribe=ref.onSnapshot(snapshot=>{
+          if(activeGeneration!==generation) return;
+          if(!snapshot.exists){
+            onUpdate(date,null);
+            return;
+          }
+          const validation=validateOverrideDocument(snapshot.data() || {},date);
+          if(!validation.ok){
+            onError(date,new Error(`invalid-override:${validation.error}`));
+            return;
+          }
+          onUpdate(date,validation.value);
+        },error=>{
+          if(activeGeneration===generation) onError(date,error);
+        });
+        unsubscribers.push(unsubscribe);
+      });
+    }
+    async function save(date,ranges){
+      const validation=validateRanges(ranges,date);
+      if(!validation.ok) throw new Error(validation.error);
+      const payload={
+        app:'vancouver-beijing-dual-clock',
+        version:1,
+        vancouverDate:date,
+        ranges:validation.ranges,
+        updatedAt:typeof now()==='string' ? now() : new Date(now()).toISOString()
+      };
+      await docRefForDate(date).set(payload);
+      return payload;
+    }
+    function remove(date){ return docRefForDate(date).delete(); }
+    function stop(){ generation+=1; unsubscribers.forEach(unsubscribe=>unsubscribe()); unsubscribers=[]; }
+    return {setDates,save,remove,stop};
+  }
+
+  const FIREBASE_API_KEY_KEY='firebaseApiKey';
+  function resolveFirebaseApiKey(locationLike,storage){
+    const key=new URLSearchParams((locationLike && locationLike.search) || '').get('apiKey');
+    if(key){ storage.setItem(FIREBASE_API_KEY_KEY,key); return key; }
+    return storage.getItem(FIREBASE_API_KEY_KEY) || '';
+  }
+  function clearFirebaseApiKey(storage){ storage.removeItem(FIREBASE_API_KEY_KEY); }
+  function buildShareUrl(locationLike,key){
+    const base=`${locationLike.origin}${locationLike.pathname}`;
+    return key ? `${base}?apiKey=${encodeURIComponent(key)}` : base;
+  }
+
   return {
     ZONES,
     getZonedParts,
@@ -395,12 +465,27 @@
     defaultRangesForWeekday,
     buildAvailabilitySegments,
     createViewState,
-    reduceViewState
+    reduceViewState,
+    validateOverrideDocument,
+    createOverrideStore,
+    resolveFirebaseApiKey,
+    clearFirebaseApiKey,
+    buildShareUrl
   };
 });
 </script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
   const core = window.dualClockCore;
+  const FIREBASE_API_KEY_KEY = 'firebaseApiKey';
+  const FIREBASE_CONFIG = {
+    authDomain:'homeinventory-4718c.firebaseapp.com',
+    projectId:'homeinventory-4718c',
+    storageBucket:'homeinventory-4718c.firebasestorage.app',
+    messagingSenderId:'719884896213',
+    appId:'1:719884896213:web:e93d5dffc79dec10995f5c'
+  };
   const clock = document.getElementById('clock');
   const hand = document.getElementById('hand');
   const bjBadge = document.getElementById('bjBadge');
@@ -416,6 +501,7 @@
   let currentPanelKey = '';
   let viewState = core.createViewState({basis:'Vancouver'});
   const overrideMap = {};
+  let overrideStore = null;
 
   function polarPlace(el, angleDeg, radiusPct){
     const a=(angleDeg-90)*Math.PI/180;
@@ -524,6 +610,7 @@
       currentPanelKey=panelKey;
       selectedSlotIndex=null;
       renderDial(currentPanel);
+      if(overrideStore) overrideStore.setDates(currentPanel.vancouverDates);
     }
     const angle=(displayInstant-Date.parse(currentPanel.start))/(Date.parse(currentPanel.end)-Date.parse(currentPanel.start))*360;
 
@@ -591,8 +678,30 @@
     update();
   });
 
+  function startFirebaseSync(){
+    const apiKey=core.resolveFirebaseApiKey(location,localStorage);
+    if(!apiKey || !window.firebase) return;
+    try{
+      if(!firebase.apps.length) firebase.initializeApp({...FIREBASE_CONFIG,apiKey});
+      const db=firebase.firestore();
+      overrideStore=core.createOverrideStore({
+        docRefForDate:date=>db.collection('dualClockAvailability').doc(date),
+        onUpdate:(date,document)=>{
+          if(document) overrideMap[date]=document.ranges;
+          else delete overrideMap[date];
+          if(currentPanel && currentPanel.vancouverDates.includes(date)) renderAvailability(currentPanel);
+        },
+        onError:(date,error)=>console.error(`Firebase availability ${date}`,error)
+      });
+      if(currentPanel) overrideStore.setDates(currentPanel.vancouverDates);
+    }catch(error){
+      console.error('Firebase initialization failed',error);
+    }
+  }
+
   buildTicks();
   update();
+  startFirebaseSync();
   setInterval(update,1000);
   addEventListener('resize',update);
 </script>

@@ -193,3 +193,122 @@ test("rebuilds live state when the selected basis crosses midnight", () => {
   assert.equal(next.date, "2026-07-18");
   assert.equal(next.panelRevision, state.panelRevision + 1);
 });
+
+function createFakeRefs() {
+  const refs = new Map();
+  function docRefForDate(date) {
+    if (!refs.has(date)) {
+      const ref = {
+        writes: [], deletes: 0, listeners: [],
+        onSnapshot(success, failure) {
+          const listener = { success, failure, unsubscribed: false };
+          this.listeners.push(listener);
+          return () => { listener.unsubscribed = true; };
+        },
+        set(payload) { this.writes.push(payload); return Promise.resolve(); },
+        delete() { this.deletes += 1; return Promise.resolve(); }
+      };
+      refs.set(date, ref);
+    }
+    return refs.get(date);
+  }
+  return { refs, docRefForDate };
+}
+
+function validOverride(date, ranges = [{ start: "06:00", end: "07:30" }]) {
+  return {
+    app: "vancouver-beijing-dual-clock",
+    version: 1,
+    vancouverDate: date,
+    ranges,
+    updatedAt: "2026-07-17T12:00:00.000Z"
+  };
+}
+
+test("loads Firebase compat and uses the family Firebase project", () => {
+  assert.match(html, /firebasejs\/9\.23\.0\/firebase-app-compat\.js/);
+  assert.match(html, /firebasejs\/9\.23\.0\/firebase-firestore-compat\.js/);
+  assert.match(html, /projectId:\s*['"]homeinventory-4718c['"]/);
+  assert.match(html, /FIREBASE_API_KEY_KEY\s*=\s*['"]firebaseApiKey['"]/);
+});
+
+test("validates every field in remote override documents", () => {
+  const core = loadCore();
+  assert.equal(core.validateOverrideDocument(validOverride("2026-07-17"), "2026-07-17").ok, true);
+  assert.equal(core.validateOverrideDocument(validOverride("2026-07-17", []), "2026-07-17").ok, true);
+  const invalid = [
+    { ...validOverride("2026-07-17"), app: "wrong" },
+    { ...validOverride("2026-07-17"), version: 2 },
+    { ...validOverride("2026-07-17"), vancouverDate: "2026-07-18" },
+    { ...validOverride("2026-07-17"), updatedAt: "yesterday" },
+    { ...validOverride("2026-07-17"), ranges: "06:00-07:30" },
+    validOverride("2026-07-17", [{ start: "06:00", end: "08:00" }, { start: "07:30", end: "09:00" }]),
+    validOverride("2026-03-08", [{ start: "02:00", end: "03:00" }])
+  ];
+  for (const document of invalid) {
+    assert.equal(core.validateOverrideDocument(document, document.vancouverDate === "2026-07-18" ? "2026-07-17" : document.vancouverDate).ok, false);
+  }
+});
+
+test("subscribes by Vancouver date and ignores stale callbacks", () => {
+  const core = loadCore();
+  const fake = createFakeRefs();
+  const updates = [], errors = [];
+  const store = core.createOverrideStore({
+    docRefForDate: fake.docRefForDate,
+    now: () => "2026-07-17T12:00:00.000Z",
+    onUpdate: (date, value) => updates.push({ date, value }),
+    onError: (date, error) => errors.push({ date, error: error.message })
+  });
+  store.setDates(["2026-07-16", "2026-07-17", "2026-07-17"]);
+  assert.equal(fake.refs.get("2026-07-17").listeners.length, 1);
+  const old = fake.refs.get("2026-07-16").listeners[0];
+  store.setDates(["2026-07-17"]);
+  assert.equal(old.unsubscribed, true);
+  old.success({ exists: true, data: () => validOverride("2026-07-16") });
+  assert.equal(updates.length, 0);
+
+  const active = fake.refs.get("2026-07-17").listeners.at(-1);
+  active.success({ exists: false, data: () => ({}) });
+  assert.deepEqual(plain(updates.at(-1)), { date: "2026-07-17", value: null });
+  active.failure(new Error("offline"));
+  assert.deepEqual(plain(errors.at(-1)), { date: "2026-07-17", error: "offline" });
+});
+
+test("writes sorted exact payloads and deletes only one date", async () => {
+  const core = loadCore();
+  const fake = createFakeRefs();
+  const store = core.createOverrideStore({
+    docRefForDate: fake.docRefForDate,
+    now: () => "2026-07-17T12:00:00.000Z",
+    onUpdate() {}, onError() {}
+  });
+  await store.save("2026-07-17", [
+    { start: "18:00", end: "22:00" },
+    { start: "06:00", end: "07:30" }
+  ]);
+  assert.deepEqual(plain(fake.refs.get("2026-07-17").writes[0]), validOverride("2026-07-17", [
+    { start: "06:00", end: "07:30" },
+    { start: "18:00", end: "22:00" }
+  ]));
+  await store.remove("2026-07-17");
+  assert.equal(fake.refs.get("2026-07-17").deletes, 1);
+  assert.equal(fake.refs.has("2026-07-18"), false);
+});
+
+test("handles Firebase API keys through URL and storage", () => {
+  const core = loadCore();
+  const values = new Map([["firebaseApiKey", "stored-key"]]);
+  const storage = {
+    getItem: key => values.get(key) || null,
+    setItem: (key, value) => values.set(key, value),
+    removeItem: key => values.delete(key)
+  };
+  const fromUrl = core.resolveFirebaseApiKey({ search: "?apiKey=url-key" }, storage);
+  assert.equal(fromUrl, "url-key");
+  assert.equal(values.get("firebaseApiKey"), "url-key");
+  assert.equal(core.resolveFirebaseApiKey({ search: "" }, storage), "url-key");
+  core.clearFirebaseApiKey(storage);
+  assert.equal(values.has("firebaseApiKey"), false);
+  assert.equal(core.buildShareUrl({ origin: "https://example.test", pathname: "/clock.html" }, "a+b"), "https://example.test/clock.html?apiKey=a%2Bb");
+});
