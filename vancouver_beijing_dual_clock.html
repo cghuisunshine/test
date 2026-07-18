@@ -32,6 +32,11 @@
     }
     .app{width:min(1320px,100%)}
     h1{margin:0 0 18px;text-align:center;font-size:clamp(28px,4vw,52px);letter-spacing:.02em}
+    .toolbar{display:flex;align-items:end;justify-content:center;gap:10px;flex-wrap:wrap;margin:0 auto 12px}
+    .control{display:grid;gap:4px;color:var(--muted);font-size:12px;font-weight:700}
+    select,input,button{font:inherit;color:var(--text);background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+    button{cursor:pointer;font-weight:800}
+    button:hover{background:#f3f6f9}
     .panel{
       background:rgba(255,255,255,.92);
       border:1px solid rgba(255,255,255,.8);
@@ -97,12 +102,24 @@
     .badge.bj{background:var(--beijing);color:#fff}
     .note{text-align:center;margin-top:16px;color:var(--muted);line-height:1.7}
     .note b{color:var(--text)}
-    @media (max-width:640px){body{padding:4px}.app{width:100%}.panel{padding:6px;border-radius:16px}.clock-wrap{width:min(98vw,960px)}.badge{padding:5px 7px}.ring-label.inner{top:28%}h1{margin-bottom:8px}}
+    @media (max-width:640px){body{padding:4px}.app{width:100%}.panel{padding:6px;border-radius:16px}.clock-wrap{width:min(98vw,960px)}.badge{padding:5px 7px}.ring-label.inner{top:28%}h1{margin-bottom:8px}.toolbar{gap:6px}.control{font-size:11px}select,input,button{padding:7px 8px}}
   </style>
 </head>
 <body>
   <main class="app">
     <h1 id="pageTitle">北京 --:-- - 温哥华 --:--</h1>
+    <div class="toolbar" aria-label="日期控制">
+      <label class="control" for="basisSelect">日期基准
+        <select id="basisSelect">
+          <option value="Vancouver">温哥华</option>
+          <option value="Beijing">北京</option>
+        </select>
+      </label>
+      <label class="control" for="dateInput">日期
+        <input id="dateInput" type="date" />
+      </label>
+      <button id="todayBtn" type="button">今天</button>
+    </div>
     <section class="panel">
       <div class="clock-wrap">
         <div class="clock" id="clock">
@@ -306,6 +323,69 @@
     });
   }
 
+  function createViewState({basis='Vancouver',now=()=>new Date()}={}){
+    const instant=new Date(now());
+    return {
+      basis,
+      date:getZonedParts(instant,ZONES[basis]).date,
+      liveMode:true,
+      anchor:instant.toISOString(),
+      panelRevision:0
+    };
+  }
+
+  function reduceViewState(state, action, nowInstant=new Date()){
+    const now=new Date(nowInstant);
+    if(action.type==='TODAY'){
+      return {
+        ...state,
+        liveMode:true,
+        date:getZonedParts(now,ZONES[state.basis]).date,
+        anchor:now.toISOString(),
+        panelRevision:state.panelRevision+1
+      };
+    }
+    if(action.type==='SELECT_DATE'){
+      return {
+        ...state,
+        liveMode:false,
+        date:action.date,
+        anchor:zonedDateTimeToInstant(action.date,'00:00',ZONES[state.basis]).toISOString(),
+        panelRevision:state.panelRevision+1
+      };
+    }
+    if(action.type==='SET_BASIS'){
+      const basis=action.basis;
+      if(state.liveMode){
+        return {
+          ...state,
+          basis,
+          date:getZonedParts(now,ZONES[basis]).date,
+          anchor:now.toISOString(),
+          panelRevision:state.panelRevision+1
+        };
+      }
+      const date=getZonedParts(new Date(state.anchor),ZONES[basis]).date;
+      return {
+        ...state,
+        basis,
+        date,
+        anchor:zonedDateTimeToInstant(date,'00:00',ZONES[basis]).toISOString(),
+        panelRevision:state.panelRevision+1
+      };
+    }
+    if(action.type==='TICK' && state.liveMode){
+      const date=getZonedParts(now,ZONES[state.basis]).date;
+      return {
+        ...state,
+        date,
+        anchor:now.toISOString(),
+        panelRevision:state.panelRevision+(date===state.date?0:1)
+      };
+    }
+    return {...state};
+  }
+
   return {
     ZONES,
     getZonedParts,
@@ -313,7 +393,9 @@
     buildPanel,
     validateRanges,
     defaultRangesForWeekday,
-    buildAvailabilitySegments
+    buildAvailabilitySegments,
+    createViewState,
+    reduceViewState
   };
 });
 </script>
@@ -326,9 +408,13 @@
   const selectionInfo = document.getElementById('selectionInfo');
   const availabilityRing = document.getElementById('availabilityRing');
   const availabilityLabels = document.getElementById('availabilityLabels');
+  const basisSelect = document.getElementById('basisSelect');
+  const dateInput = document.getElementById('dateInput');
+  const todayBtn = document.getElementById('todayBtn');
   let selectedSlotIndex = null;
   let currentPanel = null;
   let currentPanelKey = '';
+  let viewState = core.createViewState({basis:'Vancouver'});
   const overrideMap = {};
 
   function polarPlace(el, angleDeg, radiusPct){
@@ -424,23 +510,27 @@
 
   function update(){
     const now=new Date();
-    const van=core.getZonedParts(now,core.ZONES.Vancouver);
-    const bj=core.getZonedParts(now,core.ZONES.Beijing);
+    viewState=core.reduceViewState(viewState,{type:'TICK'},now);
+    basisSelect.value=viewState.basis;
+    dateInput.value=viewState.date;
+    const displayInstant=viewState.liveMode ? now : new Date(viewState.anchor);
+    const van=core.getZonedParts(displayInstant,core.ZONES.Vancouver);
+    const bj=core.getZonedParts(displayInstant,core.ZONES.Beijing);
     const vanHour=+van.hour%24, vanMinute=+van.minute, vanSecond=+van.second;
     const bjHour=+bj.hour%24;
-    const panelKey=`Vancouver:${van.date}`;
+    const panelKey=`${viewState.basis}:${viewState.date}:${viewState.panelRevision}`;
     if(panelKey!==currentPanelKey){
-      currentPanel=core.buildPanel('Vancouver',van.date);
+      currentPanel=core.buildPanel(viewState.basis,viewState.date);
       currentPanelKey=panelKey;
       selectedSlotIndex=null;
       renderDial(currentPanel);
     }
-    const angle=(now-Date.parse(currentPanel.start))/(Date.parse(currentPanel.end)-Date.parse(currentPanel.start))*360;
+    const angle=(displayInstant-Date.parse(currentPanel.start))/(Date.parse(currentPanel.end)-Date.parse(currentPanel.start))*360;
 
     hand.style.transform=`rotate(${angle-90}deg)`;
-    const liveTitle=`北京 ${String(bjHour).padStart(2,'0')}:${bj.minute} - 温哥华 ${String(vanHour).padStart(2,'0')}:${van.minute}`;
-    document.getElementById('pageTitle').textContent=liveTitle;
-    document.title=liveTitle;
+    const title=`北京 ${bj.date} ${String(bjHour).padStart(2,'0')}:${bj.minute} - 温哥华 ${van.date} ${String(vanHour).padStart(2,'0')}:${van.minute}`;
+    document.getElementById('pageTitle').textContent=title;
+    document.title=title;
     document.getElementById('vanTime').textContent=`${String(vanHour).padStart(2,'0')}:${van.minute}`;
     const vanDate=van.date;
     const bjDate=bj.date;
@@ -486,6 +576,19 @@
       e.preventDefault();
       selectHour(+hour.dataset.slotIndex);
     }
+  });
+  basisSelect.addEventListener('change',()=>{
+    viewState=core.reduceViewState(viewState,{type:'SET_BASIS',basis:basisSelect.value},new Date());
+    update();
+  });
+  dateInput.addEventListener('change',()=>{
+    if(!dateInput.value) return;
+    viewState=core.reduceViewState(viewState,{type:'SELECT_DATE',date:dateInput.value},new Date());
+    update();
+  });
+  todayBtn.addEventListener('click',()=>{
+    viewState=core.reduceViewState(viewState,{type:'TODAY'},new Date());
+    update();
   });
 
   buildTicks();

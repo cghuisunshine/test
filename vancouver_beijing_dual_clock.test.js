@@ -146,3 +146,50 @@ test("uses actual spring-day duration for sector percentages", () => {
   assert.equal(panel.durationHours, 23);
   assert.ok(Math.abs((segments[0].endPct - segments[0].startPct) - 100 / 23) < 0.0001);
 });
+
+test("includes date-basis, date, and Today controls", () => {
+  assert.match(html, /id="basisSelect"/);
+  assert.match(html, /id="dateInput"/);
+  assert.match(html, /id="todayBtn"/);
+});
+
+test("models live and explicitly anchored date selection", () => {
+  const core = loadCore();
+  const fixedNow = new Date("2026-07-17T15:00:00.000Z");
+  const state = core.createViewState({ basis: "Vancouver", now: () => fixedNow });
+  assert.equal(state.liveMode, true);
+  assert.equal(state.date, "2026-07-17");
+
+  const anchored = core.reduceViewState(state, { type: "SELECT_DATE", date: state.date }, fixedNow);
+  assert.equal(anchored.liveMode, false);
+  assert.equal(anchored.date, "2026-07-17");
+
+  const liveAgain = core.reduceViewState(anchored, { type: "TODAY" }, fixedNow);
+  assert.equal(liveAgain.liveMode, true);
+});
+
+test("switches basis consistently in live and anchored modes", () => {
+  const core = loadCore();
+  const fixedNow = new Date("2026-07-17T15:00:00.000Z");
+  const live = core.createViewState({ basis: "Vancouver", now: () => fixedNow });
+  const liveBeijing = core.reduceViewState(live, { type: "SET_BASIS", basis: "Beijing" }, fixedNow);
+  assert.equal(liveBeijing.liveMode, true);
+  assert.equal(liveBeijing.date, "2026-07-17");
+
+  const anchored = core.reduceViewState(live, { type: "SELECT_DATE", date: "2026-07-17" }, fixedNow);
+  const anchoredBeijing = core.reduceViewState(anchored, { type: "SET_BASIS", basis: "Beijing" }, fixedNow);
+  assert.equal(anchoredBeijing.liveMode, false);
+  assert.equal(anchoredBeijing.date, "2026-07-17");
+  assert.equal(core.getZonedParts(new Date(anchoredBeijing.anchor), core.ZONES.Beijing).hour, "00");
+});
+
+test("rebuilds live state when the selected basis crosses midnight", () => {
+  const core = loadCore();
+  const before = new Date("2026-07-17T15:59:00.000Z");
+  const after = new Date("2026-07-17T16:01:00.000Z");
+  const state = core.createViewState({ basis: "Beijing", now: () => before });
+  const next = core.reduceViewState(state, { type: "TICK" }, after);
+  assert.equal(state.date, "2026-07-17");
+  assert.equal(next.date, "2026-07-18");
+  assert.equal(next.panelRevision, state.panelRevision + 1);
+});
