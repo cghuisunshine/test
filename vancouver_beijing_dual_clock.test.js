@@ -324,6 +324,11 @@ test("provides availability editor and Firebase settings controls", () => {
   }
 });
 
+test("places the availability editor before the tall clock panel", () => {
+  assert.ok(html.indexOf('id="availabilityEditor"') < html.indexOf('<section class="panel">'));
+  assert.match(html, /availabilityEditor\.scrollIntoView/);
+});
+
 test("offers half-hour choices, 24:00 ends, and disables spring gaps", () => {
   const core = loadCore();
   const starts = core.timeOptionsForDate("2026-03-08", "start");

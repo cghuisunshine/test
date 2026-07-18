@@ -147,6 +147,21 @@
       </div>
       <div class="status" id="settingsStatus"></div>
     </section>
+    <section class="control-panel" id="availabilityEditor" hidden>
+      <div class="editor-head">
+        <h2>自定义可用时间</h2>
+        <label class="control" for="editorDateSelect">温哥华日期
+          <select id="editorDateSelect"></select>
+        </label>
+      </div>
+      <div id="rangeRows"></div>
+      <div class="editor-actions">
+        <button id="addRangeBtn" type="button">添加时段</button>
+        <button id="saveOverrideBtn" type="button">保存自定义</button>
+        <button id="deleteOverrideBtn" type="button">删除自定义</button>
+      </div>
+      <div class="status" id="editorStatus">正在加载…</div>
+    </section>
     <section class="panel">
       <div class="clock-wrap">
         <div class="clock" id="clock">
@@ -165,21 +180,6 @@
         </div>
       </div>
       <div class="note" id="selectionInfo" hidden></div>
-    </section>
-    <section class="control-panel" id="availabilityEditor" hidden>
-      <div class="editor-head">
-        <h2>自定义可用时间</h2>
-        <label class="control" for="editorDateSelect">温哥华日期
-          <select id="editorDateSelect"></select>
-        </label>
-      </div>
-      <div id="rangeRows"></div>
-      <div class="editor-actions">
-        <button id="addRangeBtn" type="button">添加时段</button>
-        <button id="saveOverrideBtn" type="button">保存自定义</button>
-        <button id="deleteOverrideBtn" type="button">删除自定义</button>
-      </div>
-      <div class="status" id="editorStatus">正在加载…</div>
     </section>
   </main>
 <script id="dualClockCoreSource">
@@ -852,7 +852,11 @@
   });
   editAvailabilityBtn.addEventListener('click',()=>{
     availabilityEditor.hidden=!availabilityEditor.hidden;
-    if(!availabilityEditor.hidden){ syncEditorDates(); loadEditorDate(); }
+    if(!availabilityEditor.hidden){
+      syncEditorDates();
+      loadEditorDate();
+      availabilityEditor.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
   });
   editorDateSelect.addEventListener('change',loadEditorDate);
   addRangeBtn.addEventListener('click',()=>addRangeRow());
