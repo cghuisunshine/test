@@ -130,6 +130,145 @@
       <div class="note" id="selectionInfo" hidden></div>
     </section>
   </main>
+<script id="dualClockCoreSource">
+(function(root, factory){
+  const core = factory();
+  if(typeof module === 'object' && module.exports) module.exports = core;
+  else root.dualClockCore = core;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function(){
+  const ZONES = { Vancouver:'America/Vancouver', Beijing:'Asia/Shanghai' };
+  const DEFAULT_WEEKDAY_RANGES = [
+    { start:'06:00', end:'07:30' },
+    { start:'18:00', end:'22:00' }
+  ];
+  const DEFAULT_WEEKEND_RANGES = [{ start:'06:00', end:'22:00' }];
+
+  function getZonedParts(value, timeZone){
+    const date = value instanceof Date ? value : new Date(value);
+    const parts = new Intl.DateTimeFormat('en-CA',{
+      timeZone,
+      hour12:false,
+      hourCycle:'h23',
+      year:'numeric', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', second:'2-digit',
+      weekday:'short', timeZoneName:'shortOffset'
+    }).formatToParts(date);
+    const result = Object.fromEntries(parts.map(part=>[part.type,part.value]));
+    if(result.hour === '24') result.hour = '00';
+    result.date = `${result.year}-${result.month}-${result.day}`;
+    const zoneMatch = (result.timeZoneName || '').match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+    if(zoneMatch){
+      const sign = zoneMatch[1] === '-' ? -1 : 1;
+      result.offsetMinutes = sign * (+zoneMatch[2] * 60 + +(zoneMatch[3] || 0));
+    }else{
+      const wallUtc = Date.UTC(+result.year,+result.month-1,+result.day,+result.hour,+result.minute,+result.second);
+      result.offsetMinutes = Math.round((wallUtc-date.getTime())/60000);
+    }
+    const absolute = Math.abs(result.offsetMinutes);
+    result.offset = `${result.offsetMinutes < 0 ? '-' : '+'}${String(Math.floor(absolute/60)).padStart(2,'0')}:${String(absolute%60).padStart(2,'0')}`;
+    return result;
+  }
+
+  function zonedDateTimeToInstant(dateText, timeText, timeZone){
+    const [year,month,day] = dateText.split('-').map(Number);
+    const [hour,minute] = timeText.split(':').map(Number);
+    const targetUtc = Date.UTC(year,month-1,day,hour,minute,0);
+    let guess = targetUtc;
+    for(let i=0;i<5;i++){
+      const parts = getZonedParts(new Date(guess),timeZone);
+      const wallUtc = Date.UTC(+parts.year,+parts.month-1,+parts.day,+parts.hour,+parts.minute,+parts.second);
+      const correction = targetUtc-wallUtc;
+      if(correction===0) break;
+      guess += correction;
+    }
+    return new Date(guess);
+  }
+
+  function addCalendarDays(dateText, days){
+    const [year,month,day] = dateText.split('-').map(Number);
+    const date = new Date(Date.UTC(year,month-1,day+days));
+    return `${date.getUTCFullYear()}-${String(date.getUTCMonth()+1).padStart(2,'0')}-${String(date.getUTCDate()).padStart(2,'0')}`;
+  }
+
+  function buildPanel(basis, dateText){
+    const timeZone = ZONES[basis];
+    if(!timeZone) throw new Error('invalid-basis');
+    const start = zonedDateTimeToInstant(dateText,'00:00',timeZone);
+    const end = zonedDateTimeToInstant(addCalendarDays(dateText,1),'00:00',timeZone);
+    const slots = [];
+    for(let time=start.getTime();time<end.getTime();time+=3600000){
+      const instant = new Date(time);
+      slots.push({
+        instant:instant.toISOString(),
+        vancouver:getZonedParts(instant,ZONES.Vancouver),
+        beijing:getZonedParts(instant,ZONES.Beijing)
+      });
+    }
+    return {
+      basis,
+      date:dateText,
+      start:start.toISOString(),
+      end:end.toISOString(),
+      durationHours:(end-start)/3600000,
+      slots,
+      vancouverDates:[...new Set(slots.map(slot=>slot.vancouver.date))]
+    };
+  }
+
+  function defaultRangesForWeekday(weekday){
+    const ranges = weekday==='Sat'||weekday==='Sun' ? DEFAULT_WEEKEND_RANGES : DEFAULT_WEEKDAY_RANGES;
+    return ranges.map(range=>({...range}));
+  }
+
+  function availableWallTimes(vancouverDate){
+    const panel = buildPanel('Vancouver',vancouverDate);
+    const times = new Set();
+    for(let time=Date.parse(panel.start);time<Date.parse(panel.end);time+=1800000){
+      const parts = getZonedParts(new Date(time),ZONES.Vancouver);
+      times.add(`${parts.hour}:${parts.minute}`);
+    }
+    return times;
+  }
+
+  function timeToMinutes(time){
+    if(time==='24:00') return 1440;
+    const match = /^(\d{2}):(00|30)$/.exec(time || '');
+    if(!match || +match[1]>23) return null;
+    return +match[1]*60 + +match[2];
+  }
+
+  function validateRanges(ranges, vancouverDate){
+    if(!Array.isArray(ranges) || !/^\d{4}-\d{2}-\d{2}$/.test(vancouverDate || '')){
+      return { ok:false, ranges:[], error:'invalid-ranges' };
+    }
+    const sorted = ranges.map(range=>({start:range && range.start,end:range && range.end})).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+    const available = availableWallTimes(vancouverDate);
+    let previousEnd = -1;
+    for(const range of sorted){
+      const start = timeToMinutes(range.start);
+      const end = timeToMinutes(range.end);
+      if(start===null || end===null || range.start==='24:00' || start>=end){
+        return { ok:false, ranges:sorted, error:'invalid-boundary' };
+      }
+      if(!available.has(range.start) || (range.end!=='24:00' && !available.has(range.end))){
+        return { ok:false, ranges:sorted, error:'nonexistent-boundary' };
+      }
+      if(start<previousEnd) return { ok:false, ranges:sorted, error:'overlap' };
+      previousEnd=end;
+    }
+    return { ok:true, ranges:sorted, error:'' };
+  }
+
+  return {
+    ZONES,
+    getZonedParts,
+    zonedDateTimeToInstant,
+    buildPanel,
+    validateRanges,
+    defaultRangesForWeekday
+  };
+});
+</script>
 <script>
   const clock = document.getElementById('clock');
   const hand = document.getElementById('hand');
