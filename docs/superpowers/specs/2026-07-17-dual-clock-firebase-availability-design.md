@@ -68,7 +68,7 @@ Date selection flow:
 4. Subscribe to each corresponding override document.
 5. For each slot/sector, render the rule for its Vancouver date: its valid override if present, otherwise that date's weekday/weekend default.
 
-Availability sectors are generated dynamically from the displayed instant interval rather than fixed CSS gradients. Each Vancouver-local range boundary is converted to an instant and clipped to the panel interval before its conic-gradient stop is calculated. Labels are positioned near each resulting sector and include their Vancouver date/time when the panel spans two Vancouver dates.
+Availability sectors are generated dynamically from the displayed instant interval rather than fixed CSS gradients. The renderer walks the interval in 30-minute instant steps, formats each instant as a Vancouver date and wall time, and applies that date's half-open wall-time predicate (`start <= local time < end`). Contiguous available steps are combined into sectors. Labels are positioned near each resulting sector and include their Vancouver date/time when the panel spans two Vancouver dates.
 
 ## Date and DST handling
 
@@ -76,7 +76,7 @@ Browser `Intl.DateTimeFormat` supplies zone-local parts. A small conversion help
 
 Each dial position represents an elapsed-hour instant and independently formats its Vancouver and Beijing labels. A Vancouver-selected ordinary day has 24 positions, the spring-forward day has 23 (no nonexistent local hour), and the fall-back day has 25 (the repeated local hour appears twice with an offset disambiguator). A Beijing-selected day always has 24 positions, with Vancouver labels independently reflecting any transition. This avoids applying one offset to an entire transition day.
 
-Range boundaries are resolved against their specific Vancouver date. On the spring-forward date, nonexistent `02:00` and `02:30` boundaries are disabled in the editor and make a remote document invalid rather than being silently normalized. On the fall-back date, a repeated start boundary selects its earlier occurrence and a repeated end boundary selects its later occurrence; therefore a range such as `01:00–02:00` includes both occurrences of the repeated hour. The wall-time conversion helper exposes explicit `earlier`/`later` disambiguation and sector tests cover both transition rules.
+Range boundaries are validated against their specific Vancouver date. On the spring-forward date, nonexistent `02:00` and `02:30` boundaries are disabled in the editor and make a remote document invalid rather than being silently normalized. On the fall-back date, availability is evaluated independently for each elapsed instant against the half-open Vancouver wall-time range, so a repeated wall time is available on both occurrences without filling the elapsed gap between them. For example, `01:00–01:30` creates two separate half-hour sectors; adjacent `00:00–01:00` and `01:00–02:00` ranges never overlap. Sector tests cover spring gaps, adjacent fall ranges, and a range wholly inside the repeated hour.
 
 ## Live and anchored state
 
