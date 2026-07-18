@@ -194,6 +194,74 @@ test("rebuilds live state when the selected basis crosses midnight", () => {
   assert.equal(next.panelRevision, state.panelRevision + 1);
 });
 
+test("defaults the date basis control to browser-local time", () => {
+  assert.match(html, /<option value="Local"[^>]*>本地/);
+  assert.ok(html.indexOf('value="Local"') < html.indexOf('value="Vancouver"'));
+});
+
+test("resolves the browser IANA timezone with a UTC fallback", () => {
+  const core = loadCore();
+  const fakeIntl = {
+    DateTimeFormat: () => ({ resolvedOptions: () => ({ timeZone: "Asia/Tokyo" }) })
+  };
+  assert.equal(core.resolveLocalTimeZone(fakeIntl), "Asia/Tokyo");
+  assert.equal(core.resolveLocalTimeZone({ DateTimeFormat: () => { throw new Error("no zone"); } }), "UTC");
+  assert.equal(core.resolveLocalTimeZone({ DateTimeFormat: () => ({ resolvedOptions: () => ({}) }) }), "UTC");
+});
+
+test("shows Vancouver or Beijing instead of an IANA name for local basis", () => {
+  const core = loadCore();
+  assert.equal(core.localTimeZoneLabel("America/Vancouver"), "温哥华");
+  assert.equal(core.localTimeZoneLabel("Canada/Pacific"), "温哥华");
+  assert.equal(core.localTimeZoneLabel("Asia/Shanghai"), "北京");
+  assert.equal(core.localTimeZoneLabel("Asia/Chongqing"), "北京");
+});
+
+test("uses browser-local time as the default date and midnight basis", () => {
+  const core = loadCore();
+  core.setLocalTimeZone("America/Toronto");
+  const fixedNow = new Date("2026-07-18T03:30:00.000Z");
+  const state = core.createViewState({ now: () => fixedNow });
+  assert.equal(state.basis, "Local");
+  assert.equal(state.date, "2026-07-17");
+
+  const anchored = core.reduceViewState(state, { type: "SELECT_DATE", date: "2026-07-17" }, fixedNow);
+  assert.equal(core.getZonedParts(new Date(anchored.anchor), "America/Toronto").hour, "00");
+  assert.equal(core.buildPanel("Local", "2026-03-08").durationHours, 23);
+});
+
+test("refreshes at local midnight and keeps Vancouver dates canonical", () => {
+  const core = loadCore();
+  core.setLocalTimeZone("America/Toronto");
+  const before = new Date("2026-07-18T03:59:00.000Z");
+  const after = new Date("2026-07-18T04:01:00.000Z");
+  const state = core.createViewState({ now: () => before });
+  const next = core.reduceViewState(state, { type: "TICK" }, after);
+  assert.equal(state.date, "2026-07-17");
+  assert.equal(next.date, "2026-07-18");
+  assert.deepEqual(plain(core.buildPanel("Local", "2026-07-18").vancouverDates), [
+    "2026-07-17", "2026-07-18"
+  ]);
+});
+
+test("formats the visible and browser titles with times only", () => {
+  const core = loadCore();
+  const title = core.formatClockTitle(
+    { hour: "08", minute: "30", date: "2026-07-18" },
+    { hour: "17", minute: "30", date: "2026-07-17" }
+  );
+  assert.equal(title, "北京 08:30 - 温哥华 17:30");
+  assert.doesNotMatch(title, /\d{4}-\d{2}-\d{2}/);
+  assert.match(html, /id="bjDate"/);
+  assert.match(html, /id="vanDate"/);
+});
+
+test("hides the live pointer and Beijing badge for anchored dates", () => {
+  assert.match(html, /hand\.hidden\s*=\s*!viewState\.liveMode/);
+  assert.match(html, /bjBadge\.hidden\s*=\s*!viewState\.liveMode/);
+  assert.match(html, /\.hand\[hidden\],\.badge\[hidden\]\{display:none\}/);
+});
+
 function createFakeRefs() {
   const refs = new Map();
   function docRefForDate(date) {

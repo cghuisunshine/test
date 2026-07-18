@@ -104,6 +104,7 @@
     .center .local{font-size:clamp(12px,1.7vw,18px);font-weight:800;color:var(--vancouver)}
     .center .time{font-size:clamp(30px,6vw,64px);font-weight:900;letter-spacing:.02em;margin:4px 0}
     .hand{position:absolute;left:50%;top:50%;height:3px;width:43%;transform-origin:0 50%;background:linear-gradient(90deg,#1e2c3a,#ff7a2f);border-radius:10px;z-index:7}
+    .hand[hidden],.badge[hidden]{display:none}
     .selection-hand{position:absolute;left:50%;top:50%;height:5px;width:43%;transform-origin:0 50%;background:linear-gradient(90deg,#7b2cbf,#d946ef);border-radius:10px;z-index:2;display:none;box-shadow:0 0 0 2px rgba(255,255,255,.8),0 0 18px rgba(123,44,191,.35)}
     .selection-hand::after{content:"";position:absolute;right:-7px;top:50%;transform:translateY(-50%);border-left:13px solid #d946ef;border-top:8px solid transparent;border-bottom:8px solid transparent}
     .hand::after{content:"";position:absolute;right:-6px;top:50%;transform:translateY(-50%);border-left:12px solid #ff7a2f;border-top:7px solid transparent;border-bottom:7px solid transparent}
@@ -121,6 +122,7 @@
     <div class="toolbar" aria-label="日期控制">
       <label class="control" for="basisSelect">日期基准
         <select id="basisSelect">
+          <option value="Local" id="localBasisOption">本地</option>
           <option value="Vancouver">温哥华</option>
           <option value="Beijing">北京</option>
         </select>
@@ -188,7 +190,7 @@
   if(typeof module === 'object' && module.exports) module.exports = core;
   else root.dualClockCore = core;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(){
-  const ZONES = { Vancouver:'America/Vancouver', Beijing:'Asia/Shanghai' };
+  const ZONES = { Local:'UTC', Vancouver:'America/Vancouver', Beijing:'Asia/Shanghai' };
   const DEFAULT_WEEKDAY_RANGES = [
     { start:'06:00', end:'07:30' },
     { start:'18:00', end:'22:00' }
@@ -365,7 +367,36 @@
     });
   }
 
-  function createViewState({basis='Vancouver',now=()=>new Date()}={}){
+  function resolveLocalTimeZone(intlLike=Intl){
+    try{
+      return intlLike.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    }catch(error){
+      return 'UTC';
+    }
+  }
+
+  function localTimeZoneLabel(timeZone){
+    const labels={
+      'America/Vancouver':'温哥华',
+      'Canada/Pacific':'温哥华',
+      'Asia/Shanghai':'北京',
+      'Asia/Chongqing':'北京',
+      'PRC':'北京'
+    };
+    return labels[timeZone] || timeZone;
+  }
+
+  function setLocalTimeZone(timeZone){
+    try{
+      new Intl.DateTimeFormat('en',{timeZone}).format();
+      ZONES.Local=timeZone || 'UTC';
+    }catch(error){
+      ZONES.Local='UTC';
+    }
+    return ZONES.Local;
+  }
+
+  function createViewState({basis='Local',now=()=>new Date()}={}){
     const instant=new Date(now());
     return {
       basis,
@@ -510,6 +541,10 @@
     return options;
   }
 
+  function formatClockTitle(beijing,vancouver){
+    return `北京 ${beijing.hour}:${beijing.minute} - 温哥华 ${vancouver.hour}:${vancouver.minute}`;
+  }
+
   return {
     ZONES,
     getZonedParts,
@@ -518,6 +553,9 @@
     validateRanges,
     defaultRangesForWeekday,
     buildAvailabilitySegments,
+    resolveLocalTimeZone,
+    localTimeZoneLabel,
+    setLocalTimeZone,
     createViewState,
     reduceViewState,
     validateOverrideDocument,
@@ -525,7 +563,8 @@
     resolveFirebaseApiKey,
     clearFirebaseApiKey,
     buildShareUrl,
-    timeOptionsForDate
+    timeOptionsForDate,
+    formatClockTitle
   };
 });
 </script>
@@ -549,6 +588,7 @@
   const availabilityRing = document.getElementById('availabilityRing');
   const availabilityLabels = document.getElementById('availabilityLabels');
   const basisSelect = document.getElementById('basisSelect');
+  const localBasisOption = document.getElementById('localBasisOption');
   const dateInput = document.getElementById('dateInput');
   const todayBtn = document.getElementById('todayBtn');
   const editAvailabilityBtn = document.getElementById('editAvailabilityBtn');
@@ -567,10 +607,12 @@
   const clearFirebaseKeyBtn = document.getElementById('clearFirebaseKeyBtn');
   const shareFirebaseBtn = document.getElementById('shareFirebaseBtn');
   const settingsStatus = document.getElementById('settingsStatus');
+  const localTimeZone = core.setLocalTimeZone(core.resolveLocalTimeZone(Intl));
+  localBasisOption.textContent=`本地（${core.localTimeZoneLabel(localTimeZone)}）`;
   let selectedSlotIndex = null;
   let currentPanel = null;
   let currentPanelKey = '';
-  let viewState = core.createViewState({basis:'Vancouver'});
+  let viewState = core.createViewState();
   const overrideMap = {};
   const overrideDocuments = {};
   let overrideStore = null;
@@ -787,8 +829,10 @@
     }
     const angle=(displayInstant-Date.parse(currentPanel.start))/(Date.parse(currentPanel.end)-Date.parse(currentPanel.start))*360;
 
+    hand.hidden=!viewState.liveMode;
+    bjBadge.hidden=!viewState.liveMode;
     hand.style.transform=`rotate(${angle-90}deg)`;
-    const title=`北京 ${bj.date} ${String(bjHour).padStart(2,'0')}:${bj.minute} - 温哥华 ${van.date} ${String(vanHour).padStart(2,'0')}:${van.minute}`;
+    const title=core.formatClockTitle(bj,van);
     document.getElementById('pageTitle').textContent=title;
     document.title=title;
     document.getElementById('vanTime').textContent=`${String(vanHour).padStart(2,'0')}:${van.minute}`;
