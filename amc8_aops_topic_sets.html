@@ -1,13 +1,21 @@
 <!doctype html><html><head><meta charset='utf-8'>
 <title>AMC 8 AoPS Topic Sets</title>
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,sans-serif;max-width:1100px;margin:32px auto;padding:0 20px;line-height:1.5;color:#1f2937;background:#fcfcfc}
+body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,sans-serif;max-width:1100px;margin:32px auto;padding:0 20px 72px;line-height:1.5;color:#1f2937;background:#fcfcfc}
 h1{font-size:28px;margin:0 0 12px}
 .meta{color:#555;margin:6px 0}
 a{color:#075985}
 .page-filter{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:18px 0 6px;padding:12px 0;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb}
 .page-filter-title{font-weight:600}
-.topic-section{margin-top:32px;border-top:1px solid #ddd;padding-top:18px}
+.category-jump{margin:16px 0 6px}
+.category-jump-title{font-weight:600;margin-bottom:6px}
+.category-jump-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 28px;margin:0;padding-left:22px}
+.category-jump-list li{break-inside:auto;margin:0}
+.category-jump-list a{display:inline-block;padding:2px 0}
+.quick-category-jump{position:fixed;right:16px;bottom:16px;z-index:10;display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #c9cdd3;border-radius:8px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.1);font-size:13px}
+.quick-category-jump label{font-weight:600;white-space:nowrap}
+.quick-category-jump select{min-height:34px;max-width:290px;border:1px solid #c9cdd3;border-radius:6px;padding:5px 8px;background:#fff;color:#1f2937;font:inherit}
+.topic-section{margin-top:32px;border-top:1px solid #ddd;padding-top:18px;scroll-margin-top:16px}
 .topic-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:10px}
 h2{font-size:21px;margin:0}
 .count{font-weight:400;color:#666}
@@ -33,7 +41,7 @@ li{break-inside:avoid;margin:3px 0}
 li.hidden{display:none}
 .last-opened-question{background:#fff7cc;border-left:3px solid #d97706;margin-left:-7px;padding-left:4px;scroll-margin-block:80px}
 .last-opened-question a{font-weight:600;color:#7c2d12}
-@media (max-width:640px){.topic-overview{align-items:flex-start}.topic-pie{width:108px;height:108px}.topic-legend{grid-template-columns:1fr}}
+@media (max-width:640px){.category-jump-list{grid-template-columns:1fr}.quick-category-jump{left:12px;right:12px;bottom:12px}.quick-category-jump select{min-width:0;max-width:none;flex:1}.topic-overview{align-items:flex-start}.topic-pie{width:108px;height:108px}.topic-legend{grid-template-columns:1fr}}
 </style>
 </head><body>
 <h1>AMC 8 / AJHSME categorized question sets</h1>
@@ -48,6 +56,19 @@ li.hidden{display:none}
 <button type="button" class="filter-btn" data-page-filter="AJHSME">AJHSME</button>
 </div>
 </div>
+<nav class="category-jump" aria-label="Category list">
+<div class="category-jump-title">Jump to category</div>
+<ul class="category-jump-list">
+<li><a href="#category-3d-geometry">3D Geometry Problems</a></li>
+<li><a href="#category-introductory-algebra">Introductory Algebra Problems</a></li>
+<li><a href="#category-introductory-combinatorics">Introductory Combinatorics Problems</a></li>
+<li><a href="#category-introductory-geometry">Introductory Geometry Problems</a></li>
+<li><a href="#category-introductory-logic">Introductory Logic Problems</a></li>
+<li><a href="#category-introductory-number-theory">Introductory Number Theory Problems</a></li>
+<li><a href="#category-introductory-probability">Introductory Probability Problems</a></li>
+<li><a href="#category-logic">Logic Problems</a></li>
+</ul>
+</nav>
 <div class="topic-overview" aria-label="Topic percentage chart">
 <svg class="topic-pie" data-topic-pie viewBox="0 0 120 120" role="img" aria-label="Topic percentages"></svg>
 <div class="topic-summary">
@@ -55,7 +76,7 @@ li.hidden{display:none}
 <ul class="topic-legend" data-topic-legend></ul>
 </div>
 </div>
-<section class="topic-section" data-topic-section data-topic="3D Geometry Problems">
+<section class="topic-section" id="category-3d-geometry" data-topic-section data-topic="3D Geometry Problems">
 <div class="topic-header">
 <h2>3D Geometry Problems <span class="count" data-count>(1)</span></h2>
 <div class="filter-controls" aria-label="Contest filter">
@@ -65,7 +86,7 @@ li.hidden{display:none}
 </div></div><ol class="grid">
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2018_AMC_8_Problems/Problem_24">2018 AMC 8 Problem 24</a></li>
 </ol></section>
-<section class="topic-section" data-topic-section data-topic="Introductory Algebra Problems">
+<section class="topic-section" id="category-introductory-algebra" data-topic-section data-topic="Introductory Algebra Problems">
 <div class="topic-header">
 <h2>Introductory Algebra Problems <span class="count" data-count>(504)</span></h2>
 <div class="filter-controls" aria-label="Contest filter">
@@ -578,7 +599,7 @@ li.hidden{display:none}
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2026_AMC_8_Problems/Problem_14">2026 AMC 8 Problem 14</a></li>
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2026_AMC_8_Problems/Problem_19">2026 AMC 8 Problem 19</a></li>
 </ol></section>
-<section class="topic-section" data-topic-section data-topic="Introductory Combinatorics Problems">
+<section class="topic-section" id="category-introductory-combinatorics" data-topic-section data-topic="Introductory Combinatorics Problems">
 <div class="topic-header">
 <h2>Introductory Combinatorics Problems <span class="count" data-count>(123)</span></h2>
 <div class="filter-controls" aria-label="Contest filter">
@@ -710,7 +731,7 @@ li.hidden{display:none}
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2026_AMC_8_Problems/Problem_21">2026 AMC 8 Problem 21</a></li>
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2026_AMC_8_Problems/Problem_25">2026 AMC 8 Problem 25</a></li>
 </ol></section>
-<section class="topic-section" data-topic-section data-topic="Introductory Geometry Problems">
+<section class="topic-section" id="category-introductory-geometry" data-topic-section data-topic="Introductory Geometry Problems">
 <div class="topic-header">
 <h2>Introductory Geometry Problems <span class="count" data-count>(266)</span></h2>
 <div class="filter-controls" aria-label="Contest filter">
@@ -985,7 +1006,7 @@ li.hidden{display:none}
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2026_AMC_8_Problems/Problem_15">2026 AMC 8 Problem 15</a></li>
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2026_AMC_8_Problems/Problem_23">2026 AMC 8 Problem 23</a></li>
 </ol></section>
-<section class="topic-section" data-topic-section data-topic="Introductory Logic Problems">
+<section class="topic-section" id="category-introductory-logic" data-topic-section data-topic="Introductory Logic Problems">
 <div class="topic-header">
 <h2>Introductory Logic Problems <span class="count" data-count>(5)</span></h2>
 <div class="filter-controls" aria-label="Contest filter">
@@ -999,7 +1020,7 @@ li.hidden{display:none}
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2020_AMC_8_Problems/Problem_6">2020 AMC 8 Problem 6</a></li>
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2020_AMC_8_Problems/Problem_9">2020 AMC 8 Problem 9</a></li>
 </ol></section>
-<section class="topic-section" data-topic-section data-topic="Introductory Number Theory Problems">
+<section class="topic-section" id="category-introductory-number-theory" data-topic-section data-topic="Introductory Number Theory Problems">
 <div class="topic-header">
 <h2>Introductory Number Theory Problems <span class="count" data-count>(113)</span></h2>
 <div class="filter-controls" aria-label="Contest filter">
@@ -1121,7 +1142,7 @@ li.hidden{display:none}
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2026_AMC_8_Problems/Problem_22">2026 AMC 8 Problem 22</a></li>
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2026_AMC_8_Problems/Problem_24">2026 AMC 8 Problem 24</a></li>
 </ol></section>
-<section class="topic-section" data-topic-section data-topic="Introductory Probability Problems">
+<section class="topic-section" id="category-introductory-probability" data-topic-section data-topic="Introductory Probability Problems">
 <div class="topic-header">
 <h2>Introductory Probability Problems <span class="count" data-count>(9)</span></h2>
 <div class="filter-controls" aria-label="Contest filter">
@@ -1139,7 +1160,7 @@ li.hidden{display:none}
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2022_AMC_8_Problems/Problem_12">2022 AMC 8 Problem 12</a></li>
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2023_AMC_8_Problems/Problem_23">2023 AMC 8 Problem 23</a></li>
 </ol></section>
-<section class="topic-section" data-topic-section data-topic="Logic Problems">
+<section class="topic-section" id="category-logic" data-topic-section data-topic="Logic Problems">
 <div class="topic-header">
 <h2>Logic Problems <span class="count" data-count>(4)</span></h2>
 <div class="filter-controls" aria-label="Contest filter">
@@ -1152,6 +1173,12 @@ li.hidden{display:none}
 <li data-contest="AJHSME"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=1987_AJHSME_Problems/Problem_17">1987 AJHSME Problem 17</a></li>
 <li data-contest="AMC 8"><a data-question-link href="https://artofproblemsolving.com/wiki/index.php?title=2001_AMC_8_Problems/Problem_20">2001 AMC 8 Problem 20</a></li>
 </ol></section>
+<div class="quick-category-jump" aria-label="Quick category navigation">
+<label for="quick-category-select">Category</label>
+<select id="quick-category-select" data-quick-category>
+<option value="">Jump to category…</option>
+</select>
+</div>
 <script>
 const topicColors = [
   "#2563eb",
@@ -1388,6 +1415,26 @@ function addCategoryExamLinks() {
   });
 }
 
+function initializeQuickCategoryJump() {
+  const select = document.querySelector("[data-quick-category]");
+  if (!select) return;
+
+  document.querySelectorAll(".category-jump-list a[href^='#']").forEach((link) => {
+    const option = document.createElement("option");
+    option.value = link.hash.slice(1);
+    option.textContent = link.textContent;
+    select.appendChild(option);
+  });
+
+  select.addEventListener("change", () => {
+    const target = document.getElementById(select.value);
+    if (!target) return;
+    window.location.hash = select.value;
+    target.scrollIntoView({ block: "start" });
+    select.value = "";
+  });
+}
+
 function applyPageFilter(value) {
   document.querySelectorAll("[data-topic-section]").forEach((section) => {
     applyContestFilter(section, value);
@@ -1420,6 +1467,7 @@ function restoreFilterSettings() {
 }
 
 addCategoryExamLinks();
+initializeQuickCategoryJump();
 
 document.querySelectorAll("[data-topic-section]").forEach((section) => {
   section.querySelectorAll("[data-filter]").forEach((button) => {
