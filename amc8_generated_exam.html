@@ -60,7 +60,7 @@
 
     .controls {
       display: grid;
-      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      grid-template-columns: repeat(6, minmax(125px, 1fr));
       gap: 12px;
       align-items: end;
       margin: 20px 0 24px;
@@ -104,6 +104,13 @@
 
     button:hover { background: var(--soft); }
 
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    button[data-print]:disabled { cursor: wait; }
+
     .primary {
       border-color: var(--strong);
       background: var(--strong);
@@ -115,6 +122,20 @@
     .status {
       margin: 0 0 18px;
       color: var(--muted);
+    }
+
+    .saved-exams-toolbar {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: -8px 0 18px;
+    }
+
+    .saved-exams-toolbar label {
+      flex: 1;
+      min-width: 240px;
+      max-width: 520px;
     }
 
     .result-layout {
@@ -141,6 +162,12 @@
       background: #f8f9fb;
     }
 
+    .panel-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .panel-body { padding: 14px; }
 
     .exam-list {
@@ -153,6 +180,17 @@
       padding-left: 4px;
     }
 
+    .exam-list.full-questions > li {
+      margin: 0 0 24px;
+      padding: 0 0 24px 6px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .exam-list.full-questions > li:last-child {
+      margin-bottom: 0;
+      border-bottom: 0;
+    }
+
     .question-row {
       display: grid;
       gap: 2px;
@@ -163,21 +201,55 @@
       font-size: 13px;
     }
 
-    table {
+    .question-content {
+      margin-top: 12px;
+      overflow-x: auto;
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    .question-content p {
+      margin: 8px 0;
+    }
+
+    .question-content img {
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+
+    .question-content table {
+      width: auto;
+      max-width: 100%;
+      border-collapse: collapse;
+    }
+
+    .question-content td,
+    .question-content th {
+      padding: 4px 8px;
+      border: 0;
+      background: transparent;
+    }
+
+    .question-unavailable {
+      color: var(--warn);
+    }
+
+    .summary-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
     }
 
-    th,
-    td {
+    .summary-table th,
+    .summary-table td {
       padding: 8px 6px;
       border-bottom: 1px solid #e7eaf0;
       text-align: left;
       vertical-align: top;
     }
 
-    th {
+    .summary-table th {
       color: #374151;
       font-weight: 600;
       background: #fafafa;
@@ -214,12 +286,76 @@
         grid-template-columns: 1fr;
       }
     }
+
+    @media print {
+      @page { margin: 0.65in; }
+
+      body {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        color: #000;
+      }
+
+      body > h1,
+      body > .meta,
+      .top-actions,
+      .controls,
+      .saved-exams-toolbar,
+      .status,
+      .empty,
+      .summary-panel,
+      .panel-actions {
+        display: none !important;
+      }
+
+      .result-layout {
+        display: block;
+      }
+
+      .result-layout > .panel {
+        border: 0;
+        border-radius: 0;
+        overflow: visible;
+      }
+
+      .panel-header {
+        padding: 0 0 12px;
+        border-bottom: 2px solid #000;
+        background: transparent;
+      }
+
+      .panel-header h2 {
+        font-size: 22px;
+      }
+
+      .panel-body {
+        padding: 16px 0 0;
+      }
+
+      .exam-list > li,
+      .question-content img,
+      .question-content table {
+        break-inside: avoid;
+      }
+
+      .question-content {
+        overflow: visible;
+      }
+
+      .question-content a,
+      .question-row > a {
+        color: #000;
+        text-decoration: none;
+      }
+    }
   </style>
 </head>
 <body>
   <h1>AMC 8 topic-balanced exam generator</h1>
   <p class="meta">Generates a linked practice exam using the topic percentages from the categorized AoPS question sets.</p>
-  <p class="meta">Problem text remains on AoPS; this page selects and organizes links.</p>
+  <p class="meta">Choose a compact link list or show question-only content from the local AoPS cache.</p>
 
   <div class="top-actions">
     <a href="amc8_aops_topic_sets.html">Back to topic sets</a>
@@ -245,9 +381,26 @@
       Exam size
       <input data-size type="number" min="1" max="50" step="1" value="25">
     </label>
+    <label>
+      Exam display
+      <select data-display>
+        <option value="links" selected>Links only</option>
+        <option value="questions">Full questions</option>
+      </select>
+    </label>
     <button class="primary" type="submit">Generate exam</button>
     <button type="button" data-copy>Copy links</button>
   </form>
+
+  <div class="saved-exams-toolbar" aria-label="Saved exams">
+    <label>
+      Saved exams
+      <select data-saved-exams disabled>
+        <option value="">No saved exams</option>
+      </select>
+    </label>
+    <button type="button" data-load-saved disabled>Load saved exam</button>
+  </div>
 
   <p class="status" data-status></p>
 
@@ -255,19 +408,23 @@
     <section class="panel">
       <div class="panel-header">
         <h2 data-exam-title>Generated exam</h2>
-        <button type="button" data-regenerate>Regenerate</button>
+        <div class="panel-actions">
+          <button type="button" data-regenerate>Regenerate</button>
+          <button type="button" data-save>Save exam</button>
+          <button type="button" data-print>Print exam</button>
+        </div>
       </div>
       <div class="panel-body">
         <ol class="exam-list" data-question-list></ol>
       </div>
     </section>
 
-    <section class="panel">
+    <section class="panel summary-panel">
       <div class="panel-header">
         <h2>Topic match</h2>
       </div>
       <div class="panel-body">
-        <table>
+        <table class="summary-table">
           <thead>
             <tr>
               <th>Topic</th>
@@ -293,17 +450,26 @@
     const topicInput = document.querySelector("[data-topic]");
     const contestInput = document.querySelector("[data-contest]");
     const sizeInput = document.querySelector("[data-size]");
+    const displayInput = document.querySelector("[data-display]");
     const statusNode = document.querySelector("[data-status]");
     const resultsNode = document.querySelector("[data-results]");
     const emptyNode = document.querySelector("[data-empty]");
     const titleNode = document.querySelector("[data-exam-title]");
     const questionList = document.querySelector("[data-question-list]");
     const summaryBody = document.querySelector("[data-summary]");
+    const savedExamSelect = document.querySelector("[data-saved-exams]");
+    const loadSavedButton = document.querySelector("[data-load-saved]");
     const regenerateButton = document.querySelector("[data-regenerate]");
+    const saveButton = document.querySelector("[data-save]");
+    const printButton = document.querySelector("[data-print]");
     const copyButton = document.querySelector("[data-copy]");
     const core = window.Amc8ExamGeneratorCore;
     const problems = window.AMC8_EXAM_PROBLEMS || [];
+    const problemsByUrl = new Map(problems.map((problem) => [problem.url, problem]));
+    const savedExamsKey = "amc8SavedExamsV1";
     let currentExam = null;
+    let currentExamSettings = null;
+    let savedExams = [];
 
     function populateTopicOptions() {
       const topics = Array.from(new Set(problems.map((problem) => problem.topic))).sort((a, b) => a.localeCompare(b));
@@ -328,15 +494,143 @@
       return value === "all" ? "All categories (balanced)" : value;
     }
 
-    function renderExam(exam, contest, size, topic) {
+    function normalizedSavedSettings(settings) {
+      const source = settings && typeof settings === "object" ? settings : {};
+      const knownTopics = Array.from(topicInput.options).map((option) => option.value);
+      const parsedSize = Number.parseInt(source.size, 10);
+      return {
+        topic: knownTopics.includes(source.topic) ? source.topic : "all",
+        contest: ["AMC 8", "AJHSME", "all"].includes(source.contest) ? source.contest : "AMC 8",
+        display: ["links", "questions"].includes(source.display) ? source.display : "links",
+        size: Math.max(1, Math.min(50, Number.isFinite(parsedSize) ? parsedSize : 25))
+      };
+    }
+
+    function normalizeSavedExam(record) {
+      if (!record || typeof record !== "object" || !Array.isArray(record.questionUrls)) return null;
+      const questionUrls = record.questionUrls.filter((url) => typeof url === "string" && url);
+      if (!questionUrls.length) return null;
+      return {
+        id: typeof record.id === "string" && record.id
+          ? record.id
+          : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        savedAt: Number.isFinite(Number(record.savedAt)) ? Number(record.savedAt) : Date.now(),
+        settings: normalizedSavedSettings(record.settings),
+        questionUrls,
+        summary: Array.isArray(record.summary) ? record.summary : [],
+        totalAvailable: Math.max(questionUrls.length, Number.parseInt(record.totalAvailable, 10) || questionUrls.length),
+        requestedSize: Math.max(1, Number.parseInt(record.requestedSize, 10) || questionUrls.length)
+      };
+    }
+
+    function readSavedExams() {
+      try {
+        const records = JSON.parse(window.localStorage.getItem(savedExamsKey) || "[]");
+        if (!Array.isArray(records)) return [];
+        return records
+          .map(normalizeSavedExam)
+          .filter(Boolean)
+          .sort((a, b) => b.savedAt - a.savedAt)
+          .slice(0, 50);
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function writeSavedExams() {
+      try {
+        window.localStorage.setItem(savedExamsKey, JSON.stringify(savedExams));
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function formatSavedExamLabel(record) {
+      const savedDate = new Date(record.savedAt);
+      const dateLabel = Number.isNaN(savedDate.getTime())
+        ? "Saved exam"
+        : savedDate.toLocaleString([], {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit"
+        });
+      const category = record.settings.topic === "all" ? "Balanced" : record.settings.topic;
+      return `${record.questionUrls.length}Q ${category} — ${dateLabel}`;
+    }
+
+    function renderSavedExamOptions(selectedId) {
+      clearNode(savedExamSelect);
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = savedExams.length ? "Choose a saved exam…" : "No saved exams";
+      savedExamSelect.append(placeholder);
+
+      savedExams.forEach((record) => {
+        const option = document.createElement("option");
+        option.value = record.id;
+        option.textContent = formatSavedExamLabel(record);
+        savedExamSelect.append(option);
+      });
+
+      savedExamSelect.disabled = savedExams.length === 0;
+      if (selectedId && savedExams.some((record) => record.id === selectedId)) {
+        savedExamSelect.value = selectedId;
+      }
+      loadSavedButton.disabled = !savedExamSelect.value;
+    }
+
+    function rebuildSavedSummary(savedSummary, questions) {
+      const actualByTopic = new Map();
+      questions.forEach((problem) => {
+        actualByTopic.set(problem.topic, (actualByTopic.get(problem.topic) || 0) + 1);
+      });
+
+      const savedRows = Array.isArray(savedSummary)
+        ? savedSummary.filter((row) => row && typeof row.topic === "string")
+        : [];
+      const savedByTopic = new Map(savedRows.map((row) => [row.topic, row]));
+      const topics = new Set([...savedByTopic.keys(), ...actualByTopic.keys()]);
+
+      return Array.from(topics).map((topic) => {
+        const source = savedByTopic.get(topic) || {};
+        const actualCount = actualByTopic.get(topic) || 0;
+        const targetCount = Math.max(0, Number.parseInt(source.targetCount, 10) || 0);
+        return {
+          topic,
+          sourceCount: Math.max(actualCount, Number.parseInt(source.sourceCount, 10) || actualCount),
+          targetCount,
+          actualCount,
+          actualPercentage: questions.length ? Number(((actualCount / questions.length) * 100).toFixed(1)) : 0,
+          targetPercentage: questions.length ? Number(((targetCount / questions.length) * 100).toFixed(1)) : 0
+        };
+      });
+    }
+
+    function savedExamSignature(questionUrls, settings) {
+      return JSON.stringify([
+        settings.topic,
+        settings.contest,
+        settings.display,
+        settings.size,
+        questionUrls
+      ]);
+    }
+
+    function renderExam(exam, contest, size, topic, display) {
       currentExam = exam;
+      currentExamSettings = { contest, size, topic, display };
       clearNode(questionList);
       clearNode(summaryBody);
+      questionList.classList.toggle("full-questions", display === "questions");
 
       titleNode.textContent = topic === "all"
         ? `${exam.questions.length}-question exam`
         : `${exam.questions.length}-question ${topic} exam`;
-      statusNode.textContent = `Category: ${topicLabel(topic)}. Source: ${sourceLabel(contest)}. Target size: ${size}. Available linked problems: ${exam.totalAvailable}.`;
+      const displayLabel = display === "questions" ? "Full questions" : "Links only";
+      statusNode.textContent = `Category: ${topicLabel(topic)}. Source: ${sourceLabel(contest)}. Display: ${displayLabel}. Target size: ${size}. Available problems: ${exam.totalAvailable}.`;
 
       exam.questions.forEach((problem) => {
         const item = document.createElement("li");
@@ -353,6 +647,18 @@
         topic.textContent = problem.topic;
 
         row.append(link, topic);
+        if (display === "questions") {
+          const content = document.createElement("div");
+          content.className = "question-content";
+          if (problem.questionHtml) {
+            // questionHtml is sanitized while building the local question dataset.
+            content.innerHTML = problem.questionHtml;
+          } else {
+            content.classList.add("question-unavailable");
+            content.textContent = "Question content is unavailable in the local cache. Use the AoPS source link above.";
+          }
+          row.append(content);
+        }
         item.append(row);
         questionList.append(item);
       });
@@ -386,9 +692,23 @@
       emptyNode.hidden = true;
     }
 
+    function updateRequestUrl(topic, contest, size, display) {
+      const params = new URLSearchParams();
+      if (topic !== "all") params.set("topic", topic);
+      params.set("contest", contest);
+      params.set("size", size);
+      params.set("display", display);
+      try {
+        window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+      } catch (error) {
+        // Some browsers restrict history updates when this page is opened directly from disk.
+      }
+    }
+
     function generateFromControls() {
       const topic = topicInput.value;
       const contest = contestInput.value;
+      const display = displayInput.value;
       const requestedSize = Math.max(1, Math.min(50, Number.parseInt(sizeInput.value, 10) || 25));
       const scopedProblems = topic === "all"
         ? problems
@@ -398,28 +718,21 @@
         contest,
         size: requestedSize
       });
-      renderExam(exam, contest, requestedSize, topic);
-
-      const params = new URLSearchParams();
-      if (topic !== "all") params.set("topic", topic);
-      params.set("contest", contest);
-      params.set("size", requestedSize);
-      try {
-        window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
-      } catch (error) {
-        // Some browsers restrict history updates when this page is opened directly from disk.
-      }
+      renderExam(exam, contest, requestedSize, topic, display);
+      updateRequestUrl(topic, contest, requestedSize, display);
     }
 
     function restoreRequestFromUrl() {
       const params = new URLSearchParams(window.location.search);
       const topic = params.get("topic");
       const contest = params.get("contest");
+      const display = params.get("display");
       const size = Number.parseInt(params.get("size"), 10);
       const hasTopic = topic && Array.from(topicInput.options).some((option) => option.value === topic);
 
       if (hasTopic) topicInput.value = topic;
       if (["AMC 8", "AJHSME", "all"].includes(contest)) contestInput.value = contest;
+      if (["links", "questions"].includes(display)) displayInput.value = display;
       if (Number.isFinite(size)) sizeInput.value = Math.max(1, Math.min(50, size));
 
       if (hasTopic) generateFromControls();
@@ -431,6 +744,107 @@
     });
 
     regenerateButton.addEventListener("click", generateFromControls);
+
+    savedExamSelect.addEventListener("change", () => {
+      loadSavedButton.disabled = !savedExamSelect.value;
+    });
+
+    saveButton.addEventListener("click", () => {
+      if (!currentExam || !currentExamSettings) return;
+      const questionUrls = currentExam.questions.map((problem) => problem.url);
+      const settings = normalizedSavedSettings(currentExamSettings);
+      const signature = savedExamSignature(questionUrls, settings);
+      const existing = savedExams.find((record) => {
+        return savedExamSignature(record.questionUrls, record.settings) === signature;
+      });
+      const savedAt = Date.now();
+      const record = {
+        id: existing ? existing.id : `${savedAt}-${Math.random().toString(36).slice(2, 8)}`,
+        savedAt,
+        settings,
+        questionUrls,
+        summary: currentExam.summary.map((row) => ({ ...row })),
+        totalAvailable: currentExam.totalAvailable,
+        requestedSize: currentExam.requestedSize
+      };
+
+      savedExams = [record, ...savedExams.filter((saved) => saved.id !== record.id)].slice(0, 50);
+      if (!writeSavedExams()) {
+        statusNode.textContent = "This browser did not allow the exam to be saved. Try opening the page from its web address instead of directly from disk.";
+        return;
+      }
+
+      renderSavedExamOptions(record.id);
+      statusNode.textContent = existing
+        ? "This exam was already saved. Its saved date has been refreshed."
+        : "Exam saved in this browser. Choose it from Saved exams to load it later.";
+    });
+
+    loadSavedButton.addEventListener("click", () => {
+      const record = savedExams.find((saved) => saved.id === savedExamSelect.value);
+      if (!record) return;
+      const settings = normalizedSavedSettings(record.settings);
+      const restoredProblems = record.questionUrls
+        .map((url) => problemsByUrl.get(url))
+        .filter(Boolean)
+        .map((problem, index) => ({ ...problem, examNumber: index + 1 }));
+      const missingCount = record.questionUrls.length - restoredProblems.length;
+
+      if (!restoredProblems.length) {
+        statusNode.textContent = "The questions in this saved exam are no longer available in the local question data.";
+        return;
+      }
+
+      topicInput.value = settings.topic;
+      contestInput.value = settings.contest;
+      displayInput.value = settings.display;
+      sizeInput.value = settings.size;
+      renderExam({
+        questions: restoredProblems,
+        summary: rebuildSavedSummary(record.summary, restoredProblems),
+        totalAvailable: record.totalAvailable,
+        requestedSize: record.requestedSize
+      }, settings.contest, settings.size, settings.topic, settings.display);
+      updateRequestUrl(settings.topic, settings.contest, settings.size, settings.display);
+
+      const savedDate = new Date(record.savedAt);
+      const dateLabel = Number.isNaN(savedDate.getTime()) ? "an earlier session" : savedDate.toLocaleString();
+      statusNode.textContent = `Loaded the exact saved exam from ${dateLabel}.${missingCount ? ` ${missingCount} unavailable question${missingCount === 1 ? " was" : "s were"} skipped.` : ""}`;
+    });
+
+    function waitForImage(image) {
+      if (image.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+      });
+    }
+
+    printButton.addEventListener("click", async () => {
+      if (!currentExam) return;
+      const previousStatus = statusNode.textContent;
+      const previousTitle = document.title;
+      const images = Array.from(questionList.querySelectorAll("img"));
+      images.forEach((image) => { image.loading = "eager"; });
+
+      printButton.disabled = true;
+      printButton.textContent = "Preparing…";
+      statusNode.textContent = images.length ? "Preparing question images for printing…" : "Preparing exam for printing…";
+
+      try {
+        await Promise.race([
+          Promise.all(images.map(waitForImage)),
+          new Promise((resolve) => window.setTimeout(resolve, 5000))
+        ]);
+        document.title = titleNode.textContent;
+        window.print();
+      } finally {
+        document.title = previousTitle;
+        statusNode.textContent = previousStatus;
+        printButton.disabled = false;
+        printButton.textContent = "Print exam";
+      }
+    });
 
     copyButton.addEventListener("click", async () => {
       if (!currentExam) return;
@@ -447,6 +861,8 @@
     });
 
     populateTopicOptions();
+    savedExams = readSavedExams();
+    renderSavedExamOptions();
     restoreRequestFromUrl();
   </script>
 </body>
