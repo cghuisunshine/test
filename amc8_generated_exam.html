@@ -60,7 +60,7 @@
 
     .controls {
       display: grid;
-      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
       gap: 12px;
       align-items: end;
       margin: 20px 0 24px;
@@ -228,6 +228,12 @@
 
   <form class="controls" data-generator-form>
     <label>
+      Category
+      <select data-topic>
+        <option value="all" selected>All categories (balanced)</option>
+      </select>
+    </label>
+    <label>
       Problem source
       <select data-contest>
         <option value="AMC 8" selected>AMC 8 only</option>
@@ -284,6 +290,7 @@
   <script src="amc8_exam_generator_data.js"></script>
   <script>
     const form = document.querySelector("[data-generator-form]");
+    const topicInput = document.querySelector("[data-topic]");
     const contestInput = document.querySelector("[data-contest]");
     const sizeInput = document.querySelector("[data-size]");
     const statusNode = document.querySelector("[data-status]");
@@ -298,6 +305,16 @@
     const problems = window.AMC8_EXAM_PROBLEMS || [];
     let currentExam = null;
 
+    function populateTopicOptions() {
+      const topics = Array.from(new Set(problems.map((problem) => problem.topic))).sort((a, b) => a.localeCompare(b));
+      topics.forEach((topic) => {
+        const option = document.createElement("option");
+        option.value = topic;
+        option.textContent = topic;
+        topicInput.appendChild(option);
+      });
+    }
+
     function sourceLabel(value) {
       if (value === "all") return "AMC 8 + AJHSME";
       return value;
@@ -307,13 +324,19 @@
       while (node.firstChild) node.removeChild(node.firstChild);
     }
 
-    function renderExam(exam, contest, size) {
+    function topicLabel(value) {
+      return value === "all" ? "All categories (balanced)" : value;
+    }
+
+    function renderExam(exam, contest, size, topic) {
       currentExam = exam;
       clearNode(questionList);
       clearNode(summaryBody);
 
-      titleNode.textContent = `${exam.questions.length}-question exam`;
-      statusNode.textContent = `Source: ${sourceLabel(contest)}. Target size: ${size}. Available linked problems: ${exam.totalAvailable}.`;
+      titleNode.textContent = topic === "all"
+        ? `${exam.questions.length}-question exam`
+        : `${exam.questions.length}-question ${topic} exam`;
+      statusNode.textContent = `Category: ${topicLabel(topic)}. Source: ${sourceLabel(contest)}. Target size: ${size}. Available linked problems: ${exam.totalAvailable}.`;
 
       exam.questions.forEach((problem) => {
         const item = document.createElement("li");
@@ -364,14 +387,42 @@
     }
 
     function generateFromControls() {
+      const topic = topicInput.value;
       const contest = contestInput.value;
       const requestedSize = Math.max(1, Math.min(50, Number.parseInt(sizeInput.value, 10) || 25));
+      const scopedProblems = topic === "all"
+        ? problems
+        : problems.filter((problem) => problem.topic === topic);
       sizeInput.value = requestedSize;
-      const exam = core.generateExam(problems, {
+      const exam = core.generateExam(scopedProblems, {
         contest,
         size: requestedSize
       });
-      renderExam(exam, contest, requestedSize);
+      renderExam(exam, contest, requestedSize, topic);
+
+      const params = new URLSearchParams();
+      if (topic !== "all") params.set("topic", topic);
+      params.set("contest", contest);
+      params.set("size", requestedSize);
+      try {
+        window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+      } catch (error) {
+        // Some browsers restrict history updates when this page is opened directly from disk.
+      }
+    }
+
+    function restoreRequestFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const topic = params.get("topic");
+      const contest = params.get("contest");
+      const size = Number.parseInt(params.get("size"), 10);
+      const hasTopic = topic && Array.from(topicInput.options).some((option) => option.value === topic);
+
+      if (hasTopic) topicInput.value = topic;
+      if (["AMC 8", "AJHSME", "all"].includes(contest)) contestInput.value = contest;
+      if (Number.isFinite(size)) sizeInput.value = Math.max(1, Math.min(50, size));
+
+      if (hasTopic) generateFromControls();
     }
 
     form.addEventListener("submit", (event) => {
@@ -394,6 +445,9 @@
         statusNode.textContent = text;
       }
     });
+
+    populateTopicOptions();
+    restoreRequestFromUrl();
   </script>
 </body>
 </html>
