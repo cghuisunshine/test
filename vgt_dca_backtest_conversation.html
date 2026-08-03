@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="A 20-year VGT dollar-cost-averaging backtest and an audit of the original rolling-return claims.">
+  <title>VGT DCA — 20-Year Backtest & Accuracy Audit</title>
+  <style>
+    :root {
+      --ink: #14231e;
+      --muted: #5e6b66;
+      --paper: #f6f3eb;
+      --surface: rgba(255, 255, 255, .72);
+      --line: rgba(20, 35, 30, .14);
+      --green: #0f7654;
+      --green-2: #31a57d;
+      --blue: #496c9a;
+      --amber: #b66b22;
+      --red: #aa4b48;
+      --shadow: 0 24px 70px rgba(37, 48, 41, .10);
+      --radius: 24px;
+      --max: 1160px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 82% 5%, rgba(49, 165, 125, .14), transparent 25rem),
+        radial-gradient(circle at 0 34%, rgba(73, 108, 154, .10), transparent 22rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    a { color: var(--green); text-underline-offset: 3px; }
+    button, summary { font: inherit; }
+    .wrap { width: min(calc(100% - 36px), var(--max)); margin-inline: auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(20, 35, 30, .08);
+      background: rgba(246, 243, 235, .84);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      color: white;
+      background: var(--green);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+    }
+
+    nav { display: flex; gap: 8px; }
+    nav a {
+      color: var(--muted);
+      padding: 8px 11px;
+      border-radius: 10px;
+      font-size: .9rem;
+      font-weight: 650;
+      text-decoration: none;
+    }
+    nav a:hover, nav a:focus-visible { color: var(--ink); background: rgba(255,255,255,.72); }
+
+    header { padding: 86px 0 42px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(15, 118, 84, .22);
+      border-radius: 999px;
+      color: var(--green);
+      background: rgba(255, 255, 255, .6);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green-2);
+      box-shadow: 0 0 0 4px rgba(49,165,125,.13);
+    }
+
+    h1, h2, h3 { margin: 0; line-height: 1.06; letter-spacing: -.04em; }
+    h1 { max-width: 940px; margin-top: 22px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(3rem, 8vw, 6.4rem); font-weight: 500; }
+    h2 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.1rem, 4.5vw, 3.5rem); font-weight: 500; }
+    h3 { font-size: 1.16rem; letter-spacing: -.02em; }
+
+    .dek {
+      max-width: 780px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+    }
+
+    .verdict-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: fit-content;
+      margin-top: 28px;
+      padding: 12px 16px;
+      border: 1px solid rgba(182, 107, 34, .24);
+      border-radius: 14px;
+      background: rgba(255, 247, 231, .76);
+      color: #704215;
+      font-weight: 700;
+    }
+
+    .verdict-strip .icon { font-size: 1.2rem; }
+    section { padding: 58px 0; scroll-margin-top: 72px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
+    .section-head p { max-width: 540px; margin: 0; color: var(--muted); }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 42px;
+    }
+
+    .metric {
+      min-height: 148px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: 0 12px 34px rgba(37,48,41,.06);
+    }
+    .metric-label { color: var(--muted); font-size: .82rem; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+    .metric-value { display: block; margin-top: 14px; font-size: clamp(1.65rem, 3vw, 2.35rem); font-weight: 850; line-height: 1; letter-spacing: -.055em; font-variant-numeric: tabular-nums; }
+    .metric-note { display: block; margin-top: 11px; color: var(--muted); font-size: .82rem; }
+    .metric.primary { color: white; border-color: transparent; background: var(--green); }
+    .metric.primary .metric-label, .metric.primary .metric-note { color: rgba(255,255,255,.72); }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .chart-panel { padding: 26px 26px 20px; }
+    .chart-meta { display: flex; justify-content: space-between; gap: 20px; align-items: start; margin-bottom: 12px; }
+    .chart-meta p { margin: 7px 0 0; color: var(--muted); font-size: .92rem; }
+    .legend { display: flex; flex-wrap: wrap; justify-content: end; gap: 14px; color: var(--muted); font-size: .82rem; }
+    .legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .legend i { width: 18px; height: 3px; border-radius: 3px; background: var(--green); }
+    .legend .invested i { background: var(--blue); }
+
+    .chart-wrap { position: relative; height: 430px; }
+    canvas { width: 100%; height: 100%; display: block; }
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      min-width: 174px;
+      padding: 10px 12px;
+      border: 1px solid rgba(20,35,30,.13);
+      border-radius: 12px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 16px 38px rgba(20,35,30,.15);
+      color: var(--ink);
+      font-size: .82rem;
+      opacity: 0;
+      transform: translate(-50%, calc(-100% - 14px));
+      transition: opacity .12s ease;
+      z-index: 3;
+    }
+    .tooltip strong { display: block; margin-bottom: 5px; }
+    .tooltip-row { display: flex; justify-content: space-between; gap: 18px; color: var(--muted); }
+    .tooltip-row b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+    .table-panel { margin-top: 18px; }
+    .table-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 20px 22px; border-bottom: 1px solid var(--line); }
+    .table-toolbar p { margin: 4px 0 0; color: var(--muted); font-size: .86rem; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 13px 20px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    th { color: var(--muted); background: rgba(20,35,30,.025); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; }
+    th:first-child, td:first-child { text-align: left; }
+    tbody tr:hover { background: rgba(49,165,125,.055); }
+    tbody tr:last-child td { border-bottom: 0; }
+    .final-row { color: var(--green); font-weight: 850; }
+    .gain { color: var(--green); font-weight: 750; }
+    .loss { color: var(--red); font-weight: 750; }
+
+    .audit-grid { display: grid; grid-template-columns: .78fr 1.22fr; gap: 18px; }
+    .verdict-card { padding: 28px; color: white; background: #173f32; }
+    .verdict-card .kicker { color: #9ddbc5; font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .verdict-card h3 { margin-top: 14px; font-family: Georgia, "Times New Roman", serif; font-size: 2.3rem; font-weight: 500; }
+    .verdict-card p { color: rgba(255,255,255,.76); }
+    .check-list { display: grid; gap: 10px; margin-top: 24px; }
+    .check-item { display: grid; grid-template-columns: 23px 1fr; gap: 10px; align-items: start; }
+    .check-icon { width: 21px; height: 21px; display: grid; place-items: center; border-radius: 50%; background: rgba(157,219,197,.16); color: #aff0d9; font-size: .75rem; }
+
+    .audit-table th:nth-child(2), .audit-table td:nth-child(2) { color: var(--muted); }
+    .audit-table td:last-child { font-weight: 750; }
+    .audit-table .bad { color: var(--red); }
+    .audit-table .good { color: var(--green); }
+
+    .comparison-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+    .comparison-card { padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.56); }
+    .comparison-card .small { color: var(--muted); font-size: .8rem; font-weight: 750; text-transform: uppercase; letter-spacing: .05em; }
+    .comparison-card strong { display: block; margin-top: 9px; font-size: 1.6rem; line-height: 1; letter-spacing: -.04em; }
+    .comparison-card p { margin: 10px 0 0; color: var(--muted); font-size: .85rem; }
+    .comparison-card.target { border-style: dashed; background: transparent; }
+
+    .correction {
+      margin-top: 18px;
+      padding: 24px;
+      border: 1px solid rgba(182,107,34,.24);
+      border-radius: 18px;
+      background: rgba(255,247,231,.68);
+    }
+    .correction h3 { color: #704215; }
+    .rate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .rate { padding: 14px; border-radius: 14px; background: rgba(255,255,255,.65); }
+    .rate span { display: block; color: var(--muted); font-size: .8rem; }
+    .rate b { display: block; margin-top: 4px; font-size: 1.08rem; }
+
+    .methods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; counter-reset: method; }
+    .method { position: relative; padding: 22px; border-top: 1px solid var(--line); }
+    .method::before { counter-increment: method; content: "0" counter(method); display: block; margin-bottom: 22px; color: var(--green); font-family: Georgia, serif; font-size: 1.4rem; }
+    .method p { margin: 9px 0 0; color: var(--muted); font-size: .88rem; }
+
+    details { border-top: 1px solid var(--line); }
+    details:first-of-type { border-top: 0; }
+    summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 24px; font-weight: 800; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; color: var(--green); background: rgba(15,118,84,.08); }
+    details[open] summary::after { content: "−"; }
+    .details-body { padding: 0 24px 24px; color: var(--muted); }
+    .details-body ul { margin-bottom: 0; }
+
+    .transcript { display: grid; gap: 18px; padding: 22px; }
+    .message { max-width: 88%; padding: 18px 20px; border-radius: 20px; }
+    .message.user { justify-self: end; color: white; background: var(--green); border-bottom-right-radius: 6px; }
+    .message.assistant { justify-self: start; background: rgba(255,255,255,.78); border: 1px solid var(--line); border-bottom-left-radius: 6px; }
+    .message-role { display: block; margin-bottom: 8px; font-size: .72rem; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; opacity: .7; }
+    .message p { margin: 0; }
+    .message p + p { margin-top: 10px; }
+    .message ul { margin-bottom: 0; }
+
+    .source-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+    .source { min-height: 120px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.48); text-decoration: none; }
+    .source small { display: block; color: var(--muted); }
+    .source strong { display: block; margin-top: 8px; color: var(--ink); }
+    .source:hover { border-color: rgba(15,118,84,.35); transform: translateY(-2px); }
+
+    .disclaimer { margin-top: 20px; padding: 18px 20px; border-left: 4px solid var(--amber); color: var(--muted); background: rgba(255,255,255,.45); }
+    footer { padding: 46px 0 66px; color: var(--muted); font-size: .86rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; padding-top: 24px; border-top: 1px solid var(--line); }
+
+    @media (max-width: 900px) {
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .audit-grid { grid-template-columns: 1fr; }
+      .methods { grid-template-columns: repeat(2, 1fr); }
+      .source-list { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .wrap { width: min(calc(100% - 24px), var(--max)); }
+      nav { display: none; }
+      header { padding-top: 58px; }
+      h1 { font-size: clamp(2.75rem, 15vw, 4.4rem); }
+      .section-head { display: block; }
+      .section-head p { margin-top: 12px; }
+      .metrics, .comparison-grid, .rate-grid, .methods, .source-list { grid-template-columns: 1fr; }
+      .chart-panel { padding: 19px 12px 12px; }
+      .chart-meta { display: block; padding-inline: 8px; }
+      .legend { justify-content: start; margin-top: 12px; }
+      .chart-wrap { height: 330px; }
+      th, td { padding: 12px 14px; }
+      .message { max-width: 96%; }
+      .footer-inner { display: block; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+
+    @media print {
+      .topbar { position: static; }
+      nav { display: none; }
+      body { background: white; }
+      .panel, .metric { box-shadow: none; }
+      section { break-inside: avoid; }
+      .transcript-section { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#top" aria-label="VGT backtest home"><span class="brand-mark">V</span> VGT / DCA</a>
+      <nav aria-label="Page sections">
+        <a href="#backtest">Backtest</a>
+        <a href="#audit">Accuracy audit</a>
+        <a href="#method">Method</a>
+        <a href="#conversation">Conversation</a>
+      </nav>
+    </div>
+  </div>
+
+  <main id="top">
+    <header>
+      <div class="wrap">
+        <span class="eyebrow">Historical backtest · Aug 2006–Jul 2026</span>
+        <h1>$1,000 a month became $2.38 million.</h1>
+        <p class="dek">A 20-year VGT dollar-cost-averaging backtest, followed by an accuracy audit of the claim that $2.42 million is a dependable minimum.</p>
+        <div class="verdict-strip"><span class="icon">◐</span><span>Bottom line: historically plausible, but not exact—and never guaranteed.</span></div>
+
+        <div class="metrics" aria-label="Key backtest results">
+          <article class="metric">
+            <span class="metric-label">Total contributed</span>
+            <strong class="metric-value">$240,000</strong>
+            <span class="metric-note">240 monthly purchases</span>
+          </article>
+          <article class="metric primary">
+            <span class="metric-label">Final VGT balance</span>
+            <strong class="metric-value">$2,380,666</strong>
+            <span class="metric-note">Month-end purchase convention</span>
+          </article>
+          <article class="metric">
+            <span class="metric-label">Investment gain</span>
+            <strong class="metric-value">$2,140,666</strong>
+            <span class="metric-note">Before taxes and fees</span>
+          </article>
+          <article class="metric">
+            <span class="metric-label">Money-weighted return</span>
+            <strong class="metric-value">≈19.81%</strong>
+            <span class="metric-note">Approximate annual IRR</span>
+          </article>
+        </div>
+      </div>
+    </header>
+
+    <section id="backtest">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>The 20-year climb</h2>
+          <p>The gap between the two lines is market growth. Contributions rise evenly; the VGT balance accelerates after year 10.</p>
+        </div>
+
+        <div class="panel chart-panel">
+          <div class="chart-meta">
+            <div>
+              <h3>Total invested vs. VGT balance</h3>
+              <p>Annual checkpoints; USD, nominal</p>
+            </div>
+            <div class="legend" aria-label="Chart legend">
+              <span><i></i>VGT balance</span>
+              <span class="invested"><i></i>Total invested</span>
+            </div>
+          </div>
+          <div class="chart-wrap" id="chartWrap">
+            <canvas id="growthChart" role="img" aria-label="Line chart comparing total invested money and VGT asset balance over 20 years"></canvas>
+            <div class="tooltip" id="tooltip" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <div class="panel table-panel">
+          <div class="table-toolbar">
+            <div><h3>Annual checkpoints</h3><p>Every July after the first August 2006 contribution.</p></div>
+          </div>
+          <div class="table-scroll">
+            <table aria-label="Annual VGT DCA backtest checkpoints">
+              <thead><tr><th>Years</th><th>Date</th><th>Total invested</th><th>VGT balance</th><th>Gain / loss</th></tr></thead>
+              <tbody id="checkpointRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="audit">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Is the original page correct?</h2>
+          <p>Not completely. Its main conclusion is sound, while several sample counts, hit rates, and annual-return labels need correction.</p>
+        </div>
+
+        <div class="audit-grid">
+          <article class="panel verdict-card">
+            <span class="kicker">Verdict / 结论</span>
+            <h3>Directionally right. Numerically uneven.</h3>
+            <p>“不能保证达到目标”是正确的，但页面中的部分统计不是完整历史月度回测的精确结果。</p>
+            <div class="check-list">
+              <div class="check-item"><span class="check-icon">✓</span><span>The “not guaranteed” conclusion is correct.</span></div>
+              <div class="check-item"><span class="check-icon">≈</span><span>The rough minimum balances are close.</span></div>
+              <div class="check-item"><span class="check-icon">!</span><span>Sample counts and success frequencies need revision.</span></div>
+              <div class="check-item"><span class="check-icon">!</span><span>Nominal APR was mislabeled as annualized return.</span></div>
+            </div>
+          </article>
+
+          <div class="panel table-scroll">
+            <table class="audit-table" aria-label="Original page claims compared with precise recalculation">
+              <thead><tr><th>Rolling-backtest item</th><th>Page result</th><th>Exact recalculation</th></tr></thead>
+              <tbody>
+                <tr><td>10-year samples</td><td class="bad">139</td><td class="good">152</td></tr>
+                <tr><td>10-year periods reaching $410k</td><td class="bad">20 / 14.4%</td><td class="good">18 / 11.8%</td></tr>
+                <tr><td>10-year minimum balance</td><td>≈$210k</td><td>$206,149</td></tr>
+                <tr><td>20-year samples</td><td class="bad">19</td><td class="good">32</td></tr>
+                <tr><td>20-year periods reaching $2.42M</td><td class="bad">1 / 5.3%</td><td class="good">2 / 6.25%</td></tr>
+                <tr><td>20-year minimum balance</td><td>≈$1.6M</td><td>$1,609,126</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="comparison-grid" aria-label="Latest 20-year results under different purchase timing conventions">
+          <article class="comparison-card">
+            <span class="small">Last trading day</span>
+            <strong>$2,380,666</strong>
+            <p>August 2006–July 2026; the convention used in the main chart.</p>
+          </article>
+          <article class="comparison-card">
+            <span class="small">First trading day</span>
+            <strong>$2,401,693</strong>
+            <p>A modest timing change gets closer, but still falls short.</p>
+          </article>
+          <article class="comparison-card target">
+            <span class="small">Original target</span>
+            <strong>$2,420,000</strong>
+            <p>Historically plausible, yet not achieved under either common convention.</p>
+          </article>
+        </div>
+
+        <div class="correction">
+          <h3>The annualized-return label also needs correction</h3>
+          <p>Multiplying a monthly rate by 12 gives a nominal APR. A standard effective annualized return compounds the monthly rate.</p>
+          <div class="rate-grid">
+            <div class="rate"><span>10 years to $410k</span><b>23.55% effective annual return—not 21.3%</b></div>
+            <div class="rate"><span>20 years to $2.42M</span><b>19.94% effective annual return—not 18.2%</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="method">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>How the test was framed</h2>
+          <p>A backtest is only meaningful when its purchase timing, price series, and treatment of distributions are explicit.</p>
+        </div>
+        <div class="panel methods">
+          <article class="method"><h3>Contribute</h3><p>Start at $0 and invest $1,000 at each month-end for 240 months.</p></article>
+          <article class="method"><h3>Adjust prices</h3><p>Use split- and dividend-adjusted VGT prices, permitting fractional shares.</p></article>
+          <article class="method"><h3>Exclude frictions</h3><p>No commissions, taxes, inflation adjustment, or CAD/USD conversion.</p></article>
+          <article class="method"><h3>Audit windows</h3><p>Test every available overlapping 10- and 20-year monthly window through July 2026.</p></article>
+        </div>
+
+        <div class="panel" style="margin-top:18px">
+          <details open>
+            <summary>Important interpretation</summary>
+            <div class="details-body">The 11.8% and 6.25% figures are historical frequencies among heavily overlapping windows. They are <strong>not</strong> independent probabilities and should not be read as forecasts of future success.</div>
+          </details>
+          <details>
+            <summary>Why adjusted prices matter</summary>
+            <div class="details-body">VGT had share splits and paid distributions during the period. Using raw closing prices would make early and late values inconsistent. Adjusted close provides a continuous total-return basis for this backtest.</div>
+          </details>
+          <details>
+            <summary>What “9.92×” means</summary>
+            <div class="details-body">The final balance divided by total contributions is about 9.92. This is not a time-weighted return: each $1,000 contribution was invested for a different length of time.</div>
+          </details>
+        </div>
+
+        <div class="source-list" aria-label="Sources">
+          <a class="source" href="https://finance.yahoo.com/quote/VGT/history/" target="_blank" rel="noopener"><small>Historical prices</small><strong>Yahoo Finance · VGT History ↗</strong></a>
+          <a class="source" href="https://investor.vanguard.com/investment-products/etfs/profile/vgt" target="_blank" rel="noopener"><small>Fund information</small><strong>Vanguard · VGT Profile ↗</strong></a>
+          <a class="source" href="https://stockanalysis.com/etf/vgt/history/" target="_blank" rel="noopener"><small>Price cross-check</small><strong>StockAnalysis · VGT History ↗</strong></a>
+          <a class="source" href="https://www.digrin.com/stocks/detail/VGT/price" target="_blank" rel="noopener"><small>Monthly adjusted prices</small><strong>Digrin · VGT Price ↗</strong></a>
+          <a class="source" href="https://www.lazyportfolioetf.com/etf/vanguard-information-technology-vgt/" target="_blank" rel="noopener"><small>Independent return reference</small><strong>Lazy Portfolio ETF · VGT ↗</strong></a>
+          <a class="source" href="https://corporate.vanguard.com/content/corporatesite/us/en/corp/who-we-are/pressroom/press-release-vanguard-announces-share-splits-for-five-equity-index-etfs-032426.html" target="_blank" rel="noopener"><small>2026 split announcement</small><strong>Vanguard Pressroom ↗</strong></a>
+        </div>
+        <p class="disclaimer"><strong>Educational analysis only.</strong> Past performance does not guarantee future results. VGT is a concentrated technology-sector fund, so its historical return and risk may not resemble those of a broad-market portfolio.</p>
+      </div>
+    </section>
+
+    <section id="conversation" class="transcript-section">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Conversation record</h2>
+          <p>The main requests and conclusions are preserved here for context.</p>
+        </div>
+        <div class="panel transcript">
+          <article class="message user"><span class="message-role">User</span><p>Run a backtesting, start from 0, invest $1000 per month as dollar-cost-average strategy into VGT for 20 years, show a table and chart of the total invested money v.s total asset balance over time.</p></article>
+          <article class="message assistant"><span class="message-role">Assistant</span><p>Using August 2006 through July 2026 and month-end purchases, total contributions were <strong>$240,000</strong> and the final VGT balance was <strong>$2,380,666</strong>, for a gain of <strong>$2,140,666</strong>.</p><p>The calculation uses adjusted prices, fractional shares, and reinvested dividends; it excludes taxes, fees, inflation, and currency effects.</p></article>
+          <article class="message user"><span class="message-role">User</span><p>And if the result in this page correct?: <a style="color:inherit" href="https://cghuisunshine.github.io/test/vgt_dca_conversation.html" target="_blank" rel="noopener">cghuisunshine.github.io/test/vgt_dca_conversation.html</a></p></article>
+          <article class="message assistant"><span class="message-role">Assistant</span><p><strong>不完全正确。</strong>页面的核心结论——“不能保证达到目标”——正确，但部分计算和统计不准确。</p><p>精确重算得到：10年达标率为18/152（11.8%），20年达标率为2/32（6.25%）。页面也把名义APR误称为复合年化收益率。</p><p>最准确的评价是：结论方向正确，最低值估算基本正确，但样本数、达标率和“年化收益率”标注需要修改。</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>VGT DCA backtest · Data through July 31, 2026</span>
+      <span>Prepared from the conversation · USD nominal values</span>
+    </div>
+  </footer>
+
+  <script>
+    const checkpoints = [
+      {years:0,date:'Jul 2006',invested:0,balance:0},
+      {years:1,date:'Jul 2007',invested:12000,balance:12867},
+      {years:2,date:'Jul 2008',invested:24000,balance:23010},
+      {years:3,date:'Jul 2009',invested:36000,balance:35250},
+      {years:4,date:'Jul 2010',invested:48000,balance:52621},
+      {years:5,date:'Jul 2011',invested:60000,balance:75644},
+      {years:6,date:'Jul 2012',invested:72000,balance:95943},
+      {years:7,date:'Jul 2013',invested:84000,balance:122609},
+      {years:8,date:'Jul 2014',invested:96000,balance:167811},
+      {years:9,date:'Jul 2015',invested:108000,balance:199769},
+      {years:10,date:'Jul 2016',invested:120000,balance:229261},
+      {years:11,date:'Jul 2017',invested:132000,balance:309172},
+      {years:12,date:'Jul 2018',invested:144000,balance:409723},
+      {years:13,date:'Jul 2019',invested:156000,balance:500305},
+      {years:14,date:'Jul 2020',invested:168000,balance:700190},
+      {years:15,date:'Jul 2021',invested:180000,balance:999098},
+      {years:16,date:'Jul 2022',invested:192000,balance:915176},
+      {years:17,date:'Jul 2023',invested:204000,balance:1149040},
+      {years:18,date:'Jul 2024',invested:216000,balance:1459846},
+      {years:19,date:'Jul 2025',invested:228000,balance:1797470},
+      {years:20,date:'Jul 2026',invested:240000,balance:2380666}
+    ];
+
+    const money = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0});
+    const compact = new Intl.NumberFormat('en-US', {notation:'compact', maximumFractionDigits:1});
+    const rows = document.getElementById('checkpointRows');
+
+    rows.innerHTML = checkpoints.map((d, i) => {
+      const gain = d.balance - d.invested;
+      const gainClass = gain >= 0 ? 'gain' : 'loss';
+      return `<tr class="${i === checkpoints.length - 1 ? 'final-row' : ''}">
+        <td>${d.years}</td><td>${d.date}</td><td>${money.format(d.invested)}</td>
+        <td>${money.format(d.balance)}</td><td class="${gainClass}">${gain >= 0 ? '+' : '−'}${money.format(Math.abs(gain))}</td>
+      </tr>`;
+    }).join('');
+
+    const canvas = document.getElementById('growthChart');
+    const chartWrap = document.getElementById('chartWrap');
+    const tooltip = document.getElementById('tooltip');
+    const ctx = canvas.getContext('2d');
+    let points = [];
+    let chartBounds = null;
+
+    function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+    function rounded(value) { return Math.ceil(value / 500000) * 500000; }
+
+    function drawChart(activeIndex = null) {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const w = rect.width, h = rect.height;
+      const pad = {top: 20, right: 18, bottom: 44, left: w < 560 ? 54 : 70};
+      const plotW = w - pad.left - pad.right;
+      const plotH = h - pad.top - pad.bottom;
+      const maxY = rounded(Math.max(...checkpoints.map(d => d.balance)) * 1.05);
+      const x = i => pad.left + (i / (checkpoints.length - 1)) * plotW;
+      const y = value => pad.top + plotH - (value / maxY) * plotH;
+      points = checkpoints.map((d, i) => ({x:x(i), y:y(d.balance), data:d, index:i}));
+      chartBounds = {left:pad.left, right:pad.left+plotW, top:pad.top, bottom:pad.top+plotH};
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.font = '12px Inter, -apple-system, sans-serif';
+      ctx.textBaseline = 'middle';
+
+      for (let i = 0; i <= 5; i++) {
+        const value = (maxY / 5) * i;
+        const yy = y(value);
+        ctx.beginPath(); ctx.moveTo(pad.left, yy); ctx.lineTo(w - pad.right, yy);
+        ctx.strokeStyle = 'rgba(20,35,30,.10)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = css('--muted'); ctx.textAlign = 'right';
+        ctx.fillText(value === 0 ? '$0' : '$' + compact.format(value), pad.left - 10, yy);
+      }
+
+      checkpoints.forEach((d, i) => {
+        if (i % (w < 560 ? 5 : 2) !== 0 && i !== checkpoints.length - 1) return;
+        ctx.fillStyle = css('--muted'); ctx.textAlign = 'center';
+        ctx.fillText(String(2006 + i), x(i), h - 20);
+      });
+
+      const gradient = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
+      gradient.addColorStop(0, 'rgba(49,165,125,.24)');
+      gradient.addColorStop(1, 'rgba(49,165,125,0)');
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, y(0));
+      points.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.lineTo(points[points.length - 1].x, y(0));
+      ctx.closePath(); ctx.fillStyle = gradient; ctx.fill();
+
+      function line(key, color, width) {
+        ctx.beginPath();
+        checkpoints.forEach((d, i) => i ? ctx.lineTo(x(i), y(d[key])) : ctx.moveTo(x(i), y(d[key])));
+        ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
+      }
+      line('invested', css('--blue'), 2.5);
+      line('balance', css('--green'), 3.5);
+
+      if (activeIndex !== null) {
+        const d = checkpoints[activeIndex];
+        const xx = x(activeIndex);
+        ctx.beginPath(); ctx.moveTo(xx, pad.top); ctx.lineTo(xx, pad.top + plotH);
+        ctx.strokeStyle = 'rgba(20,35,30,.20)'; ctx.setLineDash([4,5]); ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+        [[y(d.invested), css('--blue')], [y(d.balance), css('--green')]].forEach(([yy,color]) => {
+          ctx.beginPath(); ctx.arc(xx, yy, 5, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.stroke();
+        });
+      }
+    }
+
+    function moveTooltip(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const px = clientX - rect.left;
+      const py = clientY - rect.top;
+      if (!chartBounds || px < chartBounds.left || px > chartBounds.right || py < chartBounds.top || py > chartBounds.bottom) {
+        tooltip.style.opacity = 0; tooltip.setAttribute('aria-hidden', 'true'); drawChart(); return;
+      }
+      const index = Math.max(0, Math.min(checkpoints.length - 1, Math.round((px - chartBounds.left) / (chartBounds.right - chartBounds.left) * (checkpoints.length - 1))));
+      const d = checkpoints[index];
+      tooltip.innerHTML = `<strong>${d.date} · Year ${d.years}</strong><div class="tooltip-row"><span>VGT balance</span><b>${money.format(d.balance)}</b></div><div class="tooltip-row"><span>Invested</span><b>${money.format(d.invested)}</b></div>`;
+      tooltip.style.left = `${points[index].x}px`;
+      tooltip.style.top = `${Math.max(88, Math.min(points[index].y, chartBounds.bottom - 10))}px`;
+      tooltip.style.opacity = 1; tooltip.setAttribute('aria-hidden', 'false'); drawChart(index);
+    }
+
+    canvas.addEventListener('mousemove', e => moveTooltip(e.clientX, e.clientY));
+    canvas.addEventListener('mouseleave', () => { tooltip.style.opacity = 0; drawChart(); });
+    canvas.addEventListener('touchmove', e => { const t = e.touches[0]; moveTooltip(t.clientX, t.clientY); }, {passive:true});
+    window.addEventListener('resize', () => drawChart());
+    drawChart();
+  </script>
+</body>
+</html>
