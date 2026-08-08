@@ -400,9 +400,12 @@
       </select>
     </label>
     <button type="button" data-load-saved disabled>Load saved exam</button>
+    <button type="button" data-export-saved disabled>Export selected</button>
+    <button type="button" data-import-saved>Import exam</button>
+    <input data-import-file type="file" accept=".json,application/json" hidden>
   </div>
 
-  <p class="status" data-status></p>
+  <p class="status" data-status aria-live="polite"></p>
 
   <main class="result-layout" data-results hidden>
     <section class="panel">
@@ -459,6 +462,9 @@
     const summaryBody = document.querySelector("[data-summary]");
     const savedExamSelect = document.querySelector("[data-saved-exams]");
     const loadSavedButton = document.querySelector("[data-load-saved]");
+    const exportSavedButton = document.querySelector("[data-export-saved]");
+    const importSavedButton = document.querySelector("[data-import-saved]");
+    const importFileInput = document.querySelector("[data-import-file]");
     const regenerateButton = document.querySelector("[data-regenerate]");
     const saveButton = document.querySelector("[data-save]");
     const printButton = document.querySelector("[data-print]");
@@ -580,6 +586,32 @@
         savedExamSelect.value = selectedId;
       }
       loadSavedButton.disabled = !savedExamSelect.value;
+      exportSavedButton.disabled = !savedExamSelect.value;
+    }
+
+    function createSavedExamExport(record) {
+      return {
+        format: "amc8-saved-exam",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        exam: record
+      };
+    }
+
+    function savedExamFilename(record) {
+      const category = record.settings.topic === "all" ? "balanced" : record.settings.topic;
+      const safeCategory = category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "exam";
+      const date = new Date().toISOString().slice(0, 10);
+      return `amc8-${safeCategory}-${record.questionUrls.length}q-${date}.json`;
+    }
+
+    function importedExamFromPayload(payload) {
+      if (!payload || typeof payload !== "object") return null;
+      if (payload.format === "amc8-saved-exam" && payload.version === 1) {
+        return normalizeSavedExam(payload.exam);
+      }
+      // Accept a raw saved-exam record for compatibility with manually backed-up localStorage data.
+      return normalizeSavedExam(payload);
     }
 
     function rebuildSavedSummary(savedSummary, questions) {
@@ -746,7 +778,85 @@
     regenerateButton.addEventListener("click", generateFromControls);
 
     savedExamSelect.addEventListener("change", () => {
-      loadSavedButton.disabled = !savedExamSelect.value;
+      const hasSelection = Boolean(savedExamSelect.value);
+      loadSavedButton.disabled = !hasSelection;
+      exportSavedButton.disabled = !hasSelection;
+    });
+
+    exportSavedButton.addEventListener("click", () => {
+      const record = savedExams.find((saved) => saved.id === savedExamSelect.value);
+      if (!record) return;
+
+      const blob = new Blob([JSON.stringify(createSavedExamExport(record), null, 2)], {
+        type: "application/json"
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = savedExamFilename(record);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      statusNode.textContent = "Exported the selected saved exam as a JSON file.";
+    });
+
+    importSavedButton.addEventListener("click", () => {
+      importFileInput.click();
+    });
+
+    importFileInput.addEventListener("change", async () => {
+      const file = importFileInput.files && importFileInput.files[0];
+      importFileInput.value = "";
+      if (!file) return;
+      if (file.size > 1024 * 1024) {
+        statusNode.textContent = "That file is too large. Choose an AMC 8 saved-exam JSON file smaller than 1 MB.";
+        return;
+      }
+
+      let importedRecord;
+      try {
+        importedRecord = importedExamFromPayload(JSON.parse(await file.text()));
+      } catch (error) {
+        importedRecord = null;
+      }
+
+      if (!importedRecord) {
+        statusNode.textContent = "Could not import that file. Choose a valid AMC 8 saved-exam JSON file.";
+        return;
+      }
+
+      const availableCount = importedRecord.questionUrls.filter((url) => problemsByUrl.has(url)).length;
+      if (!availableCount) {
+        statusNode.textContent = "Could not import that exam because none of its questions exist in this page's local question data.";
+        return;
+      }
+
+      const signature = savedExamSignature(importedRecord.questionUrls, importedRecord.settings);
+      const existing = savedExams.find((record) => {
+        return savedExamSignature(record.questionUrls, record.settings) === signature;
+      });
+      importedRecord.id = existing
+        ? existing.id
+        : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      importedRecord.savedAt = Date.now();
+
+      const previousSavedExams = savedExams;
+      savedExams = [
+        importedRecord,
+        ...savedExams.filter((record) => record.id !== importedRecord.id)
+      ].slice(0, 50);
+      if (!writeSavedExams()) {
+        savedExams = previousSavedExams;
+        statusNode.textContent = "This browser did not allow the imported exam to be saved.";
+        return;
+      }
+
+      renderSavedExamOptions(importedRecord.id);
+      const missingCount = importedRecord.questionUrls.length - availableCount;
+      statusNode.textContent = existing
+        ? `That exam was already saved. Its saved date has been refreshed.${missingCount ? ` ${missingCount} unavailable question${missingCount === 1 ? " was" : "s were"} kept in the saved record.` : ""}`
+        : `Imported and saved ${importedRecord.questionUrls.length}-question exam.${missingCount ? ` ${missingCount} question${missingCount === 1 ? " is" : "s are"} not available in the current local data.` : ""}`;
     });
 
     saveButton.addEventListener("click", () => {
