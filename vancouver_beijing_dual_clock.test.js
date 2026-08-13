@@ -147,6 +147,64 @@ test("uses actual spring-day duration for sector percentages", () => {
   assert.ok(Math.abs((segments[0].endPct - segments[0].startPct) - 100 / 23) < 0.0001);
 });
 
+test("builds a Monday-to-Sunday weekly availability view", () => {
+  const core = loadCore();
+  assert.equal(core.startOfWeek("2026-08-13"), "2026-08-10");
+  assert.equal(core.startOfWeek("2026-08-16"), "2026-08-10");
+
+  const week = core.buildWeeklyAvailability("2026-08-13", {});
+  assert.equal(week.start, "2026-08-10");
+  assert.equal(week.end, "2026-08-16");
+  assert.deepEqual(plain(week.days.map(day => day.weekday)), [
+    "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+  ]);
+  assert.deepEqual(plain(week.days.map(day => day.ranges.length)), [2, 2, 1, 2, 2, 1, 1]);
+});
+
+test("shows the exact corresponding Beijing dates and times in the week", () => {
+  const core = loadCore();
+  const week = core.buildWeeklyAvailability("2026-08-13", {});
+  assert.deepEqual(plain(week.days[0].ranges), [
+    {
+      vancouver: { startTime: "06:00", endTime: "07:30" },
+      beijing: {
+        startDate: "2026-08-10", startTime: "21:00",
+        endDate: "2026-08-10", endTime: "22:30"
+      }
+    },
+    {
+      vancouver: { startTime: "18:00", endTime: "22:00" },
+      beijing: {
+        startDate: "2026-08-11", startTime: "09:00",
+        endDate: "2026-08-11", endTime: "13:00"
+      }
+    }
+  ]);
+});
+
+test("weekly tables honor custom and empty Firebase overrides", () => {
+  const core = loadCore();
+  const week = core.buildWeeklyAvailability("2026-08-13", {
+    "2026-08-12": [{ start: "09:00", end: "10:30" }],
+    "2026-08-13": []
+  });
+  assert.equal(week.days[2].overridden, true);
+  assert.deepEqual(plain(week.days[2].ranges[0].vancouver), {
+    startTime: "09:00", endTime: "10:30"
+  });
+  assert.equal(week.days[3].overridden, true);
+  assert.deepEqual(plain(week.days[3].ranges), []);
+});
+
+test("places two weekly availability tables below the clock", () => {
+  const clockPanel = html.indexOf('<section class="panel">');
+  const weeklySection = html.indexOf('<section class="weekly-section"');
+  assert.ok(clockPanel >= 0 && weeklySection > clockPanel);
+  assert.match(html, /id="vancouverWeekBody"/);
+  assert.match(html, /id="beijingWeekBody"/);
+  assert.match(html, /每周可用时间/);
+});
+
 test("includes date-basis, date, and Today controls", () => {
   assert.match(html, /id="basisSelect"/);
   assert.match(html, /id="dateInput"/);
