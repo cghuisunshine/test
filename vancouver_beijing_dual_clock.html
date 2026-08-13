@@ -196,9 +196,16 @@
     { start:'18:00', end:'22:00' }
   ];
   const DEFAULT_TUESDAY_THURSDAY_RANGES = [
-    { start:'09:00', end:'22:00' }
+    { start:'06:00', end:'18:00' },
+    { start:'21:00', end:'22:00' }
   ];
   const DEFAULT_WEEKEND_RANGES = [{ start:'06:00', end:'22:00' }];
+  const FLEX_AND_HOLIDAY_DATES = new Set([
+    '2026-07-01','2026-07-13','2026-07-21','2026-07-31',
+    '2026-08-03','2026-08-12','2026-08-21','2026-09-07',
+    '2026-09-17','2026-09-30','2026-10-12','2026-11-04',
+    '2026-11-11','2026-12-17','2026-12-18','2026-12-22','2026-12-25'
+  ]);
 
   function getZonedParts(value, timeZone){
     const date = value instanceof Date ? value : new Date(value);
@@ -272,10 +279,12 @@
     };
   }
 
-  function defaultRangesForWeekday(weekday){
-    const ranges = weekday==='Sat'||weekday==='Sun'
+  function defaultRangesForWeekday(weekday,dateText){
+    const ranges = FLEX_AND_HOLIDAY_DATES.has(dateText)
       ? DEFAULT_WEEKEND_RANGES
-      : (weekday==='Tue'||weekday==='Thu' ? DEFAULT_TUESDAY_THURSDAY_RANGES : DEFAULT_WEEKDAY_RANGES);
+      : (weekday==='Sat'||weekday==='Sun'
+        ? DEFAULT_WEEKEND_RANGES
+        : (weekday==='Tue'||weekday==='Thu' ? DEFAULT_TUESDAY_THURSDAY_RANGES : DEFAULT_WEEKDAY_RANGES));
     return ranges.map(range=>({...range}));
   }
 
@@ -322,7 +331,7 @@
     if(Object.prototype.hasOwnProperty.call(overrideMap || {},parts.date)){
       return overrideMap[parts.date] || [];
     }
-    return defaultRangesForWeekday(parts.weekday);
+    return defaultRangesForWeekday(parts.weekday,parts.date);
   }
 
   function wallTimeInRanges(parts, ranges){
@@ -707,7 +716,7 @@
 
   function defaultRangesForDate(date){
     const panel=core.buildPanel('Vancouver',date);
-    return core.defaultRangesForWeekday(panel.slots[0].vancouver.weekday);
+    return core.defaultRangesForWeekday(panel.slots[0].vancouver.weekday,date);
   }
 
   function syncEditorDates(){
