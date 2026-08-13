@@ -195,6 +195,9 @@
     { start:'06:00', end:'07:30' },
     { start:'18:00', end:'22:00' }
   ];
+  const DEFAULT_TUESDAY_THURSDAY_RANGES = [
+    { start:'09:00', end:'22:00' }
+  ];
   const DEFAULT_WEEKEND_RANGES = [{ start:'06:00', end:'22:00' }];
 
   function getZonedParts(value, timeZone){
@@ -270,7 +273,9 @@
   }
 
   function defaultRangesForWeekday(weekday){
-    const ranges = weekday==='Sat'||weekday==='Sun' ? DEFAULT_WEEKEND_RANGES : DEFAULT_WEEKDAY_RANGES;
+    const ranges = weekday==='Sat'||weekday==='Sun'
+      ? DEFAULT_WEEKEND_RANGES
+      : (weekday==='Tue'||weekday==='Thu' ? DEFAULT_TUESDAY_THURSDAY_RANGES : DEFAULT_WEEKDAY_RANGES);
     return ranges.map(range=>({...range}));
   }
 
