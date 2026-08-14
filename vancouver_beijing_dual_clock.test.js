@@ -197,11 +197,10 @@ test("formats weekly availability with Chinese 12-hour conventions", () => {
   assert.equal(core.formatChinese12HourTime("24:00"), "上午12:00");
 });
 
-test("shows both time conventions on clock-panel availability labels", () => {
-  assert.match(html, /time24\.textContent=segment\.label/);
-  assert.match(html, /time12\.textContent=core\.formatChinese12HourRange\(segment\.startTime,segment\.endTime\)/);
-  assert.match(html, /className='availability-time-24'/);
-  assert.match(html, /className='availability-time-12'/);
+test("shows only Chinese 12-hour ranges on clock-panel availability labels", () => {
+  assert.match(html, /label\.textContent=`\$\{datePrefix\}\$\{core\.formatChinese12HourRange\(segment\.startTime,segment\.endTime\)\}`/);
+  assert.doesNotMatch(html, /className='availability-time-24'/);
+  assert.doesNotMatch(html, /time24\.textContent=segment\.label/);
 });
 
 test("weekly tables honor custom and empty Firebase overrides", () => {

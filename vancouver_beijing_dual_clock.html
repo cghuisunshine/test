@@ -80,9 +80,8 @@
       color:#087746;background:rgba(235,255,245,.94);border:1px solid rgba(32,164,100,.35);
       padding:6px 9px;border-radius:9px;font-size:clamp(9px,1.25vw,14px);font-weight:800;
       box-shadow:0 4px 12px rgba(32,164,100,.14);
+      white-space:nowrap;font-variant-numeric:tabular-nums;
     }
-    .availability-time-24,.availability-time-12{display:block;white-space:nowrap;font-variant-numeric:tabular-nums}
-    .availability-time-12{margin-top:2px;font-size:.82em;color:#376f57}
     .hour{position:absolute;z-index:5;left:50%;top:50%;transform-origin:0 0;font-weight:700;line-height:1;text-align:center;white-space:nowrap}
     .hour span{display:block;transform:translate(-50%,-50%);padding:6px 7px;border-radius:9px;transition:.18s ease;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
     .hour span:hover{transform:translate(-50%,-50%) scale(1.08);background:rgba(255,255,255,.78)}
@@ -782,13 +781,8 @@
     segments.forEach(segment=>{
       const label=document.createElement('div');
       label.className='availability-label';
-      const time24=document.createElement('span');
-      time24.className='availability-time-24';
-      time24.textContent=segment.label;
-      const time12=document.createElement('span');
-      time12.className='availability-time-12';
-      time12.textContent=core.formatChinese12HourRange(segment.startTime,segment.endTime);
-      label.append(time24,time12);
+      const datePrefix=panel.vancouverDates.length>1 ? `${segment.date} ` : '';
+      label.textContent=`${datePrefix}${core.formatChinese12HourRange(segment.startTime,segment.endTime)}`;
       const angle=((segment.startPct+segment.endPct)/2)/100*360;
       const a=(angle-90)*Math.PI/180;
       label.style.left=(50+Math.cos(a)*35)+'%';
