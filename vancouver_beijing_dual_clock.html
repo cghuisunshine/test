@@ -630,6 +630,28 @@
     return `北京 ${beijing.hour}:${beijing.minute} - 温哥华 ${vancouver.hour}:${vancouver.minute}`;
   }
 
+  function chinese12HourParts(timeText){
+    const [rawHour,minute] = timeText.split(':').map(Number);
+    const hour=rawHour%24;
+    return {
+      period:hour<12 ? '上午' : '下午',
+      time:`${hour%12 || 12}:${String(minute).padStart(2,'0')}`
+    };
+  }
+
+  function formatChinese12HourTime(timeText){
+    const parts=chinese12HourParts(timeText);
+    return `${parts.period}${parts.time}`;
+  }
+
+  function formatChinese12HourRange(startTime,endTime){
+    const start=chinese12HourParts(startTime);
+    const end=chinese12HourParts(endTime);
+    return start.period===end.period
+      ? `${start.period}${start.time}–${end.time}`
+      : `${start.period}${start.time}–${end.period}${end.time}`;
+  }
+
   return {
     ZONES,
     getZonedParts,
@@ -650,7 +672,9 @@
     clearFirebaseApiKey,
     buildShareUrl,
     timeOptionsForDate,
-    formatClockTitle
+    formatClockTitle,
+    formatChinese12HourTime,
+    formatChinese12HourRange
   };
 });
 </script>
@@ -823,11 +847,14 @@
         const line=document.createElement('div');
         line.className='availability-time';
         if(city==='vancouver'){
-          line.textContent=`${range.vancouver.startTime}–${range.vancouver.endTime}`;
+          line.textContent=core.formatChinese12HourRange(range.vancouver.startTime,range.vancouver.endTime);
         }else{
           const start=range.beijing;
-          const endDate=start.startDate===start.endDate ? '' : `${chineseDate(start.endDate)} `;
-          line.textContent=`${chineseDate(start.startDate)} ${start.startTime}–${endDate}${start.endTime}`;
+          if(start.startDate===start.endDate){
+            line.textContent=`${chineseDate(start.startDate)} ${core.formatChinese12HourRange(start.startTime,start.endTime)}`;
+          }else{
+            line.textContent=`${chineseDate(start.startDate)} ${core.formatChinese12HourTime(start.startTime)}–${chineseDate(start.endDate)} ${core.formatChinese12HourTime(start.endTime)}`;
+          }
         }
         times.appendChild(line);
       });

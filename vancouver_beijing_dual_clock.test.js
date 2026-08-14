@@ -39,7 +39,7 @@ test("keeps the availability color clearly visible", () => {
 test("provides sorted weekday and weekend fallback rules", () => {
   const core = loadCore();
   assert.deepEqual(plain(core.defaultRangesForWeekday("Mon")), [
-    { start: "06:00", end: "07:30" },
+    { start: "06:00", end: "07:15" },
     { start: "18:00", end: "22:00" }
   ]);
   assert.deepEqual(plain(core.defaultRangesForWeekday("Sun")), [
@@ -101,7 +101,7 @@ test("builds dynamic weekday, weekend, and empty-override sectors", () => {
   const emptySegments = core.buildAvailabilitySegments(weekday, { "2026-07-17": [] });
 
   assert.deepEqual(plain(weekdaySegments.map(segment => [segment.startTime, segment.endTime])), [
-    ["06:00", "07:30"],
+    ["06:00", "07:15"],
     ["18:00", "22:00"]
   ]);
   assert.deepEqual(plain(weekendSegments.map(segment => [segment.startTime, segment.endTime])), [
@@ -177,6 +177,16 @@ test("shows the exact corresponding Beijing dates and times in the week", () => 
       }
     }
   ]);
+});
+
+test("formats weekly availability with Chinese 12-hour conventions", () => {
+  const core = loadCore();
+  assert.equal(core.formatChinese12HourRange("06:00", "07:15"), "上午6:00–7:15");
+  assert.equal(core.formatChinese12HourRange("11:45", "13:00"), "上午11:45–下午1:00");
+  assert.equal(core.formatChinese12HourRange("18:00", "22:00"), "下午6:00–10:00");
+  assert.equal(core.formatChinese12HourTime("00:00"), "上午12:00");
+  assert.equal(core.formatChinese12HourTime("12:00"), "下午12:00");
+  assert.equal(core.formatChinese12HourTime("24:00"), "上午12:00");
 });
 
 test("weekly tables honor custom and empty Firebase overrides", () => {
