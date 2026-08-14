@@ -103,6 +103,7 @@
     }
     .center .local{font-size:clamp(12px,1.7vw,18px);font-weight:800;color:var(--vancouver)}
     .center .time{font-size:clamp(30px,6vw,64px);font-weight:900;letter-spacing:.02em;margin:4px 0}
+    .center .time-12{font-size:clamp(13px,2vw,20px);font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
     .hand{position:absolute;left:50%;top:50%;height:3px;width:43%;transform-origin:0 50%;background:linear-gradient(90deg,#1e2c3a,#ff7a2f);border-radius:10px;z-index:7}
     .hand[hidden],.badge[hidden]{display:none}
     .selection-hand{position:absolute;left:50%;top:50%;height:5px;width:43%;transform-origin:0 50%;background:linear-gradient(90deg,#7b2cbf,#d946ef);border-radius:10px;z-index:2;display:none;box-shadow:0 0 0 2px rgba(255,255,255,.8),0 0 18px rgba(123,44,191,.35)}
@@ -111,6 +112,8 @@
     .hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18px;height:18px;border-radius:50%;background:#17324d;border:4px solid #fff;box-shadow:0 0 0 2px #17324d;z-index:8}
     .badge{position:absolute;z-index:9;padding:8px 12px;border-radius:10px;font-weight:900;box-shadow:0 4px 12px rgba(0,0,0,.16);font-size:clamp(12px,1.6vw,18px)}
     .badge.bj{background:var(--beijing);color:#fff}
+    .badge-time{display:block;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .badge-time-12{margin-top:2px;font-size:.78em;font-weight:800}
     .note{text-align:center;margin-top:16px;color:var(--muted);line-height:1.7}
     .note b{color:var(--text)}
     .weekly-section{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -195,10 +198,14 @@
           <div class="selection-hand" id="selectionHand"></div>
           <div class="hand" id="hand"></div>
           <div class="hub"></div>
-          <div class="badge bj" id="bjBadge"></div>
+          <div class="badge bj" id="bjBadge">
+            <span class="badge-time" id="bjTime24">--:--</span>
+            <span class="badge-time badge-time-12" id="bjTime12">--</span>
+          </div>
           <div class="center">
             <div class="local">温哥华</div>
             <div class="time" id="vanTime">--:--</div>
+            <div class="time-12" id="vanTime12">--</div>
           </div>
         </div>
       </div>
@@ -693,6 +700,10 @@
   const clock = document.getElementById('clock');
   const hand = document.getElementById('hand');
   const bjBadge = document.getElementById('bjBadge');
+  const bjTime24 = document.getElementById('bjTime24');
+  const bjTime12 = document.getElementById('bjTime12');
+  const vanTime = document.getElementById('vanTime');
+  const vanTime12 = document.getElementById('vanTime12');
   const selectionHand = document.getElementById('selectionHand');
   const selectionInfo = document.getElementById('selectionInfo');
   const availabilityRing = document.getElementById('availabilityRing');
@@ -1022,13 +1033,18 @@
     const title=core.formatClockTitle(bj,van);
     document.getElementById('pageTitle').textContent=title;
     document.title=title;
-    document.getElementById('vanTime').textContent=`${String(vanHour).padStart(2,'0')}:${van.minute}`;
+    const vanTime24=`${String(vanHour).padStart(2,'0')}:${van.minute}`;
+    const bjTime24Text=`${String(bjHour).padStart(2,'0')}:${bj.minute}`;
+    vanTime.textContent=vanTime24;
+    vanTime12.textContent=core.formatChinese12HourTime(vanTime24);
     const vanDate=van.date;
     const bjDate=bj.date;
     document.getElementById('bjDate').textContent=bjDate;
     document.getElementById('vanDate').textContent=vanDate===bjDate ? '' : vanDate;
 
-    bjBadge.textContent=`${String(bjHour).padStart(2,'0')}:${bj.minute}`;
+    bjTime24.textContent=bjTime24Text;
+    bjTime12.textContent=core.formatChinese12HourTime(bjTime24Text);
+    bjBadge.setAttribute('aria-label',`北京时间 ${bjTime24Text}，${bjTime12.textContent}`);
     positionBadge(bjBadge,angle,0.46);
     if(selectedSlotIndex!==null) renderSelection();
   }

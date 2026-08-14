@@ -32,6 +32,14 @@ test("shows the live Beijing time only on the arrow", () => {
   assert.doesNotMatch(html, /getElementById\('bjTime'\)/);
 });
 
+test("shows both 24-hour and Chinese 12-hour current times in the clock panel", () => {
+  for (const id of ["vanTime", "vanTime12", "bjTime24", "bjTime12"]) {
+    assert.match(html, new RegExp(`id=["']${id}["']`));
+  }
+  assert.match(html, /vanTime12\.textContent=core\.formatChinese12HourTime\(vanTime24\)/);
+  assert.match(html, /bjTime12\.textContent=core\.formatChinese12HourTime\(bjTime24Text\)/);
+});
+
 test("keeps the availability color clearly visible", () => {
   assert.match(html, /--available-soft:rgba\(32,164,100,\.55\)/);
 });
