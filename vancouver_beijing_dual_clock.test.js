@@ -198,7 +198,7 @@ test("formats weekly availability with Chinese 12-hour conventions", () => {
 });
 
 test("shows only Chinese 12-hour ranges on clock-panel availability labels", () => {
-  assert.match(html, /vancouverLabel\.textContent=`\$\{datePrefix\}\$\{core\.formatChinese12HourRange\(segment\.startTime,segment\.endTime\)\}`/);
+  assert.match(html, /vancouverLabel\.textContent=`温哥华 \$\{datePrefix\}\$\{core\.formatChinese12HourRange\(segment\.startTime,segment\.endTime\)\}`/);
   assert.doesNotMatch(html, /className='availability-time-24'/);
   assert.doesNotMatch(html, /time24\.textContent=segment\.label/);
 });
@@ -213,6 +213,7 @@ test("adds corresponding Chinese 12-hour Beijing ranges to the outer circle", ()
     "下午9:00–10:15"
   );
   assert.match(html, /beijingLabel\.className='availability-label beijing'/);
+  assert.match(html, /beijingLabel\.textContent=`北京 \$\{core\.formatChinese12HourRange/);
   assert.match(html, /placeLabel\(beijingLabel,midpoint\+4,40\.5\)/);
 });
 

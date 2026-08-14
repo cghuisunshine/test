@@ -795,17 +795,17 @@
       const vancouverLabel=document.createElement('div');
       vancouverLabel.className='availability-label';
       const datePrefix=panel.vancouverDates.length>1 ? `${segment.date} ` : '';
-      vancouverLabel.textContent=`${datePrefix}${core.formatChinese12HourRange(segment.startTime,segment.endTime)}`;
+      vancouverLabel.textContent=`温哥华 ${datePrefix}${core.formatChinese12HourRange(segment.startTime,segment.endTime)}`;
       placeLabel(vancouverLabel,midpoint-4,35);
 
       const beijingStart=core.getZonedParts(new Date(segment.start),core.ZONES.Beijing);
       const beijingEnd=core.getZonedParts(new Date(segment.end),core.ZONES.Beijing);
       const beijingLabel=document.createElement('div');
       beijingLabel.className='availability-label beijing';
-      beijingLabel.textContent=core.formatChinese12HourRange(
+      beijingLabel.textContent=`北京 ${core.formatChinese12HourRange(
         `${beijingStart.hour}:${beijingStart.minute}`,
         `${beijingEnd.hour}:${beijingEnd.minute}`
-      );
+      )}`;
       placeLabel(beijingLabel,midpoint+4,40.5);
     });
   }
