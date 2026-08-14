@@ -82,6 +82,10 @@
       box-shadow:0 4px 12px rgba(32,164,100,.14);
       white-space:nowrap;font-variant-numeric:tabular-nums;
     }
+    .availability-label.beijing{
+      color:var(--beijing);background:rgba(255,242,223,.96);border-color:rgba(163,58,22,.35);
+      padding:4px 6px;font-size:clamp(8px,1vw,12px);box-shadow:0 2px 6px rgba(163,58,22,.12);
+    }
     .hour{position:absolute;z-index:5;left:50%;top:50%;transform-origin:0 0;font-weight:700;line-height:1;text-align:center;white-space:nowrap}
     .hour span{display:block;transform:translate(-50%,-50%);padding:6px 7px;border-radius:9px;transition:.18s ease;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
     .hour span:hover{transform:translate(-50%,-50%) scale(1.08);background:rgba(255,255,255,.78)}
@@ -779,16 +783,30 @@
     availabilityRing.style.background=segments.length ? `conic-gradient(from 0deg,${stops.join(',')})` : 'transparent';
     availabilityLabels.replaceChildren();
     segments.forEach(segment=>{
-      const label=document.createElement('div');
-      label.className='availability-label';
+      const midpoint=((segment.startPct+segment.endPct)/2)/100*360;
+      const placeLabel=(label,angle,radius)=>{
+        const a=(angle-90)*Math.PI/180;
+        label.style.left=(50+Math.cos(a)*radius)+'%';
+        label.style.top=(50+Math.sin(a)*radius)+'%';
+        label.style.transform='translate(-50%,-50%)';
+        availabilityLabels.appendChild(label);
+      };
+
+      const vancouverLabel=document.createElement('div');
+      vancouverLabel.className='availability-label';
       const datePrefix=panel.vancouverDates.length>1 ? `${segment.date} ` : '';
-      label.textContent=`${datePrefix}${core.formatChinese12HourRange(segment.startTime,segment.endTime)}`;
-      const angle=((segment.startPct+segment.endPct)/2)/100*360;
-      const a=(angle-90)*Math.PI/180;
-      label.style.left=(50+Math.cos(a)*35)+'%';
-      label.style.top=(50+Math.sin(a)*35)+'%';
-      label.style.transform='translate(-50%,-50%)';
-      availabilityLabels.appendChild(label);
+      vancouverLabel.textContent=`${datePrefix}${core.formatChinese12HourRange(segment.startTime,segment.endTime)}`;
+      placeLabel(vancouverLabel,midpoint-4,35);
+
+      const beijingStart=core.getZonedParts(new Date(segment.start),core.ZONES.Beijing);
+      const beijingEnd=core.getZonedParts(new Date(segment.end),core.ZONES.Beijing);
+      const beijingLabel=document.createElement('div');
+      beijingLabel.className='availability-label beijing';
+      beijingLabel.textContent=core.formatChinese12HourRange(
+        `${beijingStart.hour}:${beijingStart.minute}`,
+        `${beijingEnd.hour}:${beijingEnd.minute}`
+      );
+      placeLabel(beijingLabel,midpoint+4,40.5);
     });
   }
 

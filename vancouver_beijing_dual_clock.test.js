@@ -198,9 +198,22 @@ test("formats weekly availability with Chinese 12-hour conventions", () => {
 });
 
 test("shows only Chinese 12-hour ranges on clock-panel availability labels", () => {
-  assert.match(html, /label\.textContent=`\$\{datePrefix\}\$\{core\.formatChinese12HourRange\(segment\.startTime,segment\.endTime\)\}`/);
+  assert.match(html, /vancouverLabel\.textContent=`\$\{datePrefix\}\$\{core\.formatChinese12HourRange\(segment\.startTime,segment\.endTime\)\}`/);
   assert.doesNotMatch(html, /className='availability-time-24'/);
   assert.doesNotMatch(html, /time24\.textContent=segment\.label/);
+});
+
+test("adds corresponding Chinese 12-hour Beijing ranges to the outer circle", () => {
+  const core = loadCore();
+  const segment = core.buildAvailabilitySegments(core.buildPanel("Vancouver", "2026-08-13"), {})[0];
+  const start = core.getZonedParts(new Date(segment.start), core.ZONES.Beijing);
+  const end = core.getZonedParts(new Date(segment.end), core.ZONES.Beijing);
+  assert.equal(
+    core.formatChinese12HourRange(`${start.hour}:${start.minute}`, `${end.hour}:${end.minute}`),
+    "下午9:00–10:15"
+  );
+  assert.match(html, /beijingLabel\.className='availability-label beijing'/);
+  assert.match(html, /placeLabel\(beijingLabel,midpoint\+4,40\.5\)/);
 });
 
 test("weekly tables honor custom and empty Firebase overrides", () => {
