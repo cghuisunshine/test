@@ -424,13 +424,8 @@
     });
   }
 
-  function startOfWeek(vancouverDate){
-    const day=new Date(`${vancouverDate}T00:00:00Z`).getUTCDay();
-    return addCalendarDays(vancouverDate,day===0 ? -6 : 1-day);
-  }
-
   function buildWeeklyAvailability(vancouverDate,overrideMap){
-    const start=startOfWeek(vancouverDate);
+    const start=vancouverDate;
     const dates=Array.from({length:7},(_,index)=>addCalendarDays(start,index));
     const days=dates.map(date=>{
       const panel=buildPanel('Vancouver',date);
@@ -643,7 +638,6 @@
     validateRanges,
     defaultRangesForWeekday,
     buildAvailabilitySegments,
-    startOfWeek,
     buildWeeklyAvailability,
     resolveLocalTimeZone,
     localTimeZoneLabel,
@@ -977,16 +971,22 @@
     const bj=core.getZonedParts(displayInstant,core.ZONES.Beijing);
     const vanHour=+van.hour%24;
     const bjHour=+bj.hour%24;
+    const todayVancouver=core.getZonedParts(now,core.ZONES.Vancouver).date;
     const panelKey=`${viewState.basis}:${viewState.date}:${viewState.panelRevision}`;
+    let subscriptionDatesChanged=false;
     if(panelKey!==currentPanelKey){
       currentPanel=core.buildPanel(viewState.basis,viewState.date);
       currentPanelKey=panelKey;
       selectedSlotIndex=null;
       renderDial(currentPanel);
-      renderWeeklyAvailability(van.date);
       syncEditorDates();
-      syncOverrideDates();
+      subscriptionDatesChanged=true;
     }
+    if(currentWeekAnchorDate!==todayVancouver){
+      renderWeeklyAvailability(todayVancouver);
+      subscriptionDatesChanged=true;
+    }
+    if(subscriptionDatesChanged) syncOverrideDates();
     const angle=(displayInstant-Date.parse(currentPanel.start))/(Date.parse(currentPanel.end)-Date.parse(currentPanel.start))*360;
 
     hand.hidden=!viewState.liveMode;

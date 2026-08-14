@@ -147,18 +147,15 @@ test("uses actual spring-day duration for sector percentages", () => {
   assert.ok(Math.abs((segments[0].endPct - segments[0].startPct) - 100 / 23) < 0.0001);
 });
 
-test("builds a Monday-to-Sunday weekly availability view", () => {
+test("builds a seven-day availability view from the current date forward", () => {
   const core = loadCore();
-  assert.equal(core.startOfWeek("2026-08-13"), "2026-08-10");
-  assert.equal(core.startOfWeek("2026-08-16"), "2026-08-10");
-
   const week = core.buildWeeklyAvailability("2026-08-13", {});
-  assert.equal(week.start, "2026-08-10");
-  assert.equal(week.end, "2026-08-16");
+  assert.equal(week.start, "2026-08-13");
+  assert.equal(week.end, "2026-08-19");
   assert.deepEqual(plain(week.days.map(day => day.weekday)), [
-    "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+    "Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"
   ]);
-  assert.deepEqual(plain(week.days.map(day => day.ranges.length)), [2, 2, 1, 2, 2, 1, 1]);
+  assert.deepEqual(plain(week.days.map(day => day.ranges.length)), [2, 2, 1, 1, 2, 2, 2]);
 });
 
 test("shows the exact corresponding Beijing dates and times in the week", () => {
@@ -166,17 +163,17 @@ test("shows the exact corresponding Beijing dates and times in the week", () => 
   const week = core.buildWeeklyAvailability("2026-08-13", {});
   assert.deepEqual(plain(week.days[0].ranges), [
     {
-      vancouver: { startTime: "06:00", endTime: "07:30" },
+      vancouver: { startTime: "06:00", endTime: "07:15" },
       beijing: {
-        startDate: "2026-08-10", startTime: "21:00",
-        endDate: "2026-08-10", endTime: "22:30"
+        startDate: "2026-08-13", startTime: "21:00",
+        endDate: "2026-08-13", endTime: "22:15"
       }
     },
     {
-      vancouver: { startTime: "18:00", endTime: "22:00" },
+      vancouver: { startTime: "20:45", endTime: "22:00" },
       beijing: {
-        startDate: "2026-08-11", startTime: "09:00",
-        endDate: "2026-08-11", endTime: "13:00"
+        startDate: "2026-08-14", startTime: "11:45",
+        endDate: "2026-08-14", endTime: "13:00"
       }
     }
   ]);
@@ -185,15 +182,15 @@ test("shows the exact corresponding Beijing dates and times in the week", () => 
 test("weekly tables honor custom and empty Firebase overrides", () => {
   const core = loadCore();
   const week = core.buildWeeklyAvailability("2026-08-13", {
-    "2026-08-12": [{ start: "09:00", end: "10:30" }],
-    "2026-08-13": []
+    "2026-08-13": [],
+    "2026-08-14": [{ start: "09:00", end: "10:30" }]
   });
-  assert.equal(week.days[2].overridden, true);
-  assert.deepEqual(plain(week.days[2].ranges[0].vancouver), {
+  assert.equal(week.days[0].overridden, true);
+  assert.deepEqual(plain(week.days[0].ranges), []);
+  assert.equal(week.days[1].overridden, true);
+  assert.deepEqual(plain(week.days[1].ranges[0].vancouver), {
     startTime: "09:00", endTime: "10:30"
   });
-  assert.equal(week.days[3].overridden, true);
-  assert.deepEqual(plain(week.days[3].ranges), []);
 });
 
 test("places two weekly availability tables below the clock", () => {
