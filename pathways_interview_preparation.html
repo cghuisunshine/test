@@ -199,6 +199,107 @@
       padding-top:14px;
       border-top:1px dashed var(--border);
     }
+
+    h3[data-audio]{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .audio-bar.audio-inline{
+      margin-top:0;
+      display:inline-flex;
+    }
+    .audio-btn.compact{
+      font-size:13px;
+      font-weight:600;
+      padding:4px 11px;
+      gap:5px;
+    }
+    .audio-btn.compact .ic{font-size:12px}
+
+    body.audio-off .audio-bar{display:none !important}
+    .menu-btn{
+      position:fixed;
+      top:14px;
+      right:14px;
+      z-index:60;
+      width:44px;
+      height:44px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.35);
+      background:rgba(24,63,159,.92);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:5px;
+      cursor:pointer;
+      box-shadow:0 4px 14px rgba(15,23,42,.18);
+      -webkit-tap-highlight-color:transparent;
+    }
+    .menu-btn span{
+      display:block;
+      width:20px;
+      height:2px;
+      background:#fff;
+      border-radius:2px;
+      transition:transform .2s, opacity .2s;
+    }
+    .menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .menu-btn.open span:nth-child(2){opacity:0}
+    .menu-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .menu-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.35);
+      z-index:55;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s;
+    }
+    body.menu-open .menu-backdrop{opacity:1;pointer-events:auto}
+    .menu-panel{
+      position:fixed;
+      top:68px;
+      right:14px;
+      z-index:61;
+      width:min(300px, calc(100% - 28px));
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:0 14px 40px rgba(15,23,42,.22);
+      padding:16px;
+      opacity:0;
+      transform:translateY(-8px);
+      pointer-events:none;
+      transition:opacity .18s, transform .18s;
+    }
+    body.menu-open .menu-panel{opacity:1;transform:none;pointer-events:auto}
+    .menu-title{
+      font-weight:700;
+      color:#183f9f;
+      margin-bottom:10px;
+    }
+    .menu-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:9px 0;
+      border-top:1px solid var(--border);
+      font-size:15px;
+    }
+    .menu-toggle{cursor:pointer}
+    .menu-toggle input{transform:scale(1.3);margin:0}
+    .menu-stop{width:100%;justify-content:center;margin-top:12px}
+    .menu-hint{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:12px;
+      line-height:1.5;
+    }
+    @media print{.menu-btn,.menu-panel,.menu-backdrop{display:none}}
     @media print{.audio-bar,.audio-global{display:none}}
   </style>
 </head>
@@ -223,7 +324,7 @@
     </section>
 
     <section class="card q">
-      <h3>1. Tell me about yourself.</h3>
+      <h3 data-audio="q1q">1. Tell me about yourself.</h3>
       <div class="answer" data-audio="q1">
         Hi, my name is Peter. I have a background in education and I have teaching experience from China.
         Currently, I am studying in an Education Assistant program in Burnaby.
@@ -234,7 +335,7 @@
     </section>
 
     <section class="card q">
-      <h3>2. Why do you want to volunteer with Pathways to Education?</h3>
+      <h3 data-audio="q2q">2. Why do you want to volunteer with Pathways to Education?</h3>
       <div class="answer" data-audio="q2">
         I want to volunteer with Pathways because I believe education can make a big difference in a young person's life.
         I understand that Pathways supports high school students academically and also provides mentoring and other support.
@@ -243,7 +344,7 @@
     </section>
 
     <section class="card q">
-      <h3>3. What experience do you have working with young people?</h3>
+      <h3 data-audio="q3q">3. What experience do you have working with young people?</h3>
       <div class="answer" data-audio="q3">
         I worked as a teacher in China, so I have experience communicating with students and helping them learn.
         I understand that students have different learning styles and different needs.
@@ -252,7 +353,7 @@
     </section>
 
     <section class="card q">
-      <h3>4. What subjects could you tutor?</h3>
+      <h3 data-audio="q4q">4. What subjects could you tutor?</h3>
       <div class="answer" data-audio="q4">
         I am especially comfortable helping students with Math.
         I can also support students with basic computer skills and some other school subjects.
@@ -262,7 +363,7 @@
     </section>
 
     <section class="card q">
-      <h3>5. What would you do if a student does not understand something?</h3>
+      <h3 data-audio="q5q">5. What would you do if a student does not understand something?</h3>
       <div class="answer" data-audio="q5">
         First, I would try to understand exactly what the student is having difficulty with.
         Then I would explain it in a simpler way or break the task into smaller steps.
@@ -273,7 +374,7 @@
     </section>
 
     <section class="card q">
-      <h3>6. What would you do if a student does not want to work?</h3>
+      <h3 data-audio="q6q">6. What would you do if a student does not want to work?</h3>
       <div class="answer" data-audio="q6">
         I would stay calm and try to build a connection with the student.
         I might ask them what is difficult or what they need help with.
@@ -284,7 +385,7 @@
     </section>
 
     <section class="card q">
-      <h3>7. How would you build a relationship with a student?</h3>
+      <h3 data-audio="q7q">7. How would you build a relationship with a student?</h3>
       <div class="answer" data-audio="q7">
         I think trust takes time.
         I would listen to the student, treat them with respect, and try to understand their interests and goals.
@@ -295,7 +396,7 @@
     </section>
 
     <section class="card q">
-      <h3>8. What would you do if a student told you something personal or concerning?</h3>
+      <h3 data-audio="q8q">8. What would you do if a student told you something personal or concerning?</h3>
       <div class="answer" data-audio="q8">
         I would listen calmly and respectfully, but I would not promise to keep something secret if it involved the student's safety.
         I would follow Pathways' policies and report the concern to the appropriate staff member.
@@ -304,7 +405,7 @@
     </section>
 
     <section class="card q">
-      <h3>9. What are your strengths?</h3>
+      <h3 data-audio="q9q">9. What are your strengths?</h3>
       <div class="answer" data-audio="q9">
         I think my strengths are patience, responsibility, and teaching experience.
         I am comfortable explaining things step by step, and I enjoy helping students understand something that was difficult for them.
@@ -313,7 +414,7 @@
     </section>
 
     <section class="card q">
-      <h3>10. What is one area you would like to improve?</h3>
+      <h3 data-audio="q10q">10. What is one area you would like to improve?</h3>
       <div class="answer" data-audio="q10">
         Because I am still learning about the Canadian school system, I would like to become more familiar with how Canadian schools support students with different backgrounds and learning needs.
         That is also one reason this volunteer opportunity is valuable to me.
@@ -415,7 +516,7 @@
       if(!window.speechSynthesis){ alert("Audio file not found. Run generate_audio.py to create it."); setIdle(btn); return; }
       var u = new SpeechSynthesisUtterance(text);
       u.lang = "en-GB";
-      u.rate = 0.95 * rate;
+      u.rate = rate;
       var v = pickVoice(); if(v) u.voice = v;
       u.onend = function(){ if(currentBtn === btn){ setIdle(btn); currentBtn = null; } };
       speech = u;
@@ -445,44 +546,98 @@
 
     // Build a Listen button under every [data-audio] block
     Array.prototype.forEach.call(document.querySelectorAll("[data-audio]"), function(el){
+      var isHeading = /^H[1-6]$/.test(el.tagName);
       var bar = document.createElement("div");
-      bar.className = "audio-bar";
+      bar.className = isHeading ? "audio-bar audio-inline" : "audio-bar";
       var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "audio-btn";
+      btn.className = isHeading ? "audio-btn compact" : "audio-btn";
       btn.innerHTML = '<span class="ic">\u25B6</span><span class="tx">Listen</span>';
       btn.addEventListener("click", function(){ play(el, btn); });
       bar.appendChild(btn);
       el.appendChild(bar);
     });
 
-    // Global speed control in the strategy card
-    var strategy = document.querySelector(".card");
-    if(strategy){
-      var g = document.createElement("div");
-      g.className = "audio-global";
-      g.innerHTML = '<span class="audio-note">UK female voice \u2022 speed</span>';
-      var sel = document.createElement("select");
-      sel.className = "audio-speed";
-      [["0.75","0.75\u00D7 slow"],["0.9","0.9\u00D7"],["1","1\u00D7 normal"],["1.15","1.15\u00D7"]].forEach(function(o){
-        var op = document.createElement("option");
-        op.value = o[0]; op.textContent = o[1];
-        if(o[0] === "1") op.selected = true;
-        sel.appendChild(op);
-      });
-      sel.addEventListener("change", function(){
-        rate = parseFloat(sel.value);
-        if(current) current.playbackRate = rate;
-      });
-      var stop = document.createElement("button");
-      stop.type = "button";
-      stop.className = "audio-btn";
-      stop.innerHTML = '<span class="ic">\u25A0</span><span class="tx">Stop audio</span>';
-      stop.addEventListener("click", stopAll);
-      g.appendChild(sel);
-      g.appendChild(stop);
-      strategy.appendChild(g);
+    // ---- Hamburger menu -------------------------------------------------
+    var LS_KEY = "pathways-audio-enabled";
+    var audioOn = true;
+    try { if(localStorage.getItem(LS_KEY) === "0") audioOn = false; } catch(e){}
+
+    function applyAudioState(){
+      document.body.classList.toggle("audio-off", !audioOn);
+      if(!audioOn) stopAll();
+      try { localStorage.setItem(LS_KEY, audioOn ? "1" : "0"); } catch(e){}
     }
+
+    var menuBtn = document.createElement("button");
+    menuBtn.type = "button";
+    menuBtn.className = "menu-btn";
+    menuBtn.setAttribute("aria-label", "Settings");
+    menuBtn.innerHTML = '<span></span><span></span><span></span>';
+
+    var backdrop = document.createElement("div");
+    backdrop.className = "menu-backdrop";
+
+    var panel = document.createElement("div");
+    panel.className = "menu-panel";
+    panel.innerHTML =
+      '<div class="menu-title">Audio settings</div>' +
+      '<label class="menu-row menu-toggle">' +
+        '<span>Show Listen buttons</span>' +
+        '<input type="checkbox" class="menu-check">' +
+      '</label>' +
+      '<div class="menu-row menu-speed-row">' +
+        '<span>Speed</span>' +
+      '</div>' +
+      '<div class="menu-hint">Turn this off before the call so you cannot tap a button by accident.</div>';
+
+    var check = panel.querySelector(".menu-check");
+    check.checked = audioOn;
+    check.addEventListener("change", function(){
+      audioOn = check.checked;
+      applyAudioState();
+    });
+
+    var sel = document.createElement("select");
+    sel.className = "audio-speed";
+    [["0.75","0.75\u00D7 slow"],["0.9","0.9\u00D7"],["1","1\u00D7 normal"],["1.15","1.15\u00D7"]].forEach(function(o){
+      var op = document.createElement("option");
+      op.value = o[0]; op.textContent = o[1];
+      if(o[0] === "1") op.selected = true;
+      sel.appendChild(op);
+    });
+    sel.addEventListener("change", function(){
+      rate = parseFloat(sel.value);
+      if(current) current.playbackRate = rate;
+    });
+    panel.querySelector(".menu-speed-row").appendChild(sel);
+
+    var stopBtn = document.createElement("button");
+    stopBtn.type = "button";
+    stopBtn.className = "audio-btn menu-stop";
+    stopBtn.innerHTML = '<span class="ic">\u25A0</span><span class="tx">Stop audio now</span>';
+    stopBtn.addEventListener("click", stopAll);
+    panel.insertBefore(stopBtn, panel.querySelector(".menu-hint"));
+
+    function openMenu(){
+      document.body.classList.add("menu-open");
+      menuBtn.classList.add("open");
+    }
+    function closeMenu(){
+      document.body.classList.remove("menu-open");
+      menuBtn.classList.remove("open");
+    }
+    menuBtn.addEventListener("click", function(){
+      if(document.body.classList.contains("menu-open")) closeMenu(); else openMenu();
+    });
+    backdrop.addEventListener("click", closeMenu);
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeMenu(); });
+
+    document.body.appendChild(menuBtn);
+    document.body.appendChild(backdrop);
+    document.body.appendChild(panel);
+    applyAudioState();
+
   })();
   </script>
 </body>
