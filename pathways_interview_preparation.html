@@ -149,6 +149,57 @@
       .hero p{color:#333}
       .badge{background:#eee;color:#111}
     }
+
+    .audio-bar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+    .audio-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      border:1px solid #c7d6f5;
+      background:#fff;
+      color:#183f9f;
+      font:inherit;
+      font-size:15px;
+      font-weight:600;
+      padding:8px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      transition:background .15s,border-color .15s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .audio-btn:hover{background:#eaf0ff}
+    .audio-btn:active{background:#dce7ff}
+    .audio-btn.playing{background:#183f9f;border-color:#183f9f;color:#fff}
+    .audio-btn .ic{font-size:16px;line-height:1}
+    .audio-note{
+      font-size:13px;
+      color:var(--muted);
+    }
+    .audio-speed{
+      font:inherit;
+      font-size:14px;
+      padding:6px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--text);
+    }
+    .audio-global{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+      padding-top:14px;
+      border-top:1px dashed var(--border);
+    }
+    @media print{.audio-bar,.audio-global{display:none}}
   </style>
 </head>
 <body>
@@ -173,7 +224,7 @@
 
     <section class="card q">
       <h3>1. Tell me about yourself.</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q1">
         Hi, my name is Peter. I have a background in education and I have teaching experience from China.
         Currently, I am studying in an Education Assistant program in Burnaby.
         I am interested in working with children and teenagers in Canada, and I would like to gain more experience supporting students in a Canadian educational environment.
@@ -184,7 +235,7 @@
 
     <section class="card q">
       <h3>2. Why do you want to volunteer with Pathways to Education?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q2">
         I want to volunteer with Pathways because I believe education can make a big difference in a young person's life.
         I understand that Pathways supports high school students academically and also provides mentoring and other support.
         I would like to use my teaching experience to help students, and at the same time learn more about how to support diverse students in Canada.
@@ -193,7 +244,7 @@
 
     <section class="card q">
       <h3>3. What experience do you have working with young people?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q3">
         I worked as a teacher in China, so I have experience communicating with students and helping them learn.
         I understand that students have different learning styles and different needs.
         I am also currently studying to become an Education Assistant, where I am learning more about inclusion, student development, behaviour support, and how to support students with different needs.
@@ -202,7 +253,7 @@
 
     <section class="card q">
       <h3>4. What subjects could you tutor?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q4">
         I am especially comfortable helping students with Math.
         I can also support students with basic computer skills and some other school subjects.
         English is my second language, so for more advanced English courses I may need some preparation, but I am very comfortable helping students learn and stay organized.
@@ -212,7 +263,7 @@
 
     <section class="card q">
       <h3>5. What would you do if a student does not understand something?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q5">
         First, I would try to understand exactly what the student is having difficulty with.
         Then I would explain it in a simpler way or break the task into smaller steps.
         I might use an example, a diagram, or another way of explaining the idea.
@@ -223,7 +274,7 @@
 
     <section class="card q">
       <h3>6. What would you do if a student does not want to work?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q6">
         I would stay calm and try to build a connection with the student.
         I might ask them what is difficult or what they need help with.
         Sometimes a student may be frustrated or may not understand the work.
@@ -234,7 +285,7 @@
 
     <section class="card q">
       <h3>7. How would you build a relationship with a student?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q7">
         I think trust takes time.
         I would listen to the student, treat them with respect, and try to understand their interests and goals.
         I would also be patient and consistent.
@@ -245,7 +296,7 @@
 
     <section class="card q">
       <h3>8. What would you do if a student told you something personal or concerning?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q8">
         I would listen calmly and respectfully, but I would not promise to keep something secret if it involved the student's safety.
         I would follow Pathways' policies and report the concern to the appropriate staff member.
       </div>
@@ -254,7 +305,7 @@
 
     <section class="card q">
       <h3>9. What are your strengths?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q9">
         I think my strengths are patience, responsibility, and teaching experience.
         I am comfortable explaining things step by step, and I enjoy helping students understand something that was difficult for them.
         I am also willing to learn and take feedback from staff.
@@ -263,7 +314,7 @@
 
     <section class="card q">
       <h3>10. What is one area you would like to improve?</h3>
-      <div class="answer">
+      <div class="answer" data-audio="q10">
         Because I am still learning about the Canadian school system, I would like to become more familiar with how Canadian schools support students with different backgrounds and learning needs.
         That is also one reason this volunteer opportunity is valuable to me.
       </div>
@@ -271,7 +322,7 @@
 
     <section class="card">
       <h2>Most Important Answer to Practice</h2>
-      <div class="practice">
+      <div class="practice" data-audio="why-pathways">
         <strong>Question: Why Pathways?</strong><br><br>
         I have teaching experience, and I am currently studying to become an Education Assistant.
         My long-term goal is to work in education in Canada.
@@ -322,5 +373,117 @@
       Pathways to Education Volunteer Interview Preparation
     </div>
   </main>
+
+  <script>
+  (function(){
+    var AUDIO_DIR = "pathways_audio/";
+    var current = null;      // HTMLAudioElement
+    var currentBtn = null;
+    var speech = null;
+    var rate = 1;
+
+    function stopAll(){
+      if(current){ current.pause(); current.currentTime = 0; current = null; }
+      if(window.speechSynthesis){ window.speechSynthesis.cancel(); }
+      speech = null;
+      if(currentBtn){ setIdle(currentBtn); currentBtn = null; }
+    }
+
+    function setIdle(btn){
+      btn.classList.remove("playing");
+      btn.querySelector(".ic").textContent = "\u25B6";
+      btn.querySelector(".tx").textContent = "Listen";
+    }
+    function setPlaying(btn){
+      btn.classList.add("playing");
+      btn.querySelector(".ic").textContent = "\u25A0";
+      btn.querySelector(".tx").textContent = "Stop";
+    }
+
+    // Fallback: browser voice (used if the mp3 file is not there yet)
+    function pickVoice(){
+      if(!window.speechSynthesis) return null;
+      var v = window.speechSynthesis.getVoices();
+      var gb = v.filter(function(x){ return /^en[-_]GB/i.test(x.lang); });
+      var female = gb.filter(function(x){
+        return /sonia|libby|hazel|serena|kate|stephanie|female|google uk english female/i.test(x.name);
+      });
+      return female[0] || gb[0] || null;
+    }
+
+    function speak(text, btn){
+      if(!window.speechSynthesis){ alert("Audio file not found. Run generate_audio.py to create it."); setIdle(btn); return; }
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-GB";
+      u.rate = 0.95 * rate;
+      var v = pickVoice(); if(v) u.voice = v;
+      u.onend = function(){ if(currentBtn === btn){ setIdle(btn); currentBtn = null; } };
+      speech = u;
+      window.speechSynthesis.speak(u);
+    }
+    if(window.speechSynthesis){ window.speechSynthesis.onvoiceschanged = pickVoice; }
+
+    function textOf(el){
+      var t = el.cloneNode(true);
+      Array.prototype.forEach.call(t.querySelectorAll(".audio-bar"), function(n){ n.remove(); });
+      return t.textContent.replace(/\s+/g," ").trim();
+    }
+
+    function play(el, btn){
+      var wasCurrent = (currentBtn === btn);
+      stopAll();
+      if(wasCurrent) return;
+      currentBtn = btn;
+      setPlaying(btn);
+
+      var a = new Audio(AUDIO_DIR + el.dataset.audio + ".mp3");
+      a.playbackRate = rate;
+      a.onended = function(){ if(currentBtn === btn){ setIdle(btn); currentBtn = null; current = null; } };
+      a.onerror = function(){ current = null; speak(textOf(el), btn); };
+      a.play().then(function(){ current = a; }).catch(function(){ current = null; speak(textOf(el), btn); });
+    }
+
+    // Build a Listen button under every [data-audio] block
+    Array.prototype.forEach.call(document.querySelectorAll("[data-audio]"), function(el){
+      var bar = document.createElement("div");
+      bar.className = "audio-bar";
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "audio-btn";
+      btn.innerHTML = '<span class="ic">\u25B6</span><span class="tx">Listen</span>';
+      btn.addEventListener("click", function(){ play(el, btn); });
+      bar.appendChild(btn);
+      el.appendChild(bar);
+    });
+
+    // Global speed control in the strategy card
+    var strategy = document.querySelector(".card");
+    if(strategy){
+      var g = document.createElement("div");
+      g.className = "audio-global";
+      g.innerHTML = '<span class="audio-note">UK female voice \u2022 speed</span>';
+      var sel = document.createElement("select");
+      sel.className = "audio-speed";
+      [["0.75","0.75\u00D7 slow"],["0.9","0.9\u00D7"],["1","1\u00D7 normal"],["1.15","1.15\u00D7"]].forEach(function(o){
+        var op = document.createElement("option");
+        op.value = o[0]; op.textContent = o[1];
+        if(o[0] === "1") op.selected = true;
+        sel.appendChild(op);
+      });
+      sel.addEventListener("change", function(){
+        rate = parseFloat(sel.value);
+        if(current) current.playbackRate = rate;
+      });
+      var stop = document.createElement("button");
+      stop.type = "button";
+      stop.className = "audio-btn";
+      stop.innerHTML = '<span class="ic">\u25A0</span><span class="tx">Stop audio</span>';
+      stop.addEventListener("click", stopAll);
+      g.appendChild(sel);
+      g.appendChild(stop);
+      strategy.appendChild(g);
+    }
+  })();
+  </script>
 </body>
 </html>
