@@ -238,6 +238,16 @@
       box-shadow:0 4px 14px rgba(15,23,42,.18);
       -webkit-tap-highlight-color:transparent;
     }
+    .menu-btn{
+      opacity:1;
+      transition:opacity .2s, transform .2s, visibility .2s;
+    }
+    body.scrolled .menu-btn{
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(-8px);
+      pointer-events:none;
+    }
     .menu-btn span{
       display:block;
       width:20px;
@@ -596,6 +606,7 @@
     check.addEventListener("change", function(){
       audioOn = check.checked;
       applyAudioState();
+    syncScroll();
     });
 
     var sel = document.createElement("select");
@@ -632,6 +643,19 @@
     });
     backdrop.addEventListener("click", closeMenu);
     document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeMenu(); });
+
+    // The menu button only appears at the very top of the page
+    var TOP_THRESHOLD = 24;
+    var ticking = false;
+    function syncScroll(){
+      var atTop = (window.pageYOffset || document.documentElement.scrollTop || 0) <= TOP_THRESHOLD;
+      document.body.classList.toggle("scrolled", !atTop);
+      if(!atTop) closeMenu();
+      ticking = false;
+    }
+    window.addEventListener("scroll", function(){
+      if(!ticking){ ticking = true; window.requestAnimationFrame(syncScroll); }
+    }, { passive: true });
 
     document.body.appendChild(menuBtn);
     document.body.appendChild(backdrop);
