@@ -60,7 +60,7 @@
 
     .controls {
       display: grid;
-      grid-template-columns: repeat(6, minmax(125px, 1fr));
+      grid-template-columns: repeat(7, minmax(125px, 1fr));
       gap: 12px;
       align-items: end;
       margin: 20px 0 24px;
@@ -354,7 +354,7 @@
 </head>
 <body>
   <h1>AMC 8 topic-balanced exam generator</h1>
-  <p class="meta">Generates a linked practice exam using the topic percentages from the categorized AoPS question sets.</p>
+  <p class="meta">Generates a linked practice exam from all categories, one category, or one knowledge-based subcategory.</p>
   <p class="meta">Choose a compact link list or show question-only content from the local AoPS cache.</p>
 
   <div class="top-actions">
@@ -367,6 +367,12 @@
       Category
       <select data-topic>
         <option value="all" selected>All categories (balanced)</option>
+      </select>
+    </label>
+    <label>
+      Subcategory
+      <select data-subcategory disabled>
+        <option value="all" selected>All subcategories</option>
       </select>
     </label>
     <label>
@@ -451,6 +457,7 @@
   <script>
     const form = document.querySelector("[data-generator-form]");
     const topicInput = document.querySelector("[data-topic]");
+    const subcategoryInput = document.querySelector("[data-subcategory]");
     const contestInput = document.querySelector("[data-contest]");
     const sizeInput = document.querySelector("[data-size]");
     const displayInput = document.querySelector("[data-display]");
@@ -487,6 +494,33 @@
       });
     }
 
+    function updateSubcategoryOptions(selectedValue = "all") {
+      clearNode(subcategoryInput);
+      const allOption = document.createElement("option");
+      allOption.value = "all";
+      allOption.textContent = "All subcategories";
+      subcategoryInput.append(allOption);
+
+      const topic = topicInput.value;
+      const subcategories = topic === "all"
+        ? []
+        : Array.from(new Set(
+          problems
+            .filter((problem) => problem.topic === topic)
+            .map((problem) => problem.subcategory)
+            .filter(Boolean)
+        )).sort((a, b) => a.localeCompare(b));
+
+      subcategories.forEach((subcategory) => {
+        const option = document.createElement("option");
+        option.value = subcategory;
+        option.textContent = subcategory;
+        subcategoryInput.append(option);
+      });
+      subcategoryInput.disabled = topic === "all";
+      subcategoryInput.value = subcategories.includes(selectedValue) ? selectedValue : "all";
+    }
+
     function sourceLabel(value) {
       if (value === "all") return "AMC 8 + AJHSME";
       return value;
@@ -500,12 +534,23 @@
       return value === "all" ? "All categories (balanced)" : value;
     }
 
+    function subcategoryLabel(value) {
+      return value === "all" ? "All subcategories" : value;
+    }
+
     function normalizedSavedSettings(settings) {
       const source = settings && typeof settings === "object" ? settings : {};
       const knownTopics = Array.from(topicInput.options).map((option) => option.value);
+      const normalizedTopic = knownTopics.includes(source.topic) ? source.topic : "all";
+      const knownSubcategories = normalizedTopic === "all"
+        ? []
+        : problems
+          .filter((problem) => problem.topic === normalizedTopic)
+          .map((problem) => problem.subcategory);
       const parsedSize = Number.parseInt(source.size, 10);
       return {
-        topic: knownTopics.includes(source.topic) ? source.topic : "all",
+        topic: normalizedTopic,
+        subcategory: knownSubcategories.includes(source.subcategory) ? source.subcategory : "all",
         contest: ["AMC 8", "AJHSME", "all"].includes(source.contest) ? source.contest : "AMC 8",
         display: ["links", "questions"].includes(source.display) ? source.display : "links",
         size: Math.max(1, Math.min(50, Number.isFinite(parsedSize) ? parsedSize : 25))
@@ -563,7 +608,9 @@
           hour: "numeric",
           minute: "2-digit"
         });
-      const category = record.settings.topic === "all" ? "Balanced" : record.settings.topic;
+      const category = record.settings.subcategory !== "all"
+        ? record.settings.subcategory
+        : record.settings.topic === "all" ? "Balanced" : record.settings.topic;
       return `${record.questionUrls.length}Q ${category} — ${dateLabel}`;
     }
 
@@ -599,7 +646,9 @@
     }
 
     function savedExamFilename(record) {
-      const category = record.settings.topic === "all" ? "balanced" : record.settings.topic;
+      const category = record.settings.subcategory !== "all"
+        ? record.settings.subcategory
+        : record.settings.topic === "all" ? "balanced" : record.settings.topic;
       const safeCategory = category.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "exam";
       const date = new Date().toISOString().slice(0, 10);
       return `amc8-${safeCategory}-${record.questionUrls.length}q-${date}.json`;
@@ -644,6 +693,7 @@
     function savedExamSignature(questionUrls, settings) {
       return JSON.stringify([
         settings.topic,
+        settings.subcategory,
         settings.contest,
         settings.display,
         settings.size,
@@ -651,18 +701,20 @@
       ]);
     }
 
-    function renderExam(exam, contest, size, topic, display) {
+    function renderExam(exam, contest, size, topic, subcategory, display) {
       currentExam = exam;
-      currentExamSettings = { contest, size, topic, display };
+      currentExamSettings = { contest, size, topic, subcategory, display };
       clearNode(questionList);
       clearNode(summaryBody);
       questionList.classList.toggle("full-questions", display === "questions");
 
-      titleNode.textContent = topic === "all"
+      titleNode.textContent = subcategory !== "all"
+        ? `${exam.questions.length}-question ${subcategory} exam`
+        : topic === "all"
         ? `${exam.questions.length}-question exam`
         : `${exam.questions.length}-question ${topic} exam`;
       const displayLabel = display === "questions" ? "Full questions" : "Links only";
-      statusNode.textContent = `Category: ${topicLabel(topic)}. Source: ${sourceLabel(contest)}. Display: ${displayLabel}. Target size: ${size}. Available problems: ${exam.totalAvailable}.`;
+      statusNode.textContent = `Category: ${topicLabel(topic)}. Subcategory: ${subcategoryLabel(subcategory)}. Source: ${sourceLabel(contest)}. Display: ${displayLabel}. Target size: ${size}. Available problems: ${exam.totalAvailable}.`;
 
       exam.questions.forEach((problem) => {
         const item = document.createElement("li");
@@ -676,7 +728,9 @@
         link.target = "_blank";
         link.rel = "noopener";
         topic.className = "question-topic";
-        topic.textContent = problem.topic;
+        topic.textContent = problem.subcategory
+          ? `${problem.topic} — ${problem.subcategory}`
+          : problem.topic;
 
         row.append(link, topic);
         if (display === "questions") {
@@ -724,9 +778,10 @@
       emptyNode.hidden = true;
     }
 
-    function updateRequestUrl(topic, contest, size, display) {
+    function updateRequestUrl(topic, subcategory, contest, size, display) {
       const params = new URLSearchParams();
       if (topic !== "all") params.set("topic", topic);
+      if (subcategory !== "all") params.set("subcategory", subcategory);
       params.set("contest", contest);
       params.set("size", size);
       params.set("display", display);
@@ -739,36 +794,43 @@
 
     function generateFromControls() {
       const topic = topicInput.value;
+      const subcategory = subcategoryInput.value;
       const contest = contestInput.value;
       const display = displayInput.value;
       const requestedSize = Math.max(1, Math.min(50, Number.parseInt(sizeInput.value, 10) || 25));
       const scopedProblems = topic === "all"
         ? problems
-        : problems.filter((problem) => problem.topic === topic);
+        : problems.filter((problem) => {
+          return problem.topic === topic && (subcategory === "all" || problem.subcategory === subcategory);
+        });
       sizeInput.value = requestedSize;
       const exam = core.generateExam(scopedProblems, {
         contest,
         size: requestedSize
       });
-      renderExam(exam, contest, requestedSize, topic, display);
-      updateRequestUrl(topic, contest, requestedSize, display);
+      renderExam(exam, contest, requestedSize, topic, subcategory, display);
+      updateRequestUrl(topic, subcategory, contest, requestedSize, display);
     }
 
     function restoreRequestFromUrl() {
       const params = new URLSearchParams(window.location.search);
       const topic = params.get("topic");
+      const subcategory = params.get("subcategory");
       const contest = params.get("contest");
       const display = params.get("display");
       const size = Number.parseInt(params.get("size"), 10);
       const hasTopic = topic && Array.from(topicInput.options).some((option) => option.value === topic);
 
       if (hasTopic) topicInput.value = topic;
+      updateSubcategoryOptions(subcategory || "all");
       if (["AMC 8", "AJHSME", "all"].includes(contest)) contestInput.value = contest;
       if (["links", "questions"].includes(display)) displayInput.value = display;
       if (Number.isFinite(size)) sizeInput.value = Math.max(1, Math.min(50, size));
 
       if (hasTopic) generateFromControls();
     }
+
+    topicInput.addEventListener("change", () => updateSubcategoryOptions());
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -906,6 +968,7 @@
       }
 
       topicInput.value = settings.topic;
+      updateSubcategoryOptions(settings.subcategory);
       contestInput.value = settings.contest;
       displayInput.value = settings.display;
       sizeInput.value = settings.size;
@@ -914,8 +977,8 @@
         summary: rebuildSavedSummary(record.summary, restoredProblems),
         totalAvailable: record.totalAvailable,
         requestedSize: record.requestedSize
-      }, settings.contest, settings.size, settings.topic, settings.display);
-      updateRequestUrl(settings.topic, settings.contest, settings.size, settings.display);
+      }, settings.contest, settings.size, settings.topic, settings.subcategory, settings.display);
+      updateRequestUrl(settings.topic, settings.subcategory, settings.contest, settings.size, settings.display);
 
       const savedDate = new Date(record.savedAt);
       const dateLabel = Number.isNaN(savedDate.getTime()) ? "an earlier session" : savedDate.toLocaleString();
