@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which explosion came first? The relativity of simultaneity</title>
+<style>
+  :root {
+    --paper: #EEF2F5;
+    --panel: #FFFFFF;
+    --ink: #14213D;
+    --muted: #5A6780;
+    --rule: #C9D2DD;
+    --ship-a: #2F5FD0;
+    --ship-b: #B7791F;
+    --ev1: #1F8A70;
+    --ev2: #B5367A;
+    --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0F1624;
+      --panel: #172133;
+      --ink: #E4E9F2;
+      --muted: #9AA7BD;
+      --rule: #2C3A52;
+      --ship-a: #7FA2F5;
+      --ship-b: #E3AE5B;
+      --ev1: #4CC7A4;
+      --ev2: #EA73B2;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F1624;
+    --panel: #172133;
+    --ink: #E4E9F2;
+    --muted: #9AA7BD;
+    --rule: #2C3A52;
+    --ship-a: #7FA2F5;
+    --ship-b: #E3AE5B;
+    --ev1: #4CC7A4;
+    --ev2: #EA73B2;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+  main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+  h1, h2, h3, .controls, .readout, figcaption, table {
+    font-family: var(--sans);
+  }
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.75rem;
+    font-weight: 700;
+  }
+  .lede { font-size: 1.25rem; color: var(--muted); margin: 0 0 2rem; }
+  h2 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+    margin: 3rem 0 0.75rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  p { margin: 0 0 1rem; }
+  .a { color: var(--ship-a); font-weight: 600; }
+  .b { color: var(--ship-b); font-weight: 600; }
+  .e1 { color: var(--ev1); font-weight: 600; }
+  .e2 { color: var(--ev2); font-weight: 600; }
+
+  /* The simulator: the one bold element */
+  .sim {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 1rem;
+    margin: 0 -0.25rem 1rem;
+  }
+  .sim svg { display: block; width: 100%; height: auto; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem;
+    align-items: center; margin-top: 0.75rem; font-size: 0.95rem;
+  }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+  .seg button, .play {
+    font: inherit; font-weight: 600; color: var(--ink);
+    background: transparent; border: 0; padding: 0.45rem 0.9rem; cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+  .play { border: 1px solid var(--rule); border-radius: 999px; min-width: 5.5rem; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--ship-a); outline-offset: 2px; }
+  .speed { display: flex; align-items: center; gap: 0.5rem; flex: 1 1 14rem; }
+  .speed input { flex: 1; accent-color: var(--ship-a); }
+  .speed output { font-variant-numeric: tabular-nums; min-width: 3.6rem; font-weight: 600; }
+  .readout {
+    margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--rule);
+    font-size: 0.98rem; line-height: 1.5;
+  }
+  .readout strong { font-variant-numeric: tabular-nums; }
+  .ratio { margin-top: 0.6rem; }
+  .bar { height: 10px; border-radius: 5px; background: var(--rule); position: relative; overflow: hidden; margin-top: 0.3rem; }
+  .bar span { position: absolute; inset: 0 auto 0 0; background: var(--ev1); border-radius: 5px; }
+  figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 0.4rem; line-height: 1.5; }
+
+  .math { overflow-x: auto; overflow-y: hidden; margin: 1rem 0 1.25rem; }
+  math { font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", math; font-size: 1.08em; }
+  math[display="block"] { margin: 0.5rem 0; font-size: 1.2em; }
+
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.98rem; margin: 0.5rem 0 1rem; }
+  th, td { text-align: left; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--rule); }
+  th { font-weight: 600; color: var(--muted); }
+  td { font-variant-numeric: tabular-nums; }
+
+  .note {
+    border-left: 4px solid var(--ev1);
+    padding: 0.25rem 0 0.25rem 1rem;
+    margin: 1.5rem 0;
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Which explosion came first?</h1>
+  <p class="lede">Two spaceships pass each other and two explosions go off. Depending on which ship you ride in, a different explosion happens first, and both answers are correct.</p>
+
+  <figure class="sim" aria-label="Animated spaceship simulator">
+    <svg id="scene" viewBox="0 0 800 310" role="img" aria-labelledby="sceneDesc">
+      <desc id="sceneDesc">Ship A on top and ship B below pass each other. Explosion x1 marks where A's tail meets B's nose; explosion x2 marks where A's nose meets B's tail. A timeline underneath shows when each explosion happens in the chosen frame.</desc>
+    </svg>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Choose reference frame">
+        <button type="button" data-frame="B" aria-pressed="true">Ride in B</button>
+        <button type="button" data-frame="A" aria-pressed="false">Ride in A</button>
+      </div>
+      <button type="button" class="play" id="play">Pause</button>
+      <label class="speed">
+        <span>Speed</span>
+        <input id="beta" type="range" min="0.10" max="0.95" step="0.01" value="0.60" aria-describedby="betaOut">
+        <output id="betaOut">0.60c</output>
+      </label>
+    </div>
+    <div class="readout" id="readout" aria-live="polite"></div>
+    <figcaption>Both ships have the same rest length <math><mi>L</mi></math>. Times are in units of <math><mi>L</mi><mo>/</mo><mi>c</mi></math>. Whichever ship you ride in is at rest; the other one is moving and contracted.</figcaption>
+  </figure>
+
+  <h2>The setup</h2>
+  <p>Let both ships have rest length <math><mi>L</mi></math>, and let <span class="a">A</span> move at speed <math><mi>v</mi></math> relative to <span class="b">B</span>. Write</p>
+  <div class="math"><math display="block"><mi>β</mi><mo>=</mo><mfrac><mrow><mi>v</mi></mrow><mrow><mi>c</mi></mrow></mfrac><mo>,</mo><mspace width="2em"/><mi>γ</mi><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>β</mi><mn>2</mn></msup></mrow></msqrt></mrow></mfrac><mo>.</mo></math></div>
+  <p>Explosion <span class="e1">x₁</span> happens when A's tail passes B's nose. Explosion <span class="e2">x₂</span> happens when A's nose passes B's tail.</p>
+
+  <h2>In B's frame</h2>
+  <p>Put B's nose at <math><mi>x</mi><mo>=</mo><mn>0</mn></math> and its tail at <math><mi>x</mi><mo>=</mo><mi>L</mi></math>. A moves in the <math><mo>+</mo><mi>x</mi></math> direction and is contracted to length <math><mi>L</mi><mo>/</mo><mi>γ</mi></math>.</p>
+  <p><span class="e1">Event 1</span> is A's tail passing B's nose. Call that <math><mi>x</mi><mo>=</mo><mn>0</mn><mo>,</mo><mspace width="0.33em"/><mi>t</mi><mo>=</mo><mn>0</mn></math>. At that moment A's nose is at <math><mi>x</mi><mo>=</mo><mi>L</mi><mo>/</mo><mi>γ</mi></math>.</p>
+  <p><span class="e2">Event 2</span> is A's nose reaching B's tail. The nose is at <math><mi>L</mi><mo>/</mo><mi>γ</mi><mo>+</mo><mi>v</mi><mi>t</mi></math>, so setting that equal to <math><mi>L</mi></math> gives</p>
+  <div class="math"><math display="block"><msub><mi>t</mi><mn>2</mn></msub><mo>=</mo><mfrac><mrow><mi>L</mi><mspace width="0.17em"/><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><mi>γ</mi><mo stretchy="false">)</mo></mrow><mrow><mi>v</mi></mrow></mfrac><mo>.</mo></math></div>
+  <p>Because <math><mi>γ</mi><mo>&gt;</mo><mn>1</mn></math>, this is positive, so in B's frame <span class="e1">x₁</span> comes first:</p>
+  <div class="math"><math display="block"><mi mathvariant="normal">Δ</mi><msub><mi>t</mi><mi>B</mi></msub><mo>=</mo><mfrac><mrow><mi>L</mi><mspace width="0.17em"/><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><mi>γ</mi><mo stretchy="false">)</mo></mrow><mrow><mi>v</mi></mrow></mfrac><mo>,</mo><mspace width="2em"/><mi mathvariant="normal">Δ</mi><msub><mi>x</mi><mi>B</mi></msub><mo>=</mo><mi>L</mi><mo>.</mo></math></div>
+
+  <h2>Transforming to A's frame</h2>
+  <p>A moves at <math><mo>+</mo><mi>v</mi></math> relative to B, so the Lorentz transformation for the time difference is</p>
+  <div class="math"><math display="block"><mi mathvariant="normal">Δ</mi><msub><mi>t</mi><mi>A</mi></msub><mo>=</mo><mi>γ</mi><mo stretchy="true">(</mo><mi mathvariant="normal">Δ</mi><msub><mi>t</mi><mi>B</mi></msub><mo>−</mo><mfrac><mrow><mi>v</mi><mspace width="0.17em"/><mi mathvariant="normal">Δ</mi><msub><mi>x</mi><mi>B</mi></msub></mrow><mrow><msup><mi>c</mi><mn>2</mn></msup></mrow></mfrac><mo stretchy="true">)</mo><mo>.</mo></math></div>
+  <p>Substituting B's values:</p>
+  <div class="math"><math display="block"><mi mathvariant="normal">Δ</mi><msub><mi>t</mi><mi>A</mi></msub><mo>=</mo><mfrac><mrow><mi>L</mi></mrow><mrow><mi>v</mi></mrow></mfrac><mo stretchy="true">[</mo><mi>γ</mi><mo>−</mo><mn>1</mn><mo>−</mo><mi>γ</mi><msup><mi>β</mi><mn>2</mn></msup><mo stretchy="true">]</mo><mo>.</mo></math></div>
+  <p>Since <math><mi>γ</mi><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msup><mi>β</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn><mo>/</mo><mi>γ</mi></math>, the bracket equals <math><mn>1</mn><mo>/</mo><mi>γ</mi><mo>−</mo><mn>1</mn></math>, so</p>
+  <div class="math"><math display="block"><mi mathvariant="normal">Δ</mi><msub><mi>t</mi><mi>A</mi></msub><mo>=</mo><mo>−</mo><mfrac><mrow><mi>L</mi><mspace width="0.17em"/><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><mi>γ</mi><mo stretchy="false">)</mo></mrow><mrow><mi>v</mi></mrow></mfrac><mo>=</mo><mo>−</mo><mi mathvariant="normal">Δ</mi><msub><mi>t</mi><mi>B</mi></msub><mo>.</mo></math></div>
+  <p>The sign is negative: in A's frame <span class="e2">x₂</span> happens first, and by exactly the same amount.</p>
+
+  <h2>Checking directly in A's frame</h2>
+  <p>Now B moves at <math><mo>−</mo><mi>v</mi></math> and is contracted to <math><mi>L</mi><mo>/</mo><mi>γ</mi></math>. Put A's tail at <math><mi>x</mi><mo>′</mo><mo>=</mo><mn>0</mn></math> and its nose at <math><mi>x</mi><mo>′</mo><mo>=</mo><mi>L</mi></math>.</p>
+  <p><span class="e2">Event 2</span> happens at <math><mi>t</mi><mo>′</mo><mo>=</mo><mn>0</mn></math>, when A's nose meets B's tail. B's nose is then at <math><mi>L</mi><mo>−</mo><mi>L</mi><mo>/</mo><mi>γ</mi></math>, and it reaches <math><mi>x</mi><mo>′</mo><mo>=</mo><mn>0</mn></math> at</p>
+  <div class="math"><math display="block"><mi>t</mi><mo>′</mo><mo>=</mo><mfrac><mrow><mi>L</mi><mspace width="0.17em"/><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><mi>γ</mi><mo stretchy="false">)</mo></mrow><mrow><mi>v</mi></mrow></mfrac><mo>,</mo></math></div>
+  <p>which is <span class="e1">event 1</span>. This matches the Lorentz transformation.</p>
+
+  <h2>Why the order can flip</h2>
+  <p>The order depends on the sign of <math><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>−</mo><mi>v</mi><mspace width="0.17em"/><mi mathvariant="normal">Δ</mi><mi>x</mi><mo>/</mo><msup><mi>c</mi><mn>2</mn></msup></math>. For some speed below <math><mi>c</mi></math> to flip that sign, you need</p>
+  <div class="math"><math display="block"><mi>c</mi><mspace width="0.17em"/><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>&lt;</mo><mi mathvariant="normal">Δ</mi><mi>x</mi><mo>,</mo></math></div>
+  <p>which says light can't travel from one event to the other in time. Test it with B's numbers:</p>
+  <div class="math"><math display="block"><mfrac><mrow><mi>c</mi><mspace width="0.17em"/><mi mathvariant="normal">Δ</mi><msub><mi>t</mi><mi>B</mi></msub></mrow><mrow><mi mathvariant="normal">Δ</mi><msub><mi>x</mi><mi>B</mi></msub></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>1</mn><mo>−</mo><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>β</mi><mn>2</mn></msup></mrow></msqrt></mrow><mrow><mi>β</mi></mrow></mfrac><mo>&lt;</mo><mn>1</mn><mo>.</mo></math></div>
+  <p>This holds for every <math><mn>0</mn><mo>&lt;</mo><mi>β</mi><mo>&lt;</mo><mn>1</mn></math>, because it is equivalent to <math><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>β</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mi>β</mi><mo stretchy="false">)</mo><mo>&gt;</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>β</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></math>, which reduces to <math><mn>1</mn><mo>+</mo><mi>β</mi><mo>&gt;</mo><mn>1</mn><mo>−</mo><mi>β</mi></math>.</p>
+  <p>So the invariant interval</p>
+  <div class="math"><math display="block"><msup><mi>s</mi><mn>2</mn></msup><mo>=</mo><mi mathvariant="normal">Δ</mi><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><msup><mi>c</mi><mn>2</mn></msup><mspace width="0.17em"/><mi mathvariant="normal">Δ</mi><msup><mi>t</mi><mn>2</mn></msup><mo>&gt;</mo><mn>0</mn><mo>,</mo></math></div>
+  <p>and the events are <em>spacelike separated</em>. Every observer computes the same <math><msup><mi>s</mi><mn>2</mn></msup></math>.</p>
+  <p class="note">If instead <math><mi>c</mi><mspace width="0.17em"/><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>&gt;</mo><mi mathvariant="normal">Δ</mi><mi>x</mi></math> (timelike separation), the term <math><mi>v</mi><mspace width="0.17em"/><mi mathvariant="normal">Δ</mi><mi>x</mi><mo>/</mo><msup><mi>c</mi><mn>2</mn></msup></math> could never outweigh <math><mi mathvariant="normal">Δ</mi><mi>t</mi></math> for any <math><mi>v</mi><mo>&lt;</mo><mi>c</mi></math>. Every observer would agree on the order, which is why cause always precedes effect.</p>
+
+  <h2>A worked example</h2>
+  <p>Take <math><mi>v</mi><mo>=</mo><mn>0.6</mn><mi>c</mi></math>, so <math><mi>γ</mi><mo>=</mo><mn>1.25</mn></math> and <math><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><mi>γ</mi><mo>=</mo><mn>0.2</mn></math>.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Frame</th><th>Time between explosions</th><th>First explosion</th></tr></thead>
+      <tbody>
+        <tr><td>B</td><td><math><mo>+</mo><mi>L</mi><mo>/</mo><mo stretchy="false">(</mo><mn>3</mn><mi>c</mi><mo stretchy="false">)</mo></math></td><td class="e1">x₁</td></tr>
+        <tr><td>A</td><td><math><mo>−</mo><mi>L</mi><mo>/</mo><mo stretchy="false">(</mo><mn>3</mn><mi>c</mi><mo stretchy="false">)</mo></math></td><td class="e2">x₂</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>In both frames <math><mi>c</mi><mspace width="0.17em"/><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>=</mo><mi>L</mi><mo>/</mo><mn>3</mn></math>, which is smaller than <math><mi mathvariant="normal">Δ</mi><mi>x</mi><mo>=</mo><mi>L</mi></math>, so the separation is spacelike.</p>
+
+</main>
+
+<script>
+(function () {
+  const svg = document.getElementById('scene');
+  const NS = 'http://www.w3.org/2000/svg';
+  const betaInput = document.getElementById('beta');
+  const betaOut = document.getElementById('betaOut');
+  const readout = document.getElementById('readout');
+  const playBtn = document.getElementById('play');
+  const frameBtns = document.querySelectorAll('[data-frame]');
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const state = { frame: 'B', beta: 0.6, p: 0, playing: !reduceMotion, last: null };
+  if (reduceMotion) { state.p = 1; playBtn.textContent = 'Play'; }
+
+  const XMIN = -0.7, XMAX = 2.45, LEFT = 30, RIGHT = 770;
+  const X = w => LEFT + (w - XMIN) / (XMAX - XMIN) * (RIGHT - LEFT);
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  function el(tag, attrs, parent) {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(n);
+    return n;
+  }
+
+  function shipPath(xl, xr, yTop, h, noseRight) {
+    const L = X(xl), R = X(xr);
+    const p = Math.min(34, (R - L) * 0.28);
+    const yB = yTop + h, yM = yTop + h / 2;
+    if (noseRight) {
+      return `M${L},${yTop} H${R - p} Q${R - p * 0.35},${yTop + h * 0.08} ${R},${yM} Q${R - p * 0.35},${yB - h * 0.08} ${R - p},${yB} H${L} Z`;
+    }
+    return `M${R},${yTop} H${L + p} Q${L + p * 0.35},${yTop + h * 0.08} ${L},${yM} Q${L + p * 0.35},${yB - h * 0.08} ${L + p},${yB} H${R} Z`;
+  }
+
+  function physics() {
+    const b = state.beta;
+    const g = 1 / Math.sqrt(1 - b * b);
+    const d = (1 - 1 / g) / b; // time gap in units of L/c
+    let tmin, tmax, events, shipA, shipB;
+    if (state.frame === 'B') {
+      tmin = -0.3 / b; tmax = 1.1 / b;
+      events = [{ id: 1, t: 0, x: 0 }, { id: 2, t: d, x: 1 }];
+      shipA = t => ({ xl: b * t, xr: b * t + 1 / g });
+      shipB = () => ({ xl: 0, xr: 1 });
+    } else {
+      tmin = ((1 - 1 / g) - 1.3) / b; tmax = ((1 - 1 / g) + 0.4) / b;
+      events = [{ id: 1, t: d, x: 0 }, { id: 2, t: 0, x: 1 }];
+      shipA = () => ({ xl: 0, xr: 1 });
+      shipB = t => { const n = (1 - 1 / g) - b * t; return { xl: n, xr: n + 1 / g }; };
+    }
+    return { b, g, d, tmin, tmax, events, shipA, shipB };
+  }
+
+  function burst(cx, cy, r, color, opacity, label) {
+    const grp = el('g', { opacity: opacity.toFixed(3) });
+    const pts = [];
+    const spikes = 10;
+    for (let i = 0; i < spikes * 2; i++) {
+      const ang = (Math.PI * i) / spikes;
+      const rr = i % 2 === 0 ? r : r * 0.45;
+      pts.push(`${cx + rr * Math.cos(ang)},${cy + rr * Math.sin(ang)}`);
+    }
+    el('polygon', { points: pts.join(' '), fill: color }, grp);
+    const t = el('text', { x: cx, y: cy - r - 6, 'text-anchor': 'middle', fill: color, 'font-family': 'system-ui, sans-serif', 'font-size': 17, 'font-weight': 700 }, grp);
+    t.textContent = label;
+  }
+
+  function draw() {
+    const P = physics();
+    const t = P.tmin + Math.min(state.p, 1) * (P.tmax - P.tmin);
+    const cA = css('--ship-a'), cB = css('--ship-b'), ink = css('--ink'), muted = css('--muted'), rule = css('--rule');
+    const cE = { 1: css('--ev1'), 2: css('--ev2') };
+    const panel = css('--panel');
+    while (svg.lastChild && svg.lastChild.nodeName !== 'desc') svg.removeChild(svg.lastChild);
+
+    const yA = 42, yB = 138, h = 58, meet = (yA + h + yB) / 2;
+
+    // Ships
+    const a = P.shipA(t), bS = P.shipB(t);
+    el('path', { d: shipPath(a.xl, a.xr, yA, h, true), fill: cA, 'fill-opacity': 0.14, stroke: cA, 'stroke-width': 2.5 });
+    el('path', { d: shipPath(bS.xl, bS.xr, yB, h, false), fill: cB, 'fill-opacity': 0.14, stroke: cB, 'stroke-width': 2.5 });
+    const la = el('text', { x: (X(a.xl) + X(a.xr)) / 2, y: yA + h / 2 + 7, 'text-anchor': 'middle', fill: cA, 'font-family': 'system-ui, sans-serif', 'font-size': 22, 'font-weight': 700 });
+    la.textContent = 'A';
+    const lb = el('text', { x: (X(bS.xl) + X(bS.xr)) / 2, y: yB + h / 2 + 7, 'text-anchor': 'middle', fill: cB, 'font-family': 'system-ui, sans-serif', 'font-size': 22, 'font-weight': 700 });
+    lb.textContent = 'B';
+
+    // Motion arrow on the moving ship
+    const moving = state.frame === 'B' ? { s: a, y: yA + h / 2, dir: 1, c: cA } : { s: bS, y: yB + h / 2, dir: -1, c: cB };
+    const ax = moving.dir > 0 ? X(moving.s.xr) + 12 : X(moving.s.xl) - 12;
+    el('line', { x1: ax, y1: moving.y, x2: ax + 34 * moving.dir, y2: moving.y, stroke: moving.c, 'stroke-width': 2.5 });
+    el('polygon', { points: `${ax + 42 * moving.dir},${moving.y} ${ax + 32 * moving.dir},${moving.y - 6} ${ax + 32 * moving.dir},${moving.y + 6}`, fill: moving.c });
+
+    // Explosions
+    const span = P.tmax - P.tmin;
+    P.events.forEach(e => {
+      if (t >= e.t) {
+        const age = (t - e.t) / span;
+        const op = Math.max(0.55, 1 - age * 3);
+        const r = 16 + Math.min(age * 40, 6);
+        burst(X(e.x), meet, r, cE[e.id], op, e.id === 1 ? 'x₁' : 'x₂');
+      }
+    });
+
+    // Timeline
+    const tlY = 262;
+    const T = tt => LEFT + 20 + (tt - P.tmin) / span * (RIGHT - LEFT - 40);
+    el('line', { x1: LEFT + 20, y1: tlY, x2: RIGHT - 20, y2: tlY, stroke: rule, 'stroke-width': 2 });
+    const cap = el('text', { x: LEFT + 20, y: tlY - 20, fill: muted, 'font-family': 'system-ui, sans-serif', 'font-size': 14 });
+    cap.textContent = `Time in ${state.frame}'s frame`;
+    P.events.forEach(e => {
+      el('circle', { cx: T(e.t), cy: tlY, r: 7, fill: t >= e.t ? cE[e.id] : panel, stroke: cE[e.id], 'stroke-width': 2.5 });
+      const tx = el('text', { x: T(e.t), y: tlY + 28, 'text-anchor': 'middle', fill: cE[e.id], 'font-family': 'system-ui, sans-serif', 'font-size': 14, 'font-weight': 700 });
+      tx.textContent = `${e.id === 1 ? 'x₁' : 'x₂'}  t = ${e.t.toFixed(2)}`;
+    });
+    el('line', { x1: T(t), y1: tlY - 12, x2: T(t), y2: tlY + 12, stroke: ink, 'stroke-width': 2 });
+  }
+
+  function updateReadout() {
+    const P = physics();
+    const first = state.frame === 'B' ? '<span class="e1">x₁</span>' : '<span class="e2">x₂</span>';
+    const second = state.frame === 'B' ? '<span class="e2">x₂</span>' : '<span class="e1">x₁</span>';
+    const ratio = P.d; // cΔt / Δx with Δx = L
+    readout.innerHTML =
+      `Riding in <span class="${state.frame.toLowerCase()}">${state.frame}</span>, ${first} happens <strong>${P.d.toFixed(3)} L/c</strong> before ${second}. ` +
+      `γ = <strong>${P.g.toFixed(3)}</strong>, so the moving ship is <strong>${(100 / P.g).toFixed(0)}%</strong> of its rest length.` +
+      `<div class="ratio">Light-travel check: cΔt / Δx = <strong>${ratio.toFixed(3)}</strong>, always below 1, so the explosions are spacelike separated.` +
+      `<div class="bar" aria-hidden="true"><span style="width:${(ratio * 100).toFixed(1)}%"></span></div></div>`;
+  }
+
+  function tick(ts) {
+    if (state.last === null) state.last = ts;
+    const dt = ts - state.last;
+    state.last = ts;
+    if (state.playing) {
+      state.p += dt / 5200;
+      if (state.p > 1.25) state.p = 0;
+      draw();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  frameBtns.forEach(btn => btn.addEventListener('click', () => {
+    state.frame = btn.dataset.frame;
+    frameBtns.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    state.p = state.playing ? 0 : 1;
+    updateReadout(); draw();
+  }));
+
+  betaInput.addEventListener('input', () => {
+    state.beta = parseFloat(betaInput.value);
+    betaOut.textContent = state.beta.toFixed(2) + 'c';
+    updateReadout(); draw();
+  });
+
+  playBtn.addEventListener('click', () => {
+    state.playing = !state.playing;
+    if (state.playing && state.p >= 1) state.p = 0;
+    playBtn.textContent = state.playing ? 'Pause' : 'Play';
+    draw();
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+
+  updateReadout();
+  draw();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
