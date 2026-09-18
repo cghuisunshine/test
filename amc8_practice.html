@@ -17,8 +17,13 @@
 @media(max-width:750px){.layout.sidebar-collapsed{grid-template-columns:1fr}.sidebar-collapsed .sidebar-toggle{flex-direction:row;justify-content:space-between;min-height:0;padding:11px 17px}.sidebar-collapsed .sidebar-toggle-label{writing-mode:horizontal-tb}.sidebar-collapsed .sidebar-toggle-icon{order:3}}
 
 @media(min-width:951px){.question-card.drawing-active{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);grid-template-rows:repeat(11,auto) 1fr;column-gap:28px;align-items:start}.question-card.drawing-active>*{grid-column:1}.question-card.drawing-active>#photo-section{grid-column:2;grid-row:1/-1;margin:0}.question-card.drawing-active .statement{font-size:15px;line-height:1.75;margin:16px 0}.question-card.drawing-active #choice-list{gap:6px}.question-card.drawing-active .choice{min-width:44px;padding:11px 4px}}
+
+/* Full-width page: use the whole browser window instead of a centered 1300px column. */
+header,main{max-width:none}footer{max-width:none;margin:0 38px}
+.header-links{display:flex;align-items:center;gap:18px}.fullscreen-toggle{background:transparent;border:1px solid #cbd6cd;color:var(--ink);font-size:12px;padding:7px 12px}
+@media(max-width:750px){footer{margin:0 20px}.fullscreen-toggle{padding:6px 9px;font-size:11px}}
 </style></head>
-<body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a></header>
+<body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
 <div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option></select></label><label>Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
 <p id="reason" class="reason"></p><article class="question-card"><div class="question-top"><span id="badge" class="badge"></span><button id="flag" class="quiet" type="button" aria-pressed="false">☆ Flag for review</button></div><h2 id="question-title" tabindex="-1"></h2><div id="question-meta" class="muted"></div><div id="statement" class="statement"></div><p id="image-warning" class="notice" hidden>Some formulas or diagrams could not load. Open the AoPS source below to view them before answering.</p><a id="source" target="_blank" rel="noopener noreferrer">View original on AoPS ↗</a>
@@ -386,9 +391,7 @@ $('next').onclick=()=>{next();$('question-title').focus();};$('skip').onclick=()
 $('mode').onchange=next;$('topic').onchange=next;
 $('review-button').onclick=()=>{$('mode').value='review';$('topic').value='';next();$('question-title').focus();};
 $('export').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`amc8-progress-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
-$('import').onchange=async()=>{const file=$('import').files[0];if(!file)return;try{if(file.size>15000000)throw Error('too large');const s=JSON.parse(await file.text());if(!validState(s))throw Error('invalid');if(!window.confirm('Replace your current progress with this backup?'))return;state=canonicalize(s);save();function setSidebar(open){$('layout').classList.toggle('sidebar-collapsed',!open);$('sidebar-body').hidden=!open;$('sidebar-toggle').setAttribute('aria-expanded',String(open));$('sidebar-toggle').querySelector('.sidebar-toggle-icon').textContent=open?'›':'‹';$('sidebar-toggle').title=open?'Hide progress panel':'Show progress panel';}
-$('sidebar-toggle').onclick=()=>setSidebar($('sidebar-body').hidden);setSidebar(false);
-dashboard();next();}catch(e){$('storage-message').textContent='This file is not a valid AMC 8 practice backup. Your current progress has been kept.';}finally{$('import').value='';}};
+$('import').onchange=async()=>{const file=$('import').files[0];if(!file)return;try{if(file.size>15000000)throw Error('too large');const s=JSON.parse(await file.text());if(!validState(s))throw Error('invalid');if(!window.confirm('Replace your current progress with this backup?'))return;state=canonicalize(s);save();dashboard();next();}catch(e){$('storage-message').textContent='This file is not a valid AMC 8 practice backup. Your current progress has been kept.';}finally{$('import').value='';}};
 document.addEventListener('error',e=>{if(e.target.tagName==='IMG' && e.target.id!=='photo-preview'){$('image-warning').hidden=false;const fallback=document.createElement('span');fallback.textContent=e.target.alt||'[Diagram unavailable]';e.target.replaceWith(fallback);}},true);
 function readableHTML(html){
   const doc=new DOMParser().parseFromString(html||'','text/html');
@@ -585,5 +588,9 @@ $('ai-check').onclick=reviewSteps;
 $('ai-cancel').onclick=()=>{cancelReview();$('ai-status').textContent='Review canceled. Your answer is saved; the working can be retried.';};
 function setSidebar(open){$('layout').classList.toggle('sidebar-collapsed',!open);$('sidebar-body').hidden=!open;$('sidebar-toggle').setAttribute('aria-expanded',String(open));$('sidebar-toggle').querySelector('.sidebar-toggle-icon').textContent=open?'›':'‹';$('sidebar-toggle').title=open?'Hide progress panel':'Show progress panel';}
 $('sidebar-toggle').onclick=()=>setSidebar($('sidebar-body').hidden);setSidebar(false);
+// Browser full screen (hides tabs and toolbars); Esc or the button exits.
+(()=>{const b=$('fullscreen'),root=document.documentElement;if(!root.requestFullscreen||!document.fullscreenEnabled)return;b.hidden=false;
+const sync=()=>{const on=!!document.fullscreenElement;b.textContent=on?'Exit full screen':'⛶ Full screen';b.setAttribute('aria-pressed',String(on));};
+b.onclick=()=>{(document.fullscreenElement?document.exitFullscreen():root.requestFullscreen()).catch(()=>{});};document.addEventListener('fullscreenchange',sync);sync();})();
 dashboard();next();
 </script></body></html>
