@@ -6,6 +6,8 @@
 .camera-panel{margin:14px 0;padding:12px;border:1px solid #cbd6cd;border-radius:8px;background:#fff}.camera-panel video{display:block;width:100%;max-height:360px;object-fit:contain;background:#15251e;border-radius:5px}.photo-controls .camera-open{margin-top:0;min-height:46px}.camera-panel .photo-controls{margin-top:10px}
 
 .drawing-panel{margin:14px 0;padding:12px;border:1px solid #cbd6cd;border-radius:8px;background:#fff}.drawing-tools{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.drawing-tools .secondary{width:auto;margin:0;padding:8px 11px}.drawing-tools label{font-size:11px}.drawing-tools select{padding:5px;margin:0}.drawing-tools [aria-pressed=true]{background:var(--green);color:#fff;border-color:var(--green)}#drawing-canvas{display:block;width:100%;height:auto;aspect-ratio:3/2;background:#fff;border:1px solid #cbd6cd;border-radius:4px;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none}#drawing-canvas.erasing{cursor:cell}#drawing-canvas:focus-visible{outline:3px solid #b78021;outline-offset:3px}
+
+.drawing-tools input[type=color]{display:block;width:42px;height:32px;padding:2px;border:1px solid #cbd6cd;border-radius:5px;background:#fff;cursor:pointer}
 </style></head>
 <body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
@@ -17,8 +19,8 @@
 <p class="muted">Write your steps below or add a clear photo for feedback on how you solved this question.</p>
 <div class="photo-controls"><button id="drawing-open" class="secondary camera-open" type="button" aria-controls="drawing-panel" aria-expanded="false">Draw your steps</button><button id="photo-camera" class="secondary camera-open" type="button" aria-controls="camera-panel" aria-expanded="false">Take a photo</button><label class="photo-picker">Choose a photo<input id="photo-file" type="file" accept="image/*"></label></div>
 <section id="drawing-panel" class="drawing-panel" hidden aria-label="Write your solution steps">
-<div class="drawing-tools" role="group" aria-label="Drawing tools"><button id="drawing-pen" class="secondary" type="button" aria-pressed="true">Pen</button><button id="drawing-eraser" class="secondary" type="button" aria-pressed="false">Eraser</button><label>Pen size<select id="drawing-width"><option value="4">Fine</option><option value="8" selected>Medium</option><option value="14">Bold</option></select></label><button id="drawing-undo" class="secondary" type="button" disabled>Undo</button><button id="drawing-clear" class="secondary" type="button" disabled>Clear</button><button id="drawing-close" class="quiet" type="button">Close pad</button></div>
-<p id="drawing-help" class="small">Write with a mouse, finger, or stylus. Your drawing is sent when you click AI check my steps. It stays here until you change questions or reload.</p>
+<div class="drawing-tools" role="group" aria-label="Drawing tools"><button id="drawing-pen" class="secondary" type="button" aria-pressed="true">Pen</button><button id="drawing-eraser" class="secondary" type="button" aria-pressed="false">Eraser</button><span class="small">Fine pen</span><label>Pen color<input id="drawing-color" type="color" value="#172c26" aria-label="Pen color"></label><button id="drawing-undo" class="secondary" type="button" disabled>Undo</button><button id="drawing-clear" class="secondary" type="button" disabled>Clear</button><button id="drawing-close" class="quiet" type="button">Close pad</button></div>
+<p id="drawing-help" class="small">Write with a mouse, finger, or stylus. Hold Shift while drawing to erase; release Shift to return to your selected tool. Your drawing is sent when you click AI check my steps. It stays here until you change questions or reload.</p>
 <canvas id="drawing-canvas" width="1200" height="800" tabindex="0" aria-label="Solution drawing pad" aria-describedby="drawing-help">Use Choose a photo to submit your written steps if drawing is not supported.</canvas>
 <p id="drawing-status" class="small" role="status" aria-live="polite">The pad is empty.</p>
 </section>
@@ -205,7 +207,7 @@ if(typeof module!=='undefined')module.exports=api;root.PhotoReview=api;
 class DrawingPad {
   constructor(canvas,onChange){
     this.canvas=canvas;this.ctx=canvas.getContext('2d');this.onChange=onChange;
-    this.strokes=[];this.active=null;this.tool='pen';this.width=8;this.enabled=true;this.hasInk=false;
+    this.strokes=[];this.active=null;this.tool='pen';this.color='#172c26';this.gesture=0;this.enabled=true;this.hasInk=false;
     canvas.addEventListener('pointerdown',event=>this.start(event));
     canvas.addEventListener('pointermove',event=>this.move(event));
     for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,event=>{if(this.active?.pointerId===event.pointerId)this.finish();});
@@ -215,12 +217,22 @@ class DrawingPad {
   start(event){
     if(!this.enabled||this.active||event.button!==0||!event.isPrimary)return;
     event.preventDefault();this.canvas.setPointerCapture(event.pointerId);
-    this.active={pointerId:event.pointerId,tool:this.tool,width:this.tool==='eraser'?40:this.width,points:[this.point(event)]};
+    this.active=this.segment(event,this.point(event),++this.gesture);
     this.draw(this.active);this.onChange();
+  }
+  segment(event,point,gesture){
+    const tool=event.shiftKey?'eraser':this.tool;
+    return {pointerId:event.pointerId,gesture,tool,width:tool==='eraser'?40:4,color:this.color,points:[point]};
   }
   move(event){
     if(!this.enabled||this.active?.pointerId!==event.pointerId)return;
-    event.preventDefault();const points=event.getCoalescedEvents?.()||[event];
+    event.preventDefault();
+    const tool=event.shiftKey?'eraser':this.tool;
+    if(tool!==this.active.tool){
+      const prior=this.active;this.strokes.push(prior);
+      this.active=this.segment(event,prior.points[prior.points.length-1],prior.gesture);
+    }
+    const points=event.getCoalescedEvents?.()||[event];
     for(const e of points.length?points:[event]){const last=this.active.points[this.active.points.length-1],point=this.point(e);this.active.points.push(point);this.draw({...this.active,points:[last,point]});}
   }
   finish(){
@@ -230,15 +242,15 @@ class DrawingPad {
     this.render();this.onChange();
   }
   draw(stroke){
-    const ctx=this.ctx;ctx.strokeStyle=ctx.fillStyle=stroke.tool==='eraser'?'#ffffff':'#172c26';ctx.lineWidth=stroke.width;ctx.lineCap='round';ctx.lineJoin='round';
+    const ctx=this.ctx;ctx.strokeStyle=ctx.fillStyle=stroke.tool==='eraser'?'#ffffff':stroke.color;ctx.lineWidth=stroke.width;ctx.lineCap='round';ctx.lineJoin='round';
     const first=stroke.points[0];ctx.beginPath();ctx.arc(first.x,first.y,stroke.width/2,0,Math.PI*2);ctx.fill();
     if(stroke.points.length>1){ctx.beginPath();ctx.moveTo(first.x,first.y);for(const point of stroke.points.slice(1))ctx.lineTo(point.x,point.y);ctx.stroke();}
   }
   render(){this.ctx.fillStyle='#fff';this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);for(const stroke of this.strokes)this.draw(stroke);this.inspectInk();}
   inspectInk(){const pixels=this.ctx.getImageData(0,0,this.canvas.width,this.canvas.height).data;this.hasInk=false;for(let i=0;i<pixels.length;i+=4){if(pixels[i]<240||pixels[i+1]<240||pixels[i+2]<240){this.hasInk=true;break;}}}
-  undo(){if(!this.enabled)return;this.finish();this.strokes.pop();this.render();this.onChange();}
+  undo(){if(!this.enabled)return;this.finish();const gesture=this.strokes[this.strokes.length-1]?.gesture;while(this.strokes.length&&this.strokes[this.strokes.length-1].gesture===gesture)this.strokes.pop();this.render();this.onChange();}
   clear(){this.finish();this.strokes=[];this.render();this.onChange();}
-  reset(){const active=this.active;this.active=null;if(active&&this.canvas.hasPointerCapture(active.pointerId))this.canvas.releasePointerCapture(active.pointerId);this.strokes=[];this.tool='pen';this.width=8;this.enabled=true;this.render();}
+  reset(){const active=this.active;this.active=null;if(active&&this.canvas.hasPointerCapture(active.pointerId))this.canvas.releasePointerCapture(active.pointerId);this.strokes=[];this.tool='pen';this.color='#172c26';this.gesture=0;this.enabled=true;this.render();}
 }
 root.DrawingPad=DrawingPad;
 })(window);
@@ -249,7 +261,7 @@ const P=window.Practice, $=id=>document.getElementById(id), KEY='amc8Practice.v1
 let state={version:1,attempts:[],items:{}}, current=null, selected=null, checked=false, started=Date.now();
 let activeAttempt=null, photo=null, photoVersion=0, reviewRequest=null;
 let cameraStream=null, cameraOpening=false, cameraVersion=0;
-let drawingOpen=false;
+let drawingOpen=false, drawingShift=false;
 const drawing=new window.DrawingPad($('drawing-canvas'),()=>updatePhotoControls());
 function validState(s) {
   if(!s || s.version!==1 || !Array.isArray(s.attempts) || !s.items || typeof s.items!=='object' || Array.isArray(s.items)) return false;
@@ -348,7 +360,7 @@ function updatePhotoControls(){
   $('ai-check').textContent=reviewed?'AI review saved':'AI check my steps';
   for(const id of ['photo-camera','photo-file','photo-remove','drawing-open'])$(id).disabled=busy||reviewed||cameraActive;
   drawing.enabled=!busy&&!reviewed;
-  for(const id of ['drawing-pen','drawing-eraser','drawing-width','drawing-close'])$(id).disabled=busy||reviewed;
+  for(const id of ['drawing-pen','drawing-eraser','drawing-color','drawing-close'])$(id).disabled=busy||reviewed;
   $('drawing-undo').disabled=busy||reviewed||!drawing.strokes.length||!!drawing.active;
   $('drawing-clear').disabled=busy||reviewed||!drawing.hasInk||!!drawing.active;
   $('drawing-status').textContent=drawing.hasInk?'Your drawing is ready for AI review.':'The pad is empty. Write your steps to enable AI review.';
@@ -360,7 +372,7 @@ function cancelReview(){
 }
 function resetPhotoReview(){
   stopCamera();cancelReview();photoVersion++;photo=null;activeAttempt=null;drawingOpen=false;drawing.reset();
-  $('drawing-panel').hidden=true;$('drawing-open').setAttribute('aria-expanded','false');$('drawing-width').value='8';syncDrawingTool();
+  $('drawing-panel').hidden=true;$('drawing-open').setAttribute('aria-expanded','false');$('drawing-color').value=drawing.color;drawingShift=false;syncDrawingTool();
   $('photo-section').hidden=true;$('photo-attachment').hidden=true;$('photo-preview').removeAttribute('src');
   $('photo-file').value='';$('ai-feedback').hidden=true;$('ai-feedback').replaceChildren();$('ai-status').textContent='';
 }
@@ -494,11 +506,12 @@ async function reviewSteps(){
   }
 }
 function syncDrawingTool(){
-  $('drawing-pen').setAttribute('aria-pressed',String(drawing.tool==='pen'));$('drawing-eraser').setAttribute('aria-pressed',String(drawing.tool==='eraser'));
-  $('drawing-canvas').classList.toggle('erasing',drawing.tool==='eraser');
+  const erasing=drawingShift||drawing.tool==='eraser';
+  $('drawing-pen').setAttribute('aria-pressed',String(!erasing));$('drawing-eraser').setAttribute('aria-pressed',String(erasing));
+  $('drawing-canvas').classList.toggle('erasing',erasing);
 }
 function closeDrawing(){
-  drawing.finish();drawingOpen=false;$('drawing-panel').hidden=true;$('drawing-open').setAttribute('aria-expanded','false');$('photo-attachment').hidden=!photo;updatePhotoControls();
+  drawing.finish();drawingOpen=false;drawingShift=false;syncDrawingTool();$('drawing-panel').hidden=true;$('drawing-open').setAttribute('aria-expanded','false');$('photo-attachment').hidden=!photo;updatePhotoControls();
 }
 $('drawing-open').onclick=()=>{
   if(reviewRequest||activeAttempt?.aiReview)return;
@@ -507,7 +520,11 @@ $('drawing-open').onclick=()=>{
 };
 $('drawing-close').onclick=()=>{closeDrawing();$('ai-status').textContent=photo?'Photo selected for AI review. Your drawing is kept in the pad.':'Drawing kept in the pad. Reopen it to continue or send it for review.';$('drawing-open').focus();};
 $('drawing-pen').onclick=()=>{drawing.tool='pen';syncDrawingTool();};$('drawing-eraser').onclick=()=>{drawing.tool='eraser';syncDrawingTool();};
-$('drawing-width').onchange=()=>{drawing.width=Number($('drawing-width').value);};
+$('drawing-color').oninput=()=>{drawing.color=$('drawing-color').value;};
+document.addEventListener('keydown',event=>{if(event.key==='Shift'&&drawingOpen){drawingShift=true;syncDrawingTool();}});
+document.addEventListener('keyup',event=>{if(event.key==='Shift'){drawingShift=false;syncDrawingTool();}});
+window.addEventListener('blur',()=>{drawingShift=false;syncDrawingTool();});
+for(const type of ['pointerdown','pointermove'])$('drawing-canvas').addEventListener(type,event=>{drawingShift=!!event.shiftKey;syncDrawingTool();});
 $('drawing-undo').onclick=()=>drawing.undo();$('drawing-clear').onclick=()=>drawing.clear();
 $('photo-file').onchange=attachPhoto;$('photo-camera').onclick=openCamera;
 $('camera-video').addEventListener('loadeddata',cameraReady);$('camera-video').addEventListener('canplay',cameraReady);
