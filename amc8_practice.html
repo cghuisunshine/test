@@ -15,6 +15,8 @@
 .sidebar-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin-bottom:14px;background:#eef0e7;color:var(--ink);border:1px solid var(--line);font-size:13px}.sidebar-toggle-icon{font-size:18px;line-height:1;color:var(--green)}
 .layout.sidebar-collapsed{grid-template-columns:minmax(0,1fr) 52px}.sidebar-collapsed .sidebar-toggle{flex-direction:column;justify-content:flex-start;padding:14px 0;min-height:180px;margin:0}.sidebar-collapsed .sidebar-toggle-label{writing-mode:vertical-rl;letter-spacing:1px;order:2}.sidebar-collapsed .sidebar-toggle-icon{order:1}
 @media(max-width:750px){.layout.sidebar-collapsed{grid-template-columns:1fr}.sidebar-collapsed .sidebar-toggle{flex-direction:row;justify-content:space-between;min-height:0;padding:11px 17px}.sidebar-collapsed .sidebar-toggle-label{writing-mode:horizontal-tb}.sidebar-collapsed .sidebar-toggle-icon{order:3}}
+
+@media(min-width:951px){.question-card.drawing-active{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);grid-template-rows:repeat(11,auto) 1fr;column-gap:28px;align-items:start}.question-card.drawing-active>*{grid-column:1}.question-card.drawing-active>#photo-section{grid-column:2;grid-row:1/-1;margin:0}.question-card.drawing-active .statement{font-size:15px;line-height:1.75;margin:16px 0}.question-card.drawing-active #choice-list{gap:6px}.question-card.drawing-active .choice{min-width:44px;padding:11px 4px}}
 </style></head>
 <body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
@@ -413,7 +415,7 @@ function cancelReview(){
 }
 function resetPhotoReview(){
   stopCamera();cancelReview();photoVersion++;photo=null;activeAttempt=null;drawingOpen=false;drawing.reset();
-  $('drawing-panel').hidden=true;$('drawing-open').setAttribute('aria-expanded','false');drawingShift=false;syncDrawingTool();
+  $('drawing-panel').hidden=true;setDrawingLayout(false);$('drawing-open').setAttribute('aria-expanded','false');drawingShift=false;syncDrawingTool();
   $('photo-section').hidden=true;$('photo-attachment').hidden=true;$('photo-preview').removeAttribute('src');
   $('photo-file').value='';$('ai-feedback').hidden=true;$('ai-feedback').replaceChildren();$('ai-status').textContent='';
 }
@@ -552,12 +554,14 @@ function syncDrawingTool(){
   $('drawing-pen').setAttribute('aria-pressed',String(!erasing));$('drawing-eraser').setAttribute('aria-pressed',String(erasing));
   $('drawing-canvas').classList.toggle('erasing',erasing);
 }
+// While drawing, the question narrows to one third so the pad gets the remaining two thirds.
+function setDrawingLayout(on){document.querySelector('.question-card').classList.toggle('drawing-active',on);}
 function closeDrawing(){
-  drawing.finish();drawingOpen=false;drawingShift=false;syncDrawingTool();$('drawing-panel').hidden=true;$('drawing-open').setAttribute('aria-expanded','false');$('photo-attachment').hidden=!photo;updatePhotoControls();
+  drawing.finish();drawingOpen=false;drawingShift=false;syncDrawingTool();$('drawing-panel').hidden=true;setDrawingLayout(false);$('drawing-open').setAttribute('aria-expanded','false');$('photo-attachment').hidden=!photo;updatePhotoControls();
 }
 function openDrawing(focus=false){
   if(reviewRequest||activeAttempt?.aiReview)return;
-  stopCamera();photoVersion++;drawingOpen=true;$('drawing-panel').hidden=false;$('drawing-open').setAttribute('aria-expanded','true');$('photo-attachment').hidden=true;
+  stopCamera();photoVersion++;drawingOpen=true;$('drawing-panel').hidden=false;setDrawingLayout(true);$('drawing-open').setAttribute('aria-expanded','true');$('photo-attachment').hidden=true;
   $('ai-status').textContent='The drawing pad is selected for AI review.';updatePhotoControls();if(focus)$('drawing-canvas').focus({preventScroll:true});
 }
 $('drawing-open').onclick=()=>openDrawing(true);
