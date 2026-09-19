@@ -16,17 +16,22 @@
 .layout.sidebar-collapsed{grid-template-columns:minmax(0,1fr) 52px}.sidebar-collapsed .sidebar-toggle{flex-direction:column;justify-content:flex-start;padding:14px 0;min-height:180px;margin:0}.sidebar-collapsed .sidebar-toggle-label{writing-mode:vertical-rl;letter-spacing:1px;order:2}.sidebar-collapsed .sidebar-toggle-icon{order:1}
 @media(max-width:750px){.layout.sidebar-collapsed{grid-template-columns:1fr}.sidebar-collapsed .sidebar-toggle{flex-direction:row;justify-content:space-between;min-height:0;padding:11px 17px}.sidebar-collapsed .sidebar-toggle-label{writing-mode:horizontal-tb}.sidebar-collapsed .sidebar-toggle-icon{order:3}}
 
-@media(min-width:951px){.question-card.drawing-active{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);grid-template-rows:repeat(11,auto) 1fr;column-gap:28px;align-items:start}.question-card.drawing-active>*{grid-column:1}.question-card.drawing-active>#photo-section{grid-column:2;grid-row:1/-1;margin:0}.question-card.drawing-active .statement{font-size:15px;line-height:1.75;margin:16px 0}.question-card.drawing-active #choice-list{gap:6px}.question-card.drawing-active .choice{min-width:44px;padding:11px 4px}}
 
 /* Full-width page: use the whole browser window instead of a centered 1300px column. */
 header,main{max-width:none}footer{max-width:none;margin:0 38px}
 .header-links{display:flex;align-items:center;gap:18px}.fullscreen-toggle{background:transparent;border:1px solid #cbd6cd;color:var(--ink);font-size:12px;padding:7px 12px}
 @media(max-width:750px){footer{margin:0 20px}.fullscreen-toggle{padding:6px 9px;font-size:11px}}
+
+
+/* While drawing: question stays above the pad in one column, capped at a third of the screen height (scrolls if longer) and foldable. */
+.question-toggle{display:flex;align-items:center;gap:8px;background:#eef0e7;color:var(--ink);border:1px solid var(--line);font-size:12px;padding:7px 12px;margin-bottom:12px}.question-toggle-icon{font-size:14px;line-height:1;color:var(--green)}
+.question-card.drawing-active .question-area{max-height:33vh;overflow-y:auto;padding-right:8px;border-bottom:1px solid var(--line)}.question-card.drawing-active .statement{margin:14px 0}.question-card.drawing-active fieldset{margin:16px 0 12px}
+.question-card.question-collapsed .question-area{display:none}
 </style></head>
 <body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
 <div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option></select></label><label>Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
-<p id="reason" class="reason"></p><article class="question-card"><div class="question-top"><span id="badge" class="badge"></span><button id="flag" class="quiet" type="button" aria-pressed="false">☆ Flag for review</button></div><h2 id="question-title" tabindex="-1"></h2><div id="question-meta" class="muted"></div><div id="statement" class="statement"></div><p id="image-warning" class="notice" hidden>Some formulas or diagrams could not load. Open the AoPS source below to view them before answering.</p><a id="source" target="_blank" rel="noopener noreferrer">View original on AoPS ↗</a>
+<p id="reason" class="reason"></p><article class="question-card"><button id="question-toggle" class="question-toggle" type="button" aria-expanded="true" hidden title="Hide the question text to give the drawing pad more room"><span class="question-toggle-icon" aria-hidden="true">▴</span><span class="question-toggle-label">Hide question</span></button><div id="question-area" class="question-area"><div class="question-top"><span id="badge" class="badge"></span><button id="flag" class="quiet" type="button" aria-pressed="false">☆ Flag for review</button></div><h2 id="question-title" tabindex="-1"></h2><div id="question-meta" class="muted"></div><div id="statement" class="statement"></div><p id="image-warning" class="notice" hidden>Some formulas or diagrams could not load. Open the AoPS source below to view them before answering.</p><a id="source" target="_blank" rel="noopener noreferrer">View original on AoPS ↗</a></div>
 <fieldset id="choices"><legend>Choose your answer</legend><div id="choice-list"></div></fieldset>
 <section id="photo-section" class="photo-section" aria-labelledby="photo-title">
 <h3 id="photo-title">Show your steps <span class="muted">(optional)</span></h3>
@@ -558,7 +563,10 @@ function syncDrawingTool(){
   $('drawing-canvas').classList.toggle('erasing',erasing);
 }
 // While drawing, the question narrows to one third so the pad gets the remaining two thirds.
-function setDrawingLayout(on){document.querySelector('.question-card').classList.toggle('drawing-active',on);}
+function setDrawingLayout(on){document.querySelector('.question-card').classList.toggle('drawing-active',on);$('question-toggle').hidden=!on;if(!on)setQuestionCollapsed(false);}
+// The question column can be folded to a thin strip for a wider pad; a new question or closing the pad unfolds it.
+function setQuestionCollapsed(collapsed){document.querySelector('.question-card').classList.toggle('question-collapsed',collapsed);const t=$('question-toggle');t.setAttribute('aria-expanded',String(!collapsed));t.querySelector('.question-toggle-label').textContent=collapsed?'Show question':'Hide question';t.querySelector('.question-toggle-icon').textContent=collapsed?'▾':'▴';t.title=collapsed?'Show the question and answer choices':'Hide the question text to give the drawing pad more room';}
+$('question-toggle').onclick=()=>setQuestionCollapsed($('question-toggle').getAttribute('aria-expanded')==='true');
 function closeDrawing(){
   drawing.finish();drawingOpen=false;drawingShift=false;syncDrawingTool();$('drawing-panel').hidden=true;setDrawingLayout(false);$('drawing-open').setAttribute('aria-expanded','false');$('photo-attachment').hidden=!photo;updatePhotoControls();
 }
