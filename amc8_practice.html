@@ -46,8 +46,16 @@ header,main{max-width:none}footer{max-width:none;margin:0 38px}
 #drawing-canvas.pencil-only{touch-action:pan-x pan-y pinch-zoom}
 .drawing-tools .close-btn{margin-right:8px;color:var(--muted)}.drawing-tools .close-btn:hover:not(:disabled){color:var(--ink);background:#f1f3ee}
 @media(hover:hover) and (pointer:fine){#drawing-help{display:none}}
+
+/* Student sign-in and sync */
+.student-button{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #cbd6cd;color:var(--ink);font-size:13px;padding:7px 12px}.student-switch{color:var(--muted);font-weight:400;font-size:11px;border-left:1px solid var(--line);padding-left:8px}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#b9c4bb}.sync-dot[data-state=synced]{background:#2e8b57}.sync-dot[data-state=connecting]{background:#d9a441}.sync-dot[data-state=error]{background:#c2553a}
+.login-overlay{position:fixed;inset:0;z-index:50;background:#183832a6;display:flex;align-items:center;justify-content:center;padding:16px}.login-box{background:#fff;border-radius:14px;padding:28px;width:min(420px,100%);box-shadow:0 20px 60px #0004}.login-box h2{margin:0 0 6px;font:26px/1.2 Georgia,serif}.login-box input{width:100%;padding:12px;border:1px solid #cbd6cd;border-radius:8px;font-size:16px;margin:4px 0 16px}.login-actions{display:flex;gap:10px;align-items:center}
+.known-students{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.known-student{background:#eef0e7;color:var(--ink);font-size:14px;padding:9px 14px}.known-student[aria-current=true]{box-shadow:inset 0 0 0 2px var(--green)}
+.sync-box{margin:14px 0;padding-top:12px;border-top:1px solid var(--line)}.sync-box input{width:100%;padding:9px;border:1px solid #cbd6cd;border-radius:7px;margin:4px 0 4px}.sync-actions{display:flex;flex-wrap:wrap;gap:6px}.sync-actions .secondary{width:auto;flex:1 1 auto;margin-top:4px}
+@media(max-width:750px){.student-switch{display:none}}
 </style></head>
-<body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a></div></header>
+<body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
 <div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option></select></label><label>Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
 <p id="reason" class="reason"></p><article class="question-card"><div class="card-top"><button id="question-toggle" class="question-toggle" type="button" aria-expanded="true" aria-controls="question-area" title="Fold the question text away"><span class="question-toggle-icon" aria-hidden="true">▾</span><span class="question-toggle-label">Hide question</span><span class="question-toggle-title"></span></button><button id="flag" class="quiet" type="button" aria-pressed="false">☆ Flag for review</button></div><div id="question-area" class="question-area"><div class="question-top"><span id="badge" class="badge"></span></div><h2 id="question-title" tabindex="-1"></h2><div id="question-meta" class="muted"></div><div id="statement" class="statement"></div><p id="image-warning" class="notice" hidden>Some formulas or diagrams could not load. Open the AoPS source below to view them before answering.</p><a id="source" target="_blank" rel="noopener noreferrer">View original on AoPS ↗</a></div>
@@ -80,8 +88,9 @@ header,main{max-width:none}footer{max-width:none;margin:0 38px}
 <section class="panel learning-map" id="learning-map"><div class="eyebrow">YOUR LEARNING MAP</div><h2>Room to grow</h2><p class="muted">First attempts guide your next topic and difficulty. Reviews don’t inflate your score.</p><div id="topic-stats"></div><p class="small">Start at foundation level. Two correct answers at the same level move you up; a miss brings the next question down a level. Exam difficulty is estimated from question number.</p></section>
 <section class="panel sidebar-section" id="review-panel"><h3>Review queue <span id="review-count" class="badge">0</span></h3><p class="muted">Misses and AI-identified reasoning errors are saved here. A correct retry clears a missed answer; a clear AI review clears a reasoning flag. Manual flags stay until removed.</p><div id="queue"></div><button id="review-button" class="secondary">Practice review queue</button></section>
 <section class="panel sidebar-section" id="skills-panel"><h3>Skills to strengthen</h3><p class="eyebrow">FROM YOUR WORKING</p><p class="muted">AI observations with evidence from your steps. These are practice suggestions, not a fixed assessment of your ability.</p><div id="weak-points"></div><details id="ai-history"><summary>Saved AI reviews</summary><div id="ai-history-list"></div></details></section>
-<section class="panel storage sidebar-section" id="progress-panel"><h3>Keep your progress</h3><p class="muted">Saved in this browser on this device. Export a backup to keep your answers or share them for coaching.</p><button id="export" class="secondary">Export progress</button><label class="import">Restore backup <input id="import" type="file" accept="application/json,.json"></label><p id="storage-message" role="status" class="small"></p></section>
+<section class="panel storage sidebar-section" id="progress-panel"><h3>Keep your progress</h3><p class="muted">Each student’s history is saved separately on this device. Turn on Firebase sync to use it on other devices too.</p><div class="sync-box"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div><button id="export" class="secondary">Export progress</button><label class="import">Restore backup <input id="import" type="file" accept="application/json,.json"></label><p id="storage-message" role="status" class="small"></p></section>
 </div></aside></div></main>
+<div id="login-overlay" class="login-overlay" hidden><form id="login-form" class="login-box" role="dialog" aria-modal="true" aria-labelledby="login-title"><h2 id="login-title">Who’s practicing?</h2><p class="muted">Each student’s answers, reviews and progress are kept separately. The name is remembered on this device.</p><div id="known-students" class="known-students" hidden></div><label for="login-name" class="small">Student name</label><input id="login-name" autocomplete="off" maxlength="40" placeholder="e.g. Peggy"><div class="login-actions"><button class="primary" type="submit">Start practicing</button><button id="login-cancel" class="quiet" type="button">Cancel</button></div></form></div>
 <footer>ONE QUESTION AT A TIME <span id="bank-count"></span></footer>
 <script>/* Pure practice logic, shared by the browser and Node tests. */
 (function (root) {
@@ -328,6 +337,81 @@ class DrawingPad {
 }
 root.DrawingPad=DrawingPad;
 })(window);
+</script><script>/* Per-student persistence, modelled on family_todo_login.html:
+   - the student name is a simple login kept in localStorage (no password);
+   - each student's history is saved locally first (works offline);
+   - optional Firebase Firestore sync across devices, enabled by an API key
+     from the settings box or a shared link (?apiKey=...), stored under the same
+     "firebaseApiKey" localStorage key the todo page uses. */
+(function(root){
+'use strict';
+const FIREBASE_CONFIG={authDomain:"homeinventory-4718c.firebaseapp.com",projectId:"homeinventory-4718c",storageBucket:"homeinventory-4718c.firebasestorage.app",messagingSenderId:"719884896213",appId:"1:719884896213:web:e93d5dffc79dec10995f5c"};
+const FIREBASE_COLLECTION="amc8PracticeStudents";
+const FIREBASE_API_KEY_KEY="firebaseApiKey", LOGIN_KEY="amc8PracticeStudent", KNOWN_KEY="amc8PracticeKnownStudents", LOCAL_PREFIX="amc8Practice.v1:", LEGACY_KEY="amc8Practice.v1";
+const store={};
+const ls={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},set:(k,v)=>{try{localStorage.setItem(k,v);return true;}catch(e){return false;}},del:k=>{try{localStorage.removeItem(k);}catch(e){}}};
+// Names are matched case-insensitively; the id is safe as a Firestore document id.
+store.idFor=name=>encodeURIComponent(String(name).trim().replace(/\s+/g,' ').toLowerCase()).slice(0,200);
+store.current=()=>ls.get(LOGIN_KEY)||'';
+store.known=()=>{try{const v=JSON.parse(ls.get(KNOWN_KEY)||'[]');return Array.isArray(v)?v.filter(n=>typeof n==='string'):[];}catch(e){return [];}};
+store.login=name=>{name=String(name).trim().replace(/\s+/g,' ');ls.set(LOGIN_KEY,name);const known=store.known().filter(n=>store.idFor(n)!==store.idFor(name));known.unshift(name);ls.set(KNOWN_KEY,JSON.stringify(known.slice(0,20)));return name;};
+store.forget=name=>{ls.set(KNOWN_KEY,JSON.stringify(store.known().filter(n=>store.idFor(n)!==store.idFor(name))));};
+store.loadLocal=name=>{try{const raw=ls.get(LOCAL_PREFIX+store.idFor(name));return raw?JSON.parse(raw):null;}catch(e){return null;}};
+store.saveLocal=(name,payload)=>ls.set(LOCAL_PREFIX+store.idFor(name),JSON.stringify(payload));
+// Progress saved before student logins existed goes to the first student who signs in on this device.
+store.takeLegacy=()=>{const raw=ls.get(LEGACY_KEY);if(!raw)return null;ls.del(LEGACY_KEY);try{return JSON.parse(raw);}catch(e){return null;}};
+
+// ---- Firebase (optional) ----
+let db=null, activeKey='', unsubscribe=null, docRef=null, onRemote=null, onStatus=()=>{};
+let lastRemoteUpdatedAt='', pendingLocalUpdatedAt='', getLocal=()=>null;
+store.getApiKey=()=>{let fromUrl='';try{fromUrl=new URLSearchParams(location.search).get('apiKey')||'';}catch(e){}if(fromUrl.trim()){ls.set(FIREBASE_API_KEY_KEY,fromUrl.trim());return fromUrl.trim();}return ls.get(FIREBASE_API_KEY_KEY)||'';};
+store.setApiKey=key=>{key=String(key||'').trim();if(key)ls.set(FIREBASE_API_KEY_KEY,key);else ls.del(FIREBASE_API_KEY_KEY);};
+store.syncing=()=>!!docRef;
+store.shareLink=()=>{const key=store.getApiKey();if(!key)return '';return location.origin+location.pathname+'?apiKey='+encodeURIComponent(key);};
+// The SDK is only downloaded once sync is on, so the page starts instantly offline or on slow networks.
+const SDK=['https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js','https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js'];
+let sdkLoading=null;
+function loadSdk(){
+  if(root.firebase&&root.firebase.firestore)return Promise.resolve();
+  if(!sdkLoading)sdkLoading=SDK.reduce((p,src)=>p.then(()=>new Promise((ok,fail)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>fail(Error('firebase-sdk-unavailable'));document.head.append(s);})),Promise.resolve()).catch(e=>{sdkLoading=null;throw e;});
+  return sdkLoading;
+}
+async function ensureFirebase(apiKey){
+  if(!apiKey)throw Error('missing-firebase-api-key');
+  await loadSdk();
+  if(!root.firebase)throw Error('firebase-sdk-unavailable');
+  if(activeKey&&activeKey!==apiKey){store.stop();if(firebase.apps.length&&firebase.app().delete)await firebase.app().delete();}
+  if(!firebase.apps.length)firebase.initializeApp({...FIREBASE_CONFIG,apiKey});
+  activeKey=apiKey;db=firebase.firestore();
+}
+store.stop=()=>{if(unsubscribe){unsubscribe();unsubscribe=null;}docRef=null;lastRemoteUpdatedAt='';pendingLocalUpdatedAt='';};
+// Start syncing one student's document. Same last-write-wins rule as the todo page, by updatedAt.
+store.start=async(name,handlers)=>{
+  store.stop();onRemote=handlers.onRemote;onStatus=handlers.onStatus||onStatus;getLocal=handlers.getLocal;
+  const apiKey=store.getApiKey();if(!apiKey){onStatus('local');return false;}
+  try{await ensureFirebase(apiKey);}catch(e){onStatus('error',e);return false;}
+  const ref=db.collection(FIREBASE_COLLECTION).doc(store.idFor(name));docRef=ref;onStatus('connecting');
+  unsubscribe=ref.onSnapshot(snapshot=>{
+    if(docRef!==ref)return;
+    if(snapshot.metadata&&snapshot.metadata.hasPendingWrites)return;
+    const data=snapshot.exists?snapshot.data():null, local=getLocal(), localAt=local&&local.updatedAt||'';
+    const remoteAt=data&&data.updatedAt||'';
+    if(lastRemoteUpdatedAt&&remoteAt&&remoteAt<lastRemoteUpdatedAt)return;
+    if(pendingLocalUpdatedAt&&remoteAt&&remoteAt<pendingLocalUpdatedAt)return;
+    if(localAt&&(!remoteAt||localAt>remoteAt)){pendingLocalUpdatedAt=localAt;ref.set(local).then(()=>{lastRemoteUpdatedAt=localAt;onStatus('synced');}).catch(e=>onStatus('error',e));return;}
+    if(!data){onStatus('synced');return;}
+    lastRemoteUpdatedAt=remoteAt;
+    if(remoteAt!==localAt)onRemote(data);
+    onStatus('synced');
+  },error=>{if(docRef===ref){onStatus('error',error);store.stop();}});
+  return true;
+};
+store.push=async payload=>{
+  if(!docRef)return false;const ref=docRef;pendingLocalUpdatedAt=payload.updatedAt;
+  try{await ref.set(payload);if(docRef===ref)lastRemoteUpdatedAt=payload.updatedAt;onStatus('synced');return true;}catch(e){onStatus('error',e);return false;}
+};
+root.StudentStore=store;
+})(window);
 </script><script>'use strict';
 const bank=JSON.parse(document.getElementById('exam-bank').textContent);
 const AI=window.PhotoReview;
@@ -362,8 +446,48 @@ function canonicalize(s) {
   }
   return s;
 }
-try {const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(!validState(s))throw Error('invalid');state=canonicalize(s);}} catch(e){$('storage-message').textContent='Saved progress could not be read. This session starts fresh; export a backup before closing.';}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));$('storage-message').textContent='Progress saved on this device.';}catch(e){$('storage-message').textContent='Browser storage is unavailable or full. Export your progress before closing.';}}
+// ---- Per-student history (see students.js): local-first, optional Firebase sync ----
+const students=window.StudentStore;let student='', updatedAt='';
+const payloadFor=()=>({version:1,student,updatedAt,state:JSON.stringify(state)});
+function readPayload(p){try{if(!p||!p.state)return null;const s=typeof p.state==='string'?JSON.parse(p.state):p.state;return validState(s)?canonicalize(s):null;}catch(e){return null;}}
+function save(){
+  if(!student)return;updatedAt=new Date().toISOString();const payload=payloadFor();
+  if(!students.saveLocal(student,payload)){$('storage-message').textContent='Browser storage is unavailable or full. Export your progress before closing.';return;}
+  $('storage-message').textContent=students.syncing()?'Saving and syncing…':'Progress saved on this device.';
+  students.push(payload);
+}
+function syncStatus(kind,error){
+  const el=$('sync-status');if(!el)return;
+  const text={local:'Saved on this device only.',connecting:'Connecting to Firebase…',synced:'Synced across devices · '+new Date().toLocaleTimeString(),error:'Saved on this device; Firebase sync is unavailable'+(error&&error.code==='permission-denied'?' (permission denied by the database rules).':error&&error.message==='firebase-sdk-unavailable'?' (the Firebase library could not load — check the internet connection).':'.')}[kind]||'';
+  el.textContent=text;$('student-sync-dot').dataset.state=kind;
+  if(kind==='synced'&&$('storage-message').textContent==='Saving and syncing…')$('storage-message').textContent='Progress saved and synced.';
+}
+function startSync(){if(!student)return;students.start(student,{getLocal:()=>students.loadLocal(student),onStatus:syncStatus,
+  onRemote:data=>{const s=readPayload(data);if(!s)return;state=s;updatedAt=data.updatedAt||'';students.saveLocal(student,{version:1,student,updatedAt,state:typeof data.state==='string'?data.state:JSON.stringify(data.state)});
+    if(activeAttempt)activeAttempt=state.attempts.find(a=>a.at===activeAttempt.at&&a.id===activeAttempt.id)||null;dashboard();$('storage-message').textContent='Loaded the latest progress from another device.';}});}
+function useStudent(name){
+  cancelReview();student=students.login(name);state={version:1,attempts:[],items:{}};updatedAt='';
+  const local=students.loadLocal(student),s=readPayload(local);
+  if(s){state=s;updatedAt=local.updatedAt||'';}
+  else if(local)$('storage-message').textContent='Saved progress for '+student+' could not be read. Starting fresh; sync or restore a backup to recover it.';
+  else{const legacy=students.takeLegacy();if(legacy&&validState(legacy)){state=canonicalize(legacy);save();$('storage-message').textContent='Earlier progress on this device was moved into '+student+'’s history.';}}
+  $('student-name-label').textContent=student;document.title='AMC 8 · Practice Studio · '+student;
+  hideLogin();dashboard();next();startSync();
+}
+function showLogin(){
+  const list=$('known-students');list.replaceChildren();
+  for(const name of students.known()){const b=document.createElement('button');b.type='button';b.className='known-student';b.textContent=name;if(name===student)b.setAttribute('aria-current','true');b.onclick=()=>useStudent(name);list.append(b);}
+  list.hidden=!list.children.length;$('login-cancel').hidden=!student;$('login-name').value='';$('login-overlay').hidden=false;setTimeout(()=>$('login-name').focus(),0);
+}
+function hideLogin(){$('login-overlay').hidden=true;}
+$('login-form').onsubmit=e=>{e.preventDefault();const name=$('login-name').value.trim();if(name)useStudent(name);else $('login-name').focus();};
+$('login-cancel').onclick=hideLogin;$('student-button').onclick=showLogin;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('login-overlay').hidden&&student)hideLogin();});
+$('firebase-key').value=students.getApiKey()?'••••••••':'';
+$('sync-enable').onclick=async()=>{const v=$('firebase-key').value.trim();if(v&&!/^•+$/.test(v))students.setApiKey(v);if(!students.getApiKey()){$('sync-status').textContent='Enter the Firebase API key first.';return;}$('firebase-key').value='••••••••';startSync();};
+$('sync-local').onclick=()=>{students.setApiKey('');students.stop();$('firebase-key').value='';syncStatus('local');};
+$('sync-share').onclick=()=>{const url=students.shareLink();if(!url){$('sync-status').textContent='Turn on sync first. A sync link only carries the key, never progress.';return;}
+  if(navigator.share)navigator.share({title:'AMC 8 Practice Studio',url}).catch(()=>{});else window.prompt('Copy this link to open synced practice on another device:',url);};
 for(const t of P.topics){const o=document.createElement('option');o.value=t;o.textContent=t;$('topic').append(o);}
 $('bank-count').textContent=`${bank.length.toLocaleString()} gradable past-exam questions`;
 function dashboard(){
@@ -422,8 +546,8 @@ $('flag').onclick=()=>{if(!current)return;const old=state.items[current.id]||{pr
 $('next').onclick=()=>{next();$('question-title').focus();};$('skip').onclick=()=>{next();$('question-title').focus();};
 $('mode').onchange=next;$('topic').onchange=next;
 $('review-button').onclick=()=>{$('mode').value='review';$('topic').value='';next();$('question-title').focus();};
-$('export').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`amc8-progress-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
-$('import').onchange=async()=>{const file=$('import').files[0];if(!file)return;try{if(file.size>15000000)throw Error('too large');const s=JSON.parse(await file.text());if(!validState(s))throw Error('invalid');if(!window.confirm('Replace your current progress with this backup?'))return;state=canonicalize(s);save();dashboard();next();}catch(e){$('storage-message').textContent='This file is not a valid AMC 8 practice backup. Your current progress has been kept.';}finally{$('import').value='';}};
+$('export').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`amc8-progress-${(student||'student').replace(/[^\w-]+/g,'_')}-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+$('import').onchange=async()=>{const file=$('import').files[0];if(!file)return;try{if(file.size>15000000)throw Error('too large');const s=JSON.parse(await file.text());if(!validState(s))throw Error('invalid');if(!window.confirm('Replace '+(student||'this student')+'’s progress with this backup?'))return;state=canonicalize(s);save();dashboard();next();}catch(e){$('storage-message').textContent='This file is not a valid AMC 8 practice backup. Your current progress has been kept.';}finally{$('import').value='';}};
 document.addEventListener('error',e=>{if(e.target.tagName==='IMG' && e.target.id!=='photo-preview'){$('image-warning').hidden=false;const fallback=document.createElement('span');fallback.textContent=e.target.alt||'[Diagram unavailable]';e.target.replaceWith(fallback);}},true);
 function readableHTML(html){
   const doc=new DOMParser().parseFromString(html||'','text/html');
@@ -664,4 +788,5 @@ new MutationObserver(()=>{if(!dock.hidden)refresh();}).observe($('statement'),{c
 new MutationObserver(update).observe(document.querySelector('.question-card'),{attributes:true,attributeFilter:['class']});
 $('question-dock-top').onclick=()=>{document.querySelector('.question-card').scrollIntoView({behavior:'smooth',block:'start'});};})();
 dashboard();next();
+if(students.current())useStudent(students.current());else showLogin();
 </script></body></html>
