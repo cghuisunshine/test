@@ -780,7 +780,7 @@ canvas.addEventListener('touchend',e=>{if(!tap||e.touches.length)return;const qu
 // The pinned copy also carries the answer controls; they drive the real buttons so there is one source of truth.
 (()=>{const box=$('dock-choices');
 const syncChoices=()=>{const real=[...document.querySelectorAll('#choice-list .choice')];
-  if(box.children.length!==real.length||real.some((b,i)=>box.children[i].dataset.for!==b.dataset.choice)){box.replaceChildren(...real.map(b=>{const d=document.createElement('button');d.type='button';d.className='choice';d.dataset.for=b.dataset.choice;d.onclick=()=>b.click();return d;}));}
+  if(box.children.length!==real.length||real.some((b,i)=>box.children[i].dataset.for!==b.dataset.choice)){box.replaceChildren(...real.map(b=>{const d=document.createElement('button');d.type='button';d.className='choice';d.dataset.for=b.dataset.choice;d.onclick=()=>document.querySelector(`#choice-list .choice[data-choice="${d.dataset.for}"]`)?.click();return d;}));}
   real.forEach((b,i)=>{const d=box.children[i];d.className=b.className;d.textContent=b.dataset.choice;d.disabled=b.disabled;d.setAttribute('aria-pressed',b.getAttribute('aria-pressed')||'false');d.setAttribute('aria-label','Answer '+b.dataset.choice+(b.querySelector('small')?': '+b.querySelector('small').textContent:''));});};
 const syncButtons=()=>{for(const id of ['check','next','skip']){const r=$(id),d=$('dock-'+id);d.hidden=r.hidden;d.disabled=r.disabled;}
   const f=$('feedback'),df=$('dock-feedback');df.hidden=f.hidden;df.className='dock-feedback'+(f.classList.contains('wrong')?' wrong':'');df.textContent=f.textContent;};
