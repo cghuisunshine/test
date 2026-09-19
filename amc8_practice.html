@@ -357,7 +357,8 @@ const ls={get:k=>{try{return localStorage.getItem(k);}catch(e){return null;}},se
 store.idFor=name=>encodeURIComponent(String(name).trim().replace(/\s+/g,' ').toLowerCase()).slice(0,200);
 store.current=()=>ls.get(LOGIN_KEY)||'';
 store.known=()=>{try{const v=JSON.parse(ls.get(KNOWN_KEY)||'[]');return Array.isArray(v)?v.filter(n=>typeof n==='string'):[];}catch(e){return [];}};
-store.login=name=>{name=String(name).trim().replace(/\s+/g,' ');ls.set(LOGIN_KEY,name);const known=store.known().filter(n=>store.idFor(n)!==store.idFor(name));known.unshift(name);ls.set(KNOWN_KEY,JSON.stringify(known.slice(0,20)));return name;};
+// Names are case-insensitive: "amy", "AMY" and "Amy" are the same student, shown with the first spelling used.
+store.login=name=>{name=String(name).trim().replace(/\s+/g,' ');const same=store.known().find(n=>store.idFor(n)===store.idFor(name));if(same)name=same;ls.set(LOGIN_KEY,name);const known=store.known().filter(n=>store.idFor(n)!==store.idFor(name));known.unshift(name);ls.set(KNOWN_KEY,JSON.stringify(known.slice(0,20)));return name;};
 store.forget=name=>{ls.set(KNOWN_KEY,JSON.stringify(store.known().filter(n=>store.idFor(n)!==store.idFor(name))));};
 store.loadLocal=name=>{try{const raw=ls.get(LOCAL_PREFIX+store.idFor(name));return raw?JSON.parse(raw):null;}catch(e){return null;}};
 store.saveLocal=(name,payload)=>ls.set(LOCAL_PREFIX+store.idFor(name),JSON.stringify(payload));
@@ -471,6 +472,7 @@ function startSync(){if(!student)return;students.start(student,{getLocal:()=>stu
 function useStudent(name){
   cancelReview();student=students.login(name);state={version:1,attempts:[],items:{}};updatedAt='';
   const local=students.loadLocal(student),s=readPayload(local);
+  if(local&&typeof local.student==='string'&&local.student!==student&&students.idFor(local.student)===students.idFor(student))student=students.login(local.student);
   if(s){state=s;updatedAt=local.updatedAt||'';}
   else if(local)$('storage-message').textContent='Saved progress for '+student+' could not be read. Starting fresh; sync or restore a backup to recover it.';
   else{const legacy=students.takeLegacy();if(legacy&&validState(legacy)){state=canonicalize(legacy);save();$('storage-message').textContent='Earlier progress on this device was moved into '+student+'’s history.';}}
@@ -479,7 +481,7 @@ function useStudent(name){
 }
 function showLogin(){
   const list=$('known-students');list.replaceChildren();
-  for(const name of students.known()){const b=document.createElement('button');b.type='button';b.className='known-student';b.textContent=name;if(name===student)b.setAttribute('aria-current','true');b.onclick=()=>useStudent(name);list.append(b);}
+  for(const name of students.known()){const b=document.createElement('button');b.type='button';b.className='known-student';b.textContent=name;if(students.idFor(name)===students.idFor(student))b.setAttribute('aria-current','true');b.onclick=()=>useStudent(name);list.append(b);}
   list.hidden=!list.children.length;$('login-cancel').hidden=!student;$('login-name').value='';$('login-overlay').hidden=false;setTimeout(()=>$('login-name').focus(),0);
 }
 function hideLogin(){$('login-overlay').hidden=true;}
