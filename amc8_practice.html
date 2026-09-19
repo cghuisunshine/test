@@ -606,7 +606,7 @@ function cancelReview(){
   updatePhotoControls();
 }
 function resetPhotoReview(){
-  stopCamera();cancelReview();photoVersion++;photo=null;activeAttempt=null;drawingOpen=false;drawing.reset();reviewedDrawVersion=null;$('drawing-help').classList.remove('faded');
+  stopCamera();cancelReview();photoVersion++;photo=null;activeAttempt=null;drawingOpen=false;drawing.reset();reviewedDrawVersion=null;$('drawing-canvas').height=800;$('drawing-canvas').style.height='';drawing.render();requestAnimationFrame(()=>sizeCanvas());$('drawing-help').classList.remove('faded');
   $('drawing-panel').hidden=true;setDrawingLayout(false);setQuestionCollapsed(false);$('drawing-open').hidden=false;$('drawing-open').setAttribute('aria-expanded','false');drawingShift=false;syncDrawingTool();
   $('photo-section').hidden=true;$('photo-attachment').hidden=true;$('photo-preview').removeAttribute('src');
   $('photo-file').value='';$('ai-feedback').hidden=true;$('ai-feedback').replaceChildren();$('ai-status').textContent='';
@@ -827,6 +827,23 @@ const fit=()=>{raf=0;if(dock.hidden)return;const top=Math.max(12,dock.getBoundin
 const queue=()=>{if(!raf)raf=requestAnimationFrame(fit);};
 addEventListener('scroll',queue,{passive:true});addEventListener('resize',queue);
 new MutationObserver(queue).observe(dock,{attributes:true,attributeFilter:['hidden']});})();
+// While the question is pinned at the left, the pad grows as tall as the screen allows (never shorter than 3:2).
+// The canvas keeps 1200 drawing units across and gains units downward, so strokes never move or stretch; it also
+// never shrinks below the lowest stroke, so nothing drawn is ever hidden.
+function sizeCanvas(){
+  const c=$('drawing-canvas');if(drawing.active||!c.clientWidth)return;
+  const w=c.clientWidth,docked=$('steps-wrap').classList.contains('docked');
+  const head=document.querySelector('.steps-head').offsetHeight+60; // row + pad padding/borders + small margins
+  const target=docked?Math.max(w*2/3,innerHeight-head-24):w*2/3;
+  const lowest=drawing.strokes.reduce((m,s)=>Math.max(m,...s.points.map(p=>p.y+s.width)),0);
+  const units=Math.max(800,Math.round(1200*target/w),Math.ceil(lowest+10));
+  c.style.height=(w*units/1200)+'px';
+  if(c.height!==units){c.height=units;drawing.render();}
+}
+{let raf=0;const q=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;sizeCanvas();});};
+ new MutationObserver(q).observe($('steps-wrap'),{attributes:true,attributeFilter:['class']});
+ new MutationObserver(q).observe($('drawing-panel'),{attributes:true,attributeFilter:['hidden']});
+ addEventListener('resize',q);}
 // Pin a compact copy of the question beside the pad once the real one scrolls above the viewport.
 (()=>{const wrap=$('steps-wrap'),dock=$('question-dock'),area=$('question-area');let above=false;
 const refresh=()=>{$('question-dock-title').textContent=$('question-title').textContent;const body=$('statement').cloneNode(true);body.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));$('question-dock-body').replaceChildren(...body.childNodes);};
