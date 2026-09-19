@@ -336,7 +336,9 @@ let state={version:1,attempts:[],items:{}}, current=null, selected=null, checked
 let activeAttempt=null, photo=null, photoVersion=0, reviewRequest=null;
 let cameraStream=null, cameraOpening=false, cameraVersion=0;
 let drawingOpen=false, drawingShift=false;
-const drawing=new window.DrawingPad($('drawing-canvas'),()=>updatePhotoControls());
+// drawVersion changes on every edit, so a drawing can be re-checked by AI after it is modified.
+let drawVersion=0, reviewedDrawVersion=null;
+const drawing=new window.DrawingPad($('drawing-canvas'),()=>{drawVersion++;updatePhotoControls();});
 function validState(s) {
   if(!s || s.version!==1 || !Array.isArray(s.attempts) || !s.items || typeof s.items!=='object' || Array.isArray(s.items)) return false;
   const problemOK=p=>p && typeof p.id==='string' && ['exam','generated'].includes(p.kind) && P.topics.includes(p.topic) && [1,2,3].includes(p.level) && /^[A-E]$/.test(p.answer) && typeof p.title==='string';
@@ -429,16 +431,16 @@ function readableHTML(html){
   return doc.body.textContent.trim().slice(0,18000);
 }
 function updatePhotoControls(){
-  const busy=!!reviewRequest, reviewed=!!activeAttempt?.aiReview, cameraActive=cameraOpening||!!cameraStream;
+  const busy=!!reviewRequest, hasReview=!!activeAttempt?.aiReview, reviewed=hasReview&&drawingOpen&&reviewedDrawVersion===drawVersion, cameraActive=cameraOpening||!!cameraStream;
   const hasWorking=drawingOpen?drawing.hasInk:!!photo;
   $('ai-check').disabled=!current||!selected||!hasWorking||busy||reviewed||cameraActive||!!drawing.active;
-  $('ai-check').textContent=reviewed?'AI review saved':'AI check my steps';
-  for(const id of ['photo-camera','photo-file','photo-remove','drawing-open'])$(id).disabled=busy||reviewed||cameraActive;
-  drawing.enabled=!busy&&!reviewed;
-  for(const id of ['drawing-pen','drawing-eraser','drawing-close'])$(id).disabled=busy||reviewed;
-  document.querySelectorAll('[data-drawing-color]').forEach(button=>button.disabled=busy||reviewed);
-  $('drawing-undo').disabled=busy||reviewed||!drawing.history.length||!!drawing.active;
-  $('drawing-clear').disabled=busy||reviewed||!drawing.hasInk||!!drawing.active;
+  $('ai-check').textContent=reviewed?'AI review saved · edit to check again':hasReview?'AI check again':'AI check my steps';
+  for(const id of ['photo-camera','photo-file','photo-remove','drawing-open'])$(id).disabled=busy||cameraActive;
+  drawing.enabled=!busy;
+  for(const id of ['drawing-pen','drawing-eraser','drawing-close'])$(id).disabled=busy;
+  document.querySelectorAll('[data-drawing-color]').forEach(button=>button.disabled=busy);
+  $('drawing-undo').disabled=busy||!drawing.history.length||!!drawing.active;
+  $('drawing-clear').disabled=busy||!drawing.hasInk||!!drawing.active;
   $('drawing-status').textContent=drawing.hasInk?(selected?'Your drawing is ready for AI review.':'Choose an answer when you are ready for AI review.'):'Write your steps here, then choose an answer for AI review.';
   $('ai-cancel').hidden=!busy;
 }
@@ -447,7 +449,7 @@ function cancelReview(){
   updatePhotoControls();
 }
 function resetPhotoReview(){
-  stopCamera();cancelReview();photoVersion++;photo=null;activeAttempt=null;drawingOpen=false;drawing.reset();
+  stopCamera();cancelReview();photoVersion++;photo=null;activeAttempt=null;drawingOpen=false;drawing.reset();reviewedDrawVersion=null;
   $('drawing-panel').hidden=true;setDrawingLayout(false);setQuestionCollapsed(false);$('drawing-open').setAttribute('aria-expanded','false');drawingShift=false;syncDrawingTool();
   $('photo-section').hidden=true;$('photo-attachment').hidden=true;$('photo-preview').removeAttribute('src');
   $('photo-file').value='';$('ai-feedback').hidden=true;$('ai-feedback').replaceChildren();$('ai-status').textContent='';
@@ -477,7 +479,7 @@ function stopCamera(){
   updatePhotoControls();
 }
 async function openCamera(){
-  if(!current||reviewRequest||activeAttempt?.aiReview||cameraOpening||cameraStream)return;
+  if(!current||reviewRequest||cameraOpening||cameraStream)return;
   if(!window.isSecureContext){$('ai-status').textContent='Camera access requires a secure page. Open this page over HTTPS or on localhost, or use Choose a photo.';return;}
   if(!navigator.mediaDevices?.getUserMedia){$('ai-status').textContent='This browser does not support live camera access. Open the page in a camera-enabled browser, or use Choose a photo.';return;}
   closeDrawing();const version=++cameraVersion;photoVersion++;cameraOpening=true;
@@ -556,7 +558,7 @@ async function reviewSteps(){
   if(!uploaded)return;
   if(!checked)$('check').onclick();
   const attempt=activeAttempt, problem=current;
-  if(!attempt || attempt.aiReview){$('ai-status').textContent='This attempt already has a saved AI review. Retry the question to submit new working.';return;}
+  if(!attempt)return;const sentDrawVersion=drawingOpen?drawVersion:null;
   const statement=problem.kind==='exam'?readableHTML(problem.html):problem.text+'\n'+problem.choices.map((v,i)=>'ABCDE'[i]+': '+v).join('\n');
   const solution=problem.kind==='exam'?readableHTML(problem.solution):problem.explanation;
   const controller=new AbortController(),request={controller,started:Date.now(),timedOut:false};reviewRequest=request;
@@ -569,10 +571,10 @@ async function reviewSteps(){
     if(!response.ok)throw Error(response.status===413?'The photo is too large for the grading service. Try a smaller photo.':'The grading service could not complete the review (HTTP '+response.status+'). You can retry.');
     const review=AI.parseResponse(await response.json());
     if(reviewRequest!==request || !state.attempts.includes(attempt))return;
-    attempt.aiReview=review;attempt.aiReviewedAt=new Date().toISOString();
+    attempt.aiReview=review;attempt.aiReviewedAt=new Date().toISOString();reviewedDrawVersion=sentDrawVersion;
     const item=state.items[problem.id];if(review.confidence!=='low'&&['correct','partly_correct','incorrect'].includes(review.verdict))item.aiConcern=AI.needsReview(review);
     save();dashboard();renderAIReview(review,$('ai-feedback'));
-    $('ai-status').textContent='AI review saved with this attempt. Your answer-key score is unchanged.';
+    $('ai-status').textContent='AI review saved. Your answer-key score is unchanged. Edit your working and check again anytime.';
     photo=null;$('photo-attachment').hidden=true;$('photo-preview').removeAttribute('src');$('photo-file').value='';
   }catch(error){
     if(reviewRequest!==request)return;
@@ -596,7 +598,7 @@ function closeDrawing(){
   drawing.finish();drawingOpen=false;drawingShift=false;syncDrawingTool();$('drawing-panel').hidden=true;setDrawingLayout(false);$('drawing-open').setAttribute('aria-expanded','false');$('photo-attachment').hidden=!photo;updatePhotoControls();
 }
 function openDrawing(focus=false){
-  if(reviewRequest||activeAttempt?.aiReview)return;
+  if(reviewRequest)return;
   stopCamera();photoVersion++;drawingOpen=true;$('drawing-panel').hidden=false;setDrawingLayout(true);$('drawing-open').setAttribute('aria-expanded','true');$('photo-attachment').hidden=true;
   $('ai-status').textContent='The drawing pad is selected for AI review.';updatePhotoControls();if(focus)$('drawing-canvas').focus({preventScroll:true});
 }
