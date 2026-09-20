@@ -85,6 +85,7 @@ header,main{max-width:none}footer{max-width:none;margin:0 38px}
 @container steps (max-width:700px){.steps-head h3{display:none}.steps-head .steps-icons+.drawing-tools{margin-left:auto}}
 @container steps (max-width:520px){.steps-head{flex-wrap:wrap}.steps-head .drawing-tools{flex-wrap:wrap;margin-left:0}}
 .card-actions{display:inline-flex;align-items:center;gap:2px}.share-btn{display:inline-flex;align-items:center;gap:6px}
+.queue-when{display:block;color:var(--muted);font-size:10px;margin-top:2px}
 </style></head>
 <body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Storage settings" hidden><h2>Storage settings</h2><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
@@ -568,6 +569,20 @@ $('sync-share').onclick=()=>{const url=students.shareLink();if(!url){$('sync-sta
   if(navigator.share)navigator.share({title:'AMC 8 Practice Studio',url}).catch(()=>{});else window.prompt('Copy this link to open synced practice on another device:',url);};
 for(const t of P.topics){const o=document.createElement('option');o.value=t;o.textContent=t;$('topic').append(o);}
 $('bank-count').textContent=`${bank.length.toLocaleString()} gradable past-exam questions`;
+// "Last tried" for review-queue items: the most recent attempt on that question.
+function lastTried(id){let at='';for(const a of state.attempts)if(a.id===id&&a.at>at)at=a.at;return at;}
+function describeTime(iso){
+  const then=new Date(iso);if(isNaN(then))return '';
+  const startOfDay=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x;};
+  const days=Math.round((startOfDay(new Date())-startOfDay(then))/86400000);
+  const time=then.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  if(days<=0)return 'today at '+time;
+  if(days===1)return 'yesterday at '+time;
+  if(days<7)return days+' days ago';
+  if(days<14)return 'last week';
+  if(days<60)return Math.round(days/7)+' weeks ago';
+  return 'on '+then.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+}
 function dashboard(){
   const all=state.attempts, first=all.filter(a=>!a.review);
   $('attempt-count').textContent=all.length;
@@ -575,7 +590,8 @@ function dashboard(){
   $('topic-stats').replaceChildren();
   for(const topic of P.topics){const s=P.stats(state,topic), row=document.createElement('div');row.className='topic-row';const labels=document.createElement('div'), name=document.createElement('span'), score=document.createElement('span');name.textContent=topic;score.textContent=s.total?`${s.correct}/${s.total} correct`:'Not tried yet';labels.append(name,score);const bar=document.createElement('progress');bar.max=100;bar.value=s.total?s.correct/s.total*100:0;bar.setAttribute('aria-label',`${topic} first-attempt accuracy`);row.append(labels,bar);$('topic-stats').append(row);}
   const queue=P.reviewQueue(state,'');$('review-count').textContent=queue.length;$('queue').replaceChildren();
-  for(const item of queue.slice(-5).reverse()){const b=document.createElement('button');b.className='queue-item';b.textContent=item.problem.title;const status=document.createElement('span');status.textContent=`${item.problem.topic} · ${[item.missed?'Missed':'',item.manual?'Flagged':'',item.aiConcern?'Check reasoning':''].filter(Boolean).join(' + ')}`;b.append(status);b.onclick=()=>show(item.problem,'Retry a saved question. Review attempts do not change first-attempt accuracy.');$('queue').append(b);}
+  for(const item of queue.slice(-5).reverse()){const b=document.createElement('button');b.className='queue-item';b.textContent=item.problem.title;const status=document.createElement('span');status.textContent=`${item.problem.topic} · ${[item.missed?'Missed':'',item.manual?'Flagged':'',item.aiConcern?'Check reasoning':''].filter(Boolean).join(' + ')}`;b.append(status);
+    const last=lastTried(item.problem.id);if(last){const when=document.createElement('span');when.className='queue-when';when.textContent='Last tried '+describeTime(last);when.title=new Date(last).toLocaleString();b.append(when);}b.onclick=()=>show(item.problem,'Retry a saved question. Review attempts do not change first-attempt accuracy.');$('queue').append(b);}
   if(!queue.length)$('queue').textContent='Nothing to review yet.';
   $('review-button').disabled=!queue.length;
   renderLearningLog();
