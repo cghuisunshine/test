@@ -86,6 +86,9 @@ header,main{max-width:none}footer{max-width:none;margin:0 38px}
 @container steps (max-width:520px){.steps-head{flex-wrap:wrap}.steps-head .drawing-tools{flex-wrap:wrap;margin-left:0}}
 .card-actions{display:inline-flex;align-items:center;gap:2px}.share-btn{display:inline-flex;align-items:center;gap:6px}
 .queue-when{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+#recent-panel>details>summary{font-size:15px;font-weight:650;color:var(--ink)}#recent-panel>details>summary::marker{color:var(--green)}#recent-list{max-height:340px;overflow:auto}.recent-day{margin:14px 0 4px;font-size:11px;letter-spacing:.6px;font-weight:800;color:var(--green)}.recent-item .verdict{color:#8a5a2b}.recent-item .verdict[data-ok=yes]{color:#276b4c}
+/* The pad resizes when the question pins; browser scroll anchoring would shift the page and unpin it again. */
+body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 </style></head>
 <body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Storage settings" hidden><h2>Storage settings</h2><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
@@ -115,6 +118,7 @@ header,main{max-width:none}footer{max-width:none;margin:0 38px}
 <div id="sidebar-body" class="sidebar-body" hidden>
 <section class="panel learning-map" id="learning-map"><div class="eyebrow">YOUR LEARNING MAP</div><h2>Room to grow</h2><p class="muted">First attempts guide your next topic and difficulty. Reviews don’t inflate your score.</p><div id="topic-stats"></div><p class="small">Start at foundation level. Two correct answers at the same level move you up; a miss brings the next question down a level. Exam difficulty is estimated from question number.</p></section>
 <section class="panel sidebar-section" id="review-panel"><h3>Review queue <span id="review-count" class="badge">0</span></h3><p class="muted">Misses and AI-identified reasoning errors are saved here. A correct retry clears a missed answer; a clear AI review clears a reasoning flag. Manual flags stay until removed.</p><div id="queue"></div><button id="review-button" class="secondary">Practice review queue</button></section>
+<section class="panel sidebar-section" id="recent-panel"><details id="recent-fold"><summary>Questions this week <span id="recent-count" class="badge">0</span></summary><p class="muted">Questions you answered in the last 7 days, newest first. Skipped questions are not listed. Tap one to open it again.</p><div id="recent-list"></div></details></section>
 <section class="panel sidebar-section" id="skills-panel"><h3>Skills to strengthen</h3><p class="eyebrow">FROM YOUR WORKING</p><p class="muted">AI observations with evidence from your steps. These are practice suggestions, not a fixed assessment of your ability.</p><div id="weak-points"></div><details id="ai-history"><summary>Saved AI reviews</summary><div id="ai-history-list"></div></details></section>
 <section class="panel storage sidebar-section" id="progress-panel"><h3>Keep your progress</h3><p class="muted">Each student’s history is saved separately on this device. Use the ☰ menu at the top to sync across devices.</p><button id="export" class="secondary">Export progress</button><label class="import">Restore backup <input id="import" type="file" accept="application/json,.json"></label><p id="storage-message" role="status" class="small"></p></section>
 </div></aside></div></main>
@@ -583,6 +587,31 @@ function describeTime(iso){
   if(days<60)return Math.round(days/7)+' weeks ago';
   return 'on '+then.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
 }
+// Questions answered in the last 7 days (skipped ones are never recorded as attempts).
+function renderRecent(){
+  const since=Date.now()-7*86400000, list=$('recent-list');list.replaceChildren();
+  const recent=state.attempts.filter(a=>Date.parse(a.at)>=since).sort((x,y)=>y.at.localeCompare(x.at)).slice(0,60);
+  $('recent-count').textContent=recent.length;
+  if(!recent.length){list.textContent='No questions answered in the last 7 days.';return;}
+  let day='';
+  for(const attempt of recent){
+    const when=new Date(attempt.at), label=describeDay(when);
+    if(label!==day){day=label;const h=document.createElement('div');h.className='recent-day';h.textContent=label.toUpperCase();list.append(h);}
+    const problem=state.items[attempt.id]?.problem;
+    const b=document.createElement('button');b.className='queue-item recent-item';b.textContent=attempt.title;
+    const meta=document.createElement('span');const verdict=document.createElement('span');
+    verdict.className='verdict';verdict.dataset.ok=attempt.correct?'yes':'no';verdict.textContent=attempt.correct?'Correct':'Missed';
+    meta.append(when.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+' · '+attempt.topic+(attempt.review?' · review':'')+' · ');meta.append(verdict);
+    b.append(meta);
+    if(problem)b.onclick=()=>show(problem,'From your last 7 days. Review attempts do not change first-attempt accuracy.');else b.disabled=true;
+    list.append(b);
+  }
+}
+function describeDay(date){
+  const startOfDay=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x;};
+  const days=Math.round((startOfDay(new Date())-startOfDay(date))/86400000);
+  return days<=0?'Today':days===1?'Yesterday':date.toLocaleDateString([],{weekday:'long'});
+}
 function dashboard(){
   const all=state.attempts, first=all.filter(a=>!a.review);
   $('attempt-count').textContent=all.length;
@@ -594,7 +623,7 @@ function dashboard(){
     const last=lastTried(item.problem.id);if(last){const when=document.createElement('span');when.className='queue-when';when.textContent='Last tried '+describeTime(last);when.title=new Date(last).toLocaleString();b.append(when);}b.onclick=()=>show(item.problem,'Retry a saved question. Review attempts do not change first-attempt accuracy.');$('queue').append(b);}
   if(!queue.length)$('queue').textContent='Nothing to review yet.';
   $('review-button').disabled=!queue.length;
-  renderLearningLog();
+  renderRecent();renderLearningLog();
 }
 function flagButton(){const manual=current && state.items[current.id]?.manual;$('flag').textContent=manual?'★ Flagged for review':'☆ Flag for review';$('flag').setAttribute('aria-pressed',String(!!manual));}
 function show(p,reason){
