@@ -1,51 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AMC 8 Score Reference</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMC 8 Score Explorer</title>
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; margin: 0; background:#f5f7fa; color:#1f2937; }
-  .wrap { max-width: 720px; margin: 36px auto; padding: 0 16px 40px; }
-  h1 { text-align:center; margin-bottom:8px; }
-  .sub { text-align:center; color:#6b7280; margin-bottom:24px; }
-  table { width:100%; border-collapse:collapse; background:white; box-shadow:0 2px 12px rgba(0,0,0,.08); border-radius:10px; overflow:hidden; }
-  th { background:#1f2937; color:white; padding:12px; text-align:center; }
-  td { padding:10px 12px; text-align:center; border-bottom:1px solid #e5e7eb; }
-  tr:last-child td { border-bottom:none; }
-  tr:hover td { background:#f3f4f6; }
-  .note { margin-top:18px; font-size:14px; line-height:1.5; color:#6b7280; }
+:root{--ink:#172944;--muted:#60728b;--blue:#365bea;--line:#e3eaf4}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:radial-gradient(circle at 80% 0,#315489,transparent 38%),linear-gradient(130deg,#10213b,#1a3459);color:white;padding:52px 22px 91px}
+.container{max-width:1030px;margin:auto}.eyebrow{text-transform:uppercase;letter-spacing:.17em;color:#78ddc9;font-size:12px;font-weight:800}
+h1{font-size:clamp(32px,5vw,51px);letter-spacing:-.045em;line-height:1.1;margin:12px 0}header p{max-width:600px;color:#d0dced;margin:0}
+main{padding:0 18px 60px;margin-top:-48px;position:relative}.card{background:white;border:1px solid var(--line);border-radius:21px;box-shadow:0 12px 36px #132b4b0b;padding:27px;margin-bottom:24px}
+.head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}h2{font-size:22px;letter-spacing:-.03em;margin:0}.hint,.note{color:var(--muted);font-size:14px;margin:4px 0 0}
+label{font-size:14px;font-weight:700}select{font:inherit;color:var(--ink);padding:8px 12px;margin-left:8px;border:1px solid #cbd7e8;border-radius:10px;background:#f7f9fc}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}.stat{border:1px solid #e7edf6;border-radius:14px;background:#f6f8fc;padding:17px 19px}.stat:first-child{background:#eaf0ff;border-color:#dae5ff}.stat span{display:block;color:var(--muted);font-size:13px;font-weight:600}.stat strong{display:block;font-size:29px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.stat:first-child strong{color:var(--blue)}
+.chart-title{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:14px;margin:5px 0 10px}.chart-title span{color:var(--muted);font-size:12px}.chart-scroll{overflow-x:auto}svg{display:block;width:100%;min-width:560px;height:auto}.grid{stroke:#e5ebf3}.axis{fill:#71829b;font:12px system-ui}.curve{fill:none;stroke:var(--blue);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}.guide{stroke:#a9bae9;stroke-dasharray:4 5}.dot{fill:var(--blue);stroke:white;stroke-width:3}.hit{fill:transparent;cursor:pointer}.hit:focus-visible{fill:#365bea33;outline:none}
+.caption{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left;font-variant-numeric:tabular-nums}th{background:#ebf1f8;color:#435671;font-size:12px;text-transform:uppercase;letter-spacing:.06em;padding:13px 20px}td{border-top:1px solid var(--line);padding:10px 20px}tbody tr{cursor:pointer}tbody tr:hover,tbody tr:focus-visible{background:#f4f7ff;outline:none}tbody tr.active{background:#eaf0ff;color:#294ed2;font-weight:750}.note{margin-top:17px;line-height:1.6}
+@media(max-width:600px){header{padding:42px 20px 82px}main{padding:0 13px 40px}.card{padding:19px 15px}.stats{gap:7px}.stat{padding:12px 9px}.stat span{font-size:11px}.stat strong{font-size:23px}td,th{padding:10px 12px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>AMC 8 Score Reference</h1>
-  <table>
-    <thead><tr><th>Correct</th><th>Correct Rate</th><th>Approx. Top</th></tr></thead>
-    <tbody>
-      <tr><td>25</td><td>100%</td><td>&lt;1%</td></tr>
-      <tr><td>24</td><td>96%</td><td>1%</td></tr>
-      <tr><td>23</td><td>92%</td><td>2.5%</td></tr>
-      <tr><td>22</td><td>88%</td><td>~3–4%</td></tr>
-      <tr><td>21</td><td>84%</td><td>5%</td></tr>
-      <tr><td>20</td><td>80%</td><td>~7%</td></tr>
-      <tr><td>19</td><td>76%</td><td>~10%</td></tr>
-      <tr><td>18</td><td>72%</td><td>~13%</td></tr>
-      <tr><td>17</td><td>68%</td><td>~18%</td></tr>
-      <tr><td>16</td><td>64%</td><td>25%</td></tr>
-      <tr><td>15</td><td>60%</td><td>~30%</td></tr>
-      <tr><td>14</td><td>56%</td><td>~35%</td></tr>
-      <tr><td>13</td><td>52%</td><td>~42%</td></tr>
-      <tr><td>12</td><td>48%</td><td>~50%</td></tr>
-      <tr><td>11</td><td>44%</td><td>~58%</td></tr>
-      <tr><td>10</td><td>40%</td><td>~67%</td></tr>
-      <tr><td>9</td><td>36%</td><td>~75%</td></tr>
-      <tr><td>8</td><td>32%</td><td>~82%</td></tr>
-      <tr><td>7</td><td>28%</td><td>~87%</td></tr>
-      <tr><td>6</td><td>24%</td><td>~91%</td></tr>
-      <tr><td>5</td><td>20%</td><td>~94%</td></tr>
-    </tbody>
-  </table>
-</div>
-</body>
-</html>
+<header><div class="container"><div class="eyebrow">Score reference · 25 questions</div><h1>AMC 8 Score Explorer</h1><p>Explore how correct answers relate to the approximate share of participants ranked above a score.</p></div></header>
+<main class="container">
+<section class="card" aria-labelledby="explore"><div class="head"><div><h2 id="explore">Explore a score</h2><p class="hint">Choose a score or select a point on the chart.</p></div><label for="score">Correct answers <select id="score"></select></label></div>
+<div class="stats" aria-live="polite"><div class="stat"><span>Correct answers</span><strong id="s">—</strong></div><div class="stat"><span>Correct rate</span><strong id="r">—</strong></div><div class="stat"><span>Approx. top</span><strong id="t">—</strong></div></div>
+<div class="chart-title"><strong>Score vs. approximate top %</strong><span>Higher score → smaller top percentage</span></div>
+<div class="chart-scroll"><svg id="chart" viewBox="0 0 960 380" role="img" aria-label="Line chart of correct answers versus approximate top percentage; select a point to inspect it"></svg></div>
+<div class="caption"><span>Correct answers (out of 25) →</span><span>Approximate top percentage ↑</span></div></section>
+<section class="card" aria-labelledby="all"><div class="head"><h2 id="all">All scores</h2><span class="hint">Select a row to explore</span></div><div class="table-wrap"><table><thead><tr><th scope="col">Correct</th><th scope="col">Correct rate</th><th scope="col">Approx. top</th></tr></thead><tbody id="rows"></tbody></table></div>
+<p class="note">Percentages are approximate values from the original reference table, not official year-specific AMC 8 percentiles. The chart uses 3.5% for ~3–4% and 0.5% for &lt;1%; labels retain the original wording. Actual rankings vary by year.</p></section>
+</main>
+<script>
+const data=[[5,'~94%',94],[6,'~91%',91],[7,'~87%',87],[8,'~82%',82],[9,'~75%',75],[10,'~67%',67],[11,'~58%',58],[12,'~50%',50],[13,'~42%',42],[14,'~35%',35],[15,'~30%',30],[16,'25%',25],[17,'~18%',18],[18,'~13%',13],[19,'~10%',10],[20,'~7%',7],[21,'5%',5],[22,'~3–4%',3.5],[23,'2.5%',2.5],[24,'1%',1],[25,'<1%',.5]];
+const svg=document.getElementById('chart'),picker=document.getElementById('score'),rows=document.getElementById('rows'),ns='http://www.w3.org/2000/svg';
+const x=n=>62+(n-5)*43.5,y=p=>320-p*2.85;
+function svgEl(tag,attrs){const e=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);svg.append(e);return e}
+for(const p of [0,20,40,60,80,100]){svgEl('line',{x1:62,x2:932,y1:y(p),y2:y(p),class:'grid'});svgEl('text',{x:48,y:y(p)+4,'text-anchor':'end',class:'axis'}).textContent=p+'%'}
+for(const n of [5,10,15,20,25])svgEl('text',{x:x(n),y:348,'text-anchor':'middle',class:'axis'}).textContent=n;
+svgEl('path',{d:data.map(([n,,p],i)=>(i?'L':'M')+x(n)+','+y(p)).join(' '),class:'curve'});
+const guide=svgEl('line',{class:'guide',y2:320}),dot=svgEl('circle',{r:8,class:'dot'});
+for(const [n,label,p] of data){const option=document.createElement('option');option.value=n;option.textContent=n;picker.append(option);
+const row=document.createElement('tr');row.tabIndex=0;row.dataset.score=n;for(const value of [n+' / 25',n*4+'%',label]){const cell=document.createElement('td');cell.textContent=value;row.append(cell)}row.addEventListener('click',()=>select(n));row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(n)}});rows.prepend(row);
+const hit=svgEl('circle',{cx:x(n),cy:y(p),r:15,class:'hit',tabindex:0,role:'button','aria-label':n+' correct, approximately top '+label});hit.addEventListener('click',()=>select(n));hit.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(n)}})}
+function select(n){const [,label,p]=data.find(d=>d[0]===Number(n));picker.value=n;document.getElementById('s').textContent=n+' / 25';document.getElementById('r').textContent=n*4+'%';document.getElementById('t').textContent=label;guide.setAttribute('x1',x(n));guide.setAttribute('x2',x(n));guide.setAttribute('y1',y(p));dot.setAttribute('cx',x(n));dot.setAttribute('cy',y(p));rows.querySelectorAll('tr').forEach(row=>row.classList.toggle('active',Number(row.dataset.score)===Number(n)))}
+picker.addEventListener('change',e=>select(e.target.value));select(15);
+</script>
+</body></html>
