@@ -609,22 +609,30 @@ function describeTime(iso){
   if(days<60)return Math.round(days/7)+' weeks ago';
   return 'on '+then.toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
 }
+function describeDuration(seconds){
+  if(typeof seconds!=='number'||!Number.isFinite(seconds)||seconds<0)return 'Not recorded';
+  const total=Math.round(seconds), hours=Math.floor(total/3600), minutes=Math.floor(total%3600/60), remaining=total%60;
+  return [hours?`${hours}h`:'',hours||minutes?`${minutes}m`:'',`${remaining}s`].filter(Boolean).join(' ');
+}
 // Questions answered in the last 7 days (skipped ones are never recorded as attempts).
 function renderRecent(){
   const since=Date.now()-7*86400000, list=$('recent-list');list.replaceChildren();
-  const recent=state.attempts.filter(a=>Date.parse(a.at)>=since).sort((x,y)=>y.at.localeCompare(x.at)).slice(0,60);
+  const recent=state.attempts.filter(a=>Date.parse(a.at)>=since).sort((x,y)=>y.at.localeCompare(x.at));
   $('recent-count').textContent=recent.length;
   if(!recent.length){list.textContent='No questions answered in the last 7 days.';return;}
+  const dayCounts=new Map();
+  for(const attempt of recent){const key=new Date(attempt.at).toDateString();dayCounts.set(key,(dayCounts.get(key)||0)+1);}
   let day='';
-  for(const attempt of recent){
-    const when=new Date(attempt.at), label=describeDay(when);
-    if(label!==day){day=label;const h=document.createElement('div');h.className='recent-day';h.textContent=label.toUpperCase();list.append(h);}
+  for(const attempt of recent.slice(0,60)){
+    const when=new Date(attempt.at), label=describeDay(when), key=when.toDateString();
+    if(key!==day){day=key;const h=document.createElement('div');h.className='recent-day';const count=dayCounts.get(key);h.textContent=`${label.toUpperCase()} · ${count} ${count===1?'question':'questions'} answered`;list.append(h);}
     const problem=state.items[attempt.id]?.problem;
     const b=document.createElement('button');b.className='queue-item recent-item';b.textContent=attempt.title;
     const meta=document.createElement('span');const verdict=document.createElement('span');
     verdict.className='verdict';verdict.dataset.ok=attempt.correct?'yes':'no';verdict.textContent=attempt.correct?'Correct':'Missed';
     meta.append(when.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+' · '+attempt.topic+(attempt.review?' · review':'')+' · ');meta.append(verdict);
-    b.append(meta);
+    const duration=document.createElement('span');duration.textContent='Time spent: '+describeDuration(attempt.seconds);
+    b.append(meta,duration);
     if(problem)b.onclick=()=>show(problem,'From your last 7 days. Review attempts do not change first-attempt accuracy.');else b.disabled=true;
     list.append(b);
   }
@@ -683,6 +691,7 @@ $('check').onclick=()=>{
   checked=true;const correct=P.record(state,current,selected,Math.round((Date.now()-started)/1000));activeAttempt=state.attempts[state.attempts.length-1];save();dashboard();
   $('feedback').hidden=false;$('feedback').className=correct?'':'wrong';
   $('feedback').textContent=correct?'Correct! Take a look at the solution, or keep going.':`Not quite. You chose ${selected}; the correct answer is ${current.answer}. Saved to your review queue.`;
+  $('feedback').append(' Time spent: '+describeDuration(activeAttempt.seconds)+'.');
   document.querySelectorAll('.choice').forEach(b=>{b.disabled=true;b.classList.toggle('correct',b.dataset.choice===current.answer);b.classList.toggle('incorrect',!correct&&b.dataset.choice===selected);});
   if(current.kind==='exam')$('solution-body').innerHTML=current.solution;else $('solution-body').textContent=current.explanation;
   $('solution').hidden=false;$('solution').open=!correct;$('check').hidden=true;$('next').hidden=false;$('skip').hidden=true;
