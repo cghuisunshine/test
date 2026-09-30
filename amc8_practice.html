@@ -635,7 +635,7 @@ function renderRecent(){
       day=key;const h=document.createElement('div');h.className='recent-day';const stats=dayStats.get(key);
       const percentage=Math.round(stats.correct/stats.total*100), totalTime=describeDuration(stats.timeRecorded?stats.seconds:undefined);
       const averageTime=describeDuration(stats.timeRecorded?stats.seconds/stats.total:undefined);
-      h.textContent=`${label.toUpperCase()} · ${stats.correct}/${stats.total}(${percentage}%) · ${totalTime}(${averageTime} per question)`;list.append(h);
+      h.textContent=`${label.toUpperCase()} · ${stats.correct}/${stats.total}(${percentage}%) · ${totalTime}(${averageTime})`;list.append(h);
     }
     const problem=state.items[attempt.id]?.problem;
     const b=document.createElement('button');b.className='queue-item recent-item';b.textContent=attempt.title;
