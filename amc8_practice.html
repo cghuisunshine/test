@@ -620,12 +620,18 @@ function renderRecent(){
   const recent=state.attempts.filter(a=>Date.parse(a.at)>=since).sort((x,y)=>y.at.localeCompare(x.at));
   $('recent-count').textContent=recent.length;
   if(!recent.length){list.textContent='No questions answered in the last 7 days.';return;}
-  const dayCounts=new Map();
-  for(const attempt of recent){const key=new Date(attempt.at).toDateString();dayCounts.set(key,(dayCounts.get(key)||0)+1);}
+  const dayStats=new Map();
+  for(const attempt of recent){
+    const key=new Date(attempt.at).toDateString(), stats=dayStats.get(key)||{correct:0,total:0,seconds:0,timeRecorded:true};
+    stats.total++;if(attempt.correct)stats.correct++;
+    if(typeof attempt.seconds==='number'&&Number.isFinite(attempt.seconds)&&attempt.seconds>=0)stats.seconds+=attempt.seconds;
+    else stats.timeRecorded=false;
+    dayStats.set(key,stats);
+  }
   let day='';
   for(const attempt of recent.slice(0,60)){
     const when=new Date(attempt.at), label=describeDay(when), key=when.toDateString();
-    if(key!==day){day=key;const h=document.createElement('div');h.className='recent-day';const count=dayCounts.get(key);h.textContent=`${label.toUpperCase()} · ${count} ${count===1?'question':'questions'} answered`;list.append(h);}
+    if(key!==day){day=key;const h=document.createElement('div');h.className='recent-day';const stats=dayStats.get(key);h.textContent=`${label.toUpperCase()} · ${stats.correct}/${stats.total} correct · total time: ${describeDuration(stats.timeRecorded?stats.seconds:undefined)}`;list.append(h);}
     const problem=state.items[attempt.id]?.problem;
     const b=document.createElement('button');b.className='queue-item recent-item';b.textContent=attempt.title;
     const meta=document.createElement('span');const verdict=document.createElement('span');
