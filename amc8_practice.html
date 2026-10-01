@@ -90,10 +90,12 @@ header,main{max-width:none}footer{max-width:none;margin:0 38px}
 /* The pad resizes when the question pins; browser scroll anchoring would shift the page and unpin it again. */
 body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 .math-text{font-family:"Latin Modern Math",Cambria,Georgia,serif;white-space:pre-wrap}
+.day-controls{margin-top:12px}.day-controls .day-filter{display:flex;align-items:center;gap:8px;align-self:center}.day-filter input{width:18px;height:18px;accent-color:var(--green)}.day-help{margin:6px 0 0}.day-question{display:block;font-size:12px;font-weight:650;color:var(--muted);margin-top:12px}
 </style></head>
 <body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Storage settings" hidden><h2>Storage settings</h2><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
-<div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option></select></label><label>Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
+<div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option><option value="day">By day · past 7 days</option></select></label><label>Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
+<div id="day-controls" hidden><div class="toolbar day-controls"><label>Practice day<select id="practice-day" aria-describedby="day-help"></select></label><label class="day-filter"><input id="day-exclude-correct" type="checkbox" aria-describedby="day-help">Exclude correctly answered questions</label></div><p id="day-help" class="small day-help">Revisit questions answered today or in the previous six days. The filter uses each question’s latest answer, including later retries.</p><label class="day-question">Question from this day<select id="day-question"></select></label></div>
 <p id="reason" class="reason"></p><article class="question-card"><div class="card-top"><button id="question-toggle" class="question-toggle" type="button" aria-expanded="true" aria-controls="question-area" title="Fold the question text away"><span class="question-toggle-icon" aria-hidden="true">▾</span><span class="question-toggle-label">Hide question</span><span class="question-toggle-title"></span></button><span class="card-actions"><button id="share-question" class="quiet share-btn" type="button" title="Share a link that opens this same question" aria-label="Share this question"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/></svg><span id="share-label">Share</span></button><button id="flag" class="quiet" type="button" aria-pressed="false">☆ Flag for review</button></span></div><div id="question-area" class="question-area"><div class="question-top"><span id="badge" class="badge"></span></div><h2 id="question-title" tabindex="-1"></h2><div id="question-meta" class="muted"></div><div id="statement" class="statement"></div><p id="image-warning" class="notice" hidden>Some formulas or diagrams could not load. Open the AoPS source below to view them before answering.</p><a id="source" target="_blank" rel="noopener noreferrer">View original on AoPS ↗</a></div>
 <fieldset id="choices"><legend>Choose your answer</legend><div class="answer-row"><div id="choice-list"></div><div class="actions"><button id="check" class="primary" disabled>Check answer</button><button id="next" hidden class="primary">Next question →</button><button id="skip" class="quiet">Skip for now</button></div></div></fieldset><div id="feedback" role="status" aria-live="polite" hidden></div><details id="solution" hidden><summary>Understand the solution</summary><div id="solution-body" class="statement"></div></details>
 <div id="steps-wrap" class="steps-wrap"><aside id="question-dock" class="question-dock" aria-label="Question (pinned while you draw)" hidden><button id="question-dock-top" class="quiet dock-top" type="button">↑ Back to question &amp; choices</button><h3 id="question-dock-title"></h3><div id="dock-scroll" class="dock-scroll"><div id="question-dock-body" class="statement"></div><details id="dock-solution" class="dock-solution" hidden><summary>Understand the solution</summary><div id="dock-solution-body" class="statement"></div></details></div><div class="dock-answer" role="group" aria-label="Answer from here"><div id="dock-choices" class="dock-choices"></div><div class="dock-actions"><button id="dock-check" class="primary" type="button" disabled>Check answer</button><button id="dock-next" class="primary" type="button" hidden>Next question →</button><button id="dock-skip" class="quiet" type="button">Skip for now</button></div><div id="dock-feedback" class="dock-feedback" hidden></div></div></aside><section id="photo-section" class="photo-section" aria-labelledby="photo-title">
@@ -166,6 +168,25 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
     const best = Math.min(...candidates.map(score));
     const near = candidates.filter(p=>score(p)===best);
     return near[Math.floor(rng()*near.length)];
+  }
+  function dayKey(value) {
+    const d=new Date(value);
+    if(!Number.isFinite(d.getTime()))return '';
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function pastDays(now=new Date()) {
+    return Array.from({length:7},(_,i)=>{const d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()-i);return {key:dayKey(d),date:d};});
+  }
+  function dayQuestions(state, day, filter='', excludeCorrect=false) {
+    const latest=new Map(), onDay=new Map();
+    for(const a of state.attempts){
+      const at=Date.parse(a.at);if(!Number.isFinite(at))continue;
+      const previous=latest.get(a.id);
+      if(!previous||at>=Date.parse(previous.at))latest.set(a.id,a);
+      if(dayKey(a.at)===day){const previousDay=onDay.get(a.id);if(!previousDay||at>=Date.parse(previousDay.at))onDay.set(a.id,a);}
+    }
+    return [...onDay.values()].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).filter(a=>!excludeCorrect||!latest.get(a.id).correct)
+      .map(a=>state.items[a.id]?.problem).filter(p=>p&&(!filter||p.topic===filter));
   }
   function record(state, problem, choice, elapsed) {
     if (!'ABCDE'.includes(choice) || choice.length !== 1) throw Error('Choose A–E.');
@@ -247,7 +268,7 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
     t=t.replace(/\\[A-Za-z]+/g,'').replace(/[{}]/g,'').replace(/\u0001/g,'$');
     return t.replace(/\s+/g,' ').replace(/\s+([,.;?!])/g,'$1').trim();
   }
-  const api={topics,levels,stats,targetLevel,chooseTopic,chooseExam,record,reviewQueue,generate,latexText};
+  const api={topics,levels,stats,targetLevel,chooseTopic,chooseExam,record,reviewQueue,generate,latexText,dayKey,pastDays,dayQuestions};
   if(typeof module!=='undefined') module.exports=api;
   root.Practice=api;
 })(typeof window!=='undefined'?window:globalThis);
@@ -653,6 +674,28 @@ function describeDay(date){
   const days=Math.round((startOfDay(new Date())-startOfDay(date))/86400000);
   return days<=0?'Today':days===1?'Yesterday':date.toLocaleDateString([],{weekday:'long'});
 }
+function refreshDayControls(){
+  const active=$('mode').value==='day';$('day-controls').hidden=!active;
+  if(!active)return [];
+  const daySelect=$('practice-day'),chosen=daySelect.value,topic=$('topic').value,exclude=$('day-exclude-correct').checked;
+  daySelect.replaceChildren(...P.pastDays().map(({key,date},i)=>{
+    const o=document.createElement('option');o.value=key;
+    const label=i===0?'Today':i===1?'Yesterday':date.toLocaleDateString([],{weekday:'long'});
+    const count=P.dayQuestions(state,key,topic,exclude).length;
+    o.textContent=`${label} · ${date.toLocaleDateString([],{month:'short',day:'numeric'})} · ${count} question${count===1?'':'s'}`;return o;
+  }));
+  if([...daySelect.options].some(o=>o.value===chosen))daySelect.value=chosen;
+  const questions=P.dayQuestions(state,daySelect.value,topic,exclude),picker=$('day-question');
+  const placeholder=document.createElement('option');placeholder.value='';placeholder.disabled=true;placeholder.textContent=questions.length?'Choose a question':'No matching questions';
+  picker.replaceChildren(placeholder,...questions.map((p,i)=>{const o=document.createElement('option');o.value=p.id;o.textContent=`${i+1}. ${p.title} · ${p.topic}`;return o;}));
+  picker.value=questions.some(p=>p.id===current?.id)?current.id:'';picker.disabled=!questions.length;
+  return questions;
+}
+function showDayQuestion(p,questions){
+  const date=new Date($('practice-day').value+'T12:00:00').toLocaleDateString([],{weekday:'long',month:'short',day:'numeric'});
+  show(p,p?`${date} · Question ${questions.findIndex(q=>q.id===p.id)+1} of ${questions.length}. This is review practice.`:`No questions match ${date}${$('day-exclude-correct').checked?' after excluding correct answers':''}${$('topic').value?' in '+$('topic').value:''}. Choose another day or adjust the filters.`);
+  $('day-question').value=p?p.id:'';
+}
 function dashboard(){
   const all=state.attempts, first=all.filter(a=>!a.review);
   $('attempt-count').textContent=all.length;
@@ -664,14 +707,14 @@ function dashboard(){
     const last=lastTried(item.problem.id);if(last){const when=document.createElement('span');when.className='queue-when';when.textContent='Last tried '+describeTime(last);when.title=new Date(last).toLocaleString();b.append(when);}b.onclick=()=>show(item.problem,'Retry a saved question. Review attempts do not change first-attempt accuracy.');$('queue').append(b);}
   if(!queue.length)$('queue').textContent='Nothing to review yet.';
   $('review-button').disabled=!queue.length;
-  renderRecent();renderLearningLog();
+  renderRecent();renderLearningLog();refreshDayControls();
 }
 function flagButton(){const manual=current && state.items[current.id]?.manual;$('flag').textContent=manual?'★ Flagged for review':'☆ Flag for review';$('flag').setAttribute('aria-pressed',String(!!manual));}
 function show(p,reason){
   resetPhotoReview();
   current=p;selected=null;checked=false;started=Date.now();$('reason').textContent=reason;
   $('feedback').hidden=true;$('solution').hidden=true;$('solution').open=false;$('solution-body').replaceChildren();$('image-warning').hidden=true;
-  $('check').hidden=false;$('check').disabled=true;$('next').hidden=true;$('skip').hidden=false;$('choices').hidden=!p;$('flag').hidden=!p;$('share-question').hidden=!p;$('check').hidden=!p;$('skip').hidden=!p;
+  $('check').hidden=false;$('check').disabled=true;$('next').hidden=true;$('skip').hidden=false;$('choices').hidden=!p;$('flag').hidden=!p;$('share-question').hidden=!p;$('check').hidden=!p;$('skip').hidden=!p;$('photo-section').hidden=!p;
   $('choice-list').replaceChildren();$('statement').replaceChildren();$('source').hidden=true;$('source').removeAttribute('href');
   if(!p){$('badge').hidden=false;$('badge').textContent='All clear';$('question-title').textContent='No questions in this selection';$('question-meta').textContent='Choose another topic or try original questions.';return;}
   $('badge').textContent=p.kind==='exam'?'':'ORIGINAL PRACTICE';$('badge').hidden=p.kind==='exam';$('question-title').textContent=p.title;
@@ -681,8 +724,13 @@ function show(p,reason){
   'ABCDE'.split('').forEach((letter,i)=>{const button=document.createElement('button');button.className='choice';button.type='button';button.textContent=letter;button.setAttribute('aria-pressed','false');button.dataset.choice=letter;if(p.choices){const value=document.createElement('small');value.textContent=p.choices[i];button.append(value);}button.onclick=()=>{if(checked)return;selected=letter;document.querySelectorAll('.choice').forEach(b=>{b.classList.toggle('selected',b===button);b.setAttribute('aria-pressed',String(b===button));});$('check').disabled=false;$('photo-section').hidden=false;updatePhotoControls();};$('choice-list').append(button);});
   $('photo-section').hidden=false;openDrawing();
 }
-function next(){
+function next(reset=false){
   const filter=$('topic').value, mode=$('mode').value;
+  const dayQuestions=refreshDayControls();
+  if(mode==='day'){
+    const index=reset===true?-1:dayQuestions.findIndex(p=>p.id===current?.id);
+    showDayQuestion(dayQuestions.length?dayQuestions[(index+1)%dayQuestions.length]:null,dayQuestions);return;
+  }
   if(mode==='review'){
     const q=P.reviewQueue(state,filter), other=q.filter(x=>x.problem.id!==current?.id);
     const p=(other[0]||q[0])?.problem;
@@ -710,7 +758,9 @@ $('check').onclick=()=>{
 };
 $('flag').onclick=()=>{if(!current)return;const old=state.items[current.id]||{problem:current,missed:false,manual:false};old.manual=!old.manual;state.items[current.id]=old;save();flagButton();dashboard();};
 $('next').onclick=()=>{next();$('question-title').focus();};$('skip').onclick=()=>{next();$('question-title').focus();};
-$('mode').onchange=next;$('topic').onchange=next;
+$('mode').onchange=()=>next(true);$('topic').onchange=()=>next(true);
+$('practice-day').onchange=()=>next(true);$('day-exclude-correct').onchange=()=>next(true);
+$('day-question').onchange=()=>{const questions=P.dayQuestions(state,$('practice-day').value,$('topic').value,$('day-exclude-correct').checked);const p=questions.find(p=>p.id===$('day-question').value);if(p)showDayQuestion(p,questions);};
 $('review-button').onclick=()=>{$('mode').value='review';$('topic').value='';next();$('question-title').focus();};
 $('export').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`amc8-progress-${(student||'student').replace(/[^\w-]+/g,'_')}-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 $('import').onchange=async()=>{const file=$('import').files[0];if(!file)return;try{if(file.size>15000000)throw Error('too large');const s=JSON.parse(await file.text());if(!validState(s))throw Error('invalid');if(!window.confirm('Replace '+(student||'this student')+'’s progress with this backup?'))return;state=canonicalize(s);save();dashboard();next();}catch(e){$('storage-message').textContent='This file is not a valid AMC 8 practice backup. Your current progress has been kept.';}finally{$('import').value='';}};
