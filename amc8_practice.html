@@ -91,12 +91,14 @@ header,main{max-width:none}footer{max-width:none;margin:0 38px}
 body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 .math-text{font-family:"Latin Modern Math",Cambria,Georgia,serif;white-space:pre-wrap}
 .day-controls{margin-top:12px}.day-controls .day-filter{display:flex;align-items:center;gap:8px;align-self:center}.day-filter input{width:18px;height:18px;accent-color:var(--green)}.day-help{margin:6px 0 0}.day-question{display:block;font-size:12px;font-weight:650;color:var(--muted);margin-top:12px}
+.live-panel{margin:14px 0;padding:12px 14px;border:1px solid #b8cbbb;border-radius:9px;background:#eaf3e8}.live-panel p{margin:0;font-size:13px}.live-link-row{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}.live-link-row input{flex:1;min-width:0;padding:9px;border:1px solid #cbd6cd;border-radius:7px;font-size:12px}.live-panel button{padding:8px 12px}.live-panel .live-exit{margin-top:8px}.card-actions{flex-wrap:wrap;justify-content:flex-end}.following-live .workspace>.toolbar,.following-live #day-controls,.following-live #next,.following-live #skip,.following-live #dock-next,.following-live #dock-skip{display:none!important}
 </style></head>
 <body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Storage settings" hidden><h2>Storage settings</h2><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
 <div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option><option value="day">By day · past 7 days</option></select></label><label>Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
 <div id="day-controls" hidden><div class="toolbar day-controls"><label>Practice day<select id="practice-day" aria-describedby="day-help"></select></label><label class="day-filter"><input id="day-exclude-correct" type="checkbox" aria-describedby="day-help">Exclude correctly answered questions</label></div><p id="day-help" class="small day-help">Revisit questions answered today or in the previous six days. The filter uses each question’s latest answer, including later retries.</p><label class="day-question">Question from this day<select id="day-question"></select></label></div>
-<p id="reason" class="reason"></p><article class="question-card"><div class="card-top"><button id="question-toggle" class="question-toggle" type="button" aria-expanded="true" aria-controls="question-area" title="Fold the question text away"><span class="question-toggle-icon" aria-hidden="true">▾</span><span class="question-toggle-label">Hide question</span><span class="question-toggle-title"></span></button><span class="card-actions"><button id="share-question" class="quiet share-btn" type="button" title="Share a link that opens this same question" aria-label="Share this question"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/></svg><span id="share-label">Share</span></button><button id="flag" class="quiet" type="button" aria-pressed="false">☆ Flag for review</button></span></div><div id="question-area" class="question-area"><div class="question-top"><span id="badge" class="badge"></span></div><h2 id="question-title" tabindex="-1"></h2><div id="question-meta" class="muted"></div><div id="statement" class="statement"></div><p id="image-warning" class="notice" hidden>Some formulas or diagrams could not load. Open the AoPS source below to view them before answering.</p><a id="source" target="_blank" rel="noopener noreferrer">View original on AoPS ↗</a></div>
+<section id="live-panel" class="live-panel" aria-label="Live question sharing" hidden><p id="live-status" role="status" aria-live="polite"></p><div id="live-link-row" class="live-link-row" hidden><input id="live-link" type="text" readonly aria-label="Live follow link"><button id="live-copy" class="primary" type="button">Copy link</button></div><button id="live-exit" class="quiet live-exit" type="button" hidden>Stop sharing</button></section>
+<p id="reason" class="reason"></p><article class="question-card"><div class="card-top"><button id="question-toggle" class="question-toggle" type="button" aria-expanded="true" aria-controls="question-area" title="Fold the question text away"><span class="question-toggle-icon" aria-hidden="true">▾</span><span class="question-toggle-label">Hide question</span><span class="question-toggle-title"></span></button><span class="card-actions"><button id="share-live" class="quiet share-btn" type="button" title="Share a live link that follows your questions">Share live</button><button id="share-question" class="quiet share-btn" type="button" title="Share a link that opens this same question" aria-label="Share this question"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/></svg><span id="share-label">Share</span></button><button id="flag" class="quiet" type="button" aria-pressed="false">☆ Flag for review</button></span></div><div id="question-area" class="question-area"><div class="question-top"><span id="badge" class="badge"></span></div><h2 id="question-title" tabindex="-1"></h2><div id="question-meta" class="muted"></div><div id="statement" class="statement"></div><p id="image-warning" class="notice" hidden>Some formulas or diagrams could not load. Open the AoPS source below to view them before answering.</p><a id="source" target="_blank" rel="noopener noreferrer">View original on AoPS ↗</a></div>
 <fieldset id="choices"><legend>Choose your answer</legend><div class="answer-row"><div id="choice-list"></div><div class="actions"><button id="check" class="primary" disabled>Check answer</button><button id="next" hidden class="primary">Next question →</button><button id="skip" class="quiet">Skip for now</button></div></div></fieldset><div id="feedback" role="status" aria-live="polite" hidden></div><details id="solution" hidden><summary>Understand the solution</summary><div id="solution-body" class="statement"></div></details>
 <div id="steps-wrap" class="steps-wrap"><aside id="question-dock" class="question-dock" aria-label="Question (pinned while you draw)" hidden><button id="question-dock-top" class="quiet dock-top" type="button">↑ Back to question &amp; choices</button><h3 id="question-dock-title"></h3><div id="dock-scroll" class="dock-scroll"><div id="question-dock-body" class="statement"></div><details id="dock-solution" class="dock-solution" hidden><summary>Understand the solution</summary><div id="dock-solution-body" class="statement"></div></details></div><div class="dock-answer" role="group" aria-label="Answer from here"><div id="dock-choices" class="dock-choices"></div><div class="dock-actions"><button id="dock-check" class="primary" type="button" disabled>Check answer</button><button id="dock-next" class="primary" type="button" hidden>Next question →</button><button id="dock-skip" class="quiet" type="button">Skip for now</button></div><div id="dock-feedback" class="dock-feedback" hidden></div></div></aside><section id="photo-section" class="photo-section" aria-labelledby="photo-title">
 <p id="ai-status" class="ai-toast" role="status" aria-live="polite"></p><div class="steps-head"><h3 id="photo-title">Show your steps <span class="muted">(optional)</span></h3><div class="photo-controls steps-icons"><button id="drawing-open" class="secondary camera-open step-icon" type="button" aria-controls="drawing-panel" aria-expanded="true" aria-label="Draw your steps" title="Draw your steps"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button id="photo-camera" class="secondary camera-open step-icon" type="button" aria-controls="camera-panel" aria-expanded="false" aria-label="Take a photo" title="Take a photo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.5"/></svg></button><label class="photo-picker step-icon" title="Choose a photo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg><input id="photo-file" type="file" accept="image/*" aria-label="Choose a photo"></label></div><div class="drawing-tools" role="group" aria-label="Drawing tools"><button id="drawing-close" class="secondary icon-btn close-btn" type="button" aria-label="Close pad" title="Close pad"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button><button id="drawing-pen" class="secondary icon-btn" type="button" aria-pressed="true" aria-label="Pen" title="Pen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button id="drawing-eraser" class="secondary icon-btn" type="button" aria-pressed="false" aria-label="Object eraser" title="Object eraser (or hold Shift)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L11 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button><button id="drawing-finger" class="secondary icon-btn" type="button" aria-pressed="false" aria-label="Draw with finger" title="Draw with finger (off: Apple Pencil only)" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg></button><div class="drawing-palette" role="group" aria-label="Pen color"><button class="color-swatch" type="button" data-drawing-color="#222223" style="--swatch:#222223" aria-label="Black" title="Black" aria-pressed="true"></button><button class="color-swatch" type="button" data-drawing-color="#d45e53" style="--swatch:#d45e53" aria-label="Red" title="Red" aria-pressed="false"></button><button class="color-swatch" type="button" data-drawing-color="#3a83f6" style="--swatch:#3a83f6" aria-label="Blue" title="Blue" aria-pressed="false"></button></div><button id="drawing-undo" class="secondary icon-btn" type="button" aria-label="Undo" title="Undo" disabled><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button><button id="drawing-clear" class="secondary icon-btn" type="button" aria-label="Clear" title="Clear all" disabled><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6M14 11v6"/></svg></button></div><div class="ai-actions"><button id="ai-check" class="primary ai-icon" type="button" disabled aria-label="AI check my steps" title="AI check my steps. Sends your drawing or photo, this question and your selected answer to lakesideart.gochatus.org. Feedback is saved in this browser; the image is not."><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></button><button id="ai-cancel" class="secondary ai-icon" type="button" hidden aria-label="Cancel review" title="Cancel review"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button></div></div>
@@ -503,9 +505,15 @@ store.push=async payload=>{
   if(!docRef)return false;const ref=docRef;pendingLocalUpdatedAt=payload.updatedAt;
   try{await ref.set(payload);if(docRef===ref)lastRemoteUpdatedAt=payload.updatedAt;onStatus('synced');return true;}catch(e){onStatus('error',e);return false;}
 };
+// Live sessions use separate, random documents and never include student state.
+store.liveRef=async(id,key)=>{
+  if(!root.LivePractice.validId(id))throw Error('invalid-live-session');
+  await ensureFirebase(key||store.getApiKey());
+  return db.collection(FIREBASE_COLLECTION).doc('live-'+id);
+};
 root.StudentStore=store;
 })(window);
-</script><script>'use strict';
+</script><script src="amc8_live_share.js"></script><script>'use strict';
 const bank=JSON.parse(document.getElementById('exam-bank').textContent);
 const AI=window.PhotoReview;
 const P=window.Practice, $=id=>document.getElementById(id), KEY='amc8Practice.v1';
@@ -541,6 +549,44 @@ function canonicalize(s) {
 }
 // ---- Per-student history (see students.js): local-first, optional Firebase sync ----
 const students=window.StudentStore;let student='', updatedAt='';
+const liveParams=new URLSearchParams(location.search),followRequested=liveParams.has('follow');
+let followedQuestion=null;
+const live=new window.LivePractice.Session({openDoc:(id,key)=>students.liveRef(id,key),onStatus:setLiveStatus,
+  onQuestion:data=>{
+    const p=window.LivePractice.unpack(data,bank);
+    if(data!==null&&!p){setLiveStatus('invalid');return;}
+    followedQuestion=p;show(p,p?'Following live — your answers and progress are your own.':'The host has no question open yet.',true);
+  }});
+function setLiveStatus(status,error){
+  const following=live.role==='follower',hosting=['host','ending'].includes(live.role);
+  document.body.classList.toggle('following-live',following);
+  $('share-live').hidden=!current||following||hosting;$('share-live').disabled=live.role==='starting';
+  $('live-panel').hidden=status==='idle';$('live-link-row').hidden=!hosting||!$('live-link').value;
+  $('live-exit').hidden=!following&&!hosting;$('live-exit').disabled=live.role==='ending';$('live-exit').textContent=following?'Leave live session':'Stop sharing';
+  const messages={publishing:'Sharing the current question… waiting for a connection if offline.',starting:'Starting live sharing…',hosting:'Live sharing is on. Anyone with this link follows the question you open.',ending:'Stopping live sharing…',connecting:'Connecting to the live session…',following:'Following live. Questions change automatically when the host moves on.',reconnecting:'Reconnecting… showing the last shared question.',ended:'The host stopped sharing, or this session has expired. You can leave to practice on your own.',unavailable:'This live session is unavailable. Check the link or ask the host for a new one.',invalid:'This live session contains an unavailable question.',
+    'publish-error':'The latest question could not be shared. Check your connection and try again.', 'stop-error':'Sharing could not be stopped. Check your connection and try Stop sharing again.'};
+  $('live-status').textContent=messages[status]||'Live sharing could not connect.';
+  if(status==='error')$('live-status').textContent=error?.message==='missing-firebase-api-key'?'Live sharing needs Firebase sync. Open Settings (☰), enter your Firebase API key, then try Share live again.':error?.code==='permission-denied'?'Firebase denied access to live sharing. Check the database permissions or use a regular question link.':'Live sharing could not connect. Check your connection and try again.';
+}
+$('share-live').onclick=async()=>{
+  if(!current||live.role!=='idle')return;
+  $('live-link').value='';
+  try{
+    const id=await live.startHost(current);if(!id)return;
+    $('live-link').value=window.LivePractice.shareURL(location.href,id,students.getApiKey());setLiveStatus('hosting');
+    await live.publish(current);
+  }catch(error){/* Status is reported by the session. */}
+};
+$('live-copy').onclick=async()=>{
+  try{await navigator.clipboard.writeText($('live-link').value);$('live-copy').textContent='Copied';setTimeout(()=>$('live-copy').textContent='Copy link',2000);}
+  catch(error){$('live-link').focus();$('live-link').select();$('live-status').textContent='Select and copy the live link above.';}
+};
+$('live-exit').onclick=async()=>{
+  if(live.role==='follower'){
+    live.leave();followedQuestion=null;const u=new URL(location.href);u.searchParams.delete('follow');u.hash='';history.replaceState(null,'',u);setLiveStatus('idle');
+    if(student)next();else showLogin();
+  }else try{await live.stopHost();$('live-link').value='';}catch(error){/* Keep Stop sharing available for retry. */}
+};
 const payloadFor=()=>({version:1,student,updatedAt,state:JSON.stringify(state)});
 function readPayload(p){try{if(!p||!p.state)return null;const s=typeof p.state==='string'?JSON.parse(p.state):p.state;return validState(s)?canonicalize(s):null;}catch(e){return null;}}
 function save(){
@@ -592,7 +638,8 @@ function useStudent(name){
   else{const legacy=students.takeLegacy();if(legacy&&validState(legacy)){state=canonicalize(legacy);save();$('storage-message').textContent='Earlier progress on this device was moved into '+student+'’s history.';}}
   $('student-name-label').textContent=student;document.title='AMC 8 · Practice Studio · '+student;
   hideLogin();dashboard();
-  if(pendingShare){const p=pendingShare;pendingShare=null;show(p,'Shared question — give it a try.');}else next();
+  if(live.role==='follower')show(followedQuestion,'Following live — your answers and progress are your own.',true);
+  else if(pendingShare){const p=pendingShare;pendingShare=null;show(p,'Shared question — give it a try.');}else next();
   startSync();
 }
 function showLogin(){
@@ -611,7 +658,7 @@ document.addEventListener('click',e=>{if(!$('settings-panel').hidden&&!e.target.
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('settings-panel').hidden){setSettings(false);$('settings-button').focus();}});
 $('firebase-key').value=students.getApiKey()?'••••••••':'';
 $('sync-enable').onclick=async()=>{const v=$('firebase-key').value.trim();if(v&&!/^•+$/.test(v))students.setApiKey(v);if(!students.getApiKey()){$('sync-status').textContent='Enter the Firebase API key first.';return;}$('firebase-key').value='••••••••';startSync();};
-$('sync-local').onclick=()=>{students.setApiKey('');students.stop();$('firebase-key').value='';syncStatus('local');};
+$('sync-local').onclick=async()=>{if(live.role==='host'){try{await live.stopHost();$('live-link').value='';}catch(error){return;}}students.setApiKey('');students.stop();$('firebase-key').value='';syncStatus('local');};
 $('sync-share').onclick=()=>{const url=students.shareLink();if(!url){$('sync-status').textContent='Turn on sync first. A sync link only carries the key, never progress.';return;}
   if(navigator.share)navigator.share({title:'AMC 8 Practice Studio',url}).catch(()=>{});else window.prompt('Copy this link to open synced practice on another device:',url);};
 for(const t of P.topics){const o=document.createElement('option');o.value=t;o.textContent=t;$('topic').append(o);}
@@ -710,12 +757,15 @@ function dashboard(){
   renderRecent();renderLearningLog();refreshDayControls();
 }
 function flagButton(){const manual=current && state.items[current.id]?.manual;$('flag').textContent=manual?'★ Flagged for review':'☆ Flag for review';$('flag').setAttribute('aria-pressed',String(!!manual));}
-function show(p,reason){
+function show(p,reason,fromLive=false){
+  if(live.role==='follower'&&!fromLive){p=followedQuestion;reason='Following live — your answers and progress are your own.';}
   resetPhotoReview();
   current=p;selected=null;checked=false;started=Date.now();$('reason').textContent=reason;
   $('feedback').hidden=true;$('solution').hidden=true;$('solution').open=false;$('solution-body').replaceChildren();$('image-warning').hidden=true;
   $('check').hidden=false;$('check').disabled=true;$('next').hidden=true;$('skip').hidden=false;$('choices').hidden=!p;$('flag').hidden=!p;$('share-question').hidden=!p;$('check').hidden=!p;$('skip').hidden=!p;$('photo-section').hidden=!p;
+  $('share-live').hidden=!p||live.role==='follower'||['host','ending'].includes(live.role);
   $('choice-list').replaceChildren();$('statement').replaceChildren();$('source').hidden=true;$('source').removeAttribute('href');
+  live.publish(p).catch(()=>{});
   if(!p){$('badge').hidden=false;$('badge').textContent='All clear';$('question-title').textContent='No questions in this selection';$('question-meta').textContent='Choose another topic or try original questions.';return;}
   $('badge').textContent=p.kind==='exam'?'':'ORIGINAL PRACTICE';$('badge').hidden=p.kind==='exam';$('question-title').textContent=p.title;
   $('question-meta').textContent=`${p.topic} · ${P.levels[p.level-1]}${p.kind==='exam'?' (estimated)':''}`;
@@ -725,6 +775,7 @@ function show(p,reason){
   $('photo-section').hidden=false;openDrawing();
 }
 function next(reset=false){
+  if(live.role==='follower')return;
   const filter=$('topic').value, mode=$('mode').value;
   const dayQuestions=refreshDayControls();
   if(mode==='day'){
@@ -1056,6 +1107,11 @@ if('IntersectionObserver' in window)new IntersectionObserver(([e])=>{above=!e.is
 new MutationObserver(()=>{if(!dock.hidden)refresh();}).observe($('statement'),{childList:true,subtree:true});
 new MutationObserver(update).observe(document.querySelector('.question-card'),{attributes:true,attributeFilter:['class']});
 $('question-dock-top').onclick=()=>{document.querySelector('.question-card').scrollIntoView({behavior:'smooth',block:'start'});};})();
-dashboard();next();
-if(students.current())useStudent(students.current());else showLogin();
+dashboard();if(!followRequested)next();else show(null,'Connecting to the live session…',true);
+if(followRequested){
+  const id=liveParams.get('follow'),key=new URLSearchParams(location.hash.slice(1)).get('liveKey')||students.getApiKey();
+  if(window.LivePractice.validId(id))live.follow(id,key).catch(()=>{});
+  else{live.role='follower';setLiveStatus('invalid');}
+}
+if(students.current())useStudent(students.current());else if(!followRequested)showLogin();
 </script></body></html>
