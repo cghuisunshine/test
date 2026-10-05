@@ -91,11 +91,13 @@ header,main{max-width:none}footer{max-width:none;margin:0 38px}
 body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 .math-text{font-family:"Latin Modern Math",Cambria,Georgia,serif;white-space:pre-wrap}
 .day-controls{margin-top:12px}.day-controls .day-filter{display:flex;align-items:center;gap:8px;align-self:center}.day-filter input{width:18px;height:18px;accent-color:var(--green)}.day-help{margin:6px 0 0}.day-question{display:block;font-size:12px;font-weight:650;color:var(--muted);margin-top:12px}
-.live-panel{margin:14px 0;padding:12px 14px;border:1px solid #b8cbbb;border-radius:9px;background:#eaf3e8}.live-panel p{margin:0;font-size:13px}.live-link-row{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}.live-link-row input{flex:1;min-width:0;padding:9px;border:1px solid #cbd6cd;border-radius:7px;font-size:12px}.live-panel button{padding:8px 12px}.live-panel .live-exit{margin-top:8px}.card-actions{flex-wrap:wrap;justify-content:flex-end}.following-live .workspace>.toolbar,.following-live #day-controls,.following-live #next,.following-live #skip,.following-live #dock-next,.following-live #dock-skip{display:none!important}
+.year-controls{margin-top:12px;padding:16px;border:1px solid var(--line);border-radius:10px;background:#ffffff80}.year-progress{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.year-progress .quiet{padding:7px 10px;border:1px solid var(--line)}.year-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(36px,1fr));gap:6px;margin-top:10px}.year-grid button{padding:8px 0;background:#fff;border:1px solid #cbd6cd;color:var(--ink);font-size:12px}.year-grid button.correct{background:#e2f3e7;border-color:#387b50}.year-grid button.incorrect{background:#fff1e5;border-color:#ae5037}.year-grid button[aria-current=true]{outline:2px solid var(--green);outline-offset:1px;font-weight:800}.year-help{margin:9px 0 0}.year-notice{margin:10px 0 0}
+.live-panel{margin:14px 0;padding:12px 14px;border:1px solid #b8cbbb;border-radius:9px;background:#eaf3e8}.live-panel p{margin:0;font-size:13px}.live-link-row{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}.live-link-row input{flex:1;min-width:0;padding:9px;border:1px solid #cbd6cd;border-radius:7px;font-size:12px}.live-panel button{padding:8px 12px}.live-panel .live-exit{margin-top:8px}.card-actions{flex-wrap:wrap;justify-content:flex-end}.following-live .workspace>.toolbar,.following-live #day-controls,.following-live #year-controls,.following-live #next,.following-live #skip,.following-live #dock-next,.following-live #dock-skip{display:none!important}
 </style></head>
 <body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Storage settings" hidden><h2>Storage settings</h2><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
-<div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option><option value="day">By day · past 7 days</option></select></label><label>Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
+<div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="year">By year · 25-problem sets</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option><option value="day">By day · past 7 days</option></select></label><label id="topic-control">Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
+<div id="year-controls" class="year-controls" hidden><div class="toolbar"><label>Exam year<select id="practice-year" aria-describedby="year-help year-notice"></select></label><label>Problem<select id="year-question"></select></label></div><div class="year-progress"><button id="year-previous" class="quiet" type="button">← Previous problem</button><span id="year-progress" class="small" role="status" aria-live="polite"></span></div><div id="year-grid" class="year-grid" role="group" aria-label="Problems in the selected year"></div><p id="year-help" class="small year-help">Practice the year's problems in order, or jump to any number. Green = correct; orange = missed, using your latest answer. Progress is saved with your student history.</p><p id="year-notice" class="notice year-notice" hidden></p></div>
 <div id="day-controls" hidden><div class="toolbar day-controls"><label>Practice day<select id="practice-day" aria-describedby="day-help"></select></label><label class="day-filter"><input id="day-exclude-correct" type="checkbox" aria-describedby="day-help">Exclude correctly answered questions</label></div><p id="day-help" class="small day-help">Revisit questions answered today or in the previous six days. The filter uses each question’s latest answer, including later retries.</p><label class="day-question">Question from this day<select id="day-question"></select></label></div>
 <section id="live-panel" class="live-panel" aria-label="Live question sharing" hidden><p id="live-status" role="status" aria-live="polite"></p><div id="live-link-row" class="live-link-row" hidden><input id="live-link" type="text" readonly aria-label="Live follow link"><button id="live-copy" class="primary" type="button">Copy link</button></div><button id="live-exit" class="quiet live-exit" type="button" hidden>Stop sharing</button></section>
 <p id="reason" class="reason"></p><article class="question-card"><div class="card-top"><button id="question-toggle" class="question-toggle" type="button" aria-expanded="true" aria-controls="question-area" title="Fold the question text away"><span class="question-toggle-icon" aria-hidden="true">▾</span><span class="question-toggle-label">Hide question</span><span class="question-toggle-title"></span></button><span class="card-actions"><button id="share-live" class="quiet share-btn" type="button" title="Share a live link that follows your questions">Share live</button><button id="share-question" class="quiet share-btn" type="button" title="Share a link that opens this same question" aria-label="Share this question"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/></svg><span id="share-label">Share</span></button><button id="flag" class="quiet" type="button" aria-pressed="false">☆ Flag for review</button></span></div><div id="question-area" class="question-area"><div class="question-top"><span id="badge" class="badge"></span></div><h2 id="question-title" tabindex="-1"></h2><div id="question-meta" class="muted"></div><div id="statement" class="statement"></div><p id="image-warning" class="notice" hidden>Some formulas or diagrams could not load. Open the AoPS source below to view them before answering.</p><a id="source" target="_blank" rel="noopener noreferrer">View original on AoPS ↗</a></div>
@@ -190,6 +192,29 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
     return [...onDay.values()].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).filter(a=>!excludeCorrect||!latest.get(a.id).correct)
       .map(a=>state.items[a.id]?.problem).filter(p=>p&&(!filter||p.topic===filter));
   }
+  function problemNumber(problem) {
+    return Number(problem.id.match(/^exam-\d{4}-(\d+)$/)?.[1]) || 0;
+  }
+  function yearQuestions(bank, year) {
+    return bank.filter(p=>p.kind==='exam' && p.year===Number(year))
+      .sort((a,b)=>problemNumber(a)-problemNumber(b));
+  }
+  function examYears(bank) {
+    return [...new Set(bank.filter(p=>p.kind==='exam').map(p=>p.year))].sort((a,b)=>b-a).map(year=>{
+      const numbers=new Set(yearQuestions(bank,year).map(problemNumber));
+      const missing=Array.from({length:25},(_,i)=>i+1).filter(n=>!numbers.has(n));
+      return {year,count:numbers.size,missing};
+    });
+  }
+  function yearProgress(state, questions) {
+    const ids=new Set(questions.map(p=>p.id)), latest=new Map();
+    for(const a of state.attempts){
+      if(!ids.has(a.id) || !Number.isFinite(Date.parse(a.at)))continue;
+      const previous=latest.get(a.id);
+      if(!previous || Date.parse(a.at)>=Date.parse(previous.at))latest.set(a.id,a);
+    }
+    return {answered:latest.size,correct:[...latest.values()].filter(a=>a.correct).length,latest};
+  }
   function record(state, problem, choice, elapsed) {
     if (!'ABCDE'.includes(choice) || choice.length !== 1) throw Error('Choose A–E.');
     const review = state.attempts.some(a=>a.id===problem.id);
@@ -270,7 +295,7 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
     t=t.replace(/\\[A-Za-z]+/g,'').replace(/[{}]/g,'').replace(/\u0001/g,'$');
     return t.replace(/\s+/g,' ').replace(/\s+([,.;?!])/g,'$1').trim();
   }
-  const api={topics,levels,stats,targetLevel,chooseTopic,chooseExam,record,reviewQueue,generate,latexText,dayKey,pastDays,dayQuestions};
+  const api={topics,levels,stats,targetLevel,chooseTopic,chooseExam,record,reviewQueue,generate,latexText,dayKey,pastDays,dayQuestions,problemNumber,yearQuestions,examYears,yearProgress};
   if(typeof module!=='undefined') module.exports=api;
   root.Practice=api;
 })(typeof window!=='undefined'?window:globalThis);
@@ -639,7 +664,7 @@ function useStudent(name){
   $('student-name-label').textContent=student;document.title='AMC 8 · Practice Studio · '+student;
   hideLogin();dashboard();
   if(live.role==='follower')show(followedQuestion,'Following live — your answers and progress are your own.',true);
-  else if(pendingShare){const p=pendingShare;pendingShare=null;show(p,'Shared question — give it a try.');}else next();
+  else if(pendingShare){const p=pendingShare;pendingShare=null;show(p,'Shared question — give it a try.');}else next(true);
   startSync();
 }
 function showLogin(){
@@ -662,6 +687,10 @@ $('sync-local').onclick=async()=>{if(live.role==='host'){try{await live.stopHost
 $('sync-share').onclick=()=>{const url=students.shareLink();if(!url){$('sync-status').textContent='Turn on sync first. A sync link only carries the key, never progress.';return;}
   if(navigator.share)navigator.share({title:'AMC 8 Practice Studio',url}).catch(()=>{});else window.prompt('Copy this link to open synced practice on another device:',url);};
 for(const t of P.topics){const o=document.createElement('option');o.value=t;o.textContent=t;$('topic').append(o);}
+const examYears=P.examYears(bank);
+for(const {year,count} of examYears){const o=document.createElement('option');o.value=year;o.textContent=`${year} · ${count===25?'25 problems':count+'/25 available'}`;$('practice-year').append(o);}
+// Start with the newest complete set; incomplete caches are labelled explicitly.
+$('practice-year').value=(examYears.find(y=>!y.missing.length)||examYears[0])?.year||'';
 $('bank-count').textContent=`${bank.length.toLocaleString()} gradable past-exam questions`;
 // "Last tried" for review-queue items: the most recent attempt on that question.
 function lastTried(id){let at='';for(const a of state.attempts)if(a.id===id&&a.at>at)at=a.at;return at;}
@@ -743,6 +772,38 @@ function showDayQuestion(p,questions){
   show(p,p?`${date} · Question ${questions.findIndex(q=>q.id===p.id)+1} of ${questions.length}. This is review practice.`:`No questions match ${date}${$('day-exclude-correct').checked?' after excluding correct answers':''}${$('topic').value?' in '+$('topic').value:''}. Choose another day or adjust the filters.`);
   $('day-question').value=p?p.id:'';
 }
+function refreshYearControls(){
+  const active=$('mode').value==='year';$('year-controls').hidden=!active;$('topic-control').hidden=active;$('topic').disabled=active;
+  $('next').textContent='Next question →';$('skip').textContent='Skip for now';
+  if(!active)return [];
+  const year=$('practice-year').value,questions=P.yearQuestions(bank,year),progress=P.yearProgress(state,questions),picker=$('year-question');
+  const inSet=questions.some(p=>p.id===current?.id);
+  const placeholder=document.createElement('option');placeholder.value='';placeholder.disabled=true;placeholder.textContent='Choose a problem';
+  picker.replaceChildren(placeholder,...questions.map(p=>{const o=document.createElement('option');o.value=p.id;const a=progress.latest.get(p.id);o.textContent=`Problem ${P.problemNumber(p)}${a?a.correct?' · Correct':' · Missed':''}`;return o;}));
+  picker.value=inSet?current.id:'';picker.disabled=!questions.length;
+  $('year-progress').textContent=`${progress.answered}/${questions.length} answered · ${progress.correct} correct${progress.answered===questions.length&&questions.length?' · Set complete!':''}`;
+  $('year-previous').disabled=!inSet||questions[0]?.id===current.id;
+  const last=inSet&&questions[questions.length-1].id===current.id;
+  if(last){$('next').textContent='Back to problem 1 →';$('skip').textContent='Back to problem 1 →';}
+  const byNumber=new Map(questions.map(p=>[P.problemNumber(p),p]));
+  $('year-grid').replaceChildren(...Array.from({length:25},(_,i)=>{
+    const number=i+1,p=byNumber.get(number),a=p&&progress.latest.get(p.id),b=document.createElement('button');
+    b.type='button';b.textContent=number;b.disabled=!p;
+    b.className=a?a.correct?'correct':'incorrect':'';
+    const label=`Problem ${number}${!p?' · Unavailable':a?a.correct?' · Correct':' · Missed':' · Not answered'}`;
+    b.setAttribute('aria-label',label);b.title=label;
+    if(p && p.id===current?.id)b.setAttribute('aria-current','true');
+    if(p)b.onclick=()=>{showYearQuestion(p);$('question-title').focus();};return b;
+  }));
+  const missing=examYears.find(y=>y.year===Number(year))?.missing||[];
+  $('year-notice').hidden=!missing.length;
+  $('year-notice').textContent=missing.length?`This year's cache has ${questions.length} of 25 problems. Unavailable: ${missing.join(', ')}. Choose a year labelled “25 problems” for a complete set.`:'';
+  return questions;
+}
+function showYearQuestion(p){
+  const n=p?P.problemNumber(p):0,seen=p&&state.attempts.some(a=>a.id===p.id);
+  show(p,p?`${$('practice-year').value} · Problem ${n} of 25${n===25?' · Last problem in this year':''}. ${seen?'Retrying this problem counts as review.':'Work through the set at your own pace.'}`:'No cached questions are available for this year.');
+}
 function dashboard(){
   const all=state.attempts, first=all.filter(a=>!a.review);
   $('attempt-count').textContent=all.length;
@@ -754,13 +815,14 @@ function dashboard(){
     const last=lastTried(item.problem.id);if(last){const when=document.createElement('span');when.className='queue-when';when.textContent='Last tried '+describeTime(last);when.title=new Date(last).toLocaleString();b.append(when);}b.onclick=()=>show(item.problem,'Retry a saved question. Review attempts do not change first-attempt accuracy.');$('queue').append(b);}
   if(!queue.length)$('queue').textContent='Nothing to review yet.';
   $('review-button').disabled=!queue.length;
-  renderRecent();renderLearningLog();refreshDayControls();
+  renderRecent();renderLearningLog();refreshDayControls();refreshYearControls();
 }
 function flagButton(){const manual=current && state.items[current.id]?.manual;$('flag').textContent=manual?'★ Flagged for review':'☆ Flag for review';$('flag').setAttribute('aria-pressed',String(!!manual));}
 function show(p,reason,fromLive=false){
   if(live.role==='follower'&&!fromLive){p=followedQuestion;reason='Following live — your answers and progress are your own.';}
   resetPhotoReview();
   current=p;selected=null;checked=false;started=Date.now();$('reason').textContent=reason;
+  refreshYearControls();
   $('feedback').hidden=true;$('solution').hidden=true;$('solution').open=false;$('solution-body').replaceChildren();$('image-warning').hidden=true;
   $('check').hidden=false;$('check').disabled=true;$('next').hidden=true;$('skip').hidden=false;$('choices').hidden=!p;$('flag').hidden=!p;$('share-question').hidden=!p;$('check').hidden=!p;$('skip').hidden=!p;$('photo-section').hidden=!p;
   $('share-live').hidden=!p||live.role==='follower'||['host','ending'].includes(live.role);
@@ -778,6 +840,11 @@ function next(reset=false){
   if(live.role==='follower')return;
   const filter=$('topic').value, mode=$('mode').value;
   const dayQuestions=refreshDayControls();
+  const yearQuestions=refreshYearControls();
+  if(mode==='year'){
+    const index=reset===true?-1:yearQuestions.findIndex(p=>p.id===current?.id);
+    showYearQuestion(yearQuestions.length?yearQuestions[(index+1)%yearQuestions.length]:null);return;
+  }
   if(mode==='day'){
     const index=reset===true?-1:dayQuestions.findIndex(p=>p.id===current?.id);
     showDayQuestion(dayQuestions.length?dayQuestions[(index+1)%dayQuestions.length]:null,dayQuestions);return;
@@ -810,6 +877,9 @@ $('check').onclick=()=>{
 $('flag').onclick=()=>{if(!current)return;const old=state.items[current.id]||{problem:current,missed:false,manual:false};old.manual=!old.manual;state.items[current.id]=old;save();flagButton();dashboard();};
 $('next').onclick=()=>{next();$('question-title').focus();};$('skip').onclick=()=>{next();$('question-title').focus();};
 $('mode').onchange=()=>next(true);$('topic').onchange=()=>next(true);
+$('practice-year').onchange=()=>next(true);
+$('year-question').onchange=()=>{const questions=P.yearQuestions(bank,$('practice-year').value),p=questions.find(p=>p.id===$('year-question').value);if(p)showYearQuestion(p);};
+$('year-previous').onclick=()=>{const questions=P.yearQuestions(bank,$('practice-year').value),index=questions.findIndex(p=>p.id===current?.id);if(index>0){showYearQuestion(questions[index-1]);$('question-title').focus();}};
 $('practice-day').onchange=()=>next(true);$('day-exclude-correct').onchange=()=>next(true);
 $('day-question').onchange=()=>{const questions=P.dayQuestions(state,$('practice-day').value,$('topic').value,$('day-exclude-correct').checked);const p=questions.find(p=>p.id===$('day-question').value);if(p)showDayQuestion(p,questions);};
 $('review-button').onclick=()=>{$('mode').value='review';$('topic').value='';next();$('question-title').focus();};
@@ -1059,11 +1129,11 @@ canvas.addEventListener('touchend',e=>{if(!tap||e.touches.length)return;const qu
 const syncChoices=()=>{const real=[...document.querySelectorAll('#choice-list .choice')];
   if(box.children.length!==real.length||real.some((b,i)=>box.children[i].dataset.for!==b.dataset.choice)){box.replaceChildren(...real.map(b=>{const d=document.createElement('button');d.type='button';d.className='choice';d.dataset.for=b.dataset.choice;d.onclick=()=>document.querySelector(`#choice-list .choice[data-choice="${d.dataset.for}"]`)?.click();return d;}));}
   real.forEach((b,i)=>{const d=box.children[i];d.className=b.className;d.textContent=b.dataset.choice;d.disabled=b.disabled;d.setAttribute('aria-pressed',b.getAttribute('aria-pressed')||'false');d.setAttribute('aria-label','Answer '+b.dataset.choice+(b.querySelector('small')?': '+b.querySelector('small').textContent:''));});};
-const syncButtons=()=>{for(const id of ['check','next','skip']){const r=$(id),d=$('dock-'+id);d.hidden=r.hidden;d.disabled=r.disabled;}
+const syncButtons=()=>{for(const id of ['check','next','skip']){const r=$(id),d=$('dock-'+id);d.hidden=r.hidden;d.disabled=r.disabled;d.textContent=r.textContent;}
   const f=$('feedback'),df=$('dock-feedback');df.hidden=f.hidden;df.className='dock-feedback'+(f.classList.contains('wrong')?' wrong':'');df.textContent=f.textContent;};
 for(const id of ['check','next','skip'])$('dock-'+id).onclick=()=>$(id).click();
 new MutationObserver(syncChoices).observe($('choice-list'),{childList:true,subtree:true,attributes:true,attributeFilter:['class','disabled','aria-pressed']});
-const mo=new MutationObserver(syncButtons);for(const id of ['check','next','skip'])mo.observe($(id),{attributes:true,attributeFilter:['hidden','disabled']});
+const mo=new MutationObserver(syncButtons);for(const id of ['check','next','skip'])mo.observe($(id),{attributes:true,attributeFilter:['hidden','disabled'],childList:true});
 mo.observe($('feedback'),{attributes:true,childList:true,subtree:true,characterData:true});
 syncChoices();syncButtons();})();
 // The pinned copy mirrors "Understand the solution": same content, opened when the main one opens after a check.
