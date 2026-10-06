@@ -8,6 +8,7 @@ const html = fs.readFileSync(`${__dirname}/amc8_practice.html`, 'utf8');
 const core = html.match(/<script>\/\* Pure practice logic[\s\S]*?<\/script>/)[0]
   .replace(/^<script>|<\/script>$/g, '');
 const context = { module: { exports: {} }, Date };
+vm.runInNewContext(fs.readFileSync(`${__dirname}/amc8_activity.js`, 'utf8'), context);
 vm.runInNewContext(core, context);
 const P = context.module.exports;
 const ids = questions => Array.from(questions, p => p.id);

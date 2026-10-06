@@ -5,6 +5,8 @@ const vm = require('node:vm');
 const html = fs.readFileSync(`${__dirname}/amc8_practice.html`, 'utf8');
 const script = marker => html.slice(html.indexOf('<script>'+marker)+8, html.indexOf('</script>',html.indexOf('<script>'+marker)));
 const context = {module:{exports:{}},Date};
+const activitySource=fs.readFileSync(`${__dirname}/amc8_activity.js`,'utf8');
+vm.runInNewContext(activitySource,context);
 vm.runInNewContext(script('/* Pure practice logic'),context);
 const P = context.module.exports;
 
@@ -37,6 +39,7 @@ function fixture(key='key'){
   const window={};
   const sandbox={window,URLSearchParams,location:{search:''},localStorage:{getItem:k=>k==='firebaseApiKey'?key:null,setItem:()=>assert.fail('Monitor must not change local history'),removeItem:()=>assert.fail('Monitor must not remove local history')},firebase:{firestore:()=>database,initializeApp:(config,name)=>{apps.push(name);return {firestore:()=>database};}}};
   window.firebase=sandbox.firebase;
+  vm.runInNewContext(activitySource,sandbox);
   vm.runInNewContext(script('/* Per-student persistence'),sandbox);
   return {store:window.StudentStore,reads,statuses,data,apps,emit:s=>callback(s),error:e=>errorCallback(e),unsubscribed:()=>unsubscribed,handlers:{onStatus:(s)=>statuses.push(s),onData:d=>data.push(d)}};
 }
@@ -58,4 +61,55 @@ test('inline scripts compile and daily bar caps visually without losing the coun
   for(const match of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
   assert.ok(html.includes('bar.value=Math.min(day.total,activityGoal)'));
   assert.ok(html.includes('${day.total} / ${activityGoal} answers'));
+});
+
+test('weekday exclusions hide Wednesday and Saturday without extending the seven-day window',()=>{
+  const now=new Date('2026-10-05T12:00:00Z');
+  const attempts=[{at:'2026-10-03T19:00:00Z',correct:true},{at:'2026-10-04T19:00:00Z',correct:true}];
+  const days=P.activityDays(attempts,now,[3,6]);
+  assert.deepEqual(Array.from(days,d=>d.key),['2026-10-05','2026-10-04','2026-10-02','2026-10-01','2026-09-29']);
+  assert.equal(days[1].total,1);
+  assert.equal(P.activityDays(attempts,now).length,7);
+  assert.equal(P.activityDays(attempts,now,[0,1,2,3,4,5,6]).length,0);
+  assert.equal(attempts.length,2);
+});
+test('weekday filtering uses Vancouver dates at midnight and across daylight saving',()=>{
+  const days=P.activityDays([{at:'2026-11-02T07:30:00Z',correct:true}],new Date('2026-11-02T12:00:00Z'),[0]);
+  assert.ok(!days.some(d=>d.key==='2026-11-01'));
+  assert.equal(days[0].key,'2026-11-02');assert.equal(days[0].total,0);
+});
+
+test('monitoring links preserve student, goal, explicit filter and connection key',()=>{
+  const M=require('./amc8_activity.js');
+  const url=new URL(M.shareURL('https://example.com/test/amc8_practice.html?follow=old#old',{student:'Bruce Lee',goal:15,excluded:[3,6],key:'example-key'}));
+  assert.equal(url.pathname,'/test/amc8_monitor.html');assert.equal(url.searchParams.get('student'),'Bruce Lee');
+  assert.equal(url.searchParams.get('goal'),'15');assert.equal(url.searchParams.get('exclude'),'3,6');
+  assert.equal(url.searchParams.has('apiKey'),false);assert.equal(url.searchParams.has('follow'),false);
+  assert.equal(new URLSearchParams(url.hash.slice(1)).get('apiKey'),'example-key');
+  const empty=new URL(M.shareURL(url.href,{excluded:[]}));assert.equal(empty.searchParams.get('exclude'),'');assert.equal(empty.hash,'');
+});
+test('monitor payload validation accepts both saved formats and rejects malformed history',()=>{
+  const M=require('./amc8_activity.js'),state={version:1,attempts:[{at:'2026-10-05T12:00:00Z',correct:true,review:false}]};
+  assert.deepEqual(M.readPayload({state:JSON.stringify(state)}),state);assert.equal(M.readPayload({state}),state);
+  assert.equal(M.readPayload({state:'invalid'}),null);assert.equal(M.readPayload({state:{version:1,attempts:[null]}}),null);
+});
+test('standalone page starts reading directly and shared filters override viewer preferences',()=>{
+  const M=require('./amc8_activity.js');
+  const page=fs.readFileSync(`${__dirname}/amc8_monitor.html`,'utf8');
+  const inline=Array.from(page.matchAll(/<script>([\s\S]*?)<\/script>/g),m=>m[1]);
+  const elements=new Map(),writes=[],reads=[];
+  function element(){return {value:'',checked:false,hidden:false,textContent:'',children:[],style:{},addEventListener(){},reportValidity:()=>true,checkValidity:()=>true,replaceChildren(...children){this.children=children;},append(...children){this.children.push(...children);},setAttribute(){},focus(){},select(){}};}
+  const boxes=[1,2,3,4,5,6,0].map(n=>({...element(),value:String(n)}));
+  const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
+  get('monitor-filter').querySelectorAll=()=>boxes;
+  const watcher={...M,watch:(name,key,handlers)=>{reads.push({name,key,handlers});handlers.onStatus('connecting');return ()=>{};}};
+  const sandbox={window:{ActivityMonitor:watcher},URL,URLSearchParams,Date,location:{href:'https://example.com/test/amc8_monitor.html?student=Bruce&goal=12&exclude=3,6#apiKey=demo',search:'?student=Bruce&goal=12&exclude=3,6',hash:'#apiKey=demo'},localStorage:{getItem:key=>key==='amc8ActivityExcludedWeekdays'?'[0]':null,setItem:(key,value)=>writes.push(key)},document:{getElementById:get,createElement:element},setInterval(){},addEventListener(){}};
+  for(const code of inline)vm.runInNewContext(code,sandbox);
+  assert.equal(reads.length,1);assert.equal(reads[0].name,'Bruce');assert.equal(reads[0].key,'demo');
+  assert.deepEqual(boxes.filter(b=>b.checked).map(b=>Number(b.value)),[3,6]);
+  assert.ok(writes.every(key=>key.startsWith('amc8Activity')));
+  reads[0].handlers.onData({state:{version:1,attempts:[]}});reads[0].handlers.onStatus('synced');
+  assert.equal(get('monitor-days').children.length,5);assert.equal(get('monitor-days').hidden,false);
+  assert.equal(get('monitor-status').textContent,'Connected · live updates enabled.');
+  assert.equal(new URL(get('share-link').value).searchParams.get('goal'),'12');
 });
