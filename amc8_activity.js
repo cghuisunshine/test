@@ -24,10 +24,26 @@ const CONFIG={authDomain:"homeinventory-4718c.firebaseapp.com",projectId:"homein
     return days.filter(day=>!excludedWeekdays.includes(new Date(day.key+'T12:00:00Z').getUTCDay()));
   }
 
-function shareURL(base,{student='Bruce',goal=10,excluded=[],key=''}){
+// On a tutoring day, keep the interval ending today visible until the next date.
+function cycleDays(attempts,now=new Date(),tutoringWeekdays=[3,6]){
+  const schedule=[...new Set(tutoringWeekdays)].filter(n=>Number.isInteger(n)&&n>=0&&n<=6);
+  if(!schedule.length)return days(attempts,now);
+  const today=days([],now)[0].key,anchor=new Date(today+'T12:00:00Z');
+  const shift=n=>{const date=new Date(anchor);date.setUTCDate(date.getUTCDate()+n);return date;};
+  let previous=-1,next=0;
+  while(!schedule.includes(shift(previous).getUTCDay()))previous--;
+  while(!schedule.includes(shift(next).getUTCDay()))next++;
+  const end=shift(next),start=shift(previous+1).toISOString().slice(0,10);
+  return days(attempts.filter(a=>Date.parse(a.at)<=now.getTime()),end).filter(day=>day.key>=start).reverse().map(day=>({
+    ...day,label:(day.key===today?'Today · ':'')+new Date(day.key+'T12:00:00Z').toLocaleDateString('en-CA',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric'}),upcoming:day.key>today,tutoring:day.key===end.toISOString().slice(0,10)
+  }));
+}
+
+function shareURL(base,{student='Bruce',goal=10,excluded=[],key='',period='cycle'}){
   const url=new URL('amc8_monitor.html',base);url.search='';url.hash='';
   url.searchParams.set('student',student);
   url.searchParams.set('goal',String(goal));
+  url.searchParams.set('period',period==='week'?'week':'cycle');
   // Include an empty exclusion list so a recipient's saved filter cannot override the link.
   url.searchParams.set('exclude',excluded.join(','));
   if(key)url.hash=new URLSearchParams({apiKey:key}).toString();
@@ -71,7 +87,7 @@ function watch(name,key,handlers){
   })();
   return stop;
 }
-const api={days,watch,shareURL,readPayload};
+const api={days,cycleDays,watch,shareURL,readPayload};
 root.ActivityMonitor=api;
 if(typeof module!=='undefined')module.exports=api;
 })(typeof window==='undefined'?globalThis:window);

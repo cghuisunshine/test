@@ -132,7 +132,7 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 <section class="panel sidebar-section" id="skills-panel"><h3>Skills to strengthen</h3><p class="eyebrow">FROM YOUR WORKING</p><p class="muted">AI observations with evidence from your steps. These are practice suggestions, not a fixed assessment of your ability.</p><div id="weak-points"></div><details id="ai-history"><summary>Saved AI reviews</summary><div id="ai-history-list"></div></details></section>
 <section class="panel storage sidebar-section" id="progress-panel"><h3>Keep your progress</h3><p class="muted">Each student’s history is saved separately on this device. Use the ☰ menu at the top to sync across devices.</p><button id="export" class="secondary">Export progress</button><label class="import">Restore backup <input id="import" type="file" accept="application/json,.json"></label><p id="storage-message" role="status" class="small"></p></section>
 </div></aside></div></main>
-<dialog id="activity-dialog" aria-labelledby="activity-title"><div class="activity-head"><h2 id="activity-title">Student activity</h2><button id="activity-close" class="quiet" type="button" aria-label="Close activity monitor">Close</button></div><p><a id="activity-page-link" href="amc8_monitor.html?student=Bruce">Open monitoring page ↗</a></p><button id="activity-share" class="secondary" type="button">Copy monitoring link</button><p id="activity-share-status" class="small" role="status"></p><form id="activity-form"><div class="activity-controls"><label>Student name<input id="activity-student" value="Bruce" maxlength="40" required autocomplete="off"></label><label>Daily question goal<input id="activity-goal" type="number" min="1" max="1000" step="1" value="10" required></label></div><button class="primary" type="submit">View activity</button></form><fieldset id="activity-filter" class="activity-filter"><legend>Exclude tutoring days</legend><div class="activity-weekdays"><label><input type="checkbox" value="1">Mon</label><label><input type="checkbox" value="2">Tue</label><label><input type="checkbox" value="3">Wed</label><label><input type="checkbox" value="4">Thu</label><label><input type="checkbox" value="5">Fri</label><label><input type="checkbox" value="6">Sat</label><label><input type="checkbox" value="0">Sun</label></div><p class="small">Checked weekdays are hidden within this seven-day window. Your selection is remembered on this device.</p></fieldset><p class="small">Today and the preceding six days · Vancouver time. Checked answers include retries. Bruce must enable sync on his device using the same Firebase settings.</p><p id="activity-status" class="small" role="status">Open Settings (☰) to configure Firebase sync.</p><p id="activity-updated" class="small"></p><div id="activity-days"></div><p class="small">Read-only view. Student names have no password protection.</p></dialog>
+<dialog id="activity-dialog" aria-labelledby="activity-title"><div class="activity-head"><h2 id="activity-title">Student activity</h2><button id="activity-close" class="quiet" type="button" aria-label="Close activity monitor">Close</button></div><p><a id="activity-page-link" href="amc8_monitor.html?student=Bruce">Open monitoring page ↗</a></p><button id="activity-share" class="secondary" type="button">Copy monitoring link</button><p id="activity-share-status" class="small" role="status"></p><form id="activity-form"><div class="activity-controls"><label>Student name<input id="activity-student" value="Bruce" maxlength="40" required autocomplete="off"></label><label>Daily question goal<input id="activity-goal" type="number" min="1" max="1000" step="1" value="10" required></label></div><button class="primary" type="submit">View activity</button></form><label for="activity-period" class="small">Date window</label><select id="activity-period"><option value="cycle">Between tutoring days</option><option value="week">Last seven days</option></select><fieldset id="activity-filter" class="activity-filter"><legend>Tutoring weekdays</legend><div class="activity-weekdays"><label><input type="checkbox" value="1">Mon</label><label><input type="checkbox" value="2">Tue</label><label><input type="checkbox" value="3">Wed</label><label><input type="checkbox" value="4">Thu</label><label><input type="checkbox" value="5">Fri</label><label><input type="checkbox" value="6">Sat</label><label><input type="checkbox" value="0">Sun</label></div><p class="small">The default window ends on the next tutoring day. In the seven-day view, checked weekdays are hidden. Your selection is remembered on this device.</p></fieldset><p class="small"><span id="activity-period-label">Between tutoring days</span> · Vancouver time. Checked answers include retries. Bruce must enable sync on his device using the same Firebase settings.</p><p id="activity-status" class="small" role="status">Open Settings (☰) to configure Firebase sync.</p><p id="activity-updated" class="small"></p><div id="activity-days"></div><p class="small">Read-only view. Student names have no password protection.</p></dialog>
 <div id="login-overlay" class="login-overlay" hidden><form id="login-form" class="login-box" role="dialog" aria-modal="true" aria-labelledby="login-title"><h2 id="login-title">Who’s practicing?</h2><p class="muted">Each student’s answers, reviews and progress are kept separately. The name is remembered on this device.</p><div id="known-students" class="known-students" hidden></div><label for="login-name" class="small">Student name</label><input id="login-name" autocomplete="off" maxlength="40" placeholder="e.g. Peggy"><div class="login-actions"><button class="primary" type="submit">Start practicing</button><button id="login-cancel" class="quiet" type="button">Cancel</button><button id="login-monitor" class="quiet" type="button">Monitor student</button></div></form></div>
 <footer>ONE QUESTION AT A TIME <span id="bank-count"></span></footer>
 <script src="amc8_activity.js"></script>
@@ -586,7 +586,7 @@ let stopActivity=null,activityState=null,activityName='',activityGoal=10,activit
 try{const goal=Number(localStorage.getItem('amc8ActivityGoal'));if(Number.isInteger(goal)&&goal>=1&&goal<=1000)activityGoal=goal;}catch(e){}
 $('activity-goal').value=activityGoal;
 let activityExcluded=[];
-try{const saved=JSON.parse(localStorage.getItem('amc8ActivityExcludedWeekdays')||'[]');if(Array.isArray(saved))activityExcluded=saved.filter(n=>Number.isInteger(n)&&n>=0&&n<=6);}catch(e){}
+try{const saved=JSON.parse(localStorage.getItem('amc8ActivityExcludedWeekdays')||'[3,6]');if(Array.isArray(saved))activityExcluded=saved.filter(n=>Number.isInteger(n)&&n>=0&&n<=6);}catch(e){}
 const activityWeekdayInputs=Array.from($('activity-filter').querySelectorAll('input[type="checkbox"]'));
 for(const input of activityWeekdayInputs)input.checked=activityExcluded.includes(Number(input.value));
 $('activity-filter').addEventListener('change',()=>{
@@ -594,9 +594,12 @@ $('activity-filter').addEventListener('change',()=>{
   try{localStorage.setItem('amc8ActivityExcludedWeekdays',JSON.stringify(activityExcluded));}catch(e){}
   renderActivity();
 });
+$('activity-period').onchange=renderActivity;
 function renderActivity(){
+  const cycle=$('activity-period').value==='cycle';
+  $('activity-period-label').textContent=cycle&&activityExcluded.length?'From after the previous tutoring day through the next tutoring day':'Today and the preceding six days';
   const list=$('activity-days');list.replaceChildren();if(!activityState)return;
-  const days=P.activityDays(activityState.attempts,new Date(),activityExcluded);
+  const days=cycle?window.ActivityMonitor.cycleDays(activityState.attempts,new Date(),activityExcluded):P.activityDays(activityState.attempts,new Date(),activityExcluded);
   if(!days.length){list.textContent='All days in this window are excluded. Uncheck a weekday to show activity.';return;}
   for(const day of days){
     const row=document.createElement('div');row.className='activity-day';
@@ -604,7 +607,9 @@ function renderActivity(){
     label.textContent=day.label;count.textContent=`${day.total} / ${activityGoal} answers`;labels.append(label,count);
     const bar=document.createElement('progress');bar.max=activityGoal;bar.value=Math.min(day.total,activityGoal);bar.setAttribute('aria-label',`${activityName}, ${day.label}: ${day.total} checked answers, goal ${activityGoal}`);
     const detail=document.createElement('p');detail.className='small';detail.style.margin='0';detail.textContent=`${day.correct} correct · ${day.retries} retries · ${describeDuration(day.seconds)} recorded${day.missingTime?' · time missing for '+day.missingTime+' answers':''}`;
-    row.append(labels,bar,detail);list.append(row);
+    if(day.tutoring){count.textContent=day.upcoming?'Upcoming tutoring day':'Tutoring day';detail.textContent='End of this practice interval.';row.append(labels,detail);}
+    else if(day.upcoming){count.textContent='Upcoming';detail.textContent=`Planned practice · goal ${activityGoal} answers`;row.append(labels,bar,detail);}
+    else row.append(labels,bar,detail);list.append(row);
   }
 }
 function viewActivity(){
@@ -630,7 +635,7 @@ $('monitor-button').onclick=openActivity;$('login-monitor').onclick=openActivity
 $('activity-close').onclick=()=>$('activity-dialog').close();
 $('activity-dialog').addEventListener('close',()=>{if(stopActivity)stopActivity();stopActivity=null;});
 $('activity-form').onsubmit=e=>{e.preventDefault();viewActivity();};
-function monitoringLink(){return window.ActivityMonitor.shareURL(location.href,{student:$('activity-student').value.trim()||'Bruce',goal:Number($('activity-goal').value)||10,excluded:activityExcluded,key:students.getApiKey()});}
+function monitoringLink(){return window.ActivityMonitor.shareURL(location.href,{student:$('activity-student').value.trim()||'Bruce',goal:Number($('activity-goal').value)||10,excluded:activityExcluded,period:$('activity-period').value,key:students.getApiKey()});}
 $('activity-page-link').onclick=()=>{$('activity-page-link').href=monitoringLink();};
 $('activity-share').onclick=async()=>{
   const url=monitoringLink();

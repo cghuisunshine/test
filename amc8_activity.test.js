@@ -103,7 +103,7 @@ test('standalone page starts reading directly and shared filters override viewer
   const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
   get('monitor-filter').querySelectorAll=()=>boxes;
   const watcher={...M,watch:(name,key,handlers)=>{reads.push({name,key,handlers});handlers.onStatus('connecting');return ()=>{};}};
-  const sandbox={window:{ActivityMonitor:watcher},URL,URLSearchParams,Date,location:{href:'https://example.com/test/amc8_monitor.html?student=Bruce&goal=12&exclude=3,6#apiKey=demo',search:'?student=Bruce&goal=12&exclude=3,6',hash:'#apiKey=demo'},localStorage:{getItem:key=>key==='amc8ActivityExcludedWeekdays'?'[0]':null,setItem:(key,value)=>writes.push(key)},document:{getElementById:get,createElement:element},setInterval(){},addEventListener(){}};
+  const sandbox={window:{ActivityMonitor:watcher},URL,URLSearchParams,Date,location:{href:'https://example.com/test/amc8_monitor.html?student=Bruce&goal=12&period=week&exclude=3,6#apiKey=demo',search:'?student=Bruce&goal=12&period=week&exclude=3,6',hash:'#apiKey=demo'},localStorage:{getItem:key=>key==='amc8ActivityExcludedWeekdays'?'[0]':null,setItem:(key,value)=>writes.push(key)},document:{getElementById:get,createElement:element},setInterval(){},addEventListener(){}};
   for(const code of inline)vm.runInNewContext(code,sandbox);
   assert.equal(reads.length,1);assert.equal(reads[0].name,'Bruce');assert.equal(reads[0].key,'demo');
   assert.deepEqual(boxes.filter(b=>b.checked).map(b=>Number(b.value)),[3,6]);
@@ -112,4 +112,26 @@ test('standalone page starts reading directly and shared filters override viewer
   assert.equal(get('monitor-days').children.length,5);assert.equal(get('monitor-days').hidden,false);
   assert.equal(get('monitor-status').textContent,'Connected · live updates enabled.');
   assert.equal(new URL(get('share-link').value).searchParams.get('goal'),'12');
+});
+
+test('default interval runs Sunday to Wednesday with future days clearly marked',()=>{
+  const M=require('./amc8_activity.js');
+  const days=M.cycleDays([{at:'2026-10-05T08:00:00Z',correct:true,review:false},{at:'2026-10-06T19:00:00Z',correct:true,review:false}],new Date('2026-10-05T12:00:00Z'),[3,6]);
+  assert.deepEqual(days.map(d=>d.key),['2026-10-04','2026-10-05','2026-10-06','2026-10-07']);
+  assert.equal(days[1].total,1);assert.equal(days[1].upcoming,false);
+  assert.equal(days[2].total,0);assert.equal(days[2].upcoming,true);assert.equal(days[2].tutoring,false);
+  assert.equal(days[3].upcoming,true);assert.equal(days[3].tutoring,true);
+});
+test('on tutoring day keep the interval ending today, then roll over the next day',()=>{
+  const M=require('./amc8_activity.js');
+  const wed=M.cycleDays([],new Date('2026-10-07T20:00:00Z'),[3,6]);
+  assert.deepEqual(wed.map(d=>d.key),['2026-10-04','2026-10-05','2026-10-06','2026-10-07']);
+  assert.equal(wed.at(-1).upcoming,false);assert.equal(wed.at(-1).tutoring,true);
+  assert.deepEqual(M.cycleDays([],new Date('2026-10-08T20:00:00Z'),[3,6]).map(d=>d.key),['2026-10-08','2026-10-09','2026-10-10']);
+});
+test('cycle crosses DST safely, handles weekly tutoring and falls back when no days are selected',()=>{
+  const M=require('./amc8_activity.js');
+  assert.deepEqual(M.cycleDays([],new Date('2026-11-02T07:30:00Z'),[3,6]).map(d=>d.key),['2026-11-01','2026-11-02','2026-11-03','2026-11-04']);
+  assert.equal(M.cycleDays([],new Date('2026-10-05T12:00:00Z'),[3]).length,7);
+  assert.deepEqual(M.cycleDays([],new Date('2026-10-05T12:00:00Z'),[]),M.days([],new Date('2026-10-05T12:00:00Z')));
 });

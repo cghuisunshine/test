@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>AMC 8 · Activity monitor</title>
 <style>
-:root{--ink:#183832;--muted:#60736b;--green:#216650;--paper:#f5f5ee;--line:#dde3d9}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}main{max-width:780px;margin:auto;padding:36px 24px}a{color:var(--green)}h1{font:36px/1.2 Georgia,serif;margin:12px 0}.eyebrow{font-size:11px;letter-spacing:1.5px;color:var(--green);font-weight:700}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin:20px 0}.small{font-size:12px;color:var(--muted)}button,input{font:inherit}button{padding:10px 16px;border:0;border-radius:8px;background:var(--green);color:white;font-weight:600;cursor:pointer}button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #b78021;outline-offset:3px}input:not([type=checkbox]){width:100%;padding:10px;border:1px solid #cbd6cd;border-radius:7px;display:block;margin:5px 0 12px}.controls{display:flex;gap:16px;flex-wrap:wrap}.controls label{flex:1;min-width:150px;font-size:13px}fieldset{padding:12px;border:1px solid var(--line);border-radius:8px;margin:12px 0 18px}legend{font-size:12px;color:var(--muted)}.weekdays{display:flex;gap:10px 16px;flex-wrap:wrap}.weekdays label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer}.day{padding:16px 0;border-bottom:1px solid var(--line)}.day>div{display:flex;justify-content:space-between;gap:12px;font-size:14px}.day progress{display:block;width:100%;height:14px;margin:10px 0;accent-color:var(--green)}.day p{margin:0}summary{cursor:pointer}#monitor-status{padding:12px;background:#eef0e7;border-radius:8px}#share-link{font-size:12px}@media(max-width:480px){main{padding:22px 14px}.card{padding:18px}.day>div{flex-wrap:wrap}h1{font-size:30px}}[hidden]{display:none!important}
+:root{--ink:#183832;--muted:#60736b;--green:#216650;--paper:#f5f5ee;--line:#dde3d9}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}main{max-width:780px;margin:auto;padding:36px 24px}a{color:var(--green)}h1{font:36px/1.2 Georgia,serif;margin:12px 0}.eyebrow{font-size:11px;letter-spacing:1.5px;color:var(--green);font-weight:700}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin:20px 0}.small{font-size:12px;color:var(--muted)}button,input,select{font:inherit}select{width:100%;padding:10px;border:1px solid #cbd6cd;border-radius:7px;background:white;color:var(--ink)}button{padding:10px 16px;border:0;border-radius:8px;background:var(--green);color:white;font-weight:600;cursor:pointer}button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #b78021;outline-offset:3px}input:not([type=checkbox]){width:100%;padding:10px;border:1px solid #cbd6cd;border-radius:7px;display:block;margin:5px 0 12px}.controls{display:flex;gap:16px;flex-wrap:wrap}.controls label{flex:1;min-width:150px;font-size:13px}fieldset{padding:12px;border:1px solid var(--line);border-radius:8px;margin:12px 0 18px}legend{font-size:12px;color:var(--muted)}.weekdays{display:flex;gap:10px 16px;flex-wrap:wrap}.weekdays label{display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer}.day{padding:16px 0;border-bottom:1px solid var(--line)}.day>div{display:flex;justify-content:space-between;gap:12px;font-size:14px}.day progress{display:block;width:100%;height:14px;margin:10px 0;accent-color:var(--green)}.day p{margin:0}summary{cursor:pointer}#monitor-status{padding:12px;background:#eef0e7;border-radius:8px}#share-link{font-size:12px}@media(max-width:480px){main{padding:22px 14px}.card{padding:18px}.day>div{flex-wrap:wrap}h1{font-size:30px}}[hidden]{display:none!important}
 </style></head><body><main>
-<div class="eyebrow">AMC 8 · READ-ONLY ACTIVITY</div><h1 id="monitor-title">Bruce’s activity</h1><p>Today and the preceding six days · Vancouver time</p>
+<div class="eyebrow">AMC 8 · READ-ONLY ACTIVITY</div><h1 id="monitor-title">Bruce’s activity</h1><p><span id="monitor-period-label">Between tutoring days</span> · Vancouver time</p>
 <section class="card" aria-label="Monitoring settings"><form id="monitor-form"><div class="controls"><label>Student name<input id="monitor-student" value="Bruce" maxlength="40" required autocomplete="off"></label><label>Daily question goal<input id="monitor-goal" type="number" value="10" min="1" max="1000" step="1" required></label></div>
-<fieldset id="monitor-filter"><legend>Exclude tutoring days</legend><div class="weekdays"><label><input type="checkbox" value="1">Mon</label><label><input type="checkbox" value="2">Tue</label><label><input type="checkbox" value="3">Wed</label><label><input type="checkbox" value="4">Thu</label><label><input type="checkbox" value="5">Fri</label><label><input type="checkbox" value="6">Sat</label><label><input type="checkbox" value="0">Sun</label></div><p class="small">Checked weekdays are hidden within this seven-day window.</p></fieldset><button type="submit">View activity</button>
+<label for="monitor-period" class="small">Date window</label><select id="monitor-period"><option value="cycle">Between tutoring days</option><option value="week">Last seven days</option></select><fieldset id="monitor-filter"><legend>Tutoring weekdays</legend><div class="weekdays"><label><input type="checkbox" value="1">Mon</label><label><input type="checkbox" value="2">Tue</label><label><input type="checkbox" value="3">Wed</label><label><input type="checkbox" value="4">Thu</label><label><input type="checkbox" value="5">Fri</label><label><input type="checkbox" value="6">Sat</label><label><input type="checkbox" value="0">Sun</label></div><p class="small">The default window starts after the previous tutoring day and ends on the next one. In the seven-day view, checked weekdays are hidden.</p></fieldset><button type="submit">View activity</button>
 <details id="connection-settings"><summary>Connection settings</summary><p class="small">Use the same Firebase API key as the student’s practice device. A monitoring link can include it so your helper can open the page directly.</p><label for="monitor-key" class="small">Firebase API key</label><input id="monitor-key" type="password" autocomplete="off"><button id="monitor-connect" type="button">Connect</button></details></form></section>
 <p id="monitor-status" role="status">Connecting…</p><p id="monitor-updated" class="small"></p><section id="monitor-days" class="card" aria-label="Daily activity" hidden></section>
 <section class="card" aria-label="Share monitoring"><h2>Share this monitor</h2><p class="small">The link includes the student, goal and excluded weekdays, plus the connection key when available. Send it to the people helping you monitor.</p><label for="share-link" class="small">Monitoring link</label><input id="share-link" readonly><button id="share-copy" type="button">Copy monitoring link</button><p id="share-status" class="small" role="status"></p></section>
@@ -19,28 +19,33 @@ const validGoal=value=>{const n=Number(value);return Number.isInteger(n)&&n>=1&&
 const validExcluded=value=>Array.isArray(value)?value.filter(n=>Number.isInteger(n)&&n>=0&&n<=6):[];
 let excluded=[];
 if(params.has('exclude'))excluded=validExcluded(params.get('exclude').split(',').filter(Boolean).map(Number));
-else try{excluded=validExcluded(JSON.parse(stored('amc8ActivityExcludedWeekdays')||'[]'));}catch(e){}
+else try{excluded=validExcluded(JSON.parse(stored('amc8ActivityExcludedWeekdays')||'[3,6]'));}catch(e){}
 $('monitor-student').value=(params.get('student')||'Bruce').trim().slice(0,40)||'Bruce';
 $('monitor-goal').value=validGoal(params.get('goal')||stored('amc8ActivityGoal')||10);
 $('monitor-key').value=new URLSearchParams(location.hash.slice(1)).get('apiKey')||params.get('apiKey')||stored('firebaseApiKey')||'';
 const checkboxes=Array.from($('monitor-filter').querySelectorAll('input[type=checkbox]'));
 for(const box of checkboxes)box.checked=excluded.includes(Number(box.value));
+$('monitor-period').value=params.get('period')==='week'?'week':'cycle';
 let stop=null,state=null,exists=false,name='',goal=10;
 const currentExcluded=()=>checkboxes.filter(box=>box.checked).map(box=>Number(box.value));
 function share(){
-  $('share-link').value=M.shareURL(location.href,{student:$('monitor-student').value.trim()||'Bruce',goal:validGoal($('monitor-goal').value),excluded:currentExcluded(),key:$('monitor-key').value.trim()});
+  $('share-link').value=M.shareURL(location.href,{student:$('monitor-student').value.trim()||'Bruce',goal:validGoal($('monitor-goal').value),excluded:currentExcluded(),period:$('monitor-period').value,key:$('monitor-key').value.trim()});
 }
 function duration(seconds){const n=Math.round(seconds);return (Math.floor(n/60)?Math.floor(n/60)+'m ':'')+n%60+'s';}
 function render(){
+  const cycle=$('monitor-period').value==='cycle';
+  $('monitor-period-label').textContent=cycle&&currentExcluded().length?'From after the previous tutoring day through the next tutoring day':'Today and the preceding six days';
   const list=$('monitor-days');list.replaceChildren();list.hidden=!state;if(!state)return;
-  const days=M.days(state.attempts,new Date(),currentExcluded());
+  const days=cycle?M.cycleDays(state.attempts,new Date(),currentExcluded()):M.days(state.attempts,new Date(),currentExcluded());
   if(!days.length){list.textContent='All days in this window are excluded. Uncheck a weekday to show activity.';return;}
   for(const day of days){
     const row=document.createElement('div');row.className='day';
     const labels=document.createElement('div'),date=document.createElement('span'),count=document.createElement('span');date.textContent=day.label;count.textContent=`${day.total} / ${goal} answers`;labels.append(date,count);
     const bar=document.createElement('progress');bar.max=goal;bar.value=Math.min(day.total,goal);bar.setAttribute('aria-label',`${name}, ${day.label}: ${day.total} checked answers, goal ${goal}`);
     const detail=document.createElement('p');detail.className='small';detail.textContent=`${day.correct} correct · ${day.retries} retries · ${duration(day.seconds)} recorded${day.missingTime?' · time missing for '+day.missingTime+' answers':''}`;
-    row.append(labels,bar,detail);list.append(row);
+    if(day.tutoring){count.textContent=day.upcoming?'Upcoming tutoring day':'Tutoring day';detail.textContent='End of this practice interval.';row.append(labels,detail);}
+    else if(day.upcoming){count.textContent='Upcoming';detail.textContent=`Planned practice · goal ${goal} answers`;row.append(labels,bar,detail);}
+    else row.append(labels,bar,detail);list.append(row);
   }
 }
 function connect(){
@@ -58,6 +63,7 @@ function connect(){
   });
 }
 $('monitor-form').onsubmit=event=>{event.preventDefault();connect();};$('monitor-connect').onclick=connect;
+$('monitor-period').addEventListener('change',()=>{render();share();});
 $('monitor-filter').addEventListener('change',()=>{save('amc8ActivityExcludedWeekdays',JSON.stringify(currentExcluded()));render();share();});
 $('monitor-goal').addEventListener('change',()=>{if($('monitor-goal').checkValidity()){goal=validGoal($('monitor-goal').value);save('amc8ActivityGoal',String(goal));render();share();}});
 $('monitor-student').addEventListener('input',share);$('monitor-key').addEventListener('input',share);
