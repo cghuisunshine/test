@@ -116,9 +116,11 @@ test('standalone page starts reading directly and shared filters override viewer
   const upcoming=get('monitor-days').children[2];
   assert.ok(upcoming.children[0].children[0].textContent.includes('Upcoming'));
   assert.equal(upcoming.children[0].children[1].textContent,'0 / 12 answers');
-  assert.equal(get('monitor-days').children[3].children[0].children[1].textContent,'0 / 12 answers');
+  assert.equal(get('monitor-days').children[3].children[0].children[1].textContent,'No practice goal');
   get('monitor-goal').value='20';get('monitor-goal').events.input();
   assert.equal(get('monitor-days').children[2].children[0].children[1].textContent,'0 / 20 answers');
+  assert.equal(get('monitor-days').children[3].children[0].children[1].textContent,'No practice goal');
+  assert.equal(get('monitor-days').children[3].children.length,2);
   const shared=new URL(get('share-link').value);
   assert.equal(shared.searchParams.get('goal'),'20');assert.equal(shared.searchParams.get('period'),'cycle');
   assert.equal(shared.searchParams.get('exclude'),'3,6');

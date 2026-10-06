@@ -43,7 +43,7 @@ function render(){
     const labels=document.createElement('div'),date=document.createElement('span'),count=document.createElement('span');date.textContent=day.label+(day.upcoming?' · Upcoming':'')+(day.tutoring?' · Tutoring':'');count.textContent=`${day.total} / ${goal} answers`;labels.append(date,count);
     const bar=document.createElement('progress');bar.max=goal;bar.value=Math.min(day.total,goal);bar.setAttribute('aria-label',`${name}, ${day.label}: ${day.total} checked answers, goal ${goal}`);
     const detail=document.createElement('p');detail.className='small';detail.textContent=`${day.correct} correct · ${day.retries} retries · ${duration(day.seconds)} recorded${day.missingTime?' · time missing for '+day.missingTime+' answers':''}`;
-    if(day.tutoring){detail.textContent='End of this practice interval.';row.append(labels,detail);}
+    if(day.tutoring){count.textContent='No practice goal';detail.textContent='End of this practice interval.';row.append(labels,detail);}
     else if(day.upcoming){detail.textContent=`Planned practice · goal ${goal} answers`;row.append(labels,bar,detail);}
     else row.append(labels,bar,detail);list.append(row);
   }
