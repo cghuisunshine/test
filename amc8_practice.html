@@ -93,8 +93,10 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 .day-controls{margin-top:12px}.day-controls .day-filter{display:flex;align-items:center;gap:8px;align-self:center}.day-filter input{width:18px;height:18px;accent-color:var(--green)}.day-help{margin:6px 0 0}.day-question{display:block;font-size:12px;font-weight:650;color:var(--muted);margin-top:12px}
 .year-controls{margin-top:12px;padding:16px;border:1px solid var(--line);border-radius:10px;background:#ffffff80}.year-progress{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.year-progress .quiet{padding:7px 10px;border:1px solid var(--line)}.year-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(36px,1fr));gap:6px;margin-top:10px}.year-grid button{padding:8px 0;background:#fff;border:1px solid #cbd6cd;color:var(--ink);font-size:12px}.year-grid button.correct{background:#e2f3e7;border-color:#387b50}.year-grid button.incorrect{background:#fff1e5;border-color:#ae5037}.year-grid button[aria-current=true]{outline:2px solid var(--green);outline-offset:1px;font-weight:800}.year-help{margin:9px 0 0}.year-notice{margin:10px 0 0}
 .live-panel{margin:14px 0;padding:12px 14px;border:1px solid #b8cbbb;border-radius:9px;background:#eaf3e8}.live-panel p{margin:0;font-size:13px}.live-link-row{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}.live-link-row input{flex:1;min-width:0;padding:9px;border:1px solid #cbd6cd;border-radius:7px;font-size:12px}.live-panel button{padding:8px 12px}.live-panel .live-exit{margin-top:8px}.card-actions{flex-wrap:wrap;justify-content:flex-end}.following-live .workspace>.toolbar,.following-live #day-controls,.following-live #year-controls,.following-live #next,.following-live #skip,.following-live #dock-next,.following-live #dock-skip{display:none!important}
+
+#activity-dialog{width:min(560px,calc(100% - 28px));max-height:90vh;overflow:auto;border:1px solid var(--line);border-radius:14px;padding:24px;color:var(--ink);background:var(--paper)}#activity-dialog::backdrop{background:#18383280}.activity-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.activity-head h2{margin:0}.activity-controls{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.activity-controls label{flex:1;min-width:130px;font-size:12px}.activity-controls input{display:block;width:100%;padding:9px;border:1px solid #cbd6cd;border-radius:7px;margin-top:5px}.activity-day{padding:12px 0;border-bottom:1px solid var(--line)}.activity-day>div{display:flex;justify-content:space-between;gap:10px;font-size:13px}.activity-day progress{width:100%;height:12px;accent-color:var(--green);display:block;margin:8px 0}
 </style></head>
-<body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Storage settings" hidden><h2>Storage settings</h2><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
+<body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="monitor-button" class="student-button" type="button">Monitor student</button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Storage settings" hidden><h2>Storage settings</h2><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
 <div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="year">By year · 25-problem sets</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option><option value="day">By day · past 7 days</option></select></label><label id="topic-control">Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
 <div id="year-controls" class="year-controls" hidden><div class="toolbar"><label>Exam year<select id="practice-year" aria-describedby="year-help year-notice"></select></label><label>Problem<select id="year-question"></select></label></div><div class="year-progress"><button id="year-previous" class="quiet" type="button">← Previous problem</button><span id="year-progress" class="small" role="status" aria-live="polite"></span></div><div id="year-grid" class="year-grid" role="group" aria-label="Problems in the selected year"></div><p id="year-help" class="small year-help">Practice the year's problems in order, or jump to any number. Green = correct; orange = missed, using your latest answer. Progress is saved with your student history.</p><p id="year-notice" class="notice year-notice" hidden></p></div>
@@ -129,7 +131,8 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 <section class="panel sidebar-section" id="skills-panel"><h3>Skills to strengthen</h3><p class="eyebrow">FROM YOUR WORKING</p><p class="muted">AI observations with evidence from your steps. These are practice suggestions, not a fixed assessment of your ability.</p><div id="weak-points"></div><details id="ai-history"><summary>Saved AI reviews</summary><div id="ai-history-list"></div></details></section>
 <section class="panel storage sidebar-section" id="progress-panel"><h3>Keep your progress</h3><p class="muted">Each student’s history is saved separately on this device. Use the ☰ menu at the top to sync across devices.</p><button id="export" class="secondary">Export progress</button><label class="import">Restore backup <input id="import" type="file" accept="application/json,.json"></label><p id="storage-message" role="status" class="small"></p></section>
 </div></aside></div></main>
-<div id="login-overlay" class="login-overlay" hidden><form id="login-form" class="login-box" role="dialog" aria-modal="true" aria-labelledby="login-title"><h2 id="login-title">Who’s practicing?</h2><p class="muted">Each student’s answers, reviews and progress are kept separately. The name is remembered on this device.</p><div id="known-students" class="known-students" hidden></div><label for="login-name" class="small">Student name</label><input id="login-name" autocomplete="off" maxlength="40" placeholder="e.g. Peggy"><div class="login-actions"><button class="primary" type="submit">Start practicing</button><button id="login-cancel" class="quiet" type="button">Cancel</button></div></form></div>
+<dialog id="activity-dialog" aria-labelledby="activity-title"><div class="activity-head"><h2 id="activity-title">Student activity</h2><button id="activity-close" class="quiet" type="button" aria-label="Close activity monitor">Close</button></div><form id="activity-form"><div class="activity-controls"><label>Student name<input id="activity-student" value="Bruce" maxlength="40" required autocomplete="off"></label><label>Daily question goal<input id="activity-goal" type="number" min="1" max="1000" step="1" value="10" required></label></div><button class="primary" type="submit">View activity</button></form><p class="small">Today and the preceding six days · Vancouver time. Checked answers include retries. Bruce must enable sync on his device using the same Firebase settings.</p><p id="activity-status" class="small" role="status">Open Settings (☰) to configure Firebase sync.</p><p id="activity-updated" class="small"></p><div id="activity-days"></div><p class="small">Read-only view. Student names have no password protection.</p></dialog>
+<div id="login-overlay" class="login-overlay" hidden><form id="login-form" class="login-box" role="dialog" aria-modal="true" aria-labelledby="login-title"><h2 id="login-title">Who’s practicing?</h2><p class="muted">Each student’s answers, reviews and progress are kept separately. The name is remembered on this device.</p><div id="known-students" class="known-students" hidden></div><label for="login-name" class="small">Student name</label><input id="login-name" autocomplete="off" maxlength="40" placeholder="e.g. Peggy"><div class="login-actions"><button class="primary" type="submit">Start practicing</button><button id="login-cancel" class="quiet" type="button">Cancel</button><button id="login-monitor" class="quiet" type="button">Monitor student</button></div></form></div>
 <footer>ONE QUESTION AT A TIME <span id="bank-count"></span></footer>
 <script>/* Pure practice logic, shared by the browser and Node tests. */
 (function (root) {
@@ -295,7 +298,28 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
     t=t.replace(/\\[A-Za-z]+/g,'').replace(/[{}]/g,'').replace(/\u0001/g,'$');
     return t.replace(/\s+/g,' ').replace(/\s+([,.;?!])/g,'$1').trim();
   }
-  const api={topics,levels,stats,targetLevel,chooseTopic,chooseExam,record,reviewQueue,generate,latexText,dayKey,pastDays,dayQuestions,problemNumber,yearQuestions,examYears,yearProgress};
+  function activityDays(attempts,now=new Date()) {
+    const zone='America/Vancouver';
+    const keyFor=value=>{
+      const date=new Date(value);if(!Number.isFinite(date.getTime()))return '';
+      const parts=new Intl.DateTimeFormat('en-CA',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
+      const part=type=>parts.find(p=>p.type===type).value;
+      return `${part('year')}-${part('month')}-${part('day')}`;
+    };
+    const today=keyFor(now),anchor=new Date(today+'T12:00:00Z');
+    const days=Array.from({length:7},(_,i)=>{
+      const date=new Date(anchor);date.setUTCDate(date.getUTCDate()-i);
+      return {key:date.toISOString().slice(0,10),label:(i===0?'Today · ':'')+date.toLocaleDateString('en-CA',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric'}),total:0,correct:0,retries:0,seconds:0,missingTime:0};
+    });
+    const byDay=new Map(days.map(d=>[d.key,d]));
+    for(const a of attempts){
+      const day=byDay.get(keyFor(a.at));if(!day||Date.parse(a.at)>now.getTime())continue;
+      day.total++;if(a.correct)day.correct++;if(a.review)day.retries++;
+      if(typeof a.seconds==='number'&&Number.isFinite(a.seconds)&&a.seconds>=0)day.seconds+=a.seconds;else day.missingTime++;
+    }
+    return days;
+  }
+  const api={activityDays,topics,levels,stats,targetLevel,chooseTopic,chooseExam,record,reviewQueue,generate,latexText,dayKey,pastDays,dayQuestions,problemNumber,yearQuestions,examYears,yearProgress};
   if(typeof module!=='undefined') module.exports=api;
   root.Practice=api;
 })(typeof window!=='undefined'?window:globalThis);
@@ -536,6 +560,28 @@ store.liveRef=async(id,key)=>{
   await ensureFirebase(key||store.getApiKey());
   return db.collection(FIREBASE_COLLECTION).doc('live-'+id);
 };
+// Independent observer: never starts student sync and never writes a document.
+const monitorDatabases=new Map();
+store.watchActivity=(name,handlers)=>{
+  let cancelled=false,off=null;
+  const stop=()=>{cancelled=true;if(off)off();};
+  const key=store.getApiKey();
+  if(!key){handlers.onStatus('missing-key');return stop;}
+  handlers.onStatus('connecting');
+  (async()=>{
+    try{
+      await loadSdk();if(cancelled)return;
+      let database=monitorDatabases.get(key);
+      if(!database){const app=firebase.initializeApp({...FIREBASE_CONFIG,apiKey:key},'amc8ActivityMonitor-'+monitorDatabases.size);database=app.firestore();monitorDatabases.set(key,database);}
+      off=database.collection(FIREBASE_COLLECTION).doc(store.idFor(name)).onSnapshot({includeMetadataChanges:true},snapshot=>{
+        if(cancelled)return;
+        handlers.onData(snapshot.exists?snapshot.data():null);
+        handlers.onStatus(snapshot.metadata&&snapshot.metadata.fromCache?'cached':'synced');
+      },error=>{if(!cancelled)handlers.onStatus('error',error);});
+    }catch(error){if(!cancelled)handlers.onStatus('error',error);}
+  })();
+  return stop;
+};
 root.StudentStore=store;
 })(window);
 </script><script src="amc8_live_share.js"></script><script>'use strict';
@@ -574,6 +620,45 @@ function canonicalize(s) {
 }
 // ---- Per-student history (see students.js): local-first, optional Firebase sync ----
 const students=window.StudentStore;let student='', updatedAt='';
+let stopActivity=null,activityState=null,activityName='',activityGoal=10,activityExists=false;
+try{const goal=Number(localStorage.getItem('amc8ActivityGoal'));if(Number.isInteger(goal)&&goal>=1&&goal<=1000)activityGoal=goal;}catch(e){}
+$('activity-goal').value=activityGoal;
+function renderActivity(){
+  const list=$('activity-days');list.replaceChildren();if(!activityState)return;
+  for(const day of P.activityDays(activityState.attempts)){
+    const row=document.createElement('div');row.className='activity-day';
+    const labels=document.createElement('div'),label=document.createElement('span'),count=document.createElement('span');
+    label.textContent=day.label;count.textContent=`${day.total} / ${activityGoal} answers`;labels.append(label,count);
+    const bar=document.createElement('progress');bar.max=activityGoal;bar.value=Math.min(day.total,activityGoal);bar.setAttribute('aria-label',`${activityName}, ${day.label}: ${day.total} checked answers, goal ${activityGoal}`);
+    const detail=document.createElement('p');detail.className='small';detail.style.margin='0';detail.textContent=`${day.correct} correct · ${day.retries} retries · ${describeDuration(day.seconds)} recorded${day.missingTime?' · time missing for '+day.missingTime+' answers':''}`;
+    row.append(labels,bar,detail);list.append(row);
+  }
+}
+function viewActivity(){
+  if(!$('activity-form').reportValidity())return;
+  const name=$('activity-student').value.trim();if(!name){$('activity-student').focus();return;}
+  if(stopActivity)stopActivity();activityState=null;activityExists=false;activityName=name;activityGoal=Number($('activity-goal').value);
+  try{localStorage.setItem('amc8ActivityGoal',String(activityGoal));}catch(e){}
+  $('activity-title').textContent=name+'’s activity';$('activity-updated').textContent='';renderActivity();
+  stopActivity=students.watchActivity(name,{
+    onData:data=>{
+      activityExists=!!data;activityState=data?readPayload(data):null;
+      $('activity-updated').textContent=data?'History last updated: '+(Number.isFinite(Date.parse(data.updatedAt))?new Date(data.updatedAt).toLocaleString('en-CA',{timeZone:'America/Vancouver'})+' (Vancouver)':'Not recorded'):'';
+      renderActivity();
+    },
+    onStatus:(kind,error)=>{
+      const messages={'missing-key':'Open Settings (☰), enter the Firebase API key, then choose View activity.',connecting:'Connecting to '+name+'’s synced history…',cached:'Offline or connecting: showing cached history. It may be incomplete.',synced:activityExists?(activityState?'Connected · live updates enabled.':'The saved history could not be read.'):'No synced history found for '+name+'. Enable sync on the student’s device.',error:error?.code==='permission-denied'?'Firebase denied access to this history.':'Unable to connect. Check Firebase settings and your connection, then choose View activity to retry.'};
+      $('activity-status').textContent=messages[kind]||'';
+    }
+  });
+}
+const openActivity=()=>{$('activity-dialog').showModal();viewActivity();};
+$('monitor-button').onclick=openActivity;$('login-monitor').onclick=openActivity;
+$('activity-close').onclick=()=>$('activity-dialog').close();
+$('activity-dialog').addEventListener('close',()=>{if(stopActivity)stopActivity();stopActivity=null;});
+$('activity-form').onsubmit=e=>{e.preventDefault();viewActivity();};
+$('activity-goal').onchange=()=>{if($('activity-goal').checkValidity()){activityGoal=Number($('activity-goal').value);try{localStorage.setItem('amc8ActivityGoal',String(activityGoal));}catch(e){}renderActivity();}};
+setInterval(()=>{if($('activity-dialog').open)renderActivity();},60000);
 const liveParams=new URLSearchParams(location.search),followRequested=liveParams.has('follow');
 let followedQuestion=null;
 const live=new window.LivePractice.Session({openDoc:(id,key)=>students.liveRef(id,key),onStatus:setLiveStatus,
