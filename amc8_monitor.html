@@ -40,11 +40,11 @@ function render(){
   if(!days.length){list.textContent='All days in this window are excluded. Uncheck a weekday to show activity.';return;}
   for(const day of days){
     const row=document.createElement('div');row.className='day';
-    const labels=document.createElement('div'),date=document.createElement('span'),count=document.createElement('span');date.textContent=day.label;count.textContent=`${day.total} / ${goal} answers`;labels.append(date,count);
+    const labels=document.createElement('div'),date=document.createElement('span'),count=document.createElement('span');date.textContent=day.label+(day.upcoming?' · Upcoming':'')+(day.tutoring?' · Tutoring':'');count.textContent=`${day.total} / ${goal} answers`;labels.append(date,count);
     const bar=document.createElement('progress');bar.max=goal;bar.value=Math.min(day.total,goal);bar.setAttribute('aria-label',`${name}, ${day.label}: ${day.total} checked answers, goal ${goal}`);
     const detail=document.createElement('p');detail.className='small';detail.textContent=`${day.correct} correct · ${day.retries} retries · ${duration(day.seconds)} recorded${day.missingTime?' · time missing for '+day.missingTime+' answers':''}`;
-    if(day.tutoring){count.textContent=day.upcoming?'Upcoming tutoring day':'Tutoring day';detail.textContent='End of this practice interval.';row.append(labels,detail);}
-    else if(day.upcoming){count.textContent='Upcoming';detail.textContent=`Planned practice · goal ${goal} answers`;row.append(labels,bar,detail);}
+    if(day.tutoring){detail.textContent='End of this practice interval.';row.append(labels,detail);}
+    else if(day.upcoming){detail.textContent=`Planned practice · goal ${goal} answers`;row.append(labels,bar,detail);}
     else row.append(labels,bar,detail);list.append(row);
   }
 }
@@ -65,7 +65,7 @@ function connect(){
 $('monitor-form').onsubmit=event=>{event.preventDefault();connect();};$('monitor-connect').onclick=connect;
 $('monitor-period').addEventListener('change',()=>{render();share();});
 $('monitor-filter').addEventListener('change',()=>{save('amc8ActivityExcludedWeekdays',JSON.stringify(currentExcluded()));render();share();});
-$('monitor-goal').addEventListener('change',()=>{if($('monitor-goal').checkValidity()){goal=validGoal($('monitor-goal').value);save('amc8ActivityGoal',String(goal));render();share();}});
+$('monitor-goal').addEventListener('input',()=>{if($('monitor-goal').checkValidity()){goal=validGoal($('monitor-goal').value);save('amc8ActivityGoal',String(goal));render();share();const url=new URL(location.href);url.searchParams.set('goal',String(goal));history.replaceState(null,'',url.toString());}});
 $('monitor-student').addEventListener('input',share);$('monitor-key').addEventListener('input',share);
 $('share-copy').onclick=async()=>{share();try{await navigator.clipboard.writeText($('share-link').value);$('share-status').textContent='Monitoring link copied.';}catch(e){$('share-link').focus();$('share-link').select();$('share-status').textContent='Select and copy the link above.';}};
 addEventListener('pagehide',()=>{if(stop)stop();});addEventListener('pageshow',event=>{if(event.persisted)connect();});

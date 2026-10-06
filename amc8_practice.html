@@ -598,17 +598,18 @@ $('activity-period').onchange=renderActivity;
 function renderActivity(){
   const cycle=$('activity-period').value==='cycle';
   $('activity-period-label').textContent=cycle&&activityExcluded.length?'From after the previous tutoring day through the next tutoring day':'Today and the preceding six days';
+  $('activity-page-link').href=monitoringLink();
   const list=$('activity-days');list.replaceChildren();if(!activityState)return;
   const days=cycle?window.ActivityMonitor.cycleDays(activityState.attempts,new Date(),activityExcluded):P.activityDays(activityState.attempts,new Date(),activityExcluded);
   if(!days.length){list.textContent='All days in this window are excluded. Uncheck a weekday to show activity.';return;}
   for(const day of days){
     const row=document.createElement('div');row.className='activity-day';
     const labels=document.createElement('div'),label=document.createElement('span'),count=document.createElement('span');
-    label.textContent=day.label;count.textContent=`${day.total} / ${activityGoal} answers`;labels.append(label,count);
+    label.textContent=day.label+(day.upcoming?' · Upcoming':'')+(day.tutoring?' · Tutoring':'');count.textContent=`${day.total} / ${activityGoal} answers`;labels.append(label,count);
     const bar=document.createElement('progress');bar.max=activityGoal;bar.value=Math.min(day.total,activityGoal);bar.setAttribute('aria-label',`${activityName}, ${day.label}: ${day.total} checked answers, goal ${activityGoal}`);
     const detail=document.createElement('p');detail.className='small';detail.style.margin='0';detail.textContent=`${day.correct} correct · ${day.retries} retries · ${describeDuration(day.seconds)} recorded${day.missingTime?' · time missing for '+day.missingTime+' answers':''}`;
-    if(day.tutoring){count.textContent=day.upcoming?'Upcoming tutoring day':'Tutoring day';detail.textContent='End of this practice interval.';row.append(labels,detail);}
-    else if(day.upcoming){count.textContent='Upcoming';detail.textContent=`Planned practice · goal ${activityGoal} answers`;row.append(labels,bar,detail);}
+    if(day.tutoring){detail.textContent='End of this practice interval.';row.append(labels,detail);}
+    else if(day.upcoming){detail.textContent=`Planned practice · goal ${activityGoal} answers`;row.append(labels,bar,detail);}
     else row.append(labels,bar,detail);list.append(row);
   }
 }
@@ -642,7 +643,7 @@ $('activity-share').onclick=async()=>{
   try{await navigator.clipboard.writeText(url);$('activity-share-status').textContent='Monitoring link copied. Send it to your helper.';}
   catch(e){window.prompt('Copy this monitoring link:',url);}
 };
-$('activity-goal').onchange=()=>{if($('activity-goal').checkValidity()){activityGoal=Number($('activity-goal').value);try{localStorage.setItem('amc8ActivityGoal',String(activityGoal));}catch(e){}renderActivity();}};
+$('activity-goal').oninput=()=>{if($('activity-goal').checkValidity()){activityGoal=Number($('activity-goal').value);try{localStorage.setItem('amc8ActivityGoal',String(activityGoal));}catch(e){}renderActivity();}};
 setInterval(()=>{if($('activity-dialog').open)renderActivity();},60000);
 const liveParams=new URLSearchParams(location.search),followRequested=liveParams.has('follow');
 let followedQuestion=null;

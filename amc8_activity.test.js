@@ -97,13 +97,13 @@ test('standalone page starts reading directly and shared filters override viewer
   const M=require('./amc8_activity.js');
   const page=fs.readFileSync(`${__dirname}/amc8_monitor.html`,'utf8');
   const inline=Array.from(page.matchAll(/<script>([\s\S]*?)<\/script>/g),m=>m[1]);
-  const elements=new Map(),writes=[],reads=[];
-  function element(){return {value:'',checked:false,hidden:false,textContent:'',children:[],style:{},addEventListener(){},reportValidity:()=>true,checkValidity:()=>true,replaceChildren(...children){this.children=children;},append(...children){this.children.push(...children);},setAttribute(){},focus(){},select(){}};}
+  const elements=new Map(),writes=[],reads=[],addresses=[];
+  function element(){return {value:'',checked:false,hidden:false,textContent:'',children:[],style:{},events:{},addEventListener(type,handler){this.events[type]=handler;},reportValidity:()=>true,checkValidity:()=>true,replaceChildren(...children){this.children=children;},append(...children){this.children.push(...children);},setAttribute(){},focus(){},select(){}};}
   const boxes=[1,2,3,4,5,6,0].map(n=>({...element(),value:String(n)}));
   const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
   get('monitor-filter').querySelectorAll=()=>boxes;
-  const watcher={...M,watch:(name,key,handlers)=>{reads.push({name,key,handlers});handlers.onStatus('connecting');return ()=>{};}};
-  const sandbox={window:{ActivityMonitor:watcher},URL,URLSearchParams,Date,location:{href:'https://example.com/test/amc8_monitor.html?student=Bruce&goal=12&period=week&exclude=3,6#apiKey=demo',search:'?student=Bruce&goal=12&period=week&exclude=3,6',hash:'#apiKey=demo'},localStorage:{getItem:key=>key==='amc8ActivityExcludedWeekdays'?'[0]':null,setItem:(key,value)=>writes.push(key)},document:{getElementById:get,createElement:element},setInterval(){},addEventListener(){}};
+  const watcher={...M,cycleDays:attempts=>M.cycleDays(attempts,new Date('2026-10-05T12:00:00Z'),[3,6]),watch:(name,key,handlers)=>{reads.push({name,key,handlers});handlers.onStatus('connecting');return ()=>{};}};
+  const sandbox={history:{replaceState:(state,title,url)=>addresses.push(url)},window:{ActivityMonitor:watcher},URL,URLSearchParams,Date,location:{href:'https://example.com/test/amc8_monitor.html?student=Bruce&goal=12&period=week&exclude=3,6#apiKey=demo',search:'?student=Bruce&goal=12&period=week&exclude=3,6',hash:'#apiKey=demo'},localStorage:{getItem:key=>key==='amc8ActivityExcludedWeekdays'?'[0]':null,setItem:(key,value)=>writes.push(key)},document:{getElementById:get,createElement:element},setInterval(){},addEventListener(){}};
   for(const code of inline)vm.runInNewContext(code,sandbox);
   assert.equal(reads.length,1);assert.equal(reads[0].name,'Bruce');assert.equal(reads[0].key,'demo');
   assert.deepEqual(boxes.filter(b=>b.checked).map(b=>Number(b.value)),[3,6]);
@@ -112,6 +112,18 @@ test('standalone page starts reading directly and shared filters override viewer
   assert.equal(get('monitor-days').children.length,5);assert.equal(get('monitor-days').hidden,false);
   assert.equal(get('monitor-status').textContent,'Connected · live updates enabled.');
   assert.equal(new URL(get('share-link').value).searchParams.get('goal'),'12');
+  get('monitor-period').value='cycle';get('monitor-period').events.change();
+  const upcoming=get('monitor-days').children[2];
+  assert.ok(upcoming.children[0].children[0].textContent.includes('Upcoming'));
+  assert.equal(upcoming.children[0].children[1].textContent,'0 / 12 answers');
+  assert.equal(get('monitor-days').children[3].children[0].children[1].textContent,'0 / 12 answers');
+  get('monitor-goal').value='20';get('monitor-goal').events.input();
+  assert.equal(get('monitor-days').children[2].children[0].children[1].textContent,'0 / 20 answers');
+  const shared=new URL(get('share-link').value);
+  assert.equal(shared.searchParams.get('goal'),'20');assert.equal(shared.searchParams.get('period'),'cycle');
+  assert.equal(shared.searchParams.get('exclude'),'3,6');
+  assert.equal(new URLSearchParams(shared.hash.slice(1)).get('apiKey'),'demo');
+  assert.equal(new URL(addresses.at(-1)).searchParams.get('goal'),'20');
 });
 
 test('default interval runs Sunday to Wednesday with future days clearly marked',()=>{
