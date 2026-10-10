@@ -608,7 +608,7 @@ function renderActivity(){
     label.textContent=day.label+(day.upcoming?' · Upcoming':'')+(day.tutoring?' · Tutoring':'');count.textContent=`${day.total} / ${activityGoal} answers`;labels.append(label,count);
     const bar=document.createElement('progress');bar.max=activityGoal;bar.value=Math.min(day.total,activityGoal);bar.setAttribute('aria-label',`${activityName}, ${day.label}: ${day.total} checked answers, goal ${activityGoal}`);
     const detail=document.createElement('p');detail.className='small';detail.style.margin='0';detail.textContent=`${day.correct} correct · ${day.retries} retries · ${describeDuration(day.seconds)} recorded${day.missingTime?' · time missing for '+day.missingTime+' answers':''}`;
-    if(day.tutoring){count.textContent='No practice goal';detail.textContent='End of this practice interval.';row.append(labels,detail);}
+    if(day.tutoring){count.textContent=`${day.total} answers · No practice goal`;detail.textContent='End of this practice interval.';row.append(labels,detail);}
     else if(day.upcoming){detail.textContent=`Planned practice · goal ${activityGoal} answers`;row.append(labels,bar,detail);}
     else row.append(labels,bar,detail);list.append(row);
   }
