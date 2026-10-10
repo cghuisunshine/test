@@ -34,7 +34,7 @@ function cycleDays(attempts,now=new Date(),tutoringWeekdays=[3,6]){
   while(!schedule.includes(shift(previous).getUTCDay()))previous--;
   while(!schedule.includes(shift(next).getUTCDay()))next++;
   const end=shift(next),start=shift(previous+1).toISOString().slice(0,10);
-  return days(attempts.filter(a=>Date.parse(a.at)<=now.getTime()),end).filter(day=>day.key>=start).reverse().map(day=>({
+  return days(attempts.filter(a=>Date.parse(a.at)<=now.getTime()),new Date(Math.max(end.getTime(),now.getTime()))).filter(day=>day.key>=start).reverse().map(day=>({
     ...day,label:(day.key===today?'Today · ':'')+new Date(day.key+'T12:00:00Z').toLocaleDateString('en-CA',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric'}),upcoming:day.key>today,tutoring:day.key===end.toISOString().slice(0,10)
   }));
 }
