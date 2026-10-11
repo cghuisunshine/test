@@ -488,7 +488,8 @@ store.saveLocal=(name,payload)=>ls.set(LOCAL_PREFIX+store.idFor(name),JSON.strin
 store.takeLegacy=()=>{const raw=ls.get(LEGACY_KEY);if(!raw)return null;ls.del(LEGACY_KEY);try{return JSON.parse(raw);}catch(e){return null;}};
 
 // ---- Firebase (optional) ----
-let db=null, activeKey='', unsubscribe=null, docRef=null, onRemote=null, onStatus=()=>{};
+let unsubscribe=null, docRef=null, onRemote=null, onStatus=()=>{};
+const databases=new Map();
 let lastRemoteUpdatedAt='', pendingLocalUpdatedAt='', getLocal=()=>null;
 store.getApiKey=()=>{let fromUrl='';try{fromUrl=new URLSearchParams(location.search).get('apiKey')||'';}catch(e){}if(fromUrl.trim()){ls.set(FIREBASE_API_KEY_KEY,fromUrl.trim());return fromUrl.trim();}return ls.get(FIREBASE_API_KEY_KEY)||'';};
 store.setApiKey=key=>{key=String(key||'').trim();if(key)ls.set(FIREBASE_API_KEY_KEY,key);else ls.del(FIREBASE_API_KEY_KEY);};
@@ -506,17 +507,22 @@ async function ensureFirebase(apiKey){
   if(!apiKey)throw Error('missing-firebase-api-key');
   await loadSdk();
   if(!root.firebase)throw Error('firebase-sdk-unavailable');
-  if(activeKey&&activeKey!==apiKey){store.stop();if(firebase.apps.length&&firebase.app().delete)await firebase.app().delete();}
-  if(!firebase.apps.some(app=>app.name==='[DEFAULT]'))firebase.initializeApp({...FIREBASE_CONFIG,apiKey});
-  activeKey=apiKey;db=firebase.firestore();
+  // A live link and saved student sync settings may use different keys. Keep
+  // their connections independent so changing sync cannot terminate a follower.
+  if(!databases.has(apiKey)){
+    const app=root.firebase.initializeApp({...FIREBASE_CONFIG,apiKey},'amc8Practice-'+databases.size);
+    databases.set(apiKey,app.firestore());
+  }
+  return databases.get(apiKey);
 }
 store.stop=()=>{if(unsubscribe){unsubscribe();unsubscribe=null;}docRef=null;lastRemoteUpdatedAt='';pendingLocalUpdatedAt='';};
 // Start syncing one student's document. Same last-write-wins rule as the todo page, by updatedAt.
 store.start=async(name,handlers)=>{
   store.stop();onRemote=handlers.onRemote;onStatus=handlers.onStatus||onStatus;getLocal=handlers.getLocal;
   const apiKey=store.getApiKey();if(!apiKey){onStatus('local');return false;}
-  try{await ensureFirebase(apiKey);}catch(e){onStatus('error',e);return false;}
-  const ref=db.collection(FIREBASE_COLLECTION).doc(store.idFor(name));docRef=ref;onStatus('connecting');
+  let database;
+  try{database=await ensureFirebase(apiKey);}catch(e){onStatus('error',e);return false;}
+  const ref=database.collection(FIREBASE_COLLECTION).doc(store.idFor(name));docRef=ref;onStatus('connecting');
   unsubscribe=ref.onSnapshot(snapshot=>{
     if(docRef!==ref)return;
     if(snapshot.metadata&&snapshot.metadata.hasPendingWrites)return;
@@ -539,8 +545,8 @@ store.push=async payload=>{
 // Live sessions use separate, random documents and never include student state.
 store.liveRef=async(id,key)=>{
   if(!root.LivePractice.validId(id))throw Error('invalid-live-session');
-  await ensureFirebase(key||store.getApiKey());
-  return db.collection(FIREBASE_COLLECTION).doc('live-'+id);
+  const database=await ensureFirebase(key||store.getApiKey());
+  return database.collection(FIREBASE_COLLECTION).doc('live-'+id);
 };
 // The monitor uses an independent read-only connection.
 store.watchActivity=(name,handlers)=>root.ActivityMonitor.watch(name,store.getApiKey(),handlers);
