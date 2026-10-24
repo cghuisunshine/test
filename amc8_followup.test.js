@@ -14,7 +14,7 @@ function element() {
     replaceChildren(...children) { this.children = children; }, append(...children) { this.children.push(...children); } };
 }
 function fixture({ enabled = true, correct = false, kind = 'exam', fetch } = {}) {
-  const elements = new Map(), storage = new Map([['amc8PracticeFollowUp', String(enabled)]]), requests = [];
+  const elements = new Map(), storage = new Map(enabled === null ? [] : [['amc8PracticeFollowUp', String(enabled)]]), requests = [];
   const context = {
     module: { exports: {} }, window: {}, Date, AbortController, setTimeout, clearTimeout,
     document: { createElement: element, querySelectorAll: () => [] },
@@ -44,6 +44,17 @@ test('follow-up protocol accepts service envelopes and rejects incomplete or dup
   for (const bad of [{ ...question, answer: 'F' }, { ...question, choices: ['1', '2', '2', '3', '4'] }, { ...question, choices: ['1', '2'] }, { ...question, explanation: '' }, { response: 'not JSON' }, { ok: false }]) {
     assert.throws(() => c.FQ.parseResponse(bad));
   }
+});
+
+test('follow-ups default to enabled while respecting a saved opt-out', async () => {
+  const fresh = fixture({ enabled: null });
+  assert.equal(fresh.$('followup-enabled').checked, true);
+  await fresh.submit();
+  assert.equal(fresh.requests.length, 1);
+  const optedOut = fixture({ enabled: false });
+  assert.equal(optedOut.$('followup-enabled').checked, false);
+  await optedOut.submit();
+  assert.equal(optedOut.requests.length, 0);
 });
 
 test('only an enabled missed real exam answer automatically requests a follow-up', async () => {
