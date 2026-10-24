@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {Session,pack,unpack,shareURL,validId}=require('./amc8_live_share.js');
+const {Session,pack,unpack,unpackFollowUp,shareURL,validId}=require('./amc8_live_share.js');
 const ID='ab'.repeat(24);
 const p1={id:'exam-2003-1',kind:'exam',topic:'Geometry',answer:'E',html:'<p>Cube</p>'};
 const p2={id:'exam-2003-2',kind:'exam',topic:'Algebra',answer:'B'};
@@ -99,4 +99,40 @@ test('an empty host selection clears the follower question',async()=>{
 test('a failed start does not create a shareable session',async()=>{
   const statuses=[];const host=new Session({openDoc:async()=>{throw Error('missing-firebase-api-key');},makeId:()=>ID,onStatus:s=>statuses.push(s)});
   await assert.rejects(host.startHost(p1),/missing-firebase-api-key/);assert.equal(host.role,'idle');assert.equal(statuses.at(-1),'error');
+});
+
+
+const followUp={id:'followup-example',text:'A similar problem',choices:['1','2','3','4','5'],answer:'C',explanation:'Use the same method.'};
+test('follow-up payloads validate content and exclude student answers and working',()=>{
+  const packed=pack(p1,{...followUp,answers:[{choice:'A'}],student:'private',drawing:'private'});
+  assert.deepEqual(unpackFollowUp(packed),followUp);
+  assert.deepEqual(Object.keys(packed).sort(),['f','q']);
+  assert.equal(unpack(packed,[p1]),p1);
+  for(const bad of [{...followUp,id:'__proto__'},{...followUp,answer:'Z'},{...followUp,choices:['1']},{...followUp,choices:['1','1','2','3','4']},{...followUp,text:'x'.repeat(5001)}]){
+    assert.equal(unpackFollowUp({f:bad}),null);assert.throws(()=>pack(p1,bad),/invalid-live-follow-up/);
+  }
+  assert.equal(unpackFollowUp(pack(p1)),null);
+  const long={...followUp,text:'x'.repeat(5000),explanation:'y'.repeat(7000),choices:['a'.repeat(500),'b','c','d','e']};
+  assert.deepEqual(unpackFollowUp(pack(p1,long)),long);
+});
+
+test('current and late-joining followers get the exact follow-up, replacements and clearing',async()=>{
+  const b=backend(),host=client(b),first=[],late=[];
+  await host.startHost(p1);
+  await client(b,{onQuestion:q=>first.push(q)}).follow(ID,'web-config');
+  await host.publish(p1,followUp);
+  await client(b,{onQuestion:q=>late.push(q)}).follow(ID,'web-config');
+  assert.deepEqual(first.at(-1),pack(p1,followUp));assert.deepEqual(late.at(-1),first.at(-1));
+  const replacement={...followUp,id:'followup-new',text:'A new similar question'};
+  await host.publish(p1,replacement);assert.deepEqual(first.at(-1),pack(p1,replacement));
+  await host.publish(p2);assert.deepEqual(first.at(-1),pack(p2));assert.deepEqual(late.at(-1),pack(p2));
+  assert.equal(first.length,4);
+});
+
+test('sharing starts with an already visible follow-up and followers cannot replace it',async()=>{
+  const b=backend(),host=client(b),seen=[];await host.startHost(p1,followUp);
+  const viewer=client(b,{onQuestion:q=>seen.push(q)});await viewer.follow(ID,'web-config');
+  assert.deepEqual(seen,[pack(p1,followUp)]);
+  await viewer.publish(p1,{...followUp,id:'followup-private'});
+  assert.equal(b.writes.length,1);assert.deepEqual(b.docs.get(ID).data.question,pack(p1,followUp));
 });

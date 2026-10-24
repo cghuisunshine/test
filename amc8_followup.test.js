@@ -16,7 +16,8 @@ function element() {
 function fixture({ enabled = true, correct = false, kind = 'exam', fetch } = {}) {
   const elements = new Map(), storage = new Map(enabled === null ? [] : [['amc8PracticeFollowUp', String(enabled)]]), requests = [];
   const context = {
-    module: { exports: {} }, window: {}, Date, AbortController, setTimeout, clearTimeout,
+    module: { exports: {} }, window: {}, Date, AbortController, setTimeout, clearTimeout, crypto: require('node:crypto').webcrypto,
+    live: { role: 'idle', publications: [], publish(p,f=null) { this.publications.push({p,f}); return Promise.resolve(); } },
     document: { createElement: element, querySelectorAll: () => [] },
     $: id => { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); },
     localStorage: { getItem: k => storage.get(k), setItem: (k, v) => storage.set(k, v) },
@@ -132,4 +133,50 @@ test('turning the setting off cancels a pending request and remembers the choice
   assert.equal(f.storage.get('amc8PracticeFollowUp'), 'false');
   assert.equal(f.$('followup').hidden, true);
   assert.equal(f.requests[0][1].signal.aborted, true);
+});
+
+
+test('a generated follow-up publishes the same question and only its content', async () => {
+  const f=fixture();f.c.live.role='host';await f.submit();
+  const published=f.c.live.publications.at(-1);
+  assert.equal(published.p.id,f.c.current.id);
+  assert.match(published.f.id,/^followup-/);
+  assert.equal(published.f.text,question.text);
+  assert.equal(published.f.answer,question.answer);
+  assert.equal(published.f.answers,undefined);
+});
+
+test('followers solve the host follow-up independently even before answering the original', async () => {
+  const f=fixture();f.c.live.role='follower';
+  f.c.shared={id:'followup-shared',...question};
+  vm.runInContext('showSharedFollowUp(shared)',f.c);
+  assert.equal(f.$('followup-content').hidden,false);
+  f.$('followup-choices').children[1].onclick();f.$('followup-check').onclick();
+  assert.equal(f.c.state.liveFollowUps['followup-shared'].answers[0].correct,true);
+  assert.equal(f.c.state.attempts.length,0);
+  assert.equal(f.requests.length,0);
+  vm.runInContext('showSharedFollowUp(shared)',f.c);
+  assert.match(f.$('followup-feedback').textContent,/Correct!/);
+  f.$('followup-enabled').checked=false;f.$('followup-enabled').onchange();
+  assert.equal(f.$('followup').hidden,false);
+  await f.submit();
+  assert.equal(f.requests.length,0);
+  assert.equal(f.$('followup').hidden,false);
+  assert.equal(f.c.state.attempts.length,1);
+});
+
+test('replacement follow-ups reset only the follow-up and keep exam work and answers', async () => {
+  const f=fixture();f.c.live.role='follower';await f.submit();
+  f.c.shared={id:'followup-first',...question};vm.runInContext('showSharedFollowUp(shared)',f.c);
+  f.$('followup-choices').children[0].onclick();f.$('followup-check').onclick();
+  const attempt=f.c.activeAttempt;
+  f.c.shared={id:'followup-second',...question,text:'A different similar problem'};vm.runInContext('showSharedFollowUp(shared)',f.c);
+  assert.equal(f.c.activeAttempt,attempt);assert.equal(f.c.checked,true);
+  assert.equal(f.$('followup-statement').textContent,'A different similar problem');
+  assert.equal(f.$('followup-feedback').textContent,'');
+  assert.equal(f.c.state.liveFollowUps['followup-first'].answers.length,1);
+  f.$('followup-choices').children[0].onclick();f.$('followup-check').onclick();f.$('followup-reveal').onclick();
+  assert.equal(f.$('followup-retry').hidden,true);
+  vm.runInContext('showSharedFollowUp(null)',f.c);
+  assert.equal(f.$('followup').hidden,true);assert.equal(f.c.activeAttempt,attempt);
 });

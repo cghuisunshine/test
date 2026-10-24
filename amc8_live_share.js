@@ -3,9 +3,18 @@
   'use strict';
   const validId=id=>typeof id==='string'&&/^[a-f0-9]{48}$/.test(id);
   const topics=['Algebra','Geometry','Number Theory','Combinatorics','Probability'];
-  function pack(problem){
+  function unpackFollowUp(data){
+    const f=data?.f,str=(v,n)=>typeof v==='string'&&v.trim().length>0&&v.length<=n;
+    if(!f||!str(f.id,120)||!/^followup-[-\w]{1,100}$/.test(f.id)||!str(f.text,5000)||!str(f.explanation,7000)||!/^[A-E]$/.test(f.answer)||!Array.isArray(f.choices)||f.choices.length!==5||!f.choices.every(c=>str(c,500))||new Set(f.choices.map(c=>c.trim().toLowerCase())).size!==5)return null;
+    return {id:f.id,text:f.text,choices:f.choices.slice(),answer:f.answer,explanation:f.explanation};
+  }
+  function pack(problem,followUp=null){
     if(!problem)return null;
-    if(problem.kind==='exam')return {q:problem.id};
+    if(problem.kind==='exam'){
+      const data={q:problem.id};
+      if(followUp){const f=unpackFollowUp({f:followUp});if(!f)throw Error('invalid-live-follow-up');data.f=f;}
+      return data;
+    }
     return {g:{id:problem.id,t:problem.topic,l:problem.level,ti:problem.title,x:problem.text,c:problem.choices.slice(),a:problem.answer,e:problem.explanation}};
   }
   function unpack(data,bank){
@@ -30,22 +39,22 @@
       Object.assign(this,{openDoc,onStatus,onQuestion,now,makeId});this.role='idle';this.epoch=0;this.ref=null;this.unsubscribe=null;this.queue=Promise.resolve();this.revision=0;this.signature='';
     }
     record(question,active=true){return {kind:'amc8-live',version:1,active,revision:++this.revision,question,updatedAt:new Date(this.now()).toISOString(),expiresAt:this.now()+8*60*60*1000};}
-    async startHost(problem){
+    async startHost(problem,followUp=null){
       if(this.role!=='idle')throw Error('live-session-already-active');
       const epoch=++this.epoch;this.role='starting';this.onStatus('starting');
       const id=this.makeId();if(!validId(id)){this.leave();throw Error('invalid-live-session');}
       try{
         const ref=await this.openDoc(id);
         if(epoch!==this.epoch)return null;
-        const question=pack(problem);this.revision=0;
+        const question=pack(problem,followUp);this.revision=0;
         await ref.set(this.record(question));
         if(epoch!==this.epoch)return null;
         this.id=id;this.ref=ref;this.role='host';this.signature=JSON.stringify(question);this.queue=Promise.resolve();this.onStatus('hosting');return id;
       }catch(error){if(epoch===this.epoch){this.leave();this.onStatus('error',error);}throw error;}
     }
-    publish(problem){
+    publish(problem,followUp=null){
       if(this.role!=='host')return Promise.resolve();
-      const question=pack(problem),signature=JSON.stringify(question);
+      const question=pack(problem,followUp),signature=JSON.stringify(question);
       if(signature===this.signature)return this.queue;
       this.signature=signature;
       const ref=this.ref,epoch=this.epoch,data=this.record(question);
@@ -83,6 +92,6 @@
       ++this.epoch;if(this.unsubscribe)this.unsubscribe();this.unsubscribe=null;this.ref=null;this.id='';this.role='idle';this.signature='';
     }
   }
-  const api={Session,pack,unpack,validId,shareURL};
+  const api={Session,pack,unpack,unpackFollowUp,validId,shareURL};
   if(typeof module!=='undefined')module.exports=api;root.LivePractice=api;
 })(typeof window!=='undefined'?window:globalThis);
