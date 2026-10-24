@@ -180,3 +180,38 @@ test('replacement follow-ups reset only the follow-up and keep exam work and ans
   vm.runInContext('showSharedFollowUp(null)',f.c);
   assert.equal(f.$('followup').hidden,true);assert.equal(f.c.activeAttempt,attempt);
 });
+
+
+test('live navigation works with a cached script that has no follow-up decoder', () => {
+  const f=fixture(),first=f.c.current,second={...first,id:'exam-2023-2'};
+  f.c.bank=[first,second];
+  // This is the API surface of the script before follow-up sharing was added.
+  f.c.window.LivePractice={unpack:require('./amc8_live_share.js').unpack};
+  f.c.followedQuestion=null;f.c.followedFollowUp=null;f.c.current=null;f.c.displayed=[];
+  f.c.show=p=>{f.c.current=p;f.c.displayed.push(p.id);};
+  f.c.setLiveStatus=status=>{assert.fail('Unexpected live status: '+status);};
+  const start=html.indexOf('onQuestion:data=>{');
+  const callback=html.slice(start,html.indexOf('  }});',start)+3);
+  vm.runInContext('var onLiveQuestion=({'+callback+'}).onQuestion;',f.c);
+  f.c.onLiveQuestion({q:first.id});f.c.onLiveQuestion({q:second.id});
+  assert.deepEqual(f.c.displayed,[first.id,second.id]);
+  f.c.onLiveQuestion({q:second.id,f:{id:'followup-cached',...question}});
+  assert.equal(f.$('followup-statement').textContent,question.text);
+});
+
+test('older Safari without Array.at or crypto.randomUUID can generate and receive follow-ups', async () => {
+  const f=fixture();
+  f.c.crypto={getRandomValues:require('node:crypto').webcrypto.getRandomValues.bind(require('node:crypto').webcrypto)};
+  vm.runInContext('Array.prototype.at=undefined;',f.c);
+  await f.submit();
+  assert.equal(f.$('followup-content').hidden,false);
+  assert.match(f.c.live.publications[f.c.live.publications.length-1].f.id,/^followup-[a-f0-9]{32}$/);
+  f.c.live.role='follower';f.c.shared={id:'followup-older-safari',...question};
+  vm.runInContext('showSharedFollowUp(shared)',f.c);
+  f.$('followup-choices').children[1].onclick();f.$('followup-check').onclick();
+  assert.match(f.$('followup-feedback').textContent,/Correct!/);
+});
+
+test('the page requests a versioned live-sharing script after an API change', () => {
+  assert.match(html,/<script src="amc8_live_share\.js\?v=[^"\s]+"><\/script>/);
+});

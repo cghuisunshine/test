@@ -136,3 +136,14 @@ test('sharing starts with an already visible follow-up and followers cannot repl
   await viewer.publish(p1,{...followUp,id:'followup-private'});
   assert.equal(b.writes.length,1);assert.deepEqual(b.docs.get(ID).data.question,pack(p1,followUp));
 });
+
+
+test('display errors are reported and the same revision can be retried',async()=>{
+  const b=backend(),host=client(b),statuses=[],seen=[];let failed=true;
+  await host.startHost(p1);
+  const viewer=client(b,{onStatus:s=>statuses.push(s),onQuestion:q=>{if(failed)throw Error('cached-script-error');seen.push(q);}});
+  await viewer.follow(ID,'web-config');assert.equal(statuses.at(-1),'render-error');
+  failed=false;const ref=await b.openDoc(ID);await ref.set(b.docs.get(ID).data);
+  assert.deepEqual(seen,[pack(p1)]);assert.equal(statuses.at(-1),'following');
+  await host.publish(p2);assert.deepEqual(seen,[pack(p1),pack(p2)]);
+});

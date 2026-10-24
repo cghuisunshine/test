@@ -84,7 +84,10 @@
           if(data.revision<revision)return;
           if(!data.active||data.expiresAt<=this.now()){this.onStatus('ended');return;}
           this.onStatus(snapshot.metadata?.fromCache?'reconnecting':'following');
-          if(data.revision>revision){revision=data.revision;this.onQuestion(data.question);}
+          if(data.revision>revision){
+            try{this.onQuestion(data.question);revision=data.revision;}
+            catch(error){this.onStatus('render-error',error);}
+          }
         },error=>{if(epoch===this.epoch)this.onStatus('error',error);});
       }catch(error){if(epoch===this.epoch)this.onStatus('error',error);throw error;}
     }
