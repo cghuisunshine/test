@@ -215,3 +215,18 @@ test('older Safari without Array.at or crypto.randomUUID can generate and receiv
 test('the page requests a versioned live-sharing script after an API change', () => {
   assert.match(html,/<script src="amc8_live_share\.js\?v=[^"\s]+"><\/script>/);
 });
+
+
+test('a live visitor must name the student before an answer is recorded', async () => {
+  const f=fixture();f.c.student='';f.c.live.role='follower';let prompts=0;f.c.showLogin=()=>{prompts++;};
+  await f.submit();assert.equal(prompts,1);assert.equal(f.c.state.attempts.length,0);assert.equal(f.c.pendingAnswer,'check');
+  f.c.student='Bruce';await f.submit();assert.equal(f.c.state.attempts.length,1);
+});
+
+test('unsigned follow-up answers also prompt for a student without discarding the question', () => {
+  const f=fixture();f.c.student='';f.c.live.role='follower';let prompts=0;f.c.showLogin=()=>{prompts++;};
+  f.c.shared={id:'followup-anonymous',...question};vm.runInContext('showSharedFollowUp(shared)',f.c);
+  f.$('followup-choices').children[1].onclick();f.$('followup-check').onclick();
+  assert.equal(prompts,1);assert.equal(f.c.state.liveFollowUps['followup-anonymous'].answers.length,0);
+  assert.equal(f.c.pendingAnswer,'followup-check');assert.equal(f.$('followup-statement').textContent,question.text);
+});

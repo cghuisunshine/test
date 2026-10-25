@@ -99,3 +99,127 @@ test('concurrent live and student connections reuse the same key without resetti
   f.emit(2,'exam-2002-22');assert.equal(f.questions.length,2);assert.equal(f.statuses.at(-1),'following');
   f.viewer.leave();f.store.stop();
 });
+
+const attempt=(id,at,choice='A')=>({id,at,choice,answer:'A',correct:choice==='A',review:false,kind:'exam',title:id,topic:'Geometry',level:1});
+const payload=(attempts,updatedAt='2026-10-24T20:00:00Z',extra={})=>({version:1,student:'Bruce',updatedAt,state:JSON.stringify({version:1,attempts,items:Object.fromEntries(attempts.map(a=>[a.id,{problem:{id:a.id,kind:'exam',topic:a.topic,level:1,answer:'A',title:a.id},manual:false,missed:!a.correct}])),...extra})});
+const stateOf=p=>JSON.parse(p.state);
+
+test('sync merges yesterday’s local practice with a different device’s newer history',()=>{
+  const f=fixture(),old=attempt('exam-2023-1','2026-10-21T20:00:00Z'),yesterday=attempt('exam-2023-2','2026-10-24T20:00:00Z'),today=attempt('exam-2023-3','2026-10-25T20:00:00Z');
+  const local=payload([old,yesterday]),remote=payload([old,today],'2026-10-25T21:00:00Z');
+  const merged=f.store.mergePayloads(local,remote);
+  assert.deepEqual(stateOf(merged).attempts.map(a=>a.id),[old.id,yesterday.id,today.id]);
+  assert.deepEqual(stateOf(f.store.mergePayloads(merged,remote)),stateOf(merged),'repeated snapshots must not duplicate answers');
+  assert.deepEqual(stateOf(f.store.mergePayloads(remote,merged)),stateOf(merged));
+});
+
+test('merged retries preserve first-attempt accuracy and the latest review result',()=>{
+  const f=fixture(),first=attempt('exam-2023-1','2026-10-24T20:00:00Z','B'),retry=attempt(first.id,'2026-10-25T20:00:00Z');
+  const state=stateOf(f.store.mergePayloads(payload([first]),payload([retry],'2026-10-25T21:00:00Z')));
+  assert.deepEqual(state.attempts.map(a=>a.review),[false,true]);
+  assert.equal(state.attempts[0].correct,false);assert.equal(state.items[first.id].missed,false);
+});
+
+test('merged follow-up answers and AI reviews survive updates from two devices',()=>{
+  const f=fixture(),a=attempt('exam-2023-1','2026-10-24T20:00:00Z'),question={text:'same question',answer:'A'};
+  const wrong={choice:'B',correct:false,at:'2026-10-24T20:01:00Z'},correct={choice:'A',correct:true,at:'2026-10-24T20:02:00Z'};
+  const local=payload([{...a,followUp:{question,answers:[wrong]},aiReview:{feedback:'review'},aiReviewedAt:'2026-10-24T21:00:00Z'}],undefined,{liveFollowUps:{'followup-test':{sourceId:a.id,question,answers:[wrong]}}});
+  const remote=payload([{...a,followUp:{question,answers:[correct]}}],'2026-10-25T20:00:00Z',{liveFollowUps:{'followup-test':{sourceId:a.id,question,answers:[correct]}}});
+  const state=stateOf(f.store.mergePayloads(local,remote));
+  assert.deepEqual(state.attempts[0].followUp.answers,[wrong,correct]);assert.equal(state.attempts[0].aiReview.feedback,'review');
+  assert.deepEqual(state.liveFollowUps['followup-test'].answers,[wrong,correct]);
+});
+
+test('signed-in live participants use the link key for history sync without replacing a saved key',async()=>{
+  for(const saved of ['', 'saved-key']){
+    const f=fixture(saved);await f.store.start('Bruce',{...f.handlers,apiKey:'link-key'});
+    assert.equal(f.store.syncing(),true);assert.equal(f.store.getApiKey(),saved||'link-key');
+    assert.equal(f.reads.find(r=>r.id==='bruce').key,saved||'link-key');f.store.stop();
+  }
+});
+
+test('an explicit device-only choice is respected when joining a live session',async()=>{
+  const f=fixture();f.store.setApiKey('');let status;
+  assert.equal(await f.store.start('Bruce',{...f.handlers,apiKey:'link-key',onStatus:s=>status=s}),false);
+  assert.equal(status,'local');assert.equal(f.store.getApiKey(),'');assert.equal(f.reads.some(r=>r.id==='bruce'),false);
+});
+
+test('reconnecting uploads the union and applies it locally rather than losing either history',async()=>{
+  const f=fixture(),a=attempt('exam-2023-1','2026-10-24T20:00:00Z'),b=attempt('exam-2023-2','2026-10-25T20:00:00Z');
+  let local=payload([a]);await f.store.liveRef(ID,'saved-key');
+  // Use the same mock database to seed the student document before opening its listener.
+  const db=f.apps[0].firestore();await db.collection('amc8PracticeStudents').doc('bruce').set(payload([b],'2026-10-25T21:00:00Z'));
+  await f.store.start('Bruce',{getLocal:()=>local,onRemote:p=>{local=p;},onStatus:()=>{}});
+  await new Promise(setImmediate);
+  assert.equal(stateOf(local).attempts.length,2);
+  let remote;const off=db.collection('amc8PracticeStudents').doc('bruce').onSnapshot(s=>remote=s.data());off();
+  assert.equal(stateOf(remote).attempts.length,2);f.store.stop();
+});
+
+test('atomic writes merge the latest server document before saving local progress',async()=>{
+  const f=fixture(),a=attempt('exam-2023-1','2026-10-24T20:00:00Z'),b=attempt('exam-2023-2','2026-10-25T20:00:00Z');
+  let local=payload([a]),writes=0;
+  await f.store.start('Bruce',{getLocal:()=>local,onRemote:p=>{local=p;},onStatus:()=>{}});await new Promise(setImmediate);
+  const db=f.apps[0].firestore();
+  db.runTransaction=async fn=>fn({get:async()=>({exists:true,data:()=>payload([b],'2026-10-25T21:00:00Z')}),set:(_ref,value)=>{writes++;assert.equal(stateOf(value).attempts.length,2);}});
+  assert.equal(await f.store.push(local),true);assert.equal(writes,1);assert.equal(stateOf(local).attempts.length,2);f.store.stop();
+});
+
+
+test('a superseded sign-in cannot attach a late sync listener to the wrong student',async()=>{
+  const f=fixture();
+  const old=f.store.start('Other',f.handlers),current=f.store.start('Bruce',f.handlers);
+  assert.equal(await old,false);assert.equal(await current,true);
+  assert.equal(f.reads.some(r=>r.id==='other'),false);assert.equal(f.reads.some(r=>r.id==='bruce'),true);f.store.stop();
+});
+
+
+test('saved exam history omits built-in statements, solutions and embedded images',()=>{
+  const f=fixture(),a=attempt('exam-2023-1','2026-10-24T20:00:00Z'),p=payload([a]);
+  const state=stateOf(p);state.items[a.id].problem.html='data:image/png;base64,'+'A'.repeat(1200000);state.items[a.id].problem.solution='A full solution';p.state=JSON.stringify(state);
+  const compact=f.store.compactPayload(p);
+  assert.ok(compact.state.length<2000);assert.equal(stateOf(compact).attempts.length,1);
+  assert.equal(stateOf(compact).items[a.id].problem.id,a.id);
+  assert.equal(stateOf(compact).items[a.id].problem.html,undefined);
+  assert.equal(stateOf(compact).items[a.id].problem.solution,undefined);
+  assert.equal(f.store.saveLocal('Bruce',p),true);
+  assert.ok(f.storage.get('amc8Practice.v1:bruce').length<2000);
+  assert.equal(stateOf(p).items[a.id].problem.html.length,1200022,'compaction must not mutate the in-memory source');
+});
+
+test('legacy oversized local or cloud history is compacted before merging or uploading',async()=>{
+  const f=fixture(),a=attempt('exam-2023-1','2026-10-24T20:00:00Z'),p=payload([a]);
+  const state=stateOf(p);state.items[a.id].problem.html='A'.repeat(1200000);p.state=JSON.stringify(state);
+  assert.ok(f.store.mergePayloads(p,null).state.length<2000);
+  assert.ok(f.store.mergePayloads(null,p).state.length<2000);
+  let local=p;await f.store.start('Bruce',{getLocal:()=>local,onRemote:p=>{local=p;},onStatus:()=>{}});await new Promise(setImmediate);
+  const db=f.apps[0].firestore();let remote;const off=db.collection('amc8PracticeStudents').doc('bruce').onSnapshot(s=>remote=s.data());off();
+  assert.ok(remote.state.length<2000);assert.equal(stateOf(remote).attempts.length,1);f.store.stop();
+});
+
+test('original generated questions keep their question text and explanations when compacted',()=>{
+  const f=fixture(),p=payload([]),state=stateOf(p);
+  const question={id:'new-question',kind:'generated',title:'New',topic:'Algebra',level:1,text:'2+3?',choices:['1','2','3','4','5'],answer:'E',explanation:'Add to get 5.'};
+  state.items[question.id]={problem:question,manual:true,missed:false};p.state=JSON.stringify(state);
+  assert.deepEqual(stateOf(f.store.compactPayload(p)).items[question.id].problem,question);
+});
+
+test('the entire built-in exam bank fits in a history document without duplicating diagrams',()=>{
+  const f=fixture(),bank=JSON.parse(html.match(/<script id="exam-bank" type="application\/json">([\s\S]*?)<\/script>/)[1]);
+  const state={version:1,attempts:bank.map((p,i)=>({...attempt(p.id,new Date(Date.UTC(2026,9,24,0,i)).toISOString()),topic:p.topic,level:p.level,title:p.title,answer:p.answer,choice:p.answer})),items:Object.fromEntries(bank.map(p=>[p.id,{problem:p,manual:false,missed:false}]))};
+  const compact=f.store.compactPayload({version:1,student:'Test',updatedAt:'2026-10-24T20:00:00Z',state});
+  assert.ok(Buffer.byteLength(compact.state,'utf8')<1048000,'saved progress must fit under the Firestore document limit');
+  assert.equal(stateOf(compact).attempts.length,bank.length);
+  assert.equal(Object.keys(stateOf(compact).items).length,bank.length);
+  assert.doesNotMatch(compact.state,/data:image|<img/);
+});
+
+
+test('switching students cancels a transaction before it can write the other profile',async()=>{
+  const f=fixture();let local=payload([attempt('exam-2023-1','2026-10-24T20:00:00Z')]);
+  await f.store.start('Bruce',{getLocal:()=>local,onRemote:p=>{local=p;},onStatus:()=>{}});await new Promise(setImmediate);
+  let resume,writes=0;const db=f.apps[0].firestore();
+  db.runTransaction=fn=>fn({get:()=>new Promise(resolve=>{resume=resolve;}),set:()=>{writes++;}});
+  const pending=f.store.push(local);f.store.stop();resume({exists:false});
+  assert.equal(await pending,false);assert.equal(writes,0);
+});
