@@ -75,6 +75,51 @@ test('only an enabled missed real exam answer automatically requests a follow-up
   }
 });
 
+test('a correct exam answer offers similar practice on demand and preserves the score', async () => {
+  for (const enabled of [true, false]) {
+    const f = fixture({ correct: true, enabled });
+    assert.equal(f.$('similar').hidden, true);
+    await f.submit();
+    assert.equal(f.requests.length, 0, 'correct answers must not generate a question automatically');
+    assert.equal(f.$('similar').hidden, false);
+    await f.$('similar').onclick();
+    assert.equal(f.requests.length, 1);
+    assert.equal(f.$('similar').hidden, true);
+    assert.equal(f.$('followup-content').hidden, false);
+    assert.doesNotMatch(JSON.parse(f.requests[0][1].body).message, /answered.*incorrectly/);
+    f.$('followup-choices').children[1].onclick();f.$('followup-check').onclick();
+    assert.equal(f.c.state.attempts.length, 1);
+    assert.equal(f.c.state.attempts[0].correct, true);
+    assert.equal(f.c.state.attempts[0].followUp.answers[0].correct, true);
+    assert.equal(f.c.P.stats(f.c.state).correct, 1);
+    assert.equal(f.c.state.items[f.c.current.id].missed, false);
+  }
+});
+
+test('manual practice respects exam eligibility, navigation and live followers', async () => {
+  const f = fixture({ correct: true });await f.submit();
+  vm.runInContext('resetFollowUp();checked=false;', f.c);
+  assert.equal(f.$('similar').hidden, true);
+  await f.$('similar').onclick();assert.equal(f.requests.length, 0);
+  for (const mode of ['generated', 'follower']) {
+    const other = fixture({ correct: true, kind: mode === 'generated' ? mode : 'exam' });
+    if (mode === 'follower') other.c.live.role = mode;
+    await other.submit();
+    assert.equal(other.$('similar').hidden, true);
+    await other.$('similar').onclick();assert.equal(other.requests.length, 0);
+  }
+});
+
+test('repeated manual clicks keep a single pending follow-up request', async () => {
+  let resolve;
+  const f = fixture({ correct: true, fetch: () => new Promise(r => { resolve = r; }) });
+  await f.submit();
+  const pending = f.$('similar').onclick();await f.$('similar').onclick();
+  assert.equal(f.requests.length, 1);
+  resolve({ ok: true, json: async () => question });await pending;
+  assert.equal(f.$('followup-content').hidden, false);
+});
+
 test('wrong then correct follow-up answers save separately and keep the original miss', async () => {
   const f = fixture(); await f.submit();
   const exam = f.c.state.attempts[0];

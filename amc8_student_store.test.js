@@ -8,8 +8,10 @@ const start=html.indexOf('<script>/* Per-student persistence')+8;
 const source=html.slice(start,html.indexOf('</script>',start));
 const ID='ab'.repeat(24);
 
-function fixture(savedKey='saved-key'){
-  const storage=new Map(savedKey?[['firebaseApiKey',savedKey]]:[]),apps=[],documents=new Map(),reads=[];
+function fixture(savedKey='saved-key',storage=new Map(savedKey?[['firebaseApiKey',savedKey]]:[])){
+  const apps=[],documents=new Map(),reads=[];
+  const timers=new Map(),events=new Map(),documentEvents=new Map();let timerId=0;
+  const listen=map=>(type,fn)=>{if(!map.has(type))map.set(type,[]);map.get(type).push(fn);};
   const firebase={apps,initializeApp(config,name='[DEFAULT]'){
     assert.ok(!apps.some(app=>app.name===name),'Firebase app names must be unique');
     const subscriptions=new Set();
@@ -41,8 +43,10 @@ function fixture(savedKey='saved-key'){
     }};
     app.firestore=()=>database;apps.push(app);return app;
   },app(){return apps.find(app=>app.name==='[DEFAULT]');},firestore(){return this.app().firestore();}};
-  const window={firebase,LivePractice:{validId}};
-  vm.runInNewContext(source,{window,firebase,URLSearchParams,location:{search:''},localStorage:{
+  const window={firebase,LivePractice:{validId},addEventListener:listen(events)};
+  const document={hidden:false,addEventListener:listen(documentEvents)};
+  vm.runInNewContext(source,{window,document,firebase,URLSearchParams,location:{search:''},
+    setTimeout:(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout:id=>timers.delete(id),localStorage:{
     getItem:key=>storage.get(key)||null,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)
   }});
   const statuses=[],questions=[];
@@ -57,7 +61,10 @@ function fixture(savedKey='saved-key'){
   }
   emit(1,'exam-2020-25');
   const handlers={getLocal:()=>null,onRemote:()=>{},onStatus:()=>{}};
-  return {store,viewer,statuses,questions,apps,reads,storage,emit,handlers};
+  const dispatch=type=>{for(const fn of events.get(type)||[])fn();};
+  const visibility=hidden=>{document.hidden=hidden;for(const fn of documentEvents.get('visibilitychange')||[])fn();};
+  const retry=async()=>{const [id,timer]=timers.entries().next().value;timers.delete(id);timer.fn();await new Promise(setImmediate);};
+  return {store,viewer,statuses,questions,apps,reads,storage,emit,handlers,timers,dispatch,visibility,retry};
 }
 
 for(const liveFirst of [true,false])test(`live sharing survives a different saved sync key (${liveFirst?'live':'sync'} starts first)`,async()=>{
@@ -220,6 +227,85 @@ test('switching students cancels a transaction before it can write the other pro
   await f.store.start('Bruce',{getLocal:()=>local,onRemote:p=>{local=p;},onStatus:()=>{}});await new Promise(setImmediate);
   let resume,writes=0;const db=f.apps[0].firestore();
   db.runTransaction=fn=>fn({get:()=>new Promise(resolve=>{resume=resolve;}),set:()=>{writes++;}});
-  const pending=f.store.push(local);f.store.stop();resume({exists:false});
+  const pending=f.store.push(local);await new Promise(setImmediate);f.store.stop();resume({exists:false});
   assert.equal(await pending,false);assert.equal(writes,0);
+});
+
+test('a stale tab cannot overwrite answers already saved by another tab',()=>{
+  const f=fixture(''),first=payload([attempt('exam-2023-1','2026-10-24T20:00:00Z')]);
+  const stale=payload([attempt('exam-2023-2','2026-10-25T20:00:00Z')],'2026-10-25T20:00:00Z');
+  assert.equal(f.store.saveLocal('Bruce',first),true);
+  assert.equal(f.store.saveLocal('Bruce',stale),true);
+  assert.equal(stateOf(f.store.loadLocal('Bruce')).attempts.length,2);
+});
+
+test('failed transactions retry automatically with the newest locally saved answers',async()=>{
+  const f=fixture(),a=attempt('exam-2023-1','2026-10-24T20:00:00Z'),b=attempt('exam-2023-2','2026-10-25T20:00:00Z');
+  f.store.saveLocal('Bruce',payload([a]));
+  const statuses=[];
+  await f.store.start('Bruce',{getLocal:()=>f.store.loadLocal('Bruce'),onRemote:p=>f.store.saveLocal('Bruce',p),onStatus:s=>statuses.push(s)});
+  await new Promise(setImmediate);
+  const db=f.apps[0].firestore();let offline=true,written;
+  db.runTransaction=async fn=>{if(offline)throw Error('offline');return fn({get:async()=>({exists:false}),set:(_ref,p)=>{written=p;}});};
+  assert.equal(await f.store.push(f.store.loadLocal('Bruce')),false);
+  assert.equal(f.timers.size,1);
+  assert.equal(statuses.at(-1),'pending');
+  f.store.saveLocal('Bruce',payload([b],'2026-10-25T20:00:00Z'));offline=false;
+  await f.retry();
+  assert.equal(stateOf(written).attempts.length,2);
+  assert.equal(statuses.at(-1),'synced');assert.equal(f.timers.size,0);f.store.stop();
+});
+
+for(const event of ['online','pageshow','pagehide','hidden','visible'])test(`${event} retries pending progress after a swipe or connection loss`,async()=>{
+  const f=fixture(),a=attempt('exam-2023-1','2026-10-24T20:00:00Z');
+  f.store.saveLocal('Bruce',payload([a]));
+  await f.store.start('Bruce',{getLocal:()=>f.store.loadLocal('Bruce'),onRemote:p=>f.store.saveLocal('Bruce',p),onStatus:()=>{}});
+  await new Promise(setImmediate);
+  const db=f.apps[0].firestore();let offline=true,writes=0;
+  db.runTransaction=async fn=>{if(offline)throw Error('offline');return fn({get:async()=>({exists:false}),set:()=>{writes++;}});};
+  await f.store.push(f.store.loadLocal('Bruce'));offline=false;
+  if(event==='hidden'||event==='visible')f.visibility(event==='hidden');else f.dispatch(event);
+  await new Promise(setImmediate);
+  assert.equal(writes,1);assert.equal(f.timers.size,0);f.store.stop();
+});
+
+test('switching students cancels pending upload retries',async()=>{
+  const f=fixture();let local=payload([attempt('exam-2023-1','2026-10-24T20:00:00Z')]);
+  await f.store.start('Bruce',{getLocal:()=>local,onRemote:p=>{local=p;},onStatus:()=>{}});await new Promise(setImmediate);
+  f.apps[0].firestore().runTransaction=async()=>{throw Error('offline');};
+  await f.store.push(local);assert.equal(f.timers.size,1);
+  f.store.stop();assert.equal(f.timers.size,0);
+  f.dispatch('online');await new Promise(setImmediate);assert.equal(f.timers.size,0);
+});
+
+test('a new answer during an upload is sent before reporting synced',async()=>{
+  const f=fixture(),a=attempt('exam-2023-1','2026-10-24T20:00:00Z'),b=attempt('exam-2023-2','2026-10-25T20:00:00Z');
+  let local=payload([a]);const statuses=[];
+  await f.store.start('Bruce',{getLocal:()=>local,onRemote:p=>{local=p;},onStatus:s=>statuses.push(s)});await new Promise(setImmediate);
+  let resume;const writes=[],db=f.apps[0].firestore();
+  db.runTransaction=async fn=>{
+    const value=await fn({get:async()=>({exists:false}),set:(_ref,p)=>writes.push(p)});
+    if(writes.length===1)await new Promise(resolve=>{resume=resolve;});
+    return value;
+  };
+  const pending=f.store.push(local);await new Promise(setImmediate);
+  local=payload([a,b],'2026-10-25T20:00:00Z');f.store.push(local);
+  assert.notEqual(statuses.at(-1),'synced');resume();assert.equal(await pending,true);
+  assert.deepEqual(writes.map(p=>stateOf(p).attempts.length),[1,2]);
+  assert.equal(statuses.at(-1),'synced');f.store.stop();
+});
+
+test('reopening after an interrupted upload recovers saved answers and syncs them',async()=>{
+  const f=fixture(),p=payload([attempt('exam-2023-1','2026-10-24T20:00:00Z')]);
+  f.store.saveLocal('Bruce',p);
+  await f.store.start('Bruce',{getLocal:()=>f.store.loadLocal('Bruce'),onRemote:p=>f.store.saveLocal('Bruce',p),onStatus:()=>{}});
+  await new Promise(setImmediate);
+  let resume;f.apps[0].firestore().runTransaction=fn=>fn({get:()=>new Promise(resolve=>{resume=resolve;}),set:()=>assert.fail('interrupted upload must not write')});
+  const pending=f.store.push(p);await new Promise(setImmediate);f.store.stop();resume({exists:false});await pending;
+  const reopened=fixture('saved-key',f.storage);
+  assert.equal(stateOf(reopened.store.loadLocal('Bruce')).attempts.length,1);
+  await reopened.store.start('Bruce',{getLocal:()=>reopened.store.loadLocal('Bruce'),onRemote:p=>reopened.store.saveLocal('Bruce',p),onStatus:()=>{}});
+  await new Promise(setImmediate);
+  let remote;const off=reopened.apps[0].firestore().collection('amc8PracticeStudents').doc('bruce').onSnapshot(s=>remote=s.data());off();
+  assert.equal(stateOf(remote).attempts.length,1);reopened.store.stop();
 });
