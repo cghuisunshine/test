@@ -120,6 +120,36 @@ test('repeated manual clicks keep a single pending follow-up request', async () 
   assert.equal(f.$('followup-content').hidden, false);
 });
 
+test('Try more replaces similar questions before or after answering without changing the exam score', async () => {
+  for (const choice of [null, 0, 1]) {
+    let calls = 0;
+    const f = fixture({ fetch: async () => ({ ok: true, json: async () => ({ ...question, text: question.text + ' Practice ' + ++calls }) }) });
+    await f.submit();
+    const exam = f.c.state.attempts[0], previous = exam.followUp.question.text;
+    assert.equal(f.$('followup-more').hidden, false);
+    if (choice !== null) {
+      f.$('followup-choices').children[choice].onclick();f.$('followup-check').onclick();
+      assert.equal(f.$('followup-more').hidden, false);
+    }
+    const pending = f.$('followup-more').onclick();
+    assert.equal(f.$('followup-more').hidden, true);
+    await f.$('followup-more').onclick();
+    await pending;
+    assert.equal(f.requests.length, 2);
+    assert.ok(JSON.parse(f.requests[1][1].body).message.includes(previous));
+    assert.notEqual(f.$('followup-statement').textContent, previous);
+    assert.equal(f.$('followup-feedback').textContent, '');
+    assert.equal(f.$('followup-solution').hidden, true);
+    assert.equal(f.$('followup-check').disabled, true);
+    assert.equal(f.$('followup-more').hidden, false);
+    assert.equal(f.c.state.attempts.length, 1);
+    assert.equal(exam.correct, false);
+    assert.equal(f.c.P.stats(f.c.state).correct, 0);
+    vm.runInContext('resetFollowUp()', f.c);
+    assert.equal(f.$('followup-more').hidden, true);
+  }
+});
+
 test('wrong then correct follow-up answers save separately and keep the original miss', async () => {
   const f = fixture(); await f.submit();
   const exam = f.c.state.attempts[0];
@@ -142,8 +172,9 @@ test('revealing a solution requests a different question instead of retrying the
   const f = fixture(); await f.submit();
   f.$('followup-choices').children[0].onclick(); f.$('followup-check').onclick(); f.$('followup-reveal').onclick();
   assert.match(f.$('followup-solution').textContent, /Answer B/);
-  assert.equal(f.$('followup-retry').textContent, 'Try another similar question');
-  f.$('followup-retry').onclick(); await new Promise(setImmediate);
+  assert.equal(f.$('followup-retry').hidden, true);
+  assert.equal(f.$('followup-more').hidden, false);
+  await f.$('followup-more').onclick();
   assert.equal(f.requests.length, 2);
   assert.ok(JSON.parse(f.requests[1][1].body).message.includes(question.text));
   assert.equal(f.$('followup-solution').hidden, true);
@@ -196,6 +227,8 @@ test('followers solve the host follow-up independently even before answering the
   f.c.shared={id:'followup-shared',...question};
   vm.runInContext('showSharedFollowUp(shared)',f.c);
   assert.equal(f.$('followup-content').hidden,false);
+  assert.equal(f.$('followup-more').hidden,true);
+  await f.$('followup-more').onclick();assert.equal(f.requests.length,0);
   f.$('followup-choices').children[1].onclick();f.$('followup-check').onclick();
   assert.equal(f.c.state.liveFollowUps['followup-shared'].answers[0].correct,true);
   assert.equal(f.c.state.attempts.length,0);
