@@ -1386,13 +1386,7 @@ function openDrawing(focus=false){
   stopCamera();photoVersion++;drawingOpen=true;$('drawing-panel').hidden=false;setDrawingLayout(true);$('drawing-open').hidden=true;$('drawing-open').setAttribute('aria-expanded','true');$('photo-attachment').hidden=true;
   $('ai-status').textContent='';updatePhotoControls();if(focus)$('drawing-canvas').focus({preventScroll:true});
 }
-// Remember editor focus before a pointer click moves it to the T button.
-let textHadFocus=false;
-$('text-open').onpointerdown=()=>{textHadFocus=document.activeElement===$('text-steps');};
-$('text-open').onpointercancel=()=>{textHadFocus=false;};
 $('text-open').onclick=()=>{
-  const keepEditing=textHadFocus||document.activeElement===$('text-steps');textHadFocus=false;
-  if(!$('text-panel').hidden&&keepEditing){$('text-steps').focus({preventScroll:true});return;}
   const open=$('text-panel').hidden;
   $('text-panel').hidden=!open;$('text-open').setAttribute('aria-expanded',String(open));
   if(open)$('text-steps').focus({preventScroll:true});
