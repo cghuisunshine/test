@@ -554,7 +554,7 @@ class DrawingPad {
   // Drop the in-progress stroke without saving it (e.g. the first finger of a two-finger tap).
   cancel(){const active=this.active;if(!active)return;this.active=null;if(this.canvas.hasPointerCapture(active.pointerId))this.canvas.releasePointerCapture(active.pointerId);if(this.beforeGesture)this.strokes=this.beforeGesture;this.beforeGesture=null;this.render();this.onChange();}
   undo(){if(!this.enabled)return;this.finish();if(this.history.length)this.strokes=this.history.pop();this.render();this.onChange();}
-  clear(){if(!this.enabled)return;this.finish();if(this.strokes.length)this.history.push(this.strokes.slice());this.strokes=[];this.render();this.onChange();}
+  clear(){if(!this.enabled)return;this.finish();if(this.strokes.length)this.history.push(this.strokes.slice());this.strokes=this.hasDrawing?this.strokes.filter(stroke=>stroke.type==='text'):[];this.render();this.onChange();}
   reset(){const active=this.active;this.active=null;if(active&&this.canvas.hasPointerCapture(active.pointerId))this.canvas.releasePointerCapture(active.pointerId);this.strokes=[];this.history=[];this.beforeGesture=null;this.tool='pen';this.color='#222223';this.gesture=0;this.enabled=true;this.render();}
 }
 root.DrawingPad=DrawingPad;
@@ -1226,7 +1226,9 @@ function updatePhotoControls(){
   for(const id of ['drawing-pen','drawing-eraser','drawing-close'])$(id).disabled=busy;
   document.querySelectorAll('[data-drawing-color]').forEach(button=>button.disabled=busy);
   $('drawing-undo').disabled=busy||!drawing.history.length||!!drawing.active;
-  $('drawing-clear').disabled=busy||!drawing.hasInk||!!drawing.active;
+  $('drawing-clear').disabled=busy||(!drawing.hasInk&&!$('text-steps').value)||!!drawing.active;
+  const clearLabel=drawing.hasDrawing?'Clear drawing (keep text)':'Clear text';
+  $('drawing-clear').title=clearLabel;$('drawing-clear').setAttribute('aria-label',clearLabel);
   $('drawing-status').textContent=drawing.hasInk?(selected?'Your drawing is ready for AI review.':'Choose an answer when you are ready for AI review.'):'Write your steps here, then choose an answer for AI review.';
   $('ai-cancel').hidden=!busy;
 }
@@ -1475,7 +1477,11 @@ document.addEventListener('keydown',event=>{if(!drawingOpen)return;if(event.key=
 document.addEventListener('keyup',event=>{if(event.key!=='Shift'&&event.key!=='Control')return;if(drawing.active?.hover)drawing.finish();if(event.key==='Shift')drawingShift=false;else drawingCtrl=false;syncDrawingTool();});
 window.addEventListener('blur',()=>{if(drawing.active?.hover)drawing.finish();drawingShift=false;drawingCtrl=false;syncDrawingTool();});
 for(const type of ['pointerdown','pointermove'])$('drawing-canvas').addEventListener(type,event=>{drawingShift=!!event.shiftKey;drawingCtrl=!!event.ctrlKey;syncDrawingTool();});
-$('drawing-undo').onclick=()=>{drawing.undo();focusCanvasText();};$('drawing-clear').onclick=()=>{drawing.clear();focusCanvasText();};
+$('drawing-undo').onclick=()=>{drawing.undo();focusCanvasText();};
+$('drawing-clear').onclick=()=>{
+  if(!drawing.hasDrawing){commitCanvasText();$('text-steps').value='';}
+  drawing.clear();scheduleCanvasSize();updatePhotoControls();focusCanvasText();
+};
 $('photo-file').onchange=attachPhoto;$('photo-camera').onclick=openCamera;
 $('camera-video').addEventListener('loadeddata',cameraReady);$('camera-video').addEventListener('canplay',cameraReady);
 $('camera-capture').onclick=capturePhoto;
