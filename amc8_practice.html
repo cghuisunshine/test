@@ -99,7 +99,7 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 .activity-filter{margin:16px 0;padding:12px;border:1px solid var(--line);border-radius:8px}.activity-filter legend{margin:0;padding:0 4px}.activity-weekdays{display:flex;gap:10px 14px;flex-wrap:wrap}.activity-weekdays label{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer}.activity-filter .small{margin:8px 0 0}
 .followup-setting{display:flex;align-items:flex-start;gap:9px;margin-top:14px;font-size:13px;font-weight:650}.followup-setting input{margin-top:5px;flex-shrink:0}.followup-card{border:1px solid #b8cbbb;background:#f4f8f1;border-radius:10px;padding:20px;margin:20px 0}.followup-card h3{margin:8px 0}.followup-choices{display:flex;flex-wrap:wrap;gap:8px}.followup-choice{background:#fff;border:1px solid #cbd6cd;color:var(--ink);text-align:left;flex:1 1 100px;overflow-wrap:anywhere}.followup-choice[aria-pressed=true]{background:#eaf1e9;border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}.followup-choice.correct{background:#e2f3e7;border-color:#387b50}.followup-choice.incorrect{background:#fceae5;border-color:#ae5037}.followup-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.followup-card .statement{white-space:pre-wrap}.followup-card .secondary{width:auto;margin:0}
 </style></head>
-<body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="monitor-button" class="student-button" type="button">Monitor student</button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Practice settings" hidden><h2>Practice settings</h2><label class="followup-setting"><input id="followup-enabled" type="checkbox" checked> Similar question after a missed exam problem</label><h3>Storage settings</h3><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
+<body><header><a class="brand" href="amc8_aops_topic_sets.html">AMC 8 <span>/ Practice Studio</span></a><div class="header-links"><button id="student-button" class="student-button" type="button" title="Switch student"><span id="student-sync-dot" class="sync-dot" data-state="local" aria-hidden="true"></span><span id="student-name-label">Sign in</span><span class="student-switch">Switch</span></button><button id="monitor-button" class="student-button" type="button">Monitor student</button><button id="fullscreen" class="fullscreen-toggle" type="button" aria-pressed="false" hidden>⛶ Full screen</button><a href="amc8_aops_topic_sets.html">Browse exam library ↗</a><div class="settings-wrap"><button id="settings-button" class="settings-button" type="button" aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div id="settings-panel" class="settings-panel" role="dialog" aria-label="Practice settings" hidden><h2>Practice settings</h2><label class="followup-setting"><input id="followup-enabled" type="checkbox" checked> Similar question after a missed exam problem</label><label class="followup-setting"><input id="shift-draw-enabled" type="checkbox" aria-describedby="shift-draw-help"> Draw with Shift + pointer movement</label><p id="shift-draw-help" class="small">Draw without pressing the trackpad. Leave off to use Shift for erasing. Remembered on this browser.</p><h3>Storage settings</h3><p class="small">Progress is always saved on this device and works offline. Firebase is only used for optional sync across devices.</p><div class="sync-box settings-sync"><label for="firebase-key" class="small">Firebase API key (optional)</label><input id="firebase-key" type="password" autocomplete="off" placeholder="Leave empty to keep data on this device"><div class="sync-actions"><button id="sync-enable" class="secondary" type="button">Turn on sync</button><button id="sync-local" class="secondary" type="button">This device only</button><button id="sync-share" class="secondary" type="button">Share sync link</button></div><p id="sync-status" class="small" role="status">Saved on this device only.</p></div></div></div></div></header>
 <main><div class="intro"><div><div class="eyebrow">A LITTLE PRACTICE. A CLEAR NEXT STEP.</div><h1>Make your next answer<br>your best one.</h1><p>Work through a question, learn from the result, and build from there.</p></div><div class="session"><span id="attempt-count">0</span><div>answers checked</div><small id="accuracy">Your progress starts here</small></div></div>
 <div class="layout sidebar-collapsed" id="layout"><section class="workspace"><div class="toolbar"><label>Practice mode<select id="mode"><option value="adaptive">Adaptive · past exams</option><option value="year">By year · 25-problem sets</option><option value="generated">New · original questions</option><option value="review">Review · missed & flagged</option><option value="day">By day · past 7 days</option></select></label><label id="topic-control">Focus topic<select id="topic"><option value="">All topics</option></select></label></div>
 <div id="year-controls" class="year-controls" hidden><div class="toolbar"><label>Exam year<select id="practice-year" aria-describedby="year-help year-notice"></select></label><label>Problem<select id="year-question"></select></label></div><div class="year-progress"><button id="year-previous" class="quiet" type="button">← Previous problem</button><span id="year-progress" class="small" role="status" aria-live="polite"></span></div><div id="year-grid" class="year-grid" role="group" aria-label="Problems in the selected year"></div><p id="year-help" class="small year-help">Practice the year's problems in order, or jump to any number. Green = correct; orange = missed, using your latest answer. Progress is saved with your student history.</p><p id="year-notice" class="notice year-notice" hidden></p></div>
@@ -114,7 +114,7 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 
 <section id="drawing-panel" class="drawing-panel" aria-label="Write your solution steps">
 
-<div class="canvas-wrap"><canvas id="drawing-canvas" width="1200" height="800" tabindex="0" aria-label="Solution drawing pad" aria-describedby="drawing-help" title="Hold Shift and move the pointer to draw without clicking. Release Shift to stop.">Use Choose a photo to submit your written steps if drawing is not supported.</canvas><section id="text-panel" class="text-panel" hidden aria-label="Canvas text editor"><label for="text-steps" class="sr-only">Type your steps here</label><textarea id="text-steps" rows="2" placeholder="Type here…" aria-describedby="text-help"></textarea><p id="text-help" class="sr-only">Click anywhere on the canvas to place text. Click T again or select Pen to add your text to the canvas. Undo and eraser work on added text.</p></section><p id="drawing-help" class="canvas-hint" aria-hidden="false">Two-finger tap switches between pen and eraser.</p></div>
+<div class="canvas-wrap"><canvas id="drawing-canvas" width="1200" height="800" tabindex="0" aria-label="Solution drawing pad" aria-describedby="drawing-help" title="Drag to draw. Hold Shift while dragging to erase.">Use Choose a photo to submit your written steps if drawing is not supported.</canvas><section id="text-panel" class="text-panel" hidden aria-label="Canvas text editor"><label for="text-steps" class="sr-only">Type your steps here</label><textarea id="text-steps" rows="2" placeholder="Type here…" aria-describedby="text-help"></textarea><p id="text-help" class="sr-only">Click anywhere on the canvas to place text. Click T again or select Pen to add your text to the canvas. Undo and eraser work on added text.</p></section><p id="drawing-help" class="canvas-hint" aria-hidden="false">Two-finger tap switches between pen and eraser.</p></div>
 <p id="drawing-status" class="sr-only" role="status" aria-live="polite">The pad is empty.</p>
 </section>
 
@@ -446,7 +446,7 @@ class DrawingPad {
     // Pencil-only mode (iPad default): fingers and palms never draw and can scroll the page; stylus touches never scroll.
     const stylusGuard=event=>{if(this.pencilOnly&&[...event.changedTouches].some(t=>t.touchType==='stylus'))event.preventDefault();};
     canvas.addEventListener('touchstart',stylusGuard,{passive:false});canvas.addEventListener('touchmove',stylusGuard,{passive:false});
-    this.hoverEnabled=true;
+    this.hoverEnabled=true;this.shiftDraw=false;
     canvas.addEventListener('pointermove',event=>{this.hover(event);this.move(event);});
     canvas.addEventListener('pointerleave',()=>{if(this.active?.hover)this.finish();});
     for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,event=>{if(this.active?.pointerId===event.pointerId)this.finish();});
@@ -464,11 +464,11 @@ class DrawingPad {
     this.onChange();
   }
   segment(event,point,gesture){
-    const tool=event.shiftKey?'pen':this.tool;
+    const tool=event.shiftKey?(this.shiftDraw?'pen':'eraser'):this.tool;
     return {pointerId:event.pointerId,gesture,tool,width:tool==='eraser'?40:4,color:this.color,points:[point]};
   }
   hover(event){
-    const hovering=this.enabled&&this.hoverEnabled&&event.pointerType==='mouse'&&event.buttons===0&&event.shiftKey&&event.isPrimary;
+    const hovering=this.shiftDraw&&this.enabled&&this.hoverEnabled&&event.pointerType==='mouse'&&event.buttons===0&&event.shiftKey&&event.isPrimary;
     if(!hovering){if(this.active?.hover)this.finish();return;}
     if(this.active)return;
     event.preventDefault();this.beforeGesture=this.strokes.slice();
@@ -478,7 +478,7 @@ class DrawingPad {
   move(event){
     if(!this.enabled||this.active?.pointerId!==event.pointerId)return;
     event.preventDefault();
-    const tool=event.shiftKey?'pen':this.tool;
+    const tool=event.shiftKey?(this.shiftDraw?'pen':'eraser'):this.tool;
     if(tool!==this.active.tool){
       const prior=this.active;if(prior.tool==='pen')this.strokes.push(prior);
       this.active=this.segment(event,prior.points[prior.points.length-1],prior.gesture);
@@ -1383,7 +1383,7 @@ async function askAI(){
 }
 function syncDrawingTool(){
   document.querySelectorAll('[data-drawing-color]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.drawingColor===drawing.color)));
-  const erasing=!drawingShift&&drawing.tool==='eraser';
+  const erasing=drawingShift?!drawing.shiftDraw:drawing.tool==='eraser';
   const typing=!$('text-panel').hidden;
   $('drawing-pen').setAttribute('aria-pressed',String(!typing&&!erasing));$('drawing-eraser').setAttribute('aria-pressed',String(!typing&&erasing));
   $('drawing-canvas').classList.toggle('typing',typing);
@@ -1454,6 +1454,15 @@ $('drawing-open').onclick=()=>openDrawing(true);
 $('drawing-close').onclick=()=>{closeDrawing();$('ai-status').textContent=photo?'Photo selected for AI review. Your drawing is kept in the pad.':'Drawing kept in the pad. Reopen it with the pencil button to continue or send it for review.';$('drawing-open').focus();};
 $('drawing-pen').onclick=()=>{finishCanvasText();drawing.tool='pen';syncDrawingTool();};$('drawing-eraser').onclick=()=>{finishCanvasText();drawing.tool='eraser';syncDrawingTool();};
 document.querySelectorAll('[data-drawing-color]').forEach(button=>{button.onclick=()=>{drawing.color=button.dataset.drawingColor;drawing.tool='pen';syncDrawingTool();};});
+const shiftDrawSetting=$('shift-draw-enabled');
+try{shiftDrawSetting.checked=localStorage.getItem('amc8PracticeShiftDraw')==='true';}catch(e){}
+function applyShiftDrawing(){
+  drawing.finish();drawing.shiftDraw=shiftDrawSetting.checked;syncDrawingTool();
+  $('drawing-canvas').title=drawing.shiftDraw?'Hold Shift and move the pointer to draw without clicking. Release Shift to stop.':'Drag to draw. Hold Shift while dragging to erase.';
+  $('drawing-eraser').title=drawing.shiftDraw?'Object eraser':'Object eraser (or hold Shift)';
+}
+shiftDrawSetting.onchange=()=>{applyShiftDrawing();try{localStorage.setItem('amc8PracticeShiftDraw',String(shiftDrawSetting.checked));}catch(e){}};
+applyShiftDrawing();
 document.addEventListener('keydown',event=>{if(event.key==='Shift'&&drawingOpen){drawingShift=true;syncDrawingTool();}});
 document.addEventListener('keyup',event=>{if(event.key==='Shift'){if(drawing.active?.hover)drawing.finish();drawingShift=false;syncDrawingTool();}});
 window.addEventListener('blur',()=>{if(drawing.active?.hover)drawing.finish();drawingShift=false;syncDrawingTool();});
