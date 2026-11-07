@@ -1352,7 +1352,6 @@ function openDrawing(focus=false){
 }
 $('text-open').onclick=()=>{
   const open=$('text-panel').hidden;
-  if(open)closeDrawing();
   $('text-panel').hidden=!open;$('text-open').setAttribute('aria-expanded',String(open));
   if(open)$('text-steps').focus({preventScroll:true});
 };
