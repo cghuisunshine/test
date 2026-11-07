@@ -114,7 +114,7 @@ body,#steps-wrap,.photo-section,.question-card{overflow-anchor:none}
 
 <section id="drawing-panel" class="drawing-panel" aria-label="Write your solution steps">
 
-<div class="canvas-wrap"><canvas id="drawing-canvas" width="1200" height="800" tabindex="0" aria-label="Solution drawing pad" aria-describedby="drawing-help" title="Drag to draw. Hold Shift while dragging to erase.">Use Choose a photo to submit your written steps if drawing is not supported.</canvas><section id="text-panel" class="text-panel" hidden aria-label="Canvas text editor"><label for="text-steps" class="sr-only">Type your steps here</label><textarea id="text-steps" rows="2" placeholder="Type here…" aria-describedby="text-help"></textarea><p id="text-help" class="sr-only">Click anywhere on the canvas to place text. Click T again or select Pen to add your text to the canvas. Undo and eraser work on added text.</p></section><p id="drawing-help" class="canvas-hint" aria-hidden="false">Two-finger tap switches between pen and eraser.</p></div>
+<div class="canvas-wrap"><canvas id="drawing-canvas" width="1200" height="800" tabindex="0" aria-label="Solution drawing pad" aria-describedby="drawing-help" title="Drag to draw. Hold Shift while dragging to erase.">Use Choose a photo to submit your written steps if drawing is not supported.</canvas><section id="text-panel" class="text-panel" hidden aria-label="Canvas text editor"><label for="text-steps" class="sr-only">Type your steps here</label><textarea id="text-steps" rows="2" placeholder="Type here…" aria-describedby="text-help"></textarea><p id="text-help" class="sr-only">Click the canvas to place text. Select Pen to draw while keeping this editor focused for typing or dictation. Click T again to add the text to the canvas. Undo and eraser work on added text.</p></section><p id="drawing-help" class="canvas-hint" aria-hidden="false">Two-finger tap switches between pen and eraser.</p></div>
 <p id="drawing-status" class="sr-only" role="status" aria-live="polite">The pad is empty.</p>
 </section>
 
@@ -769,8 +769,8 @@ let cameraStream=null, cameraOpening=false, cameraVersion=0;
 let drawingOpen=false, drawingShift=false, drawingCtrl=false;
 // drawVersion changes on every edit, so a drawing can be re-checked by AI after it is modified.
 let drawVersion=0, reviewedDrawVersion=null, reviewedText=null;
-let textPosition={x:24,y:24};
-const drawing=new window.DrawingPad($('drawing-canvas'),()=>{drawVersion++;$('drawing-help').classList.toggle('faded',drawing.hasInk||!!drawing.active);updatePhotoControls();});
+let textPosition={x:24,y:24},textPlacement=false,canvasResizeFrame=0;
+const drawing=new window.DrawingPad($('drawing-canvas'),()=>{drawVersion++;$('drawing-help').classList.toggle('faded',drawing.hasInk||!!drawing.active);updatePhotoControls();if(!drawing.active)scheduleCanvasSize();});
 function validState(s) {
   if(!s || s.version!==1 || !Array.isArray(s.attempts) || !s.items || typeof s.items!=='object' || Array.isArray(s.items)) return false;
   const problemOK=p=>p && typeof p.id==='string' && ['exam','generated'].includes(p.kind) && P.topics.includes(p.topic) && [1,2,3].includes(p.level) && /^[A-E]$/.test(p.answer) && typeof p.title==='string';
@@ -1222,7 +1222,7 @@ function updatePhotoControls(){
   for(const id of ['photo-camera','photo-file','photo-remove','drawing-open','text-open'])$(id).disabled=busy||cameraActive;
   $('text-steps').disabled=busy;
   drawing.enabled=!busy;
-  drawing.hoverEnabled=drawingOpen&&$('text-panel').hidden;
+  drawing.hoverEnabled=drawingOpen&&!textPlacement;
   for(const id of ['drawing-pen','drawing-eraser','drawing-close'])$(id).disabled=busy;
   document.querySelectorAll('[data-drawing-color]').forEach(button=>button.disabled=busy);
   $('drawing-undo').disabled=busy||!drawing.history.length||!!drawing.active;
@@ -1235,7 +1235,7 @@ function cancelReview(){
   updatePhotoControls();
 }
 function resetPhotoReview(){
-  textPosition={x:24,y:24};$('text-steps').value='';$('text-panel').hidden=true;$('text-open').setAttribute('aria-expanded','false');reviewedText=null;
+  textPlacement=false;textPosition={x:24,y:24};$('text-steps').value='';$('text-panel').hidden=true;$('text-open').setAttribute('aria-expanded','false');reviewedText=null;
   stopCamera();cancelReview();photoVersion++;photo=null;activeAttempt=null;drawingOpen=false;drawing.reset();reviewedDrawVersion=null;$('drawing-canvas').height=800;$('drawing-canvas').style.height='';drawing.render();requestAnimationFrame(()=>sizeCanvas());$('drawing-help').classList.remove('faded');
   $('drawing-panel').hidden=true;setDrawingLayout(false);setQuestionCollapsed(false);$('drawing-open').hidden=false;$('drawing-open').setAttribute('aria-expanded','false');drawingShift=false;drawingCtrl=false;syncDrawingTool();
   $('photo-section').hidden=true;$('photo-attachment').hidden=true;$('photo-preview').removeAttribute('src');
@@ -1384,7 +1384,7 @@ async function askAI(){
 function syncDrawingTool(){
   document.querySelectorAll('[data-drawing-color]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.drawingColor===drawing.color)));
   const erasing=drawingShift||(!(drawingCtrl&&drawing.ctrlDraw)&&drawing.tool==='eraser');
-  const typing=!$('text-panel').hidden;
+  const typing=textPlacement;
   $('drawing-pen').setAttribute('aria-pressed',String(!typing&&!erasing));$('drawing-eraser').setAttribute('aria-pressed',String(!typing&&erasing));
   $('drawing-canvas').classList.toggle('typing',typing);
   $('drawing-canvas').classList.toggle('erasing',erasing);
@@ -1419,7 +1419,7 @@ function commitCanvasText(){
 }
 function finishCanvasText(){
   if($('text-panel').hidden)return;
-  commitCanvasText();$('text-panel').hidden=true;$('text-open').setAttribute('aria-expanded','false');syncDrawingTool();sizeCanvas();updatePhotoControls();
+  commitCanvasText();textPlacement=false;$('text-panel').hidden=true;$('text-open').setAttribute('aria-expanded','false');syncDrawingTool();sizeCanvas();updatePhotoControls();
 }
 function openCanvasText(point=null){
   if(reviewRequest)return;
@@ -1428,7 +1428,7 @@ function openCanvasText(point=null){
   const c=$('drawing-canvas'),scale=c.width/(c.clientWidth||c.width);
   textPosition.x=Math.max(0,Math.min(textPosition.x,c.width-40*scale));
   textPosition.y=Math.max(0,Math.min(textPosition.y,c.height));
-  $('text-panel').hidden=false;$('text-open').setAttribute('aria-expanded','true');
+  textPlacement=true;$('text-panel').hidden=false;$('text-open').setAttribute('aria-expanded','true');
   positionTextEditor();syncDrawingTool();sizeCanvas();updatePhotoControls();$('text-steps').focus({preventScroll:true});
 }
 $('text-open').onclick=()=>{
@@ -1436,11 +1436,11 @@ $('text-open').onclick=()=>{
   else{finishCanvasText();$('drawing-canvas').focus({preventScroll:true});}
 };
 $('drawing-canvas').addEventListener('pointerdown',event=>{
-  if($('text-panel').hidden)return;
+  if(!textPlacement)return;
   if(!drawing.enabled||event.button!==0||!event.isPrimary)return;
   event.preventDefault();event.stopImmediatePropagation();openCanvasText(drawing.point(event));
 },true);
-$('text-steps').oninput=()=>{positionTextEditor();sizeCanvas();updatePhotoControls();};
+$('text-steps').oninput=()=>{scheduleCanvasSize();updatePhotoControls();};
 document.addEventListener('keydown',event=>{
   if(event.key.toLowerCase()!=='t'||event.ctrlKey||event.metaKey||event.altKey||event.isComposing||event.repeat||event.defaultPrevented)return;
   const target=event.target;
@@ -1452,8 +1452,16 @@ document.addEventListener('keydown',event=>{
 });
 $('drawing-open').onclick=()=>openDrawing(true);
 $('drawing-close').onclick=()=>{closeDrawing();$('ai-status').textContent=photo?'Photo selected for AI review. Your drawing is kept in the pad.':'Drawing kept in the pad. Reopen it with the pencil button to continue or send it for review.';$('drawing-open').focus();};
-$('drawing-pen').onclick=()=>{finishCanvasText();drawing.tool='pen';syncDrawingTool();};$('drawing-eraser').onclick=()=>{finishCanvasText();drawing.tool='eraser';syncDrawingTool();};
-document.querySelectorAll('[data-drawing-color]').forEach(button=>{button.onclick=()=>{drawing.color=button.dataset.drawingColor;drawing.tool='pen';syncDrawingTool();};});
+function focusCanvasText(){if(!$('text-panel').hidden)$('text-steps').focus({preventScroll:true});}
+function selectDrawingTool(tool){
+  drawing.finish();textPlacement=false;drawing.tool=tool;syncDrawingTool();updatePhotoControls();focusCanvasText();
+}
+$('drawing-pen').onclick=()=>selectDrawingTool('pen');$('drawing-eraser').onclick=()=>selectDrawingTool('eraser');
+document.querySelectorAll('[data-drawing-color]').forEach(button=>{button.onclick=()=>{drawing.color=button.dataset.drawingColor;selectDrawingTool('pen');};});
+// Keep the caret and dictation target in the editor when using drawing controls.
+for(const button of document.querySelectorAll('#drawing-pen,#drawing-eraser,[data-drawing-color],#drawing-undo,#drawing-clear')){
+  button.addEventListener('pointerdown',event=>{if(document.activeElement===$('text-steps'))event.preventDefault();});
+}
 const ctrlDrawSetting=$('ctrl-draw-enabled');
 try{ctrlDrawSetting.checked=(localStorage.getItem('amc8PracticeCtrlDraw')??localStorage.getItem('amc8PracticeShiftDraw'))==='true';}catch(e){}
 function applyCtrlDrawing(){
@@ -1467,7 +1475,7 @@ document.addEventListener('keydown',event=>{if(!drawingOpen)return;if(event.key=
 document.addEventListener('keyup',event=>{if(event.key!=='Shift'&&event.key!=='Control')return;if(drawing.active?.hover)drawing.finish();if(event.key==='Shift')drawingShift=false;else drawingCtrl=false;syncDrawingTool();});
 window.addEventListener('blur',()=>{if(drawing.active?.hover)drawing.finish();drawingShift=false;drawingCtrl=false;syncDrawingTool();});
 for(const type of ['pointerdown','pointermove'])$('drawing-canvas').addEventListener(type,event=>{drawingShift=!!event.shiftKey;drawingCtrl=!!event.ctrlKey;syncDrawingTool();});
-$('drawing-undo').onclick=()=>drawing.undo();$('drawing-clear').onclick=()=>drawing.clear();
+$('drawing-undo').onclick=()=>{drawing.undo();focusCanvasText();};$('drawing-clear').onclick=()=>{drawing.clear();focusCanvasText();};
 $('photo-file').onchange=attachPhoto;$('photo-camera').onclick=openCamera;
 $('camera-video').addEventListener('loadeddata',cameraReady);$('camera-video').addEventListener('canplay',cameraReady);
 $('camera-capture').onclick=capturePhoto;
@@ -1530,6 +1538,9 @@ new MutationObserver(queue).observe(dock,{attributes:true,attributeFilter:['hidd
 // While the question is pinned at the left, the pad grows as tall as the screen allows (never shorter than 3:2).
 // The canvas keeps 1200 drawing units across and gains units downward, so strokes never move or stretch; it also
 // never shrinks below the lowest stroke, so nothing drawn is ever hidden.
+function scheduleCanvasSize(){
+  if(!canvasResizeFrame)canvasResizeFrame=requestAnimationFrame(()=>{canvasResizeFrame=0;sizeCanvas();});
+}
 function sizeCanvas(){
   const c=$('drawing-canvas');if(drawing.active||!c.clientWidth)return;
   const w=c.clientWidth,docked=$('steps-wrap').classList.contains('docked');
