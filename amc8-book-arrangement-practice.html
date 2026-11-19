@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f6">
+  <meta name="description" content="Three interactive AMC 8-style book arrangement questions with instant feedback and step-by-step counting solutions.">
+  <title>Book Arrangement Practice | AMC 8 Combinatorics</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --paper: #ffffff;
+      --ink: #21302b;
+      --muted: #63716a;
+      --line: #dfe6e0;
+      --green: #176b53;
+      --green-soft: #e8f5ef;
+      --red: #aa4c38;
+      --red-soft: #fff1eb;
+      --gold: #d9a358;
+      --shadow: 0 12px 36px rgba(24, 45, 33, .055);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.55; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, a:focus-visible, input:focus-visible + .choice-content, summary:focus-visible { outline: 3px solid #69a9d5; outline-offset: 3px; }
+    .container { width: min(100% - 32px, 850px); margin-inline: auto; }
+    .topbar { border-bottom: 1px solid var(--line); background: rgba(255,255,255,.75); }
+    .topbar .container { min-height: 57px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .back { color: var(--green); font-weight: 700; text-decoration: none; font-size: .92rem; }
+    .brand { color: var(--muted); letter-spacing: .07em; font-size: .72rem; font-weight: 800; text-transform: uppercase; }
+    .hero { padding: 53px 0 25px; }
+    .eyebrow { color: var(--green); font-size: .76rem; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { font-size: clamp(2.2rem, 6vw, 3.35rem); letter-spacing: -.055em; line-height: 1.08; margin: 13px 0 17px; font-weight: 850; }
+    .intro { color: var(--muted); font-size: 1.05rem; margin: 0; max-width: 640px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip { border: 1px solid var(--line); background: white; color: #51645a; border-radius: 50px; padding: 5px 11px; font-size: .78rem; font-weight: 750; }
+    .strategy { margin: 12px 0 27px; background: #edf4f0; border-left: 4px solid var(--green); padding: 17px 20px; border-radius: 0 12px 12px 0; }
+    .strategy strong { color: var(--green); }
+    .strategy p { margin: 4px 0 0; font-size: .93rem; color: #435e51; }
+    .progress-panel { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 13px; flex-wrap: wrap; }
+    .progress-panel strong { display: block; font-size: 1.01rem; }
+    .progress-panel .sub { color: var(--muted); font-size: .85rem; }
+    .meter { height: 7px; background: #e3e9e3; border-radius: 20px; overflow: hidden; margin: 0 0 25px; }
+    #meter-fill { height: 100%; width: 0%; background: var(--green); transition: width .25s ease; }
+    .reset { padding: 9px 13px; border-radius: 9px; border: 1px solid var(--line); background: white; color: var(--ink); font-size: .84rem; font-weight: 700; }
+    .reset:hover { border-color: #a5b9ac; }
+    .question-card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: clamp(20px, 4vw, 32px); margin-bottom: 21px; }
+    .card-head { display: flex; align-items: center; justify-content: space-between; gap: 9px; flex-wrap: wrap; }
+    .number { font-size: .79rem; font-weight: 850; color: var(--green); text-transform: uppercase; letter-spacing: .05em; }
+    .level { color: #7d6748; background: #fff5e6; padding: 5px 10px; border-radius: 30px; font-size: .74rem; font-weight: 750; }
+    .question-card h2 { font-size: clamp(1.23rem, 3vw, 1.49rem); letter-spacing: -.025em; line-height: 1.36; margin: 17px 0 15px; }
+    .problem { margin: 0 0 16px; color: #405047; }
+    .shelf { display: flex; gap: 7px; flex-wrap: wrap; background: #f5f7f4; padding: 12px; border-radius: 10px; margin: 16px 0 20px; border: 1px solid #eaf0e8; }
+    .book { min-width: 34px; border-radius: 5px 5px 2px 2px; padding: 8px 7px; text-align: center; font-size: .74rem; font-weight: 850; color: #33463b; background: #e1ecdf; border-bottom: 4px solid #a8bd9d; }
+    .book:nth-child(3n) { background: #eee2ce; border-color: #d1ba94; }
+    .book:nth-child(4n) { background: #e2e8f4; border-color: #abbcd7; }
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 11px; }
+    .choice { cursor: pointer; position: relative; min-width: 0; }
+    .choice input { position: absolute; opacity: 0; height: 1px; width: 1px; }
+    .choice-content { display: flex; align-items: center; gap: 13px; border: 1.5px solid #dbe4dc; border-radius: 11px; min-height: 56px; padding: 11px 13px; background: white; transition: background .16s, border-color .16s; }
+    .choice:hover .choice-content { border-color: #a1b9a8; }
+    .choice input:checked + .choice-content { border-color: var(--green); background: #ecf6f0; box-shadow: inset 0 0 0 1px var(--green); }
+    .choice input:disabled + .choice-content { cursor: default; }
+    .letter { display: grid; place-items: center; background: #eff2ed; border-radius: 8px; height: 29px; width: 29px; flex: 0 0 29px; font-size: .78rem; font-weight: 850; color: #627169; }
+    .choice input:checked + .choice-content .letter { background: var(--green); color: white; }
+    .choice .value { font-size: 1.04rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+    .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 19px; }
+    .primary { border: none; color: white; font-weight: 800; background: var(--green); border-radius: 10px; padding: 11px 19px; }
+    .primary:hover:not(:disabled) { background: #0f5742; }
+    .primary:disabled { cursor: not-allowed; background: #b6c7bd; }
+    .secondary { border: 1px solid var(--line); background: white; border-radius: 10px; padding: 11px 17px; font-weight: 750; }
+    .feedback { margin: 16px 0 0; border-radius: 11px; padding: 12px 15px; font-size: .94rem; font-weight: 750; }
+    .feedback.good { color: #155c45; background: var(--green-soft); }
+    .feedback.bad { color: var(--red); background: var(--red-soft); }
+    .solution { border-top: 1px solid var(--line); margin-top: 21px; padding-top: 15px; }
+    .solution summary { cursor: pointer; color: var(--green); font-weight: 800; list-style-position: outside; padding: 3px 0; }
+    .steps { margin: 11px 0; padding-left: 22px; }
+    .steps li { margin: 9px 0; color: #495d51; }
+    .formula { display: inline-block; padding: 11px 14px; border-radius: 10px; background: #f0f5ef; color: #205b46; font-weight: 850; font-size: 1.13rem; letter-spacing: .01em; margin: 5px 0 2px; }
+    .note { color: var(--muted); font-size: .83rem; margin: 12px 0 0; }
+    footer { color: var(--muted); font-size: .83rem; padding: 8px 0 46px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 560px) {
+      .hero { padding-top: 34px; }
+      .choices { grid-template-columns: 1fr; }
+      .choice-content { min-height: 52px; }
+      .question-card { border-radius: 14px; }
+      .strategy { padding: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <a class="back" href="amc8_practice.html">&larr; AMC 8 Practice</a>
+      <span class="brand">Counting &amp; Combinatorics</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">AMC 8 &middot; Mini practice set</div>
+      <h1>Keeping Books Together</h1>
+      <p class="intro">Three questions inspired by 2018 AMC 8 Problem 16. Practice the block method, choose an answer, then uncover a step-by-step solution.</p>
+      <div class="chips" aria-label="Practice details">
+        <span class="chip">3 questions</span>
+        <span class="chip">Multiple choice</span>
+        <span class="chip">No time limit</span>
+        <span class="chip">Instant feedback</span>
+      </div>
+    </section>
+
+    <aside class="strategy">
+      <strong>Strategy: the block method</strong>
+      <p>If some books must stay together, temporarily treat each required group as one object. Arrange the objects first; then count the possible orders <em>inside</em> each group.</p>
+    </aside>
+
+    <div class="progress-panel">
+      <div>
+        <strong id="progress-label" aria-live="polite">0 of 3 checked</strong>
+        <span class="sub" id="score-label">0 correct so far</span>
+      </div>
+      <button type="button" class="reset" id="reset-all">Restart all questions</button>
+    </div>
+    <div class="meter" role="progressbar" aria-label="Questions checked" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" id="progress-meter">
+      <div id="meter-fill"></div>
+    </div>
+
+    <section class="question-card" id="question-1" data-answer="1">
+      <div class="card-head"><span class="number">Question 01 / 03</span><span class="level">Intermediate</span></div>
+      <h2>French and Italian books</h2>
+      <p class="problem">A student has <strong>8 different books</strong> on a shelf: 3 French, 2 Italian, and 3 Japanese. How many arrangements are possible if all 3 French books must be together and both Italian books must be together?</p>
+      <div class="shelf" aria-label="Book inventory: French F1 F2 F3, Italian I1 I2, Japanese J1 J2 J3">
+        <span class="book">F1</span><span class="book">F2</span><span class="book">F3</span><span class="book">I1</span><span class="book">I2</span><span class="book">J1</span><span class="book">J2</span><span class="book">J3</span>
+      </div>
+      <div class="choices" role="radiogroup" aria-label="Question 1 answer">
+        <label class="choice"><input type="radio" name="q1" value="0"><span class="choice-content"><span class="letter">A</span><span class="value">720</span></span></label>
+        <label class="choice"><input type="radio" name="q1" value="1"><span class="choice-content"><span class="letter">B</span><span class="value">1,440</span></span></label>
+        <label class="choice"><input type="radio" name="q1" value="2"><span class="choice-content"><span class="letter">C</span><span class="value">2,880</span></span></label>
+        <label class="choice"><input type="radio" name="q1" value="3"><span class="choice-content"><span class="letter">D</span><span class="value">4,320</span></span></label>
+        <label class="choice"><input type="radio" name="q1" value="4"><span class="choice-content"><span class="letter">E</span><span class="value">10,080</span></span></label>
+      </div>
+      <div class="actions">
+        <button type="button" class="primary check" disabled>Check answer</button>
+        <button type="button" class="secondary retry" hidden>Try again</button>
+      </div>
+      <p class="feedback" role="status" aria-live="polite" hidden></p>
+      <details class="solution" hidden>
+        <summary>Understand the solution</summary>
+        <ol class="steps">
+          <li>Make one French block (FFF) and one Italian block (II).</li>
+          <li>These two blocks and the 3 different Japanese books give <strong>5 objects</strong>, which can be arranged in <strong>5! = 120</strong> ways.</li>
+          <li>Within the French block, there are <strong>3! = 6</strong> orders. Within the Italian block, there are <strong>2! = 2</strong> orders.</li>
+          <li>Multiply these independent choices.</li>
+        </ol>
+        <div class="formula">5! &times; 3! &times; 2! = 1,440</div>
+        <p class="note">Correct choice: B</p>
+      </details>
+    </section>
+
+    <section class="question-card" id="question-2" data-answer="2">
+      <div class="card-head"><span class="number">Question 02 / 03</span><span class="level">Intermediate</span></div>
+      <h2>Science books and novels</h2>
+      <p class="problem">A teacher has <strong>10 different books</strong>: 2 science books, 3 history books, and 5 novels. How many arrangements are possible if the science books must be next to each other and all 5 novels must also be next to each other?</p>
+      <div class="shelf" aria-label="Book inventory: 2 science, 3 history, and 5 novels">
+        <span class="book">S1</span><span class="book">S2</span><span class="book">H1</span><span class="book">H2</span><span class="book">H3</span><span class="book">N1</span><span class="book">N2</span><span class="book">N3</span><span class="book">N4</span><span class="book">N5</span>
+      </div>
+      <div class="choices" role="radiogroup" aria-label="Question 2 answer">
+        <label class="choice"><input type="radio" name="q2" value="0"><span class="choice-content"><span class="letter">A</span><span class="value">5,760</span></span></label>
+        <label class="choice"><input type="radio" name="q2" value="1"><span class="choice-content"><span class="letter">B</span><span class="value">14,400</span></span></label>
+        <label class="choice"><input type="radio" name="q2" value="2"><span class="choice-content"><span class="letter">C</span><span class="value">28,800</span></span></label>
+        <label class="choice"><input type="radio" name="q2" value="3"><span class="choice-content"><span class="letter">D</span><span class="value">57,600</span></span></label>
+        <label class="choice"><input type="radio" name="q2" value="4"><span class="choice-content"><span class="letter">E</span><span class="value">1,209,600</span></span></label>
+      </div>
+      <div class="actions">
+        <button type="button" class="primary check" disabled>Check answer</button>
+        <button type="button" class="secondary retry" hidden>Try again</button>
+      </div>
+      <p class="feedback" role="status" aria-live="polite" hidden></p>
+      <details class="solution" hidden>
+        <summary>Understand the solution</summary>
+        <ol class="steps">
+          <li>Group the science books into (SS) and the novels into (NNNNN).</li>
+          <li>The 2 groups plus the 3 different history books form <strong>5 objects</strong>: arrange them in <strong>5! = 120</strong> ways.</li>
+          <li>Arrange the science books within their block in <strong>2!</strong> ways, and the novels within their block in <strong>5!</strong> ways.</li>
+          <li>Multiply the counts.</li>
+        </ol>
+        <div class="formula">5! &times; 2! &times; 5! = 28,800</div>
+        <p class="note">Correct choice: C</p>
+      </details>
+    </section>
+
+    <section class="question-card" id="question-3" data-answer="3">
+      <div class="card-head"><span class="number">Question 03 / 03</span><span class="level">Challenge</span></div>
+      <h2>Three subject groups</h2>
+      <p class="problem">A professor has <strong>10 different textbooks</strong>: 3 mathematics, 3 physics, and 4 chemistry. How many ways can the books be arranged if <strong>all books of the same subject must stay together</strong>?</p>
+      <div class="shelf" aria-label="Book inventory: 3 mathematics, 3 physics, and 4 chemistry">
+        <span class="book">M1</span><span class="book">M2</span><span class="book">M3</span><span class="book">P1</span><span class="book">P2</span><span class="book">P3</span><span class="book">C1</span><span class="book">C2</span><span class="book">C3</span><span class="book">C4</span>
+      </div>
+      <div class="choices" role="radiogroup" aria-label="Question 3 answer">
+        <label class="choice"><input type="radio" name="q3" value="0"><span class="choice-content"><span class="letter">A</span><span class="value">1,728</span></span></label>
+        <label class="choice"><input type="radio" name="q3" value="1"><span class="choice-content"><span class="letter">B</span><span class="value">2,592</span></span></label>
+        <label class="choice"><input type="radio" name="q3" value="2"><span class="choice-content"><span class="letter">C</span><span class="value">4,320</span></span></label>
+        <label class="choice"><input type="radio" name="q3" value="3"><span class="choice-content"><span class="letter">D</span><span class="value">5,184</span></span></label>
+        <label class="choice"><input type="radio" name="q3" value="4"><span class="choice-content"><span class="letter">E</span><span class="value">10,368</span></span></label>
+      </div>
+      <div class="actions">
+        <button type="button" class="primary check" disabled>Check answer</button>
+        <button type="button" class="secondary retry" hidden>Try again</button>
+      </div>
+      <p class="feedback" role="status" aria-live="polite" hidden></p>
+      <details class="solution" hidden>
+        <summary>Understand the solution</summary>
+        <ol class="steps">
+          <li>Make three blocks: (MMM), (PPP), and (CCCC).</li>
+          <li>Arrange these <strong>3 blocks</strong> in <strong>3! = 6</strong> ways.</li>
+          <li>Inside the blocks, independently arrange the mathematics books in <strong>3!</strong> ways, the physics books in <strong>3!</strong> ways, and the chemistry books in <strong>4!</strong> ways.</li>
+          <li>Multiply all four factors.</li>
+        </ol>
+        <div class="formula">3! &times; 3! &times; 3! &times; 4! = 5,184</div>
+        <p class="note">Correct choice: D</p>
+      </details>
+    </section>
+
+    <footer>These are original practice variations inspired by 2018 AMC 8 Problem 16; they are not official AMC questions. All books are distinct.</footer>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+      var cards = Array.from(document.querySelectorAll(".question-card"));
+      var letters = ["A", "B", "C", "D", "E"];
+
+      function updateProgress() {
+        var completed = cards.filter(function (card) { return card.dataset.result === "correct" || card.dataset.result === "incorrect"; }).length;
+        var correct = cards.filter(function (card) { return card.dataset.result === "correct"; }).length;
+        document.getElementById("progress-label").textContent = completed + " of 3 checked";
+        document.getElementById("score-label").textContent = correct + " correct so far";
+        document.getElementById("meter-fill").style.width = (completed / cards.length * 100) + "%";
+        document.getElementById("progress-meter").setAttribute("aria-valuenow", completed);
+      }
+
+      function restart(card) {
+        card.querySelectorAll('input[type="radio"]').forEach(function (input) {
+          input.checked = false;
+          input.disabled = false;
+        });
+        card.querySelector(".check").hidden = false;
+        card.querySelector(".check").disabled = true;
+        card.querySelector(".retry").hidden = true;
+        var feedback = card.querySelector(".feedback");
+        feedback.hidden = true;
+        feedback.textContent = "";
+        feedback.className = "feedback";
+        var solution = card.querySelector(".solution");
+        solution.open = false;
+        solution.hidden = true;
+        delete card.dataset.result;
+        updateProgress();
+      }
+
+      cards.forEach(function (card) {
+        var choices = Array.from(card.querySelectorAll('input[type="radio"]'));
+        var check = card.querySelector(".check");
+        var retry = card.querySelector(".retry");
+        var feedback = card.querySelector(".feedback");
+        var solution = card.querySelector(".solution");
+
+        choices.forEach(function (input) {
+          input.addEventListener("change", function () {
+            check.disabled = false;
+          });
+        });
+
+        check.addEventListener("click", function () {
+          var selected = choices.find(function (input) { return input.checked; });
+          if (!selected) return;
+          var expected = Number(card.dataset.answer);
+          var isCorrect = Number(selected.value) === expected;
+          card.dataset.result = isCorrect ? "correct" : "incorrect";
+          choices.forEach(function (input) { input.disabled = true; });
+          check.hidden = true;
+          retry.hidden = false;
+          feedback.hidden = false;
+          feedback.className = "feedback " + (isCorrect ? "good" : "bad");
+          feedback.textContent = isCorrect
+            ? "Correct! Well done. Open the explanation below to see why."
+            : "Not quite. The correct choice is " + letters[expected] + ". Open the solution to see the block method.";
+          solution.hidden = false;
+          updateProgress();
+        });
+
+        retry.addEventListener("click", function () { restart(card); });
+      });
+
+      document.getElementById("reset-all").addEventListener("click", function () {
+        cards.forEach(restart);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      updateProgress();
+    }());
+  </script>
+</body>
+</html>
