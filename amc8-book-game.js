@@ -255,18 +255,23 @@
       '<p class="gm-little-note">Tap a filled box to remove its tile and try a different one. You may also tap a specific blank box before choosing a tile.</p>'+
       '<div class="gm-actions"><button type="button" class="gm-action primary" data-action="check-expression" data-scope="'+escape(scope)+'">✓ Check my counting</button>'+
       '<button type="button" class="gm-action" data-action="clear-expression" data-scope="'+escape(scope)+'">Clear formula</button></div>'+
-      branchExplanation(n,isFinal);
+      branchExplanation(n,isFinal,isFinal?[]:(scope==="outer"?spec.objects.map(function(o){return o.label;}):groupByName(spec,scope.slice(6)).books));
   }
-  function branchExplanation(n,isFinal){
+  function branchExplanation(n,isFinal,labels){
     if(isFinal){
-      return '<div class="gm-branch"><b>Why multiplication here?</b><p>Imagine a grid: each row is an outside layout. For each row you can use EVERY internal order. Each cell of that grid is one complete shelf. Adding would count rows and columns separately, not their combinations.</p></div>';
+      return '<div class="gm-branch"><b>Why multiplication here?</b><p>Every outside arrangement works with EVERY order inside the first group and EVERY order inside the other groups. A complete shelf needs one choice from all these lists, so multiply their sizes. Adding only counts the lists separately.</p></div>';
     }
-    var a=Math.min(n,3),b=a-1,rows=[];
-    for(var i=1;i<=a;i++)for(var j=1;j<=a;j++)if(i!==j)rows.push('<div class="gm-branch-item">'+i+' first → '+j+' second</div>');
-    return '<div class="gm-branch"><b>Why × and not +?</b>'+
-      '<p>Look at just '+a+' distinct objects. Each of the '+a+' first choices has '+b+' different second choices. '+a+' rows of '+b+
-      ' possibilities = '+a+' × '+b+' = '+(a*b)+' two-position beginnings (not '+a+' + '+b+' = '+(a+b)+').</p>'+
-      '<div class="gm-branch-grid">'+rows.join("")+'</div><p>The same branching continues until the last position has only 1 possible object. That is why we multiply '+n+' × '+(n-1)+' × ... × 1.</p></div>';
+    var names=labels&&labels.length===n?labels:Array.from({length:n},function(_,i){return String(i+1);});
+    var rows=names.map(function(first,i){
+      var rest=names.filter(function(_,j){return i!==j;});
+      return '<div class="gm-branch-row"><b>First: '+escape(first)+'</b><div class="gm-branch-grid">'+
+        rest.map(function(second){return '<div class="gm-branch-item">'+escape(first)+' → '+escape(second)+'</div>';}).join("")+'</div></div>';
+    }).join("");
+    return '<details class="gm-branch"><summary><b>Show WHY we multiply: all '+n+' × '+(n-1)+' first-two-position beginnings</b></summary>'+
+      '<p>There are '+n+' possible first choices (one row for each). For EACH first choice, '+(n-1)+' different objects can be second. That is '+n+' groups of '+(n-1)+' possibilities.</p>'+
+      rows+
+      '<p><strong>'+n+' × '+(n-1)+' = '+(n*(n-1))+' different first-two-position beginnings.</strong> Not '+n+' + '+(n-1)+
+      '. After filling two positions, '+(n-2)+' unused choices remain, then fewer, until 1 remains. Therefore all full orders are '+n+' × '+(n-1)+' × ... × 1 = '+n+'!.</p></details>';
   }
   function stageOuter(s){
     return '<h4 class="gm-panel-title">Step 2 · Arrange the outside objects</h4>'+
@@ -289,7 +294,7 @@
   function stageFinal(s){
     var spec=s.spec,m=spec.groups.length+1;
     return '<h4 class="gm-panel-title">Last step · Count every complete shelf</h4>'+
-      '<p class="gm-help">Each outside layout works with each French/Science/etc. internal order. Bring the factors you discovered into the final line and choose the operations that combine them.</p>'+
+      '<p class="gm-help">Every outside layout can combine with every inside order for every required group. Bring the factors you discovered into the final line and choose the operations that combine them.</p>'+
       '<div class="gm-board"><span class="gm-board-label">The factors you earned</span><div class="gm-card-row">'+
       factorChoices(spec).map(function(c){return '<div class="gm-factor"><b>'+escape(c.title)+'</b><strong>'+fmt(c.value)+'</strong></div>';}).join("")+'</div></div>'+
       expressionBuilder(s,"final",m,true)+
@@ -323,7 +328,7 @@
   }
   function view(s){
     return '<div class="gm-game">'+heading(s)+
-      '<div class="gm-stage"><main class="gm-local">'+stepContent(s)+info(s)+'</main>'+overview(s)+'</div></div>';
+      '<div class="gm-stage"><section class="gm-local">'+stepContent(s)+info(s)+'</section>'+overview(s)+'</div></div>';
   }
   function validateExpr(s,scope){
     var model=exprModel(s,scope),spec=s.spec;
@@ -333,7 +338,7 @@
       say(s,"Fill every number box and every operation box before checking.",true);return false;
     }
     if(model.ops.some(function(op){return op!=="×";})){
-      say(s,"Try multiplication (×). For EACH first choice there are the remaining choices. Addition joins different alternatives; it does not count all combinations.",true);return false;
+      say(s,isFinal?"Try multiplication (×). Every outside shelf can pair with EVERY possible order inside each band. Addition would count decision lists separately, not all complete shelves.":"Try multiplication (×). For EACH first choice there are all the possible second choices, and for EACH beginning there are further choices. Addition does not count these full branches.",true);return false;
     }
     if(isFinal){
       var expected=factorChoices(spec).map(function(x){return x.id;}).sort().join("|");
@@ -363,7 +368,7 @@
   function removeFromPosition(s,scope,index){
     var model=scope==="outer"?s.outer:s.inside[scope.slice(6)];
     if(!model||index<0||index>=model.positions.length||!model.positions[index])return;
-    model.positions[index]=null;model.verified=false;
+    model.positions=model.positions.map(function(value,i){return i>=index?null:value;});model.verified=false;
     model.expr={numbers:blank(model.positions.length),ops:blank(model.positions.length-1)};
     if(scope==="outer")forgetLater(s,1);else forgetLater(s,s.step);
   }
@@ -390,6 +395,8 @@
       if(options.indexOf(value)<0){say(s,"This object does not belong in this shelf.",true);return false;}
       var idx=target.index;
       if(idx<0||idx>=st.positions.length)return false;
+      var next=st.positions.indexOf(null);
+      if(idx!==next){say(s,"Fill the shelf from LEFT to RIGHT so the number of choices decreases one position at a time. The next empty position is "+(next+1)+".",true);return false;}
       if(st.positions.indexOf(value)!==-1){say(s,"You already used this object in another position. Each object can appear only once.",true);return false;}
       if(st.positions[idx]!==null){say(s,"This position is full. Tap Undo on that position to move its object first.",true);return false;}
       if(isOuter)clearFrom(s,1);else clearFrom(s,s.step);
