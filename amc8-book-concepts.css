@@ -124,3 +124,7 @@
 @media(prefers-reduced-motion:reduce) {
   .cb-book,.cb-band,.cb-tile,.cb-position.filled,.cb-answer { animation:none !important; }
 }
+/* Introduction above the interactive tutor */
+.why-lab { margin: 12px 0 30px; }
+.why-lab h2 { font-size: clamp(1.38rem, 3.4vw, 1.82rem); letter-spacing: -.035em; line-height: 1.22; margin: 5px 0 9px; }
+.why-sub { color: #506456; font-size: .94rem; max-width: 700px; margin: 0 0 12px; }
