@@ -444,7 +444,7 @@
   function selectOrUse(s,src){
     if(src.kind==="chip"){
       var target=s.selectedSlot && s.selectedSlot.scope===src.context && s.selectedSlot.tokenKind===src.tokenKind ?
-        s.selectedSlot:firstSlot(s,src);
+        {kind:"expr",scope:s.selectedSlot.scope,tokenKind:s.selectedSlot.tokenKind,index:s.selectedSlot.index}:firstSlot(s,src);
       if(!target){say(s,"There is no empty box for that tile. Tap an existing box to remove it first.",true);return;}
       if(assignSource(s,src,target))s.selected=null;
       return;
