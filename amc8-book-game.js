@@ -21,6 +21,13 @@
     makeSpec("question-2",[{name:"Science",books:["S1","S2"]},{name:"Novels",books:["N1","N2","N3","N4","N5"]}],["H1","H2","H3"],28800),
     makeSpec("question-3",[{name:"Mathematics",books:["M1","M2","M3"]},{name:"Physics",books:["P1","P2","P3"]},{name:"Chemistry",books:["C1","C2","C3","C4"]}],[],5184)
   ];
+  function problemNumber(spec){return specs.indexOf(spec)+1;}
+  /* Always use the question card as the canonical source for the wording. */
+  specs.forEach(function(spec){
+    var card=el(spec.id);
+    spec.title=card && card.querySelector("h2")?card.querySelector("h2").textContent.trim():spec.id;
+    spec.problem=card && card.querySelector(".problem")?card.querySelector(".problem").textContent.trim():"";
+  });
   function groupForBook(spec,b){return spec.groups.find(function(g){return g.books.indexOf(b)!==-1;});}
   function groupByName(spec,name){return spec.groups.find(function(g){return g.name===name;});}
   function mixBooks(spec){
@@ -127,11 +134,33 @@
       '<div class="gm-total">Whole result<span class="gm-big">'+formulaParts.join(" × ")+(finalDone?" = "+fmt(spec.answer):" = ?")+'</span></div>'+
       '<p class="gm-little-note">The highlighted factor is the small part you are working on. Every finished part appears here.</p></aside>';
   }
-  function heading(s){
+  function problemChooser(s){
+    return '<div class="gm-problem-picker"><span class="gm-board-label">Choose the question you want to play</span>'+
+      '<div class="gm-problem-picker-buttons" role="group" aria-label="Select the AMC 8 book problem">'+
+      specs.map(function(sp,i){
+        var selected=sp.id===s.spec.id;
+        var names=sp.groups.map(function(g){return g.name+" "+g.books.length;}).join(" · ");
+        return '<button type="button" class="gm-problem-choice'+(selected?" current":"")+
+          '" data-action="switch-problem" data-problem="'+escape(sp.id)+'" aria-pressed="'+(selected?"true":"false")+
+          '" title="'+escape(sp.title)+'"><b>Q'+(i+1)+': '+escape(sp.title)+'</b><small>'+escape(names)+'</small></button>';
+      }).join("")+'</div></div>';
+  }
+  function problemContext(spec){
+    var grouped=spec.groups.map(function(g){
+      return '<span class="gm-context-chip">'+escape(g.name)+': '+g.books.length+' together</span>';
+    }).join("");
+    var solo=spec.singles.length?'<span class="gm-context-chip neutral">'+spec.singles.length+' ungrouped books</span>':'';
+    return '<div class="gm-problem-context"><div class="gm-problem-kicker">Playing question '+problemNumber(spec)+' of '+specs.length+
+      '</div><p class="gm-current-question"><strong>'+escape(spec.title)+'</strong> — '+escape(spec.problem)+'</p>'+
+      '<div class="gm-context-chips">'+grouped+solo+'</div></div>';
+  }
+  function heading(s,options){
     var names=["1 · Group books","2 · Outside order"].concat(s.spec.groups.map(function(g,i){return (i+3)+" · "+g.name+" inside";}));
     names.push((finalIndex(s)+1)+" · Multiply");names.push("✓ Complete");
     return '<header class="gm-head"><div class="gm-head-top"><span class="gm-kicker">Book Blocks Counting Game</span>'+
-      '<button type="button" class="gm-restart" data-action="restart">↺ Restart game</button></div>'+
+      '<button type="button" class="gm-restart" data-action="restart">↺ Restart this problem</button></div>'+
+      (options&&options.showPicker?problemChooser(s):"")+
+      problemContext(s.spec)+
       '<h3>Build the answer yourself</h3>'+
       '<nav class="gm-trail" aria-label="Game steps">'+names.map(function(label,i){
         var available=i<=unlocked(s);var active=i===s.step;
@@ -327,8 +356,8 @@
     if(s.step===finalIndex(s))return stageFinal(s);
     return stageWin(s);
   }
-  function view(s){
-    return '<div class="gm-game">'+heading(s)+
+  function view(s,options){
+    return '<div class="gm-game">'+heading(s,options)+
       '<div class="gm-stage"><section class="gm-local">'+stepContent(s)+info(s)+'</section>'+overview(s)+'</div></div>';
   }
   function validateExpr(s,scope){
@@ -547,10 +576,27 @@
     }
     if(action==="check-expression"){validateExpr(s,scope);return;}
   }
-  function addGame(root,spec){
-    var state=newGame(spec),drag=null,suppressClickUntil=0;
+  function addGame(root,spec,options){
+    options=options||{};
+    var state=newGame(spec),savedStates={},drag=null,suppressClickUntil=0;
+    savedStates[spec.id]=state;
+    function load(nextSpec,scroll){
+      if(!nextSpec || !specs.some(function(sp){return sp.id===nextSpec.id;}))return false;
+      if(drag){
+        if(drag.ghost)drag.ghost.remove();
+        if(drag.highlight)drag.highlight.classList.remove("gm-drag-target");
+        drag=null;
+      }
+      state.selected=null;state.selectedSlot=null;
+      savedStates[state.spec.id]=state;
+      state=savedStates[nextSpec.id] || newGame(nextSpec);
+      savedStates[nextSpec.id]=state;
+      state.selected=null;state.selectedSlot=null;state.notice="";
+      repaint(!!scroll);
+      return true;
+    }
     function repaint(scroll){
-      root.innerHTML=view(state);
+      root.innerHTML=view(state,options);
       if(scroll){var h=root.querySelector(".gm-head");if(h&&h.scrollIntoView)h.scrollIntoView({behavior:"smooth",block:"start"});}
     }
     function process(source,target){
@@ -566,6 +612,10 @@
       if(Date.now()<suppressClickUntil)return;
       var action=ev.target.closest("[data-action]");
       if(action&&root.contains(action)){
+        if(action.dataset.action==="switch-problem" && options.showPicker){
+          load(specs.find(function(sp){return sp.id===action.dataset.problem;}),false);
+          return;
+        }
         var mode=dispatchAction(state,action);
         repaint(mode==="jump");return;
       }
@@ -645,9 +695,19 @@
     document.addEventListener("pointerup",endPointer);
     document.addEventListener("pointercancel",function(){if(drag){if(drag.ghost)drag.ghost.remove();if(drag.highlight)drag.highlight.classList.remove("gm-drag-target");drag=null;}});
     repaint(false);
-    return {getState:function(){return state;},render:function(){repaint(false);}};
+    return {getState:function(){return state;},render:function(){repaint(false);},load:load};
   }
-  var top=el("why-tutor");if(top)addGame(top,specs[0]);
+  var initialSpec=specs[0];
+  try{
+    var params=new URLSearchParams(window.location.search);
+    var requested=params.get("problem");
+    var selected=specs.find(function(sp,i){return requested===String(i+1) || requested===sp.id;});
+    if(selected)initialSpec=selected;
+    var hashed=window.location.hash.match(/^#question-([1-9][0-9]*)$/);
+    if(hashed && specs[Number(hashed[1])-1])initialSpec=specs[Number(hashed[1])-1];
+  }catch(ignore){}
+  var top=el("why-tutor");
+  var topGame=top?addGame(top,initialSpec,{showPicker:true}):null;
   specs.forEach(function(spec){
     var card=el(spec.id);if(!card)return;
     var solution=card.querySelector(".solution");if(!solution)return;
@@ -659,5 +719,27 @@
     [".steps",".formula",".note"].forEach(function(selector){var item=solution.querySelector(selector);if(item)written.appendChild(item);});
     solution.appendChild(written);
     addGame(mount,spec);
+    if(topGame){
+      var actions=card.querySelector(".actions");
+      if(actions){
+        var openGame=document.createElement("button");
+        openGame.type="button";
+        openGame.className="secondary gm-play-problem";
+        openGame.textContent="Play this question in the game";
+        openGame.setAttribute("aria-label","Play "+spec.title+" in the interactive game");
+        openGame.addEventListener("click",function(){
+          topGame.load(spec,true);
+          if(top&&top.scrollIntoView)top.scrollIntoView({behavior:"smooth",block:"start"});
+        });
+        actions.appendChild(openGame);
+      }
+      /* Choosing an answer indicates which problem the student is working on.
+         Sync the main game without scrolling away from the question. */
+      card.addEventListener("change",function(event){
+        if(event.target && event.target.matches && event.target.matches('input[type="radio"]')){
+          topGame.load(spec,false);
+        }
+      });
+    }
   });
 })();
