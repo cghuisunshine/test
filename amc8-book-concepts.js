@@ -1,329 +1,369 @@
-/* Visual-first counting lessons for the AMC 8 book arrangement practice.
-   Deliberately show whole shelves, not abstract factor labels. */
+/* AMC 8 visual counting tutor: teach choices before symbols. */
 (function () {
   "use strict";
-  var lab = document.getElementById("why-counting");
-  if (!lab) return;
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  function byId(id) { return document.getElementById(id); }
-  function factorial(n) { var r = 1; for (var i = 2; i <= n; i++) r *= i; return r; }
-  function commas(n) { return n.toLocaleString("en-US"); }
-  function descending(n) { return Array.from({length:n},function(_,i){return n-i;}).join(" × "); }
-  function permutation(items) {
-    if (items.length === 0) return [[]];
-    return items.flatMap(function(item,idx){
-      return permutation(items.filter(function(_,j){return j !== idx;})).map(function(tail){return [item].concat(tail);});
+  function factorial(n) { var v=1; for(var i=2;i<=n;i++) v*=i; return v; }
+  function fmt(x) { return x.toLocaleString("en-US"); }
+  function product(values) { return values.reduce(function(a,b){return a*b;},1); }
+  function chain(n) { return Array.from({length:n},function(_,i){return n-i;}).join(" × "); }
+  function permute(a) {
+    if (a.length===0) return [[]];
+    var out=[];
+    a.forEach(function(item,i) {
+      permute(a.filter(function(_,j){return i!==j;})).forEach(function(tail){
+        out.push([item].concat(tail));
+      });
     });
+    return out;
   }
-  function classFor(label) {
-    if (/^F/.test(label)) return "";
-    if (/^(J|H|C)/.test(label)) return "blue";
-    if (/^(I|N|P)/.test(label)) return "gold";
-    return "green";
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g,function(x){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x];});
   }
-  function miniBook(label) { return '<span class="why-mini-book ' + classFor(label) + '">' + label + '</span>'; }
-  function miniBooks(labels) { return '<span class="why-mini-books">' + labels.map(miniBook).join("") + '</span>'; }
-  function putText(id, s) { byId(id).textContent = s; }
-  function counterButtons(prefix, step, max, captions) {
-    var previous = byId(prefix + "-prev"), next = byId(prefix + "-next");
-    previous.disabled = step <= 0;
-    next.disabled = step >= max;
-    next.textContent = step < max ? captions[step] : "Completed ✓";
-    putText(prefix + "-step", "Step " + (step+1) + " of " + (max+1));
+  function mkSpec(id, groups, singles, expected) {
+    var spec={id:id,groups:groups.map(function(g){return {name:g.name,code:g.code,books:g.books,perms:permute(g.books)};}),singles:singles,answer:expected};
+    spec.objects=spec.groups.map(function(group,i){return {id:"group"+i,name:group.name,type:"group",group:i};})
+      .concat(spec.singles.map(function(book){return {id:"single"+book,type:"single",name:book,label:book};}));
+    spec.n=spec.objects.length;
+    spec.outerWays=factorial(spec.n);
+    spec.insideWays=product(spec.groups.map(function(g){return g.perms.length;}));
+    return spec;
   }
-  var tabs = Array.from(document.querySelectorAll(".why-tab"));
-  function openTab(name) {
-    tabs.forEach(function(tab) {
-      var on = tab.dataset.tab === name;
-      tab.setAttribute("aria-pressed", on ? "true" : "false");
-      byId("why-panel-" + tab.dataset.tab).hidden = !on;
-    });
-  }
-  tabs.forEach(function (tab) { tab.addEventListener("click", function(){openTab(tab.dataset.tab);}); });
-  document.querySelectorAll("[data-why-next]").forEach(function(btn) {
-    btn.addEventListener("click",function(){openTab(btn.dataset.whyNext);lab.scrollIntoView({behavior:"smooth",block:"start"});});
-  });
-  openTab("block");
-
-  /* 1: Four physical books. Preserve DOM elements so CSS left transitions
-     visibly move and exchange books instead of fading in new explanations. */
-  var groupStep = 0;
-  var positions = [
-    {F1:0,J1:70,F2:140,J2:210},
-    {F1:0,F2:55,J1:140,J2:210},
-    {J1:0,F1:70,F2:125,J2:220},
-    {J1:0,F2:70,F1:125,J2:220}
+  var specs=[
+    mkSpec("question-1",[
+      {name:"French",code:"F",books:["F1","F2","F3"]},
+      {name:"Italian",code:"I",books:["I1","I2"]}
+    ],["J1","J2","J3"],1440),
+    mkSpec("question-2",[
+      {name:"Science",code:"S",books:["S1","S2"]},
+      {name:"Novels",code:"N",books:["N1","N2","N3","N4","N5"]}
+    ],["H1","H2","H3"],28800),
+    mkSpec("question-3",[
+      {name:"Mathematics",code:"M",books:["M1","M2","M3"]},
+      {name:"Physics",code:"P",books:["P1","P2","P3"]},
+      {name:"Chemistry",code:"C",books:["C1","C2","C3","C4"]}
+    ],[],5184)
   ];
-  var groupLines = [
-    "F1 and F2 are separated by J1. This arrangement does NOT satisfy “stay together.”",
-    "Move F2 beside F1, and wrap a band around them. Now [F1 F2] is ONE outside object, while J1 and J2 are two more.",
-    "Move the WHOLE [F1 F2] block past J1. The two French books move as a unit, so they remain neighbors.",
-    "Now swap F1 and F2 INSIDE the band. The band stays intact, but this is a different valid shelf! We must count inside orders too."
-  ];
-  var groupButtonLabels = ["Make a block →","Move the block →","Swap inside the block →"];
-  function renderGroup() {
-    Object.keys(positions[groupStep]).forEach(function(label){
-      byId("physical-" + label).style.left = positions[groupStep][label] + "px";
-    });
-    var band = byId("physical-band");
-    band.style.left = groupStep <= 1 ? "-6px" : "64px";
-    band.style.opacity = groupStep > 0 ? "1" : "0";
-    byId("physical-caption").textContent = groupLines[groupStep];
-    byId("physical-band-label").textContent =
-      groupStep === 0 ? "Different books · no grouping yet" :
-      groupStep === 1 ? "3 outside objects: [F1 F2], J1, J2" :
-      "3 outside objects — the French pair remains a block";
-    var status = byId("physical-validity");
-    status.className = "why-state" + (groupStep === 0 ? " invalid" : "");
-    status.textContent = groupStep === 0 ? "✗ French books separated" : "✓ French books stay together";
-    counterButtons("block", groupStep, 3, groupButtonLabels);
+  function getObj(spec,id) { return spec.objects.find(function(o){return o.id===id;}); }
+  function freshState(spec) {
+    return {spec:spec,stage:0,bandCount:0,placed:[],
+      orderIndices:spec.groups.map(function(){return 0;}),
+      didSwap:spec.groups.map(function(){return false;}),
+      outerVariant:0,recall:""};
   }
-  byId("block-next").addEventListener("click", function(){groupStep=Math.min(3,groupStep+1);renderGroup();});
-  byId("block-prev").addEventListener("click", function(){groupStep=Math.max(0,groupStep-1);renderGroup();});
-  byId("block-reset").addEventListener("click", function(){groupStep=0;renderGroup();});
-  renderGroup();
-
-  /* 2: A real permutation tree, displaying all six complete arrangements.
-     Students see 3 branches, then 2 under EVERY branch, then a final forced choice. */
-  var factorialStep = 0;
-  var objects = ["F-block","J1","J2"];
-  var factorialLines = [
-    "First position: pick any of the 3 different objects. Those are three separate branches.",
-    "After EACH first choice, there are exactly 2 different objects left for position 2. So each of the 3 branches splits into two.",
-    "The third spot is forced: only 1 object remains. Follow each path to see all 6 complete orders, with no repeats.",
-    "The logic scales: with 4 objects it is 4 × 3 × 2 × 1 = 24. Adding gives 4 + 3 + 2 + 1 = 10, which is wrong."
-  ];
-  var factorialButtonLabels = ["Show the two branches for each first choice →","Fill the final spot and count all six →","Try four objects →"];
-  function shortObject(s) {return s === "F-block" ? "[F]" : s;}
-  function renderFactorial() {
-    byId("factorial-explain").textContent = factorialLines[factorialStep];
-    byId("factorial-tree").innerHTML = objects.map(function(first,i) {
-      var rest = objects.filter(function(x){return x !== first;});
-      var outcomes = rest.map(function(second,j){
-        var last = rest.find(function(x){return x!==second;});
-        var shown = factorialStep === 0 ? "?" :
-          factorialStep === 1 ? shortObject(first) + " → " + shortObject(second) + " → ?" :
-          shortObject(first) + " → " + shortObject(second) + " → " + shortObject(last);
-        return '<div class="why-tree-leaf why-fade-in" style="--delay:'+(i*100+j*70)+'ms">' +
-          '<small>' + (factorialStep === 0 ? "Next choices hidden" : "Path " + (i*2+j+1)) +
-          '</small><strong>' + shown + '</strong></div>';
-      }).join("");
-      return '<div class="why-tree-row"><div class="why-tree-first"><span>' +
-        shortObject(first) + '</span><small>1st choice</small></div>' +
-        '<div class="why-tree-branches">' + outcomes + '</div></div>';
-    }).join("");
-    byId("factorial-equation").textContent = factorialStep < 2 ?
-      (factorialStep === 0 ? "3 possible starts" : "3 first choices × 2 second choices = 6 partial paths") :
-      "3 × 2 × 1 = 3! = 6 complete arrangements";
-    byId("factorial-four").hidden = factorialStep !== 3;
-    counterButtons("factorial",factorialStep,3,factorialButtonLabels);
+  function bookType(label) {return label[0].toLowerCase();}
+  function book(label) {return '<span class="cb-book '+bookType(label)+'" aria-label="Book '+escapeHtml(label)+'">'+escapeHtml(label)+'</span>';}
+  function minibook(label,changed) {return '<span class="cb-mini-book '+bookType(label)+(changed?' changed':'')+'">'+escapeHtml(label)+'</span>';}
+  function miniShelf(labels) {return '<div class="cb-mini-shelf">'+labels.map(function(b){return minibook(b,false);}).join("")+'</div>';}
+  function actualBooks(spec) {return spec.groups.flatMap(function(g){return g.books;}).concat(spec.singles);}
+  function groupView(group,books) {
+    return '<span class="cb-band '+group.code.toLowerCase()+'" role="group" aria-label="'+escapeHtml(group.name)+' grouped books">' +
+      '<span class="cb-band-label">'+escapeHtml(group.name)+' = 1 object</span>' +
+      '<span class="cb-books">'+books.map(book).join("")+'</span></span>';
   }
-  byId("factorial-next").addEventListener("click", function(){factorialStep=Math.min(3,factorialStep+1);renderFactorial();});
-  byId("factorial-prev").addEventListener("click", function(){factorialStep=Math.max(0,factorialStep-1);renderFactorial();});
-  byId("factorial-reset").addEventListener("click", function(){factorialStep=0;renderFactorial();});
-  renderFactorial();
-
-  /* 3: Cartesian product using 12 ACTUAL complete shelves.
-     6 positions of [F1 F2], J1, J2; 2 possible orders inside F block. */
-  var productStep = 0;
-  var outside = permutation(["F","J1","J2"]);
-  var productLines = [
-    "First, treat [F1 F2] as a single block. That block, J1, and J2 give 3! = 6 possible OUTSIDE layouts. Each row is one.",
-    "Keep F1 before F2 inside each outside layout. That creates 6 different full shelves (the left column).",
-    "Reverse the two French books inside EACH outside layout. Now there are 6 MORE shelves (the right column). Count all 12.",
-    "For EVERY one of the 6 outside layouts, there are 2 inside orders. Six rows with two shelves per row: 6 × 2 = 12. No shelf is missed or counted twice."
-  ];
-  var productButtonLabels = ["Put F1 F2 into every outside layout →","Also put F2 F1 into every layout →","Explain why not addition →"];
-  function completeShelf(order,reversed) {
-    var labels = [];
-    order.forEach(function(part) {
-      if (part==="F") labels.push.apply(labels, reversed ? ["F2","F1"] : ["F1","F2"]);
-      else labels.push(part);
-    });
-    return miniBooks(labels);
+  function objView(spec,obj,st,expanded) {
+    if(obj.type==="single") return book(obj.label);
+    var g=spec.groups[obj.group];
+    return groupView(g,expanded ? g.perms[st.orderIndices[obj.group]] : g.books);
   }
-  function renderProduct() {
-    putText("product-explain",productLines[productStep]);
-    var tbody = byId("product-table-body");
-    tbody.innerHTML = outside.map(function(order,i){
-      var label = order.map(function(x){return x==="F"?"[F block]":x;}).join(" · ");
-      return '<tr class="why-fade-in" style="--delay:'+(i*65)+'ms">' +
-        '<th scope="row"><strong>#'+(i+1)+'</strong><div>'+label+'</div></th>' +
-        '<td class="'+(productStep<1?"placeholder":"")+'">' + (productStep>=1?completeShelf(order,false):"—")+'</td>' +
-        '<td class="'+(productStep<2?"placeholder":"")+'">' + (productStep>=2?completeShelf(order,true):"—")+'</td></tr>';
-    }).join("");
-    putText("product-equation",productStep===0 ? "6 outside layouts; inside still undecided" :
-      productStep===1 ? "6 × 1 = 6 complete shelves so far" :
-      "6 outside × 2 inside = 12 complete shelves");
-    byId("product-rules").hidden = productStep !== 3;
-    counterButtons("product", productStep, 3, productButtonLabels);
-  }
-  byId("product-next").addEventListener("click",function(){productStep=Math.min(3,productStep+1);renderProduct();});
-  byId("product-prev").addEventListener("click",function(){productStep=Math.max(0,productStep-1);renderProduct();});
-  byId("product-reset").addEventListener("click",function(){productStep=0;renderProduct();});
-  renderProduct();
-
-  /* 4: Apply exactly the same demonstrations to the existing three quizzes.
-     No hard-coded answer changes. Existing questions and scoring remain intact. */
-  var specs = [
-    {id:"question-1", blocks:[
-      {name:"French",books:["F1","F2","F3"]},
-      {name:"Italian",books:["I1","I2"]}
-    ],singles:["J1","J2","J3"],answer:1440},
-    {id:"question-2", blocks:[
-      {name:"Science",books:["S1","S2"]},
-      {name:"Novels",books:["N1","N2","N3","N4","N5"]}
-    ],singles:["H1","H2","H3"],answer:28800},
-    {id:"question-3", blocks:[
-      {name:"Mathematics",books:["M1","M2","M3"]},
-      {name:"Physics",books:["P1","P2","P3"]},
-      {name:"Chemistry",books:["C1","C2","C3","C4"]}
-    ],singles:[],answer:5184}
-  ];
-  var walks = [];
-  function outsideObjects(spec) {
-    return spec.blocks.map(function(g,i){return {type:"block",group:g,id:"block"+i};})
-      .concat(spec.singles.map(function(s){return {type:"single",id:s};}));
-  }
-  function groupedObject(obj,reverse,delay) {
-    if (obj.type === "single") {
-      return '<span class="walk2-single" style="--delay:'+(delay||0)+'ms">'+miniBook(obj.id)+'</span>';
-    }
-    var group = obj.group;
-    var arr = reverse ? group.books.slice().reverse() : group.books;
-    return '<span class="walk2-block" style="--delay:'+(delay||0)+'ms"><small>'+group.name+' block</small>'+
-      miniBooks(arr)+'</span>';
-  }
-  function outsideVisual(list, reverseFirst) {
-    return '<div class="walk2-shelf">' + list.map(function(obj,i){
-      return groupedObject(obj,reverseFirst && obj.type==="block" && obj===list.find(function(e){return e.type==="block";}),i*65);
+  function viewOutside(spec,ids,st,expanded) {
+    return '<div class="cb-books">'+ids.map(function(id){
+      return objView(spec,getObj(spec,id),st,expanded);
     }).join("")+'</div>';
   }
-  function walkContent(state) {
-    var spec = state.spec;
-    var stage = state.step;
-    var objects = outsideObjects(spec);
-    var outerN = objects.length, outerWays = factorial(outerN);
-    var insideWays = spec.blocks.reduce(function(acc,g){return acc*factorial(g.books.length);},1);
-    var lastSequence = objects.slice().reverse();
-    var original = state.original;
-    var formula = [outerN+"!"].concat(spec.blocks.map(function(g){return g.books.length+"!";})).join(" × ");
-    var heading, description, visual;
-    if (stage===0) {
-      heading = "Start with the actual books";
-      description = "All books have different labels. Some must be neighbors, but they are still different books. Count only arrangements that obey the rule.";
-      visual = '<div class="walk2-shelf">'+original.map(function(label,i){return '<span class="walk2-single" style="--delay:'+(i*65)+'ms">'+miniBook(label)+'</span>';}).join("")+'</div>'+
-        '<span class="why-state">'+original.length+' different books</span>';
-    } else if (stage===1) {
-      heading = "Make one movable block for each required group";
-      description = "Put a pretend rubber band around each required group. Count the band as ONE object when moving things on the shelf. The books inside the band are still free to swap later.";
-      visual = outsideVisual(objects,false)+
-        '<div class="walk2-math">'+spec.blocks.length+' blocks + '+spec.singles.length+' single books = '+outerN+' outside objects</div>';
-    } else if (stage===2) {
-      heading = "Rearrange the outside objects WITHOUT breaking the bands";
-      description = "Notice that moving a band never splits it. The entire group goes to another spot. Each different outside order gives a new arrangement of the big objects.";
-      visual = '<strong>Outside order A</strong>'+outsideVisual(objects,false)+
-        '<strong>Outside order B</strong>'+outsideVisual(lastSequence,false)+
-        '<div class="walk2-math">'+outerN+' movable objects</div><p class="walk2-note">We count how many outside orders exist next. We are NOT done yet, because inside orders also matter.</p>';
-    } else if (stage===3) {
-      heading = "Why exactly "+outerN+"! outside orders?";
-      description = "Choose the first outside object: "+outerN+" options. Once chosen, that object cannot be reused. So the next spot has "+(outerN-1)+" choices, then fewer, until 1 remains. Every choice branches into the remaining choices.";
-      visual = '<div class="walk2-choicebar">' + Array.from({length:outerN},function(_,i){
-        return '<div class="walk2-choice" style="--delay:'+(i*80)+'ms">'+(outerN-i)+'<small>spot '+(i+1)+'</small></div>';
-      }).join("")+'</div><div class="walk2-math">'+descending(outerN)+' = '+outerN+'! = '+commas(outerWays)+'</div>'+
-        '<p class="walk2-note">Each first choice leads to ('+(outerN-1)+')! ways to finish. For example, '+outerN+' × '+(outerN-1)+'! = '+commas(outerWays)+'. <button class="why-lesson-link" type="button" data-open-why="factorial">See the complete 3-object tree</button></p>';
-    } else if (stage===4) {
-      heading = "Unwrap each band: count INSIDE orders";
-      description = "Keep the band in its outside position. Now swap the different books inside it. For each block with k different books there are k choices, then k−1, down to 1: that is k!.";
-      visual = '<div class="walk2-inside">'+spec.blocks.map(function(g){
-        return '<div class="walk2-inside-one"><strong>'+g.name+' — '+g.books.length+'! = '+commas(factorial(g.books.length))+' orders</strong>'+
-          '<small>One order:</small>'+miniBooks(g.books)+
-          '<small>Another order, same band:</small>'+miniBooks(g.books.slice().reverse())+
-          '<small>'+descending(g.books.length)+' = '+g.books.length+'!</small></div>';
-      }).join("")+'</div><div class="walk2-math">Inside combinations per outside order = '+spec.blocks.map(function(g){return g.books.length+'!';}).join(' × ')+
-        ' = '+commas(insideWays)+'</div>';
-    } else {
-      heading = "Pair EVERY outside order with EVERY inside choice";
-      description = "Fix just one outside order. You already get "+commas(insideWays)+" complete shelves from the different orders inside its blocks. The SAME number is possible for each of the "+commas(outerWays)+" outside orders.";
-      visual = '<div class="walk2-product-rows">'+
-        '<div class="walk2-product-row"><strong>Outside order #1</strong> → '+commas(insideWays)+' inside choices</div>'+
-        '<div class="walk2-product-row"><strong>Outside order #2</strong> → '+commas(insideWays)+' inside choices</div>'+
-        '<div class="walk2-product-row"><strong>… through #'+commas(outerWays)+'</strong> → '+commas(insideWays)+' inside choices each</div></div>'+
-        '<p>Two complete shelves with the SAME outside order but different inside books:</p>'+
-        outsideVisual(objects,false)+outsideVisual(objects,true)+
-        '<div class="walk2-math">'+commas(outerWays)+' outside × '+commas(insideWays)+' inside = '+commas(spec.answer)+'</div>'+
-        '<p><strong>Full formula:</strong> '+formula+' = '+commas(spec.answer)+'. We <strong>multiply</strong> because we choose an outside order <em>AND</em> an inside order. <button type="button" class="why-lesson-link" data-open-why="product">See every combination in the small example</button></p>';
-    }
-    return '<div class="walk2-scene"><h3>'+heading+'</h3><p>'+description+'</p>'+visual+'</div>';
-  }
-  function stopWalk(state) {
-    if (state.timer !== null) {clearInterval(state.timer);state.timer=null;}
-  }
-  function renderWalk(state, focusClass) {
-    var s = state.step, panel=state.panel;
-    panel.innerHTML = '<div class="walk2-top"><span>SEE WHY · STEP '+(s+1)+' / 6</span><span class="walk2-dots" aria-hidden="true">'+
-      Array.from({length:6},function(_,i){return '<span class="'+(i<=s?'on':'')+'"></span>';}).join("")+'</span></div>'+
-      '<div aria-live="polite">'+walkContent(state)+'</div>'+
-      '<div class="walk2-buttons">'+
-      '<button type="button" class="walk2-button prev" '+(s===0?'disabled':'')+'>← Previous</button>'+
-      '<button type="button" class="walk2-button next" '+(s===5?'disabled':'')+'>Next →</button>'+
-      '<button type="button" class="walk2-button play">'+(state.timer===null?'▶ Play':'Ⅱ Pause')+'</button>'+
-      '<button type="button" class="walk2-button replay">↺ Replay</button>'+
-      '</div><span class="why-micro">Ask the learner: “What exactly are we choosing at this step?”</span>';
-    function changeStep(number,cls){
-      stopWalk(state);
-      state.step=Math.max(0,Math.min(5,number));
-      renderWalk(state,cls);
-    }
-    panel.querySelector(".prev").addEventListener("click",function(){changeStep(s-1,"prev");});
-    panel.querySelector(".next").addEventListener("click",function(){changeStep(s+1,"next");});
-    panel.querySelector(".replay").addEventListener("click",function(){changeStep(0,"next");});
-    panel.querySelector(".play").addEventListener("click",function(){
-      if (state.timer!==null) {stopWalk(state);renderWalk(state,"play");return;}
-      if (state.step===5) state.step=0;
-      state.timer=setInterval(function(){
-        if (!state.details.open || state.details.hidden) {stopWalk(state);renderWalk(state);return;}
-        state.step=Math.min(5,state.step+1);
-        if (state.step===5) stopWalk(state);
-        renderWalk(state);
-      },reducedMotion?5000:4200);
-      renderWalk(state,"play");
+  function fullLabels(spec,ids,perms) {
+    var list=[];
+    ids.forEach(function(id) {
+      var obj=getObj(spec,id);
+      if(obj.type==="single") list.push(obj.label);
+      else list.push.apply(list,perms[obj.group] || spec.groups[obj.group].books);
     });
-    if (focusClass) {
-      var focusEl = panel.querySelector("." + focusClass);
-      if (focusEl && !focusEl.disabled) focusEl.focus({preventScroll:true});
+    return list;
+  }
+  function chosenInside(spec,st) {return spec.groups.map(function(g,i){return g.perms[st.orderIndices[i]];});}
+  function currentIds(st) {return st.placed.length===st.spec.n?st.placed:st.spec.objects.map(function(o){return o.id;});}
+  function outsideVariant(st) {
+    var arr=currentIds(st).slice();
+    if(st.outerVariant===1 && arr.length>1){var tmp=arr[0]; arr[0]=arr[1]; arr[1]=tmp;}
+    return arr;
+  }
+  function factorCards(n,completed) {
+    return '<div class="cb-math-strip">'+Array.from({length:n},function(_,i){
+      return (i>0?'<span class="cb-times">×</span>':'')+
+        '<span class="cb-number" style="opacity:'+(i<=completed?1:.43)+'">'+(n-i)+'<small>spot '+(i+1)+'</small></span>';
+    }).join("")+'</div>';
+  }
+  function maybeTree(spec) {
+    var firstThree=spec.objects.slice(0,3);
+    var branches=firstThree.map(function(first,i){
+      var rest=firstThree.filter(function(x){return x.id!==first.id;});
+      return '<div class="cb-tree-branch"><b>Start: '+escapeHtml(first.name)+'</b>'+
+        rest.map(function(second){
+          var last=rest.find(function(x){return x.id!==second.id;});
+          return '<div class="cb-tree-leaf">'+escapeHtml(first.name)+' → '+escapeHtml(second.name)+' → '+escapeHtml(last.name)+'</div>';
+        }).join("")+'</div>';
+    }).join("");
+    return '<div class="cb-figure"><span class="cb-fig-title">Look at just 3 objects — ALL 6 complete orders</span>'+
+      '<div class="cb-tree">'+branches+'</div>'+
+      '<div class="cb-nudge"><strong>Why 3 × 2 × 1?</strong> Three choices to start. Under EACH start, two choices come next. The last one is forced. That makes 6 whole orders, not 3 + 2 + 1.</div></div>';
+  }
+  function twoSpotPairs(spec) {
+    var rows=spec.objects.map(function(first){
+      var remaining=spec.objects.filter(function(second){return second.id!==first.id;});
+      return '<div class="cb-branch"><strong>First: '+escapeHtml(first.name)+'</strong><span>'+remaining.map(function(o){return escapeHtml(o.name);}).join(" · ")+'</span></div>';
+    }).join("");
+    return '<details class="cb-alternate"><summary>Still unsure? Show ALL '+spec.n+' × '+(spec.n-1)+' = '+(spec.n*(spec.n-1))+' possible first-two-position choices</summary>'+
+      '<div class="cb-branch-list">'+rows+'</div><p class="cb-copy">Each row has '+(spec.n-1)+' possible second choices. There are '+spec.n+' rows, so '+spec.n+' × '+(spec.n-1)+' = '+(spec.n*(spec.n-1))+' two-position beginnings, not '+(spec.n+(spec.n-1))+'.</p></details>';
+  }
+  function sceneBand(st) {
+    var spec=st.spec,done=st.bandCount;
+    var visual=spec.groups.map(function(g,i){
+      if(i<done)return groupView(g,g.books);
+      return '<span class="cb-books">'+g.books.map(book).join("")+'</span>';
+    }).join("")+spec.singles.map(book).join("");
+    var nBooks=actualBooks(spec).length;
+    var counts=nBooks-spec.groups.slice(0,done).reduce(function(sum,g){return sum+(g.books.length-1);},0);
+    var nextGroup=spec.groups[done];
+    return '<h3 class="cb-title">1. Make the groups you are not allowed to split</h3>'+
+      '<p class="cb-question">If '+spec.groups.map(function(g){return g.name.toLowerCase();}).join(' and ')+' books must stay together, what should we move as one piece?</p>'+
+      '<p class="cb-copy">Imagine putting a rubber band around each required group. No single book can slip between books inside that band.</p>'+
+      '<div class="cb-figure"><span class="cb-fig-title">Actual books: '+nBooks+' real books</span><div class="cb-books">'+visual+
+      '</div><div class="cb-legend"><b>Band = 1 movable object</b><span>Books inside are still different.</span></div></div>'+
+      '<div class="cb-nudge">'+(done===0?
+        'Right now all '+nBooks+' books are separate. Count the movable objects, not just the individual spines.' :
+        done<spec.groups.length?
+        '<strong>'+escapeHtml(spec.groups[done-1].name)+' is one object now.</strong> The next required group still needs a band.' :
+        '<strong>All required groups are banded.</strong> You still have '+nBooks+' physical books, but only <strong>'+spec.n+' objects to move</strong> when arranging the outside positions.')+'</div>'+
+      '<div class="cb-actions">'+(nextGroup?
+        '<button type="button" class="cb-button primary" data-cb-action="band">Put a band around '+escapeHtml(nextGroup.name)+' →</button>' :
+        '<span class="cb-tag">✓ Groups are ready</span>')+
+      '<button type="button" class="cb-button" data-cb-action="reset-bands">↺ Undo bands</button></div>'+
+      (done===spec.groups.length?'<div class="cb-count">'+spec.groups.length+' banded groups + '+spec.singles.length+' individual books = '+spec.n+' movable objects</div>':'')+
+      '<p class="cb-shortcut">Think: <strong>rubber bands, not glue.</strong> We will rearrange inside later.</p>';
+  }
+  function sceneOutside(st) {
+    var spec=st.spec,ids=st.placed;
+    var available=spec.objects.filter(function(o){return ids.indexOf(o.id)===-1;});
+    var n=spec.n,k=ids.length;
+    var slots=Array.from({length:n},function(_,i){
+      var id=ids[i];
+      if(!id)return '<div class="cb-position"><span class="hint">Spot '+(i+1)+'<br>?</span></div>';
+      return '<div class="cb-position filled" style="animation-delay:'+(i*30)+'ms">'+
+        '<div>'+objView(spec,getObj(spec,id),st,false)+'</div></div>';
+    }).join("");
+    var nextCount=n-k;
+    var sentence=k===0? 'Every object can go into the FIRST position. There are '+n+' choices.' :
+      k===n? 'You made ONE outside order. But any first choice is allowed, and each has further branches. The total is '+fmt(spec.outerWays)+' different outside orders.' :
+      'You chose an object for spot '+k+'. That object cannot be used again. For the next position you now have '+nextCount+' choices.';
+    var options=available.map(function(o){
+      return '<button type="button" class="cb-pick" data-cb-action="pick" data-id="'+escapeHtml(o.id)+'" aria-label="Put '+escapeHtml(o.name)+' into position '+(k+1)+'">'+
+        '<span class="cb-tile">'+objView(spec,o,st,false)+'<small>Choose this</small></span></button>';
+    }).join("");
+    var directions=k<n?'Tap an object below to place it in spot '+(k+1)+'. Watch the number of available choices shrink.':'You have filled all the outside positions. Now count all the OTHER orders you could have built.';
+    var math=k===n?
+      '<div class="cb-count">'+chain(n)+' = '+n+'! = '+fmt(spec.outerWays)+' outside orders</div>'+
+      '<p class="cb-copy">You saw '+n+' possibilities for spot 1, then '+(n-1)+' for spot 2 <em>for each first choice</em>, then fewer choices at every step. That branching is the reason for multiplication.</p>'+maybeTree(spec)+twoSpotPairs(spec) :
+      '<p class="cb-copy">'+sentence+'</p>'+
+      (k>0?'<div class="cb-nudge"><strong>Why multiply?</strong> Each different choice for the first position can combine with EACH available choice for the next position. Example: '+n+' possible first choices, and '+(n-1)+' second choices for each, giving '+(n*(n-1))+' first-two-position arrangements.</div>':'');
+    return '<h3 class="cb-title">2. Fill the shelf using ONLY the movable objects</h3>'+
+      '<p class="cb-question">How many different outside orders are possible for these '+n+' objects?</p>'+
+      '<p class="cb-copy">'+directions+'</p>'+
+      '<div class="cb-figure"><span class="cb-fig-title">Shelf slots — select objects one by one</span><div class="cb-positions">'+slots+'</div>'+
+      (k<n?'<span class="cb-tag">'+nextCount+' choices remain for spot '+(k+1)+'</span>':'<span class="cb-tag">✓ One legal outside order completed</span>')+'</div>'+
+      factorCards(n,k)+
+      (available.length?'<div class="cb-figure"><span class="cb-fig-title">Available objects — tap one to place it</span><div class="cb-tray">'+options+'</div></div>':'')+
+      '<div class="cb-actions"><button type="button" class="cb-button" data-cb-action="undo" '+(k===0?'disabled':'')+'>← Undo last</button>'+
+      (k<n?'<button type="button" class="cb-button" data-cb-action="fill">Fill the rest for me</button>':'')+
+      '<button type="button" class="cb-button" data-cb-action="clear-placements">↺ Rearrange outside</button></div>'+
+      math;
+  }
+  function sceneInside(st) {
+    var spec=st.spec,objects=currentIds(st);
+    var allReady=st.didSwap.every(Boolean);
+    var options=spec.groups.map(function(g,i){
+      var order=g.perms[st.orderIndices[i]];
+      return '<div class="cb-option"><b>'+escapeHtml(g.name)+' block — '+fmt(g.perms.length)+' internal orders</b>'+
+        '<small>The outside block stays in the SAME shelf spot.</small><div class="cb-books">'+order.map(book).join("")+'</div>'+
+        '<small>Example '+(st.orderIndices[i]+1)+' of '+fmt(g.perms.length)+' · '+chain(g.books.length)+' = '+g.books.length+'!</small>'+
+        '<div class="cb-actions"><button type="button" class="cb-button primary" data-cb-action="swap" data-index="'+i+'">↻ Change '+escapeHtml(g.name)+' order</button></div>'+
+        '<small>'+(st.didSwap[i]?'✓ You made a different legal shelf.':'Try swapping these books at least once.')+'</small></div>';
+    }).join("");
+    return '<h3 class="cb-title">3. Keep the outside shelf still. Change the books INSIDE</h3>'+
+      '<p class="cb-question">If a group stays together, can its books change order?</p>'+
+      '<p class="cb-copy">YES! Watch what happens when you swap books inside a band: the band has not moved, but the finished shelf is different. So outside arrangements alone are not the answer.</p>'+
+      '<div class="cb-figure"><span class="cb-fig-title">The SAME outside order, with real books inside</span>'+
+      viewOutside(spec,objects,st,true)+'</div>'+
+      '<div class="cb-option-grid">'+options+'</div>'+
+      '<div class="cb-nudge"><strong>Count the inside options for ONE fixed outside order.</strong> '+
+      spec.groups.map(function(g){return escapeHtml(g.name)+': '+g.books.length+'! = '+fmt(g.perms.length);}).join('; ')+
+      '. We need an order inside <em>each</em> block, so every choice for the first block can combine with every choice for the others.</div>'+
+      '<div class="cb-count">'+spec.groups.map(function(g){return fmt(g.perms.length);}).join(' × ')+
+        ' = '+fmt(spec.insideWays)+' different complete shelves per outside order</div>'+
+      '<p class="cb-shortcut">'+(allReady?'✓ You have changed the books inside every group.':'Try changing every group once, while leaving the outside order alone.')+'</p>';
+  }
+  function sampleInsideCombinations(spec,max) {
+    var options=spec.groups.map(function(g){return g.perms.slice(0,Math.min(2,g.perms.length));});
+    var combo=[[]];
+    options.forEach(function(opts){
+      combo=combo.flatMap(function(a){return opts.map(function(b){return a.concat([b]);});});
+    });
+    return combo.slice(0,max);
+  }
+  function insideTable(spec,ids) {
+    if(spec.groups.length===2 && spec.insideWays<=24) {
+      var g0=spec.groups[0],g1=spec.groups[1];
+      var head='<thead><tr><th scope="col">'+escapeHtml(g0.name)+'</th>'+
+        g1.perms.map(function(o){return '<th scope="col">'+escapeHtml(o.join(" "))+'</th>';}).join("")+'</tr></thead>';
+      var rows=g0.perms.map(function(a){
+        return '<tr><th scope="row">'+escapeHtml(a.join(" "))+'</th>'+
+          g1.perms.map(function(b){
+            return '<td>'+miniShelf(fullLabels(spec,ids,[a,b]))+'</td>';
+          }).join("")+'</tr>';
+      }).join("");
+      return '<div class="cb-figure"><span class="cb-fig-title">ONE outside order — ALL '+spec.insideWays+' real shelves</span>'+
+        '<p class="cb-copy">Read across: hold the '+escapeHtml(g0.name)+' order still and try every '+escapeHtml(g1.name)+' order. Then change the '+escapeHtml(g0.name)+' order and repeat. Each cell is a different finished shelf.</p>'+
+        '<div class="cb-matrix-scroller"><table class="cb-matrix">'+head+'<tbody>'+rows+'</tbody></table></div>'+
+        '<div class="cb-tag">Exactly '+spec.insideWays+' different complete shelves here</div></div>';
+    }
+    var samples=sampleInsideCombinations(spec,8);
+    return '<div class="cb-figure"><span class="cb-fig-title">A few complete shelves for ONE fixed outside order</span>'+
+      '<p class="cb-copy">These '+samples.length+' are just examples, NOT the entire list of '+fmt(spec.insideWays)+'.</p>'+
+      '<div class="cb-card-row">'+samples.map(function(combo,i){
+        return '<div class="cb-stat"><span>Example '+(i+1)+'</span>'+miniShelf(fullLabels(spec,ids,combo))+'</div>';
+      }).join("")+'</div>'+
+      '<p class="cb-copy">Counting every inside combination gives '+spec.groups.map(function(g){return g.books.length+'!';}).join(' × ')+
+      ' = '+fmt(spec.insideWays)+' different finished shelves <em>for this one outside order</em>.</p></div>';
+  }
+  function scenePair(st) {
+    var spec=st.spec,ids=outsideVariant(st);
+    var outside=spec.outerWays,inside=spec.insideWays;
+    var seen=spec.groups.map(function(g){return fmt(g.perms.length);});
+    var formula=[spec.n+'!'].concat(spec.groups.map(function(g){return g.books.length+'!';})).join(" × ");
+    var rows=outside<=6?Array.from({length:outside},function(_,i){return i+1;}):[1,2,3,outside];
+    var branchRows=rows.map(function(x,idx){
+      return '<div class="cb-branch"><strong>Outside arrangement #'+fmt(x)+'</strong><span>'+fmt(inside)+' complete shelves</span></div>'+
+        ((idx===2 && outside>6)?'<div class="cb-copy" style="text-align:center">⋮ same '+fmt(inside)+' options for every other outside order ⋮</div>':'');
+    }).join("");
+    return '<h3 class="cb-title">4. Repeat the inside choices for EVERY outside arrangement</h3>'+
+      '<p class="cb-question">You found '+fmt(outside)+' outside orders, and '+fmt(inside)+' inside combinations for each one. How many WHOLE shelves are there?</p>'+
+      '<p class="cb-copy">Choose ONE outside order first. For that order, change the books inside the bands in all possible ways. Then pick a different outside order and do it all again.</p>'+
+      '<div class="cb-figure"><span class="cb-fig-title">Outside arrangement example '+(st.outerVariant?'B':'A')+'</span>'+
+      viewOutside(spec,ids,st,true)+
+      '<div class="cb-actions"><button type="button" class="cb-button primary" data-cb-action="other-outer">↔ Move the blocks to a NEW outside order</button></div>'+
+      '<p class="cb-shortcut">The outside layout changes, but it still has '+fmt(inside)+' possible inside combinations.</p></div>'+
+      insideTable(spec,ids)+
+      '<div class="cb-figure"><span class="cb-fig-title">'+fmt(outside)+' groups of '+fmt(inside)+' complete shelves</span><div class="cb-branch-list">'+branchRows+'</div>'+
+      '<div class="cb-nudge"><strong>Multiplication is repeated addition:</strong> '+fmt(inside)+' + '+fmt(inside)+
+      ' + ··· ('+fmt(outside)+' equal groups) = '+fmt(outside)+' × '+fmt(inside)+'.</div>'+
+      '<div class="cb-count">'+fmt(outside)+' × '+fmt(inside)+' = '+fmt(spec.answer)+'</div></div>'+
+      '<div class="cb-why"><strong>Why NOT add '+fmt(outside)+' + '+seen.join(" + ")+'?</strong> Because an outside order alone is not a finished shelf, and an inside order alone is not a finished shelf. You need BOTH choices to create one complete arrangement. Every outside order combines with every inside order.</div>'+
+      '<div class="cb-card-row"><div class="cb-stat"><b>'+spec.n+'! = '+fmt(outside)+'</b><span>Different outside layouts</span></div>'+
+      spec.groups.map(function(g){return '<div class="cb-stat"><b>'+g.books.length+'! = '+fmt(g.perms.length)+'</b><span>'+escapeHtml(g.name)+' orders inside one band</span></div>';}).join("")+'</div>'+
+      '<div class="cb-answer">'+formula+' = '+fmt(spec.answer)+'</div>'+
+      '<div class="cb-recall"><strong>Quick memory check</strong>'+
+      '<p>Why are we multiplying instead of adding the numbers above?</p>'+
+      '<div class="cb-actions"><button type="button" class="cb-button" data-cb-action="recall-wrong">Because multiplication gives a bigger number</button>'+
+      '<button type="button" class="cb-button primary" data-cb-action="recall-correct">Because every outside order pairs with each inside order</button></div>'+
+      '<div class="cb-response" role="status" aria-live="polite">'+escapeHtml(st.recall)+'</div></div>'+
+      '<div class="cb-nudge"><strong>Remember the story:</strong> BAND the required books → FILL the outside positions → SWAP inside each band → PAIR every outside choice with every inside choice.</div>';
+  }
+  function canAdvance(st) {
+    if(st.stage===0) return st.bandCount===st.spec.groups.length;
+    if(st.stage===1) return st.placed.length===st.spec.n;
+    if(st.stage===2) return st.didSwap.every(Boolean);
+    return false;
+  }
+  function stageHeading(st) {
+    if(st.stage===0)return "Make the bands";
+    if(st.stage===1)return "Fill the outside";
+    if(st.stage===2)return "Swap inside";
+    return "Pair every choice";
+  }
+  function render(st,root,focusControl) {
+    var content=[sceneBand,sceneOutside,sceneInside,scenePair][st.stage](st);
+    var progress=Array.from({length:4},function(_,i){return '<span class="'+(i<=st.stage?'on':'')+'"></span>';}).join("");
+    root.innerHTML='<div class="cb-shell"><div class="cb-progress"><strong>WHY IT WORKS · STEP '+(st.stage+1)+' OF 4</strong><div class="cb-dots" aria-hidden="true">'+progress+'</div></div>'+
+      '<p class="cb-step-title">'+stageHeading(st)+'</p>'+
+      '<div aria-live="polite">'+content+'</div>'+
+      '<div class="cb-controls"><button type="button" class="cb-button" data-cb-action="prev" '+(st.stage===0?'disabled':'')+'>← Previous step</button>'+
+      (st.stage===3?'<span class="cb-tag">✓ You reached the answer</span>':
+      '<button type="button" class="cb-button primary" data-cb-action="next" '+(!canAdvance(st)?'disabled':'')+'>'+
+      ['Next: fill the positions →','Next: swap inside →','Next: count complete shelves →'][st.stage]+'</button>')+
+      '<button type="button" class="cb-button" data-cb-action="restart">↺ Replay from start</button></div></div>';
+    if(focusControl) {
+      var control=root.querySelector('[data-cb-action="'+focusControl+'"]');
+      if(control && !control.disabled) control.focus({preventScroll:true});
     }
   }
+  function attach(root,spec) {
+    var st=freshState(spec);
+    render(st,root);
+    root.addEventListener("click",function(event) {
+      var node=event.target.closest("[data-cb-action]");
+      if(!node || !root.contains(node)) return;
+      var action=node.dataset.cbAction,focus=null;
+      if(action==="band"){
+        st.bandCount=Math.min(spec.groups.length,st.bandCount+1);
+        focus="band";
+      }else if(action==="reset-bands"){
+        st.bandCount=0;
+        focus="band";
+      }else if(action==="pick"){
+        var id=node.dataset.id;
+        if(st.placed.indexOf(id)<0 && getObj(spec,id))st.placed.push(id);
+      }else if(action==="undo"){
+        st.placed.pop();focus="undo";
+      }else if(action==="fill"){
+        st.placed=st.placed.concat(spec.objects.map(function(o){return o.id;}).filter(function(id){return st.placed.indexOf(id)<0;}));
+        focus="next";
+      }else if(action==="clear-placements"){
+        st.placed=[];focus="fill";
+      }else if(action==="swap"){
+        var i=Number(node.dataset.index);
+        if(Number.isInteger(i) && i>=0 && i<spec.groups.length){
+          st.orderIndices[i]=(st.orderIndices[i]+1)%spec.groups[i].perms.length;
+          st.didSwap[i]=true;focus="swap";
+        }
+      }else if(action==="other-outer"){
+        st.outerVariant=st.outerVariant===0?1:0;focus="other-outer";
+      }else if(action==="recall-correct"){
+        st.recall="✓ Exactly. For every outside layout, there are all the inside variations — like rows and columns in a grid.";
+        focus="recall-correct";
+      }else if(action==="recall-wrong"){
+        st.recall="Try again: we multiply even when the answer is small. The reason is that every complete shelf combines multiple choices.";
+        focus="recall-wrong";
+      }else if(action==="next"){
+        if(canAdvance(st) && st.stage<3){st.stage++; focus="prev";}
+      }else if(action==="prev"){
+        st.stage=Math.max(0,st.stage-1);focus="next";
+      }else if(action==="restart"){
+        st=freshState(spec);focus="band";
+      }else return;
+      render(st,root,focus);
+      if(action==="next"||action==="prev"||action==="restart"){
+        var heading=root.querySelector(".cb-progress");
+        if(heading) heading.scrollIntoView({behavior:reducedMotion?"auto":"smooth",block:"nearest"});
+      }
+    });
+  }
+  var main=document.getElementById("why-tutor");
+  if(main)attach(main,specs[0]);
   specs.forEach(function(spec) {
-    var card=byId(spec.id), details=card.querySelector(".solution");
-    var original=Array.from(card.querySelectorAll(".shelf .book"),function(b){return b.textContent.trim();});
-    var panel=document.createElement("div");
-    panel.className="walk2";
-    panel.setAttribute("aria-label","Interactive explanation of book arrangements");
-    details.insertBefore(panel,details.querySelector(".steps"));
+    var card=document.getElementById(spec.id);
+    if(!card)return;
+    var solution=card.querySelector(".solution");
+    if(!solution)return;
+    var root=document.createElement("div");
+    root.className="cb-lesson";
+    root.setAttribute("aria-label","Interactive counting explanation");
+    solution.insertBefore(root,solution.querySelector(".steps"));
     var written=document.createElement("details");
-    written.className="walk2-written";
-    var summary=document.createElement("summary");
-    summary.textContent="Show the written calculation";
-    written.appendChild(summary);
+    written.className="cb-written";
+    written.innerHTML="<summary>Read the original written calculation</summary>";
     [".steps",".formula",".note"].forEach(function(selector){
-      var el=details.querySelector(selector);
-      if(el) written.appendChild(el);
+      var old=solution.querySelector(selector);
+      if(old)written.appendChild(old);
     });
-    details.appendChild(written);
-    var state={spec:spec,panel:panel,details:details,original:original,step:0,timer:null};
-    walks.push(state);
-    renderWalk(state);
-    details.addEventListener("toggle",function(){if(!details.open){stopWalk(state);renderWalk(state);}});
-    card.querySelector(".retry").addEventListener("click",function(){stopWalk(state);state.step=0;renderWalk(state);});
-  });
-  byId("reset-all").addEventListener("click",function(){
-    walks.forEach(function(state){stopWalk(state);state.step=0;renderWalk(state);});
-  });
-  document.addEventListener("click",function(event){
-    var button=event.target.closest("[data-open-why]");
-    if(!button)return;
-    openTab(button.dataset.openWhy);
-    lab.scrollIntoView({behavior:"smooth",block:"start"});
+    solution.appendChild(written);
+    attach(root,spec);
   });
 })();
