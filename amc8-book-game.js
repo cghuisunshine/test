@@ -233,7 +233,7 @@
     var slots=model.numbers.map(function(v,i){
       var kind=isFinal?"factor":"number";
       return (i?formulaSlot(scope,"op",i-1,model.ops[i-1],s.selectedSlot&&s.selectedSlot.scope===scope&&s.selectedSlot.kind==="op"&&s.selectedSlot.index===i-1,spec):"")+
-        formulaSlot(scope,kind,i,v,s.selectedSlot&&s.selectedSlot.scope===scope&&s.selectedSlot.kind===kind&&s.selectedSlot.index===i,spec);
+        formulaSlot(scope,kind,i,v,s.selectedSlot&&s.selectedSlot.scope===scope&&s.selectedSlot.tokenKind===kind&&s.selectedSlot.index===i,spec);
     }).join("");
     var chips=bank.map(function(item){
       var used=occupied.indexOf(isFinal?item.id:item.value)>=0;
@@ -352,7 +352,7 @@
     }
     if(scope==="outer")s.outer.verified=true;
     else s.inside[scope.slice(6)].verified=true;
-    say(s,"Yes: "+Array.from({length:nReal},function(_,i){return nReal-i;}).join(" × ")+" = "+fmt(fact(nReal))+"! The choices multiply because every earlier choice can be combined with each later choice.");
+    say(s,"Yes: "+Array.from({length:nReal},function(_,i){return nReal-i;}).join(" × ")+" = "+fmt(fact(nReal))+" complete orders. The choices multiply because every earlier choice can be combined with each later choice.");
     return true;
   }
   function clearFrom(s,step){
