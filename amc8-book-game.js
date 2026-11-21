@@ -699,8 +699,8 @@
   }
   var initialSpec=specs[0];
   try{
-    var params=new URLSearchParams(window.location.search);
-    var requested=params.get("problem");
+    var queryMatch=String(window.location.search||"").match(/[?&]problem=([^&#]+)/);
+    var requested=queryMatch?decodeURIComponent(queryMatch[1]):null;
     var selected=specs.find(function(sp,i){return requested===String(i+1) || requested===sp.id;});
     if(selected)initialSpec=selected;
     var hashed=window.location.hash.match(/^#question-([1-9][0-9]*)$/);
