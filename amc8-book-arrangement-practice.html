@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f8f6">
-  <meta name="description" content="Three interactive AMC 8-style book arrangement questions with instant feedback and step-by-step counting solutions.">
+  <meta name="description" content="Visual AMC 8 book arrangements: move a book block, see all factorial branches, count complete shelf combinations, then practice three questions.">
   <title>Book Arrangement Practice | AMC 8 Combinatorics</title>
   <style>
     :root {
@@ -110,18 +110,18 @@
     <section class="hero">
       <div class="eyebrow">AMC 8 &middot; Mini practice set</div>
       <h1>Keeping Books Together</h1>
-      <p class="intro">Three questions inspired by 2018 AMC 8 Problem 16. Practice the block method, choose an answer, then uncover a step-by-step solution.</p>
+      <p class="intro">First see four books move into a block, watch every branch of 3!, and count real complete shelves in a grid. Then solve three AMC 8-style questions with guided animated explanations.</p>
       <div class="chips" aria-label="Practice details">
-        <span class="chip">3 questions</span>
+        <span class="chip">Visual lesson + 3 questions</span>
         <span class="chip">Multiple choice</span>
-        <span class="chip">No time limit</span>
+        <span class="chip">Step-by-step replay</span>
         <span class="chip">Instant feedback</span>
       </div>
     </section>
 
     <aside class="strategy">
       <strong>Strategy: the block method</strong>
-      <p>If some books must stay together, temporarily treat each required group as one object. Arrange the objects first; then count the possible orders <em>inside</em> each group.</p>
+      <p>When books must be together, put a pretend band around them. Count outside arrangements of the bands and single books, then count the orders inside each band. Multiply because each outside order can be paired with every inside order.</p>
     </aside>
 
 
