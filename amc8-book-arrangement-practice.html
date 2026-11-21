@@ -459,7 +459,7 @@
       function renderPairs() {
         var pairs = [["O1","I1"],["O1","I2"],["O1","I3"],["O2","I1"],["O2","I2"],["O2","I3"]];
         document.getElementById("pair-grid").innerHTML = pairs.map(function (pair, i) {
-          return '<span class="pair-tile ' + (i < pairStep ? 'revealed' : '') + '">' + (i < pairStep ? pair[0] + " + " + pair[1] : "·") + "</span>";
+          return '<span class="pair-tile ' + (i < pairStep ? 'revealed' : '') + '">' + (i < pairStep ? pair[0] + " with " + pair[1] : "·") + "</span>";
         }).join("");
         document.getElementById("pair-sentence").textContent =
           pairStep === 0 ? "Start: each outside order branches into three possible inside orders." :
@@ -512,7 +512,7 @@
         var groups = spec.blocks.map(blockMarkup).concat(spec.solo.map(function (name,i) {
           return '<div class="single-object">' + book(name,i*80) + '<span class="object-label">1 object</span></div>';
         })).join("");
-        var allBooks = spec.blocks.reduce(function (list,g) { return list.concat(g.books); },[]).concat(spec.solo);
+        var allBooks = spec.original || spec.blocks.reduce(function (list,g) { return list.concat(g.books); },[]).concat(spec.solo);
         var formula = [n + "!"].concat(spec.blocks.map(function (g) { return g.books.length + "!"; })).join(" × ");
         var info = [
           {title:"Start: every book is different", text:"Look at all the books. Different labels mean different books. The neighbors rule is the only restriction."},
@@ -597,6 +597,7 @@
       }
       specs.forEach(function (spec) {
         var card = document.getElementById(spec.id);
+        spec.original = Array.from(card.querySelectorAll(".shelf .book"), function (el) { return el.textContent.trim(); });
         var details = card.querySelector(".solution");
         var container = document.createElement("div");
         container.className = "animated-lesson";
@@ -605,7 +606,7 @@
         var state = {spec:spec,container:container,details:details,step:0,timer:null};
         states.push(state);
         render(state);
-        details.addEventListener("toggle",function () { if (!details.open) stop(state); });
+        details.addEventListener("toggle",function () { if (!details.open) { stop(state); render(state); } });
         card.querySelector(".retry").addEventListener("click",function () { stop(state); state.step=0; render(state); });
       });
       document.getElementById("reset-all").addEventListener("click",function() {
