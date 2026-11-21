@@ -83,6 +83,87 @@
     .formula { display: inline-block; padding: 11px 14px; border-radius: 10px; background: #f0f5ef; color: #205b46; font-weight: 850; font-size: 1.13rem; letter-spacing: .01em; margin: 5px 0 2px; }
     .note { color: var(--muted); font-size: .83rem; margin: 12px 0 0; }
     footer { color: var(--muted); font-size: .83rem; padding: 8px 0 46px; }
+
+    /* Interactive counting lessons */
+    .concept-lab { margin: 8px 0 30px; padding: 23px; background: #fff; border: 1px solid var(--line); border-radius: 17px; box-shadow: var(--shadow); }
+    .concept-lab h2 { font-size: clamp(1.25rem,3vw,1.55rem); line-height: 1.3; margin: 3px 0 6px; letter-spacing: -.02em; }
+    .concept-lead { color: var(--muted); margin: 0 0 18px; font-size: .91rem; }
+    .concept-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+    .concept-card { padding: 17px; background: #f8faf7; border: 1px solid #e1e9e1; border-radius: 13px; min-width: 0; }
+    .concept-card h3 { font-size: 1.02rem; margin: 0 0 8px; color: #205b46; }
+    .concept-card p { font-size: .87rem; color: #4b5b50; margin: 8px 0; }
+    .concept-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .concept-actions button, .walk-controls button { border: 1px solid #bacdc0; background: white; color: #1b664d; font-weight: 750; font-size: .85rem; border-radius: 9px; padding: 9px 12px; }
+    .concept-actions button:disabled, .walk-controls button:disabled { opacity: .45; cursor: not-allowed; }
+    .concept-actions button:hover:not(:disabled), .walk-controls button:hover:not(:disabled) { background: #e9f5ed; }
+    .demo-slots { display: flex; gap: 7px; margin: 13px 0 9px; }
+    .demo-slot { flex: 1; min-width: 0; padding: 12px 4px; border-radius: 9px; background: #e5ebe5; border: 2px dashed #b3c5b6; text-align: center; font-weight: 850; }
+    .demo-slot.filled { background: #d6eede; border: 2px solid #419170; animation: book-reveal .4s ease both; }
+    .demo-equation { font-weight: 850; color: #125b43; margin: 10px 0 0; font-size: 1.01rem; }
+    .all-orders { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+    .all-orders span { background: #ecf3ed; border: 1px solid #d6e4d6; border-radius: 6px; font-size: .78rem; padding: 3px 6px; font-weight: 700; }
+    .pair-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; margin: 12px 0; }
+    .pair-tile { min-height: 40px; border: 1px dashed #ccd8cd; background: #ecf1eb; border-radius: 7px; display: grid; place-items: center; color: #758378; font-weight: 750; font-size: .77rem; }
+    .pair-tile.revealed { background: #e0f2e6; border: 1px solid #8dbca1; color: #16563d; animation: book-reveal .42s ease both; }
+    .rule-comparison { font-size: .81rem !important; color: #6a5949 !important; background: #fff6e9; padding: 9px; border-radius: 7px; }
+    .animated-lesson { background: #f9fcf9; border: 1px solid #c8dfce; border-radius: 14px; padding: 18px; margin: 15px 0 20px; }
+    .lesson-kicker { text-transform: uppercase; letter-spacing: .09em; font-size: .7rem; color: #51745f; font-weight: 850; }
+    .walk-progress { display: flex; align-items: center; gap: 10px; justify-content: space-between; margin-bottom: 12px; }
+    .step-pips { display: flex; gap: 5px; }
+    .step-pips span { height: 7px; width: 17px; border-radius: 9px; background: #dce7dc; }
+    .step-pips span.active { background: var(--green); }
+    .walk-stage { min-height: 240px; animation: book-reveal .36s ease both; }
+    .walk-stage h3 { font-size: 1.15rem; margin: 7px 0 7px; letter-spacing: -.02em; }
+    .walk-stage p { color: #4c6053; font-size: .9rem; margin: 8px 0 12px; }
+    .lesson-books, .movable-objects { display: flex; align-items: stretch; flex-wrap: wrap; gap: 7px; margin: 16px 0; }
+    .motion-book { display: inline-grid; place-items: center; min-width: 35px; height: 47px; padding: 0 7px; font-size: .75rem; font-weight: 850; background: #cde4d6; color: #254d3c; border: 1px solid #afd2bc; border-bottom: 5px solid #6da48b; border-radius: 5px 5px 3px 3px; animation: book-reveal .55s ease both; animation-delay: var(--delay,0ms); }
+    .motion-book.italian, .motion-book.novel, .motion-book.physics { background: #f5e4c8; border-color: #ddc59a; border-bottom-color: #ca9e54; color: #694c24; }
+    .motion-book.japanese, .motion-book.history, .motion-book.chemistry { background: #dfe6fb; border-color: #bdcaec; border-bottom-color: #849dcf; color: #364d79; }
+    .motion-block { display: flex; flex-direction: column; gap: 7px; align-items: center; border: 2px solid #70a891; border-radius: 11px; padding: 9px; background: #eaf7ee; animation: group-appear .48s ease both; animation-delay: var(--delay,0ms); }
+    .motion-block .book-line { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+    .motion-block .motion-book { height: 36px; min-width: 30px; padding: 0 4px; font-size: .7rem; }
+    .block-tag { font-size: .7rem; color: #29654c; font-weight: 850; text-align: center; }
+    .object-label { font-size: .72rem; font-weight: 800; text-align: center; color: #35624b; }
+    .single-object { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 11px; }
+    .single-object .motion-book { height: 36px; }
+    .lesson-count { display: inline-block; background: #e4f2e7; padding: 7px 11px; border-radius: 9px; color: #175d45; font-weight: 850; }
+    .count-slots { display: flex; gap: 6px; flex-wrap: wrap; margin: 15px 0; }
+    .count-slot { flex: 1; min-width: 52px; background: #edf4ed; border: 1px solid #cde0d0; border-radius: 9px; text-align: center; padding: 12px 6px; animation: book-reveal .55s ease both; animation-delay: var(--delay,0ms); }
+    .count-slot strong { display: block; color: #166144; font-size: 1.25rem; }
+    .count-slot small { font-size: .7rem; color: #607569; }
+    .walk-equation { display: inline-block; color: #145b42; background: #e5f3e9; font-weight: 850; padding: 10px 13px; border-radius: 9px; font-size: clamp(.96rem, 2.5vw, 1.17rem); margin: 7px 0; }
+    .inside-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 9px; margin: 13px 0; }
+    .inside-card { border: 1px solid #d2e4d5; background: white; padding: 12px; border-radius: 11px; }
+    .inside-card strong { display: block; color: #225b44; }
+    .inside-card .book-line { display: flex; gap: 3px; flex-wrap: wrap; margin: 8px 0; }
+    .inside-card .motion-book { height: 32px; min-width: 29px; padding: 0 4px; font-size: .7rem; }
+    .inside-card .order-next { animation: book-reveal 1s ease-in-out infinite alternate; }
+    .inside-card small { color: #5f6b63; font-size: .75rem; }
+    .tree-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin: 12px 0; }
+    .tree-pair { background: #e6f3e8; border: 1px solid #b0d2bb; text-align: center; border-radius: 8px; padding: 9px 2px; font-weight: 800; font-size: .79rem; animation: book-reveal .5s ease both; animation-delay: var(--delay,0ms); }
+    .tree-pair small { display: block; color: #607368; font-weight: 600; }
+    .factor-reasons { display: flex; flex-wrap: wrap; gap: 7px; margin: 15px 0; }
+    .factor-reason { padding: 9px 12px; border-radius: 9px; background: white; border: 1px solid #cce1d0; }
+    .factor-reason strong { display: block; font-size: 1.1rem; color: var(--green); }
+    .factor-reason span { display: block; font-size: .74rem; color: #5e7062; }
+    .answer-burst { margin: 9px 0; color: #0d6043; font-weight: 900; font-size: clamp(1.22rem,3.5vw,1.8rem); animation: book-reveal .7s ease both; }
+    .walk-controls { display: flex; justify-content: flex-start; align-items: center; gap: 7px; flex-wrap: wrap; border-top: 1px solid #d8e8dc; margin-top: 12px; padding-top: 13px; }
+    .walk-controls .walk-next { background: #176b53; color: white; border-color: #176b53; }
+    .walk-controls .walk-next:hover:not(:disabled) { background: #0b5940; }
+    .walk-controls .walk-replay { margin-left: auto; }
+    .teacher-tip { margin-top: 10px; color: #52685a; font-size: .8rem; }
+    @keyframes book-reveal { from { opacity: .25; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes group-appear { from { opacity: .3; transform: translateX(-14px) scale(.96); } to { opacity: 1; transform: translateX(0) scale(1); } }
+    @media (max-width: 610px) {
+      .concept-grid { grid-template-columns: 1fr; }
+      .concept-lab { padding: 16px; }
+      .animated-lesson { padding: 13px; }
+      .walk-controls .walk-replay { margin-left: 0; }
+      .tree-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .motion-book, .motion-block, .walk-stage, .count-slot, .tree-pair, .answer-burst, .demo-slot.filled, .pair-tile.revealed, .inside-card .order-next { animation: none !important; }
+    }
     [hidden] { display: none !important; }
     @media (max-width: 560px) {
       .hero { padding-top: 34px; }
@@ -121,6 +202,39 @@
       <strong>Strategy: the block method</strong>
       <p>If some books must stay together, temporarily treat each required group as one object. Arrange the objects first; then count the possible orders <em>inside</em> each group.</p>
     </aside>
+
+
+    <section class="concept-lab" id="counting-lab" aria-label="Interactive counting lesson">
+      <span class="eyebrow">Learn by seeing</span>
+      <h2>Why do we multiply? Where does n! come from?</h2>
+      <p class="concept-lead">No memorizing needed. Make each choice, watch the possibilities, then use the same reasoning in the questions.</p>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h3>1. Build 3! from three books</h3>
+          <p>Place A, B, and C on a shelf. Each time you pick one book, there is one fewer book left.</p>
+          <div class="demo-slots" id="factorial-slots" aria-live="polite"></div>
+          <p id="factorial-sentence" aria-live="polite"></p>
+          <div class="demo-equation">3 choices × 2 choices × 1 choice = 3! = 6</div>
+          <div class="all-orders" id="factorial-orders" hidden></div>
+          <div class="concept-actions">
+            <button type="button" id="factorial-next">Next choice →</button>
+            <button type="button" id="factorial-reset">Replay ↺</button>
+          </div>
+        </div>
+        <div class="concept-card">
+          <h3>2. Why × instead of +?</h3>
+          <p>Suppose there are <strong>2 outside layouts</strong>, and for <strong>each</strong> layout there are <strong>3 inside orders</strong>. Count every full pair.</p>
+          <div class="pair-grid" id="pair-grid" aria-live="polite"></div>
+          <p id="pair-sentence" aria-live="polite"></p>
+          <div class="demo-equation">2 outside × 3 inside = 6 complete arrangements</div>
+          <p class="rule-comparison"><strong>Multiply</strong> for “first choose this, AND then that.” <strong>Add</strong> for “choose from this group OR that group,” when options do not overlap.</p>
+          <div class="concept-actions">
+            <button type="button" id="pair-next">Show next pair →</button>
+            <button type="button" id="pair-reset">Replay ↺</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="progress-panel">
       <div>
@@ -307,5 +421,198 @@
       updateProgress();
     }());
   </script>
+
+  <script>
+    /* Visual counting guide: independent of the existing quiz answer checker. */
+    (function () {
+      "use strict";
+      var factorialStep = 0;
+      var pairStep = 0;
+      var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function factorial(n) { var result = 1; for (var i = 2; i <= n; i++) result *= i; return result; }
+      function format(n) { return n.toLocaleString("en-US"); }
+      function labelClass(label) {
+        var letter = label.charAt(0);
+        return ({I:"italian",J:"japanese",N:"novel",H:"history",P:"physics",C:"chemistry"})[letter] || "";
+      }
+      function book(label, delay) {
+        return '<span class="motion-book ' + labelClass(label) + '" style="--delay:' + (delay || 0) + 'ms">' + label + '</span>';
+      }
+      function renderFactorial() {
+        var chosen = ["A","B","C"];
+        var slots = document.getElementById("factorial-slots");
+        slots.innerHTML = chosen.map(function (name, i) {
+          return '<span class="demo-slot ' + (i < factorialStep ? 'filled' : '') + '">' + (i < factorialStep ? name : "?") + '</span>';
+        }).join("");
+        var message = [
+          "First position: A, B, or C — 3 possible choices.",
+          "Choose A first. Now only B or C remains — 2 choices for the next position.",
+          "Choose B next. The final position must be C — 1 choice.",
+          "This is one order, ABC. Choosing differently earlier gives all six possible orders!"
+        ];
+        document.getElementById("factorial-sentence").textContent = message[factorialStep];
+        var orders = document.getElementById("factorial-orders");
+        orders.hidden = factorialStep !== 3;
+        orders.innerHTML = ["ABC","ACB","BAC","BCA","CAB","CBA"].map(function (s) { return "<span>" + s + "</span>"; }).join("");
+        document.getElementById("factorial-next").disabled = factorialStep === 3;
+      }
+      function renderPairs() {
+        var pairs = [["O1","I1"],["O1","I2"],["O1","I3"],["O2","I1"],["O2","I2"],["O2","I3"]];
+        document.getElementById("pair-grid").innerHTML = pairs.map(function (pair, i) {
+          return '<span class="pair-tile ' + (i < pairStep ? 'revealed' : '') + '">' + (i < pairStep ? pair[0] + " + " + pair[1] : "·") + "</span>";
+        }).join("");
+        document.getElementById("pair-sentence").textContent =
+          pairStep === 0 ? "Start: each outside order branches into three possible inside orders." :
+          pairStep < 6 ? pairStep + " complete pair" + (pairStep === 1 ? "" : "s") + " counted. Keep pairing choices." :
+          "There are six different complete arrangements. Adding 2 + 3 = 5 would miss combinations.";
+        document.getElementById("pair-next").disabled = pairStep === 6;
+      }
+      document.getElementById("factorial-next").addEventListener("click", function () { factorialStep = Math.min(3, factorialStep + 1); renderFactorial(); });
+      document.getElementById("factorial-reset").addEventListener("click", function () { factorialStep = 0; renderFactorial(); });
+      document.getElementById("pair-next").addEventListener("click", function () { pairStep = Math.min(6, pairStep + 1); renderPairs(); });
+      document.getElementById("pair-reset").addEventListener("click", function () { pairStep = 0; renderPairs(); });
+      renderFactorial();
+      renderPairs();
+
+      var specs = [
+        {
+          id: "question-1", blocks: [
+            {name:"French", code:"F", books:["F1","F2","F3"]},
+            {name:"Italian", code:"I", books:["I1","I2"]}
+          ],
+          solo:["J1","J2","J3"], answer:1440
+        },
+        {
+          id: "question-2", blocks: [
+            {name:"Science", code:"S", books:["S1","S2"]},
+            {name:"Novels", code:"N", books:["N1","N2","N3","N4","N5"]}
+          ],
+          solo:["H1","H2","H3"], answer:28800
+        },
+        {
+          id: "question-3", blocks: [
+            {name:"Mathematics", code:"M", books:["M1","M2","M3"]},
+            {name:"Physics", code:"P", books:["P1","P2","P3"]},
+            {name:"Chemistry", code:"C", books:["C1","C2","C3","C4"]}
+          ],
+          solo:[], answer:5184
+        }
+      ];
+      var states = [];
+      function outerCount(spec) { return spec.blocks.length + spec.solo.length; }
+      function factorialProduct(n) { return Array.from({length:n},function (_,i) { return n - i; }).join(" × "); }
+      function blockMarkup(group, index) {
+        return '<div class="motion-block" style="--delay:' + (index * 110) + 'ms"><span class="block-tag">' + group.name +
+          ' = 1 object</span><div class="book-line">' + group.books.map(function (b,i) { return book(b,i*65); }).join("") + '</div></div>';
+      }
+      function stepContent(spec, step) {
+        var n = outerCount(spec);
+        var outerWays = factorial(n);
+        var names = spec.blocks.map(function(g){return g.code + "-block";}).concat(spec.solo);
+        var groups = spec.blocks.map(blockMarkup).concat(spec.solo.map(function (name,i) {
+          return '<div class="single-object">' + book(name,i*80) + '<span class="object-label">1 object</span></div>';
+        })).join("");
+        var allBooks = spec.blocks.reduce(function (list,g) { return list.concat(g.books); },[]).concat(spec.solo);
+        var formula = [n + "!"].concat(spec.blocks.map(function (g) { return g.books.length + "!"; })).join(" × ");
+        var info = [
+          {title:"Start: every book is different", text:"Look at all the books. Different labels mean different books. The neighbors rule is the only restriction."},
+          {title:"Keep each required group together", text:"Move all books in a required group as ONE big object. Their internal order is not fixed; we will count it later."},
+          {title:"Why does the outside count become " + n + "!?", text:"Fill the shelf from left to right without reusing an object. There are " + n + " choices for the first spot, " + (n-1) + " for the next, and one fewer each time."},
+          {title:"Now rearrange INSIDE each block", text:"The group stays together, but its different books can swap places. Count those possibilities independently for every block."},
+          {title:"Why multiply, not add?", text:"Every outside layout can be paired with EVERY possible inside order. We need to count complete combinations, not choose only one kind of decision."},
+          {title:"Combine all the decisions", text:"First pick the arrangement of the outside objects. Then, for each one, choose an arrangement inside every block. The multiplication rule counts every complete shelf exactly once."}
+        ];
+        var visual = "";
+        if (step === 0) {
+          visual = '<div class="lesson-books">' + allBooks.map(function (b,i) { return book(b,i*75); }).join("") + '</div>' +
+            '<span class="lesson-count">' + allBooks.length + ' distinct books before grouping</span>';
+        } else if (step === 1) {
+          visual = '<div class="movable-objects">' + groups + '</div><span class="lesson-count">' +
+            spec.blocks.length + ' grouped object' + (spec.blocks.length > 1 ? 's' : '') + ' + ' + spec.solo.length +
+            ' single book' + (spec.solo.length === 1 ? '' : 's') + ' = ' + n + ' moveable objects</span>';
+        } else if (step === 2) {
+          visual = '<div class="count-slots">' + Array.from({length:n},function (_,i) {
+            return '<div class="count-slot" style="--delay:' + (i*115) + 'ms"><strong>' + (n-i) +
+              '</strong><small>spot ' + (i+1) + ' choices</small></div>';
+          }).join("") + '</div><div class="walk-equation">' + factorialProduct(n) + ' = ' + n + '! = ' + format(outerWays) +
+            '</div><p>Example outside order: <strong>' + names.join(" → ") + '</strong>. The factorial counts all other orders, too.</p>';
+        } else if (step === 3) {
+          visual = '<div class="inside-grid">' + spec.blocks.map(function (g, i) {
+            var reversed = g.books.slice().reverse();
+            return '<div class="inside-card"><strong>' + g.name + ': ' + g.books.length + '! = ' + format(factorial(g.books.length)) +
+              '</strong><div class="book-line">' + g.books.map(function(b,j){return book(b,j*50);}).join("") +
+              '</div><small>Another allowed order:</small><div class="book-line order-next">' +
+              reversed.map(function(b,j){return book(b,j*50);}).join("") + '</div><small>' +
+              factorialProduct(g.books.length) + ' choices as spots fill</small></div>';
+          }).join("") + '</div>';
+        } else if (step === 4) {
+          var toy = [["O1","I1"],["O1","I2"],["O1","I3"],["O2","I1"],["O2","I2"],["O2","I3"]];
+          visual = '<p><strong>Smaller example:</strong> 2 outside orders, with 3 inside orders EACH:</p><div class="tree-grid">' +
+            toy.map(function (pair,i) { return '<div class="tree-pair" style="--delay:' + (i*115) + 'ms">' +
+              pair[0] + ' with ' + pair[1] + '<small>one complete shelf</small></div>'; }).join("") +
+            '</div><div class="walk-equation">2 × 3 = 6 complete shelves (not 2 + 3 = 5)</div>' +
+            '<p><strong>ADD</strong> if you choose an option from list A <em>or</em> list B. <strong>MULTIPLY</strong> if a complete result needs a choice from A <em>and</em> a choice from B.</p>';
+        } else {
+          visual = '<div class="factor-reasons"><div class="factor-reason"><strong>' + n + '! = ' + format(outerWays) +
+            '</strong><span>Outside arrangements</span></div>' + spec.blocks.map(function(g) {
+              return '<div class="factor-reason"><strong>' + g.books.length + '! = ' + format(factorial(g.books.length)) +
+                '</strong><span>' + g.name + ' inside</span></div>';
+            }).join("") + '</div><div class="walk-equation">' + formula + ' = ' + format(spec.answer) +
+            '</div><div class="answer-burst">✓ ' + format(spec.answer) + ' arrangements</div>';
+        }
+        return '<div class="walk-stage" key="step-' + step + '"><h3>' + info[step].title + '</h3><p>' +
+          info[step].text + '</p>' + visual + '</div>';
+      }
+      function stop(state) {
+        if (state.timer !== null) { clearInterval(state.timer); state.timer = null; }
+      }
+      function render(state) {
+        var s = state.step;
+        state.container.innerHTML =
+          '<div class="walk-progress"><span class="lesson-kicker">Animated solution · Step ' + (s+1) +
+          ' of 6</span><span class="step-pips" aria-hidden="true">' + Array.from({length:6},function(_,i) {
+            return '<span class="' + (i <= s ? "active" : "") + '"></span>';
+          }).join("") + '</span></div>' +
+          '<div class="walk-body" aria-live="polite">' + stepContent(state.spec,s) + '</div>' +
+          '<div class="walk-controls">' +
+          '<button type="button" class="walk-prev" ' + (s === 0 ? "disabled" : "") + '>← Previous</button>' +
+          '<button type="button" class="walk-next" ' + (s === 5 ? "disabled" : "") + '>Next step →</button>' +
+          '<button type="button" class="walk-play">' + (state.timer !== null ? "Pause Ⅱ" : "▶ Play steps") + '</button>' +
+          '<button type="button" class="walk-replay">↺ Replay</button></div>' +
+          '<p class="teacher-tip">Try asking: “What choice did we make here? How many choices are left?”</p>';
+        state.container.querySelector(".walk-prev").addEventListener("click", function () { stop(state); state.step = Math.max(0,state.step-1); render(state); });
+        state.container.querySelector(".walk-next").addEventListener("click", function () { stop(state); state.step = Math.min(5,state.step+1); render(state); });
+        state.container.querySelector(".walk-replay").addEventListener("click", function () { stop(state); state.step = 0; render(state); });
+        state.container.querySelector(".walk-play").addEventListener("click", function () {
+          if (state.timer !== null) { stop(state); render(state); return; }
+          if (state.step === 5) state.step = 0;
+          state.timer = setInterval(function () {
+            if (!state.details.open || state.details.hidden) { stop(state); render(state); return; }
+            state.step = Math.min(5,state.step+1);
+            if (state.step === 5) stop(state);
+            render(state);
+          }, reducedMotion ? 4800 : 3300);
+          render(state);
+        });
+      }
+      specs.forEach(function (spec) {
+        var card = document.getElementById(spec.id);
+        var details = card.querySelector(".solution");
+        var container = document.createElement("div");
+        container.className = "animated-lesson";
+        container.setAttribute("aria-label", "Animated step-by-step explanation");
+        details.insertBefore(container, details.querySelector(".steps"));
+        var state = {spec:spec,container:container,details:details,step:0,timer:null};
+        states.push(state);
+        render(state);
+        details.addEventListener("toggle",function () { if (!details.open) stop(state); });
+        card.querySelector(".retry").addEventListener("click",function () { stop(state); state.step=0; render(state); });
+      });
+      document.getElementById("reset-all").addEventListener("click",function() {
+        states.forEach(function(state) { stop(state); state.step=0; render(state); });
+      });
+    }());
+  </script>
+
 </body>
 </html>
