@@ -271,11 +271,12 @@
       '<p>There are '+n+' possible first choices (one row for each). For EACH first choice, '+(n-1)+' different objects can be second. That is '+n+' groups of '+(n-1)+' possibilities.</p>'+
       rows+
       '<p><strong>'+n+' × '+(n-1)+' = '+(n*(n-1))+' different first-two-position beginnings.</strong> Not '+n+' + '+(n-1)+
-      '. After filling two positions, '+(n-2)+' unused choices remain, then fewer, until 1 remains. Therefore all full orders are '+n+' × '+(n-1)+' × ... × 1 = '+n+'!.</p></details>';
+      (n===2?'. Both positions are now filled.':'. After filling two positions, '+(n-2)+' unused objects remain; keep selecting one for each later position until the final choice is forced.')+
+      ' Therefore all full orders are '+Array.from({length:n},function(_,i){return n-i;}).join(' × ')+' = '+n+'!.</p></details>';
   }
   function stageOuter(s){
     return '<h4 class="gm-panel-title">Step 2 · Arrange the outside objects</h4>'+
-      '<p class="gm-help">The whole band moves as a single object. Fill the shelf positions yourself, one object at a time. Count how many objects remain available after each choice.</p>'+
+      '<p class="gm-help">Each band moves as one object. Every object is different, so changing their order makes a new arrangement. Fill positions from left to right, using every object exactly once.</p>'+
       placementBoard(s,"outer")+
       (s.outer.verified?'<div class="gm-feedback"><strong>Correct: '+s.spec.n+'! = '+fmt(fact(s.spec.n))+' outside arrangements.</strong> Each first choice has a complete set of possible endings. That is why the numbers multiply, not add.</div>':'')+
       actions(s);
