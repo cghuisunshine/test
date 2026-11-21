@@ -89,7 +89,7 @@
   function factorCards(n,completed) {
     return '<div class="cb-math-strip">'+Array.from({length:n},function(_,i){
       return (i>0?'<span class="cb-times">×</span>':'')+
-        '<span class="cb-number" style="opacity:'+(i<=completed?1:.43)+'">'+(n-i)+'<small>spot '+(i+1)+'</small></span>';
+        '<span class="cb-number" style="opacity:'+((i<completed?1:i===completed?.84:.4))+'">'+(n-i)+'<small>spot '+(i+1)+'</small></span>';
     }).join("")+'</div>';
   }
   function maybeTree(spec) {
@@ -282,6 +282,9 @@
       return '<div class="cb-option"><b>'+escapeHtml(g.name)+' block — '+fmt(g.perms.length)+' internal orders</b>'+
         '<small>The outside block stays in the SAME shelf spot.</small><div class="cb-books">'+order.map(book).join("")+'</div>'+
         '<small>Example '+(st.orderIndices[i]+1)+' of '+fmt(g.perms.length)+' · '+chain(g.books.length)+' = '+g.books.length+'!</small>'+
+        '<p class="cb-copy">Why '+g.books.length+'!? First book: '+g.books.length+' choices. After choosing it, '+(g.books.length-1)+' remain for the second position. Continue until the final book is forced.</p>'+
+        '<details class="cb-alternate"><summary>See every one of the '+fmt(g.perms.length)+' different '+escapeHtml(g.name)+' orders</summary>'+
+          '<div class="cb-order-list cb-order-list-scroll" role="list">'+g.perms.map(function(order){return orderChip(order);}).join("")+'</div></details>'+
         '<div class="cb-actions"><button type="button" class="cb-button primary" data-cb-action="swap" data-index="'+i+'">↻ Change '+escapeHtml(g.name)+' order</button></div>'+
         '<small>'+(st.didSwap[i]?'✓ You made a different legal shelf.':'Try swapping these books at least once.')+'</small></div>';
     }).join("");
