@@ -110,100 +110,27 @@
     <section class="hero">
       <div class="eyebrow">AMC 8 &middot; Mini practice set</div>
       <h1>Keeping Books Together</h1>
-      <p class="intro">First see four books move into a block, watch every branch of 3!, and count real complete shelves in a grid. Then solve three AMC 8-style questions with guided animated explanations.</p>
+      <p class="intro">Build a real shelf one decision at a time. Discover what the blocks mean, where factorial comes from, and why every outside choice pairs with each inside choice. Then try three AMC 8-style problems.</p>
       <div class="chips" aria-label="Practice details">
-        <span class="chip">Visual lesson + 3 questions</span>
+        <span class="chip">One guided visual lesson + 3 questions</span>
         <span class="chip">Multiple choice</span>
-        <span class="chip">Step-by-step replay</span>
+        <span class="chip">Choose and move books</span>
         <span class="chip">Instant feedback</span>
       </div>
     </section>
 
     <aside class="strategy">
       <strong>Strategy: the block method</strong>
-      <p>When books must be together, put a pretend band around them. Count outside arrangements of the bands and single books, then count the orders inside each band. Multiply because each outside order can be paired with every inside order.</p>
+      <p>Band the groups, fill the outside positions, swap books inside each band, and count complete shelves. Each stage reveals where the next number in the calculation comes from.</p>
     </aside>
 
 
 
     <section class="why-lab" id="why-counting" aria-labelledby="why-title">
-      <div class="eyebrow">Interactive lesson · Learn before you calculate</div>
-      <h2 id="why-title">See why the counting rules work</h2>
-      <p class="why-sub">Start with only four books. Move them, see ALL possible arrangements, and then use the same idea for the larger problems. No formula to memorize first.</p>
-      <nav class="why-nav" aria-label="Three counting ideas">
-        <button type="button" class="why-tab" data-tab="block" aria-pressed="true">1. Keep together</button>
-        <button type="button" class="why-tab" data-tab="factorial" aria-pressed="false">2. Why factorial?</button>
-        <button type="button" class="why-tab" data-tab="product" aria-pressed="false">3. Why multiply?</button>
-      </nav>
-
-      <article class="why-panel" id="why-panel-block" aria-label="What a block means">
-        <h3>First: what does “books must stay together” really mean?</h3>
-        <p class="why-micro">Tiny problem: F1 and F2 must stay next to each other. J1 and J2 can be anywhere.</p>
-        <p class="why-explain" id="physical-caption" aria-live="polite"></p>
-        <div class="why-demo-track" aria-label="Animated moving books, with a band around F1 and F2">
-          <span class="why-band" id="physical-band" aria-hidden="true"></span>
-          <span class="why-demo-book" id="physical-F1" style="left:0px">F1</span>
-          <span class="why-demo-book j" id="physical-J1" style="left:70px">J1</span>
-          <span class="why-demo-book" id="physical-F2" style="left:140px">F2</span>
-          <span class="why-demo-book j" id="physical-J2" style="left:210px">J2</span>
-        </div>
-        <div class="why-band-label" id="physical-band-label">Different books · no grouping yet</div>
-        <div style="margin-top:12px"><span id="physical-validity" class="why-state invalid">✗ French books separated</span></div>
-        <div class="why-buttons">
-          <button type="button" class="why-button" id="block-prev">← Previous</button>
-          <button type="button" class="why-button next" id="block-next">Make a block →</button>
-          <button type="button" class="why-button replay" id="block-reset">↺ Start again</button>
-        </div>
-        <span class="why-micro" id="block-step">Step 1 of 4</span>
-        <div class="why-takeaway">Remember: <strong>Band = one movable object.</strong> But the books can still swap <em>inside</em> the band.</div>
-        <p class="why-practice-call">Got it? <button type="button" class="why-lesson-link" data-why-next="factorial">Next: why 3! counts outside orders →</button></p>
-      </article>
-
-      <article class="why-panel" id="why-panel-factorial" aria-label="Where factorial comes from" hidden>
-        <h3>Next: why do 3 objects have 3! arrangements?</h3>
-        <p class="why-micro">The movable objects are [F block], J1 and J2. Each object can only be used once.</p>
-        <p class="why-explain" id="factorial-explain" aria-live="polite"></p>
-        <div class="why-branch-tree" id="factorial-tree"></div>
-        <div class="why-count-equation" id="factorial-equation">3 possible starts</div>
-        <p class="why-contrast" id="factorial-four" hidden>Important: factorial does not mean “add the numbers.” With four objects, <strong>4 × 3 × 2 × 1 = 24</strong> complete orders; <strong>4 + 3 + 2 + 1 = 10</strong> is not the count.</p>
-        <div class="why-buttons">
-          <button type="button" class="why-button" id="factorial-prev">← Previous</button>
-          <button type="button" class="why-button next" id="factorial-next">Show branches →</button>
-          <button type="button" class="why-button replay" id="factorial-reset">↺ Start again</button>
-        </div>
-        <span class="why-micro" id="factorial-step">Step 1 of 4</span>
-        <div class="why-takeaway">Remember: <strong>Fill positions → fewer choices remain.</strong> Each first choice creates a new branch.</div>
-        <p class="why-practice-call"><button type="button" class="why-lesson-link" data-why-next="product">Next: why we multiply outside and inside →</button></p>
-      </article>
-
-      <article class="why-panel" id="why-panel-product" aria-label="Why book arrangements are multiplied" hidden>
-        <h3>Finally: every outside order has its own inside orders</h3>
-        <p class="why-micro">Same four books. Outside: [F block], J1, J2 (6 orders). Inside: F1 F2 or F2 F1 (2 orders).</p>
-        <p class="why-explain" id="product-explain" aria-live="polite"></p>
-        <div class="why-table-wrap">
-          <table class="why-grid-table" aria-label="All 12 complete shelves from six outside orders and two inside orders">
-            <thead>
-              <tr><th scope="col">Outside order</th><th scope="col">Inside: F1 F2</th><th scope="col">Inside: F2 F1</th></tr>
-            </thead>
-            <tbody id="product-table-body"></tbody>
-          </table>
-        </div>
-        <div class="why-count-equation" id="product-equation">6 outside layouts; inside still undecided</div>
-        <div id="product-rules" hidden>
-          <div class="why-multiply-rule">
-            <div class="why-rule"><strong>AND → MULTIPLY</strong><span>Choose an outside layout <em>and</em> an inside order. Every row pairs with both columns: 6 × 2 = 12.</span></div>
-            <div class="why-rule or"><strong>OR → ADD</strong><span>Choose one from 2 French book covers <em>or</em> one from 3 Italian covers: 2 + 3 = 5 separate options. You are not combining both choices.</span></div>
-          </div>
-          <p class="why-contrast">Why is 6 + 2 = 8 wrong here? It counts the two lists separately, not the 12 <strong>complete shelves</strong>. Each grid cell is a different whole shelf.</p>
-        </div>
-        <div class="why-buttons">
-          <button type="button" class="why-button" id="product-prev">← Previous</button>
-          <button type="button" class="why-button next" id="product-next">Fill the shelf grid →</button>
-          <button type="button" class="why-button replay" id="product-reset">↺ Start again</button>
-        </div>
-        <span class="why-micro" id="product-step">Step 1 of 4</span>
-        <div class="why-takeaway"><strong>Three ideas to remember:</strong> Stay together → make a block. Arrange distinct objects → count down (factorial). Each outside choice AND each inside choice → multiply.</div>
-      </article>
+      <div class="eyebrow">See it. Move it. Understand it.</div>
+      <h2 id="why-title">Why do the numbers multiply?</h2>
+      <p class="why-sub">Use the actual books from Question 1. Do four small things: put bands around books that must stay together, choose the outside shelf order, swap books inside the bands, and count every complete combination. Discover each number instead of memorizing a rule.</p>
+      <div id="why-tutor" aria-label="Build a book arrangement step by step"></div>
     </section>
 
     <div class="progress-panel">
