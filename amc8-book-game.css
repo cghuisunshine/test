@@ -125,3 +125,27 @@
 .gm-branch-row:last-of-type{border-bottom:none}
 .gm-branch-row b{display:block;margin-bottom:6px;font-size:.79rem;color:#805d2f}
 .gm-branch-item{overflow-wrap:anywhere;line-height:1.35}
+/* The game now follows the selected question, not a fixed demonstration. */
+.gm-problem-picker{margin:8px 0 13px}
+.gm-problem-picker-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.gm-problem-choice{border:1.5px solid #c9dfd0;background:#fff;border-radius:10px;padding:10px 9px;text-align:left;color:#3a6249;line-height:1.3;min-width:0;transition:border-color .15s,background .15s}
+.gm-problem-choice b{display:block;font-size:.8rem;font-weight:850}
+.gm-problem-choice small{display:block;font-size:.69rem;color:#647569;line-height:1.38;margin-top:5px}
+.gm-problem-choice:hover{border-color:#60a777;background:#f3faf4}
+.gm-problem-choice.current,.gm-problem-choice[aria-pressed="true"]{border-color:#176b53;background:#e4f4e9;box-shadow:inset 0 0 0 1px #176b53}
+.gm-problem-choice.current b{color:#165b40}
+.gm-problem-context{margin:12px 0 14px;padding:12px;background:#fff;border:1px solid #d7e8da;border-radius:11px}
+.gm-problem-kicker{font-size:.7rem;color:#47805d;font-weight:900;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.gm-current-question{margin:4px 0 9px;color:#42594b;font-size:.84rem;line-height:1.53}
+.gm-current-question strong{color:#215b3e}
+.gm-context-chips{display:flex;gap:5px;flex-wrap:wrap}
+.gm-context-chip{border:1px solid #a9d1b3;border-radius:99px;background:#e9f6ec;color:#286747;font-size:.68rem;font-weight:850;padding:4px 8px}
+.gm-context-chip.neutral{background:#f4f6f2;color:#637165;border-color:#d8e2d8}
+.gm-play-problem{font-size:.84rem;font-weight:800;color:#176b53;border-color:#9fc9ab}
+@media(max-width:640px){
+ .gm-problem-picker-buttons{grid-template-columns:1fr;gap:5px}
+ .gm-problem-choice{padding:9px 11px}
+ .gm-problem-choice b{font-size:.82rem}
+ .gm-problem-choice small{font-size:.72rem;margin-top:2px}
+ .gm-problem-context{padding:10px}
+}
