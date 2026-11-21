@@ -120,3 +120,8 @@
 @media(max-width:730px){.gm-stage{grid-template-columns:1fr;padding:11px}.gm-overview{position:relative;top:auto;grid-row:1;padding:12px}.gm-head{padding:13px}.gm-mini-board{max-height:100px;overflow:auto}.gm-ledger{grid-template-columns:repeat(2,minmax(0,1fr))}.gm-factor{display:block}.gm-factor strong{text-align:left;display:block;margin-top:5px}.gm-factor{padding:7px}}
 @media(max-width:450px){.gm-ledger{grid-template-columns:1fr}.gm-factor{display:grid}.gm-step{min-width:78px}.gm-book{min-width:29px;height:40px}.gm-zone-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gm-panel-title{font-size:1.06rem}.gm-slot{min-width:56px;flex-basis:56px}}
 @media(prefers-reduced-motion:reduce){.gm-book,.gm-stack,.gm-slot.filled{animation:none!important}.gm-pick{transition:none}}
+.gm-branch summary{cursor:pointer;font-size:.82rem;color:#795a2e}
+.gm-branch-row{padding:8px 0;border-bottom:1px dashed #ddcba9}
+.gm-branch-row:last-of-type{border-bottom:none}
+.gm-branch-row b{display:block;margin-bottom:6px;font-size:.79rem;color:#805d2f}
+.gm-branch-item{overflow-wrap:anywhere;line-height:1.35}
