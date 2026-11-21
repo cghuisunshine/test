@@ -51,7 +51,7 @@
       outerVariant:0,recall:""};
   }
   function bookType(label) {return label[0].toLowerCase();}
-  function book(label) {return '<span class="cb-book '+bookType(label)+'" aria-label="Book '+escapeHtml(label)+'">'+escapeHtml(label)+'</span>';}
+  function book(label) {return '<span class="cb-book '+bookType(label)+'" data-cb-label="'+escapeHtml(label)+'" aria-label="Book '+escapeHtml(label)+'">'+escapeHtml(label)+'</span>';}
   function minibook(label,changed) {return '<span class="cb-mini-book '+bookType(label)+(changed?' changed':'')+'">'+escapeHtml(label)+'</span>';}
   function miniShelf(labels) {return '<div class="cb-mini-shelf">'+labels.map(function(b){return minibook(b,false);}).join("")+'</div>';}
   function actualBooks(spec) {return spec.groups.flatMap(function(g){return g.books;}).concat(spec.singles);}
@@ -114,31 +114,44 @@
     return '<details class="cb-alternate"><summary>Still unsure? Show ALL '+spec.n+' × '+(spec.n-1)+' = '+(spec.n*(spec.n-1))+' possible first-two-position choices</summary>'+
       '<div class="cb-branch-list">'+rows+'</div><p class="cb-copy">Each row has '+(spec.n-1)+' possible second choices. There are '+spec.n+' rows, so '+spec.n+' × '+(spec.n-1)+' = '+(spec.n*(spec.n-1))+' two-position beginnings, not '+(spec.n+(spec.n-1))+'.</p></details>';
   }
+
+  function messyRemaining(spec,done) {
+    var groups=spec.groups.slice(done).map(function(g){return g.books.slice();});
+    var singles=spec.singles.slice();
+    var result=[];
+    while(groups.some(function(g){return g.length>0;}) || singles.length) {
+      groups.forEach(function(g){if(g.length)result.push(g.shift());});
+      if(singles.length)result.push(singles.shift());
+    }
+    return result;
+  }
   function sceneBand(st) {
     var spec=st.spec,done=st.bandCount;
-    var visual=spec.groups.map(function(g,i){
-      if(i<done)return groupView(g,g.books);
-      return '<span class="cb-books">'+g.books.map(book).join("")+'</span>';
-    }).join("")+spec.singles.map(book).join("");
+    var bundled=spec.groups.slice(0,done).map(function(g){return groupView(g,g.books);}).join("");
+    var messy=messyRemaining(spec,done).map(book).join("");
     var nBooks=actualBooks(spec).length;
-    var counts=nBooks-spec.groups.slice(0,done).reduce(function(sum,g){return sum+(g.books.length-1);},0);
     var nextGroup=spec.groups[done];
     return '<h3 class="cb-title">1. Make the groups you are not allowed to split</h3>'+
-      '<p class="cb-question">If '+spec.groups.map(function(g){return g.name.toLowerCase();}).join(' and ')+' books must stay together, what should we move as one piece?</p>'+
-      '<p class="cb-copy">Imagine putting a rubber band around each required group. No single book can slip between books inside that band.</p>'+
-      '<div class="cb-figure"><span class="cb-fig-title">Actual books: '+nBooks+' real books</span><div class="cb-books">'+visual+
-      '</div><div class="cb-legend"><b>Band = 1 movable object</b><span>Books inside are still different.</span></div></div>'+
+      '<p class="cb-question">Which books MUST touch each other? Can another book go between them?</p>'+
+      '<p class="cb-copy">No! Look at this mixed-up shelf. Books from the same required group are separated. Click the button to pull each group together and wrap a pretend rubber band around it.</p>'+
+      '<div class="cb-figure"><span class="cb-fig-title">'+(done===0?'✗ Before: the shelf breaks the rules':done<spec.groups.length?'Not finished: another group is still separated':'✓ After: every required group is together')+'</span>'+
+      '<div class="cb-books">'+bundled+messy+'</div>'+
+      '<div class="cb-legend"><b>Band = ONE movable object</b><span>Books can still swap positions INSIDE it.</span></div></div>'+
+      '<span class="cb-tag '+(done<spec.groups.length?'warning':'')+'">'+
+        (done===0?'✗ Matching books are separated':
+          done<spec.groups.length?'△ Some groups are together; not all yet':
+          '✓ All required groups are together')+'</span>'+
       '<div class="cb-nudge">'+(done===0?
-        'Right now all '+nBooks+' books are separate. Count the movable objects, not just the individual spines.' :
+        'Count the BOOKS first: '+nBooks+' real books. But we want to count the big pieces we can move without breaking the rule.' :
         done<spec.groups.length?
-        '<strong>'+escapeHtml(spec.groups[done-1].name)+' is one object now.</strong> The next required group still needs a band.' :
-        '<strong>All required groups are banded.</strong> You still have '+nBooks+' physical books, but only <strong>'+spec.n+' objects to move</strong> when arranging the outside positions.')+'</div>'+
+        '<strong>'+escapeHtml(spec.groups[done-1].name)+' is ONE movable piece now.</strong> There is still another separated group to fix.' :
+        '<strong>Now look carefully:</strong> there are still '+nBooks+' real books, but only <strong>'+spec.n+' pieces to move</strong> on the outside shelf.')+'</div>'+
       '<div class="cb-actions">'+(nextGroup?
-        '<button type="button" class="cb-button primary" data-cb-action="band">Put a band around '+escapeHtml(nextGroup.name)+' →</button>' :
-        '<span class="cb-tag">✓ Groups are ready</span>')+
-      '<button type="button" class="cb-button" data-cb-action="reset-bands">↺ Undo bands</button></div>'+
+        '<button type="button" class="cb-button primary" data-cb-action="band">Pull '+escapeHtml(nextGroup.name)+' books together and band them →</button>' :
+        '<span class="cb-tag">✓ All bands are ready</span>')+
+      '<button type="button" class="cb-button" data-cb-action="reset-bands">↺ Start with the messy shelf</button></div>'+
       (done===spec.groups.length?'<div class="cb-count">'+spec.groups.length+' banded groups + '+spec.singles.length+' individual books = '+spec.n+' movable objects</div>':'')+
-      '<p class="cb-shortcut">Think: <strong>rubber bands, not glue.</strong> We will rearrange inside later.</p>';
+      '<p class="cb-shortcut"><strong>Visual rule:</strong> If you cannot insert a different book in the middle, surround the books with a band and move the entire band as ONE piece.</p>';
   }
   function sceneOutside(st) {
     var spec=st.spec,ids=st.placed;
@@ -278,7 +291,14 @@
     if(st.stage===2)return "Swap inside";
     return "Pair every choice";
   }
-  function render(st,root,focusControl) {
+  function render(st,root,focusControl,action) {
+    var moving = !reducedMotion && ["band","reset-bands","pick","undo","fill","clear-placements","swap","other-outer"].indexOf(action)>=0;
+    var oldPositions=new Map();
+    if(moving && root.querySelectorAll) {
+      root.querySelectorAll(".cb-book[data-cb-label]").forEach(function(el) {
+        if(!oldPositions.has(el.dataset.cbLabel))oldPositions.set(el.dataset.cbLabel,el.getBoundingClientRect());
+      });
+    }
     var content=[sceneBand,sceneOutside,sceneInside,scenePair][st.stage](st);
     var progress=Array.from({length:4},function(_,i){return '<span class="'+(i<=st.stage?'on':'')+'"></span>';}).join("");
     root.innerHTML='<div class="cb-shell"><div class="cb-progress"><strong>WHY IT WORKS · STEP '+(st.stage+1)+' OF 4</strong><div class="cb-dots" aria-hidden="true">'+progress+'</div></div>'+
@@ -289,6 +309,23 @@
       '<button type="button" class="cb-button primary" data-cb-action="next" '+(!canAdvance(st)?'disabled':'')+'>'+
       ['Next: fill the positions →','Next: swap inside →','Next: count complete shelves →'][st.stage]+'</button>')+
       '<button type="button" class="cb-button" data-cb-action="restart">↺ Replay from start</button></div></div>';
+    if(moving && oldPositions.size) {
+      var seenLabels=new Set();
+      root.querySelectorAll(".cb-book[data-cb-label]").forEach(function(el){
+        var label=el.dataset.cbLabel;
+        if(seenLabels.has(label))return;
+        seenLabels.add(label);
+        var before=oldPositions.get(label);
+        if(!before || !el.animate)return;
+        var after=el.getBoundingClientRect();
+        var dx=before.left-after.left,dy=before.top-after.top;
+        if(Math.abs(dx)+Math.abs(dy)<3)return;
+        el.animate([
+          {transform:"translate("+dx+"px,"+dy+"px)",opacity:.75},
+          {transform:"translate(0px,0px)",opacity:1}
+        ],{duration:720,easing:"cubic-bezier(.18,.72,.25,1)"});
+      });
+    }
     if(focusControl) {
       var control=root.querySelector('[data-cb-action="'+focusControl+'"]');
       if(control && !control.disabled) control.focus({preventScroll:true});
@@ -338,7 +375,7 @@
       }else if(action==="restart"){
         st=freshState(spec);focus="band";
       }else return;
-      render(st,root,focus);
+      render(st,root,focus,action);
       if(action==="next"||action==="prev"||action==="restart"){
         var heading=root.querySelector(".cb-progress");
         if(heading) heading.scrollIntoView({behavior:reducedMotion?"auto":"smooth",block:"nearest"});
