@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f8f6">
-  <meta name="description" content="Visual AMC 8 book arrangements: move a book block, see all factorial branches, count complete shelf combinations, then practice three questions.">
+  <meta name="description" content="Play an interactive AMC 8 counting game: group books by dragging or tapping, build permutations with number and operator tiles, and track each factor on the whole shelf.">
   <title>Book Arrangement Practice | AMC 8 Combinatorics</title>
   <style>
     :root {
@@ -96,7 +96,7 @@
       * { scroll-behavior: auto !important; transition: none !important; }
     }
   </style>
-  <link rel="stylesheet" href="amc8-book-concepts.css?v=4">
+  <link rel="stylesheet" href="amc8-book-game.css?v=1">
 </head>
 <body>
   <header class="topbar">
@@ -110,26 +110,26 @@
     <section class="hero">
       <div class="eyebrow">AMC 8 &middot; Mini practice set</div>
       <h1>Keeping Books Together</h1>
-      <p class="intro">Build a real shelf one decision at a time. Discover what the blocks mean, where factorial comes from, and why every outside choice pairs with each inside choice. Then try three AMC 8-style problems.</p>
+      <p class="intro">Play the book-arranging game: move books into groups, place the grouped objects on a shelf, fill number and multiplication tiles for each permutation, and assemble the final count. Then try the three AMC 8-style questions.</p>
       <div class="chips" aria-label="Practice details">
-        <span class="chip">One guided visual lesson + 3 questions</span>
+        <span class="chip">One playable game + 3 questions</span>
         <span class="chip">Multiple choice</span>
-        <span class="chip">Choose and move books</span>
+        <span class="chip">Drag &amp; tap books and symbols</span>
         <span class="chip">Instant feedback</span>
       </div>
     </section>
 
     <aside class="strategy">
       <strong>Strategy: the block method</strong>
-      <p>Band the groups, fill the outside positions, swap books inside each band, and count complete shelves. Each stage reveals where the next number in the calculation comes from.</p>
+      <p>Play the full counting method: band the required groups, arrange the outside objects, build each factorial with number and operation tiles, arrange inside each band, and multiply all factors.</p>
     </aside>
 
 
 
     <section class="why-lab" id="why-counting" aria-labelledby="why-title">
       <div class="eyebrow">See it. Move it. Understand it.</div>
-      <h2 id="why-title">Why do the numbers multiply?</h2>
-      <p class="why-sub">Use the actual books from Question 1. Discover why different objects have n! orders: first try 2 books, then 3, then 4, and finally all 5 outside objects. Count every branch before seeing the formula. Then rearrange inside the bands and count complete shelves.</p>
+      <h2 id="why-title">Build the bookshelf counting game</h2>
+      <p class="why-sub">Drag or tap the actual books to build blocks. Then choose shelf positions, fill the factorial formulas using number and ×/+ tiles, repeat inside each block, and combine your discoveries. The big-picture shelf and live total stay alongside every step.</p>
       <div id="why-tutor" aria-label="Build a book arrangement step by step"></div>
     </section>
 
@@ -164,7 +164,7 @@
       </div>
       <p class="feedback" role="status" aria-live="polite" hidden></p>
       <details class="solution" hidden>
-        <summary>Understand the solution</summary>
+        <summary>Play the solution game</summary>
         <ol class="steps">
           <li>Make one French block (FFF) and one Italian block (II).</li>
           <li>These two blocks and the 3 different Japanese books give <strong>5 objects</strong>, which can be arranged in <strong>5! = 120</strong> ways.</li>
@@ -196,7 +196,7 @@
       </div>
       <p class="feedback" role="status" aria-live="polite" hidden></p>
       <details class="solution" hidden>
-        <summary>Understand the solution</summary>
+        <summary>Play the solution game</summary>
         <ol class="steps">
           <li>Group the science books into (SS) and the novels into (NNNNN).</li>
           <li>The 2 groups plus the 3 different history books form <strong>5 objects</strong>: arrange them in <strong>5! = 120</strong> ways.</li>
@@ -228,7 +228,7 @@
       </div>
       <p class="feedback" role="status" aria-live="polite" hidden></p>
       <details class="solution" hidden>
-        <summary>Understand the solution</summary>
+        <summary>Play the solution game</summary>
         <ol class="steps">
           <li>Make three blocks: (MMM), (PPP), and (CCCC).</li>
           <li>Arrange these <strong>3 blocks</strong> in <strong>3! = 6</strong> ways.</li>
@@ -319,6 +319,6 @@
     }());
   </script>
 
-  <script defer src="amc8-book-concepts.js?v=4"></script>
+  <script defer src="amc8-book-game.js?v=1"></script>
 </body>
 </html>
