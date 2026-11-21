@@ -48,7 +48,7 @@
     return {spec:spec,stage:0,bandCount:0,placed:[],
       orderIndices:spec.groups.map(function(){return 0;}),
       didSwap:spec.groups.map(function(){return false;}),
-      outerVariant:0,recall:""};
+      outerVariant:0,recall:"",factorialLevel:0,factorialBranch:0};
   }
   function bookType(label) {return label[0].toLowerCase();}
   function book(label) {return '<span class="cb-book '+bookType(label)+'" data-cb-label="'+escapeHtml(label)+'" aria-label="Book '+escapeHtml(label)+'">'+escapeHtml(label)+'</span>';}
@@ -153,6 +153,90 @@
       (done===spec.groups.length?'<div class="cb-count">'+spec.groups.length+' banded groups + '+spec.singles.length+' individual books = '+spec.n+' movable objects</div>':'')+
       '<p class="cb-shortcut"><strong>Visual rule:</strong> If you cannot insert a different book in the middle, surround the books with a band and move the entire band as ONE piece.</p>';
   }
+
+  /* Derivation first, notation last: count every full ordering for
+     two, three and four objects, then reuse that argument for this problem. */
+  function orderChip(items) {
+    return '<span class="cb-order" role="listitem">'+items.map(function(o){return escapeHtml(o.name || o);}).join(' → ')+'</span>';
+  }
+  function factorialDiscovery(st) {
+    var level=st.factorialLevel, spec=st.spec, n=spec.n;
+    var titles=[
+      "Start with only 2 different books",
+      "Add a third book: where do the 6 orders come from?",
+      "Add a fourth book: why 4 × 6, not 4 + 6?",
+      "Use the actual "+n+" movable objects in THIS problem",
+      "General rule: why this works for ANY n"
+    ];
+    var body="", result="";
+    if(level===0){
+      body='<p>Put A and B in TWO positions. If A goes first, B must go second. If B goes first, A must go second. <strong>These are ALL the possibilities.</strong></p>'+
+        '<div class="cb-order-buckets"><div class="cb-order-bucket"><b>First choice: A</b><div class="cb-order-list">'+orderChip(["A","B"])+'</div><small>Only B remains</small></div>'+
+        '<div class="cb-order-bucket"><b>First choice: B</b><div class="cb-order-list">'+orderChip(["B","A"])+'</div><small>Only A remains</small></div></div>'+
+        '<p>There are <strong>2 choices for position 1</strong> and <strong>1 forced choice for position 2</strong>. Each first choice creates one full order.</p>';
+      result='2 × 1 = 2 complete orders. We call this 2!';
+    }else if(level===1){
+      var a=["A","B","C"];
+      body='<p>Choose the <strong>FIRST</strong> book. Then count the <strong>two</strong> ways of arranging the other two. Notice that the same “2 ways” happens under <em>each</em> first choice.</p>'+
+        '<div class="cb-order-buckets">'+a.map(function(first){
+          var endings=permute(a.filter(function(x){return x!==first;}));
+          return '<div class="cb-order-bucket"><b>First book: '+first+'</b><small>Two endings for this first book:</small><div class="cb-order-list">'+
+            endings.map(function(end){return orderChip([first].concat(end));}).join('')+'</div><small>2 complete orders in this row</small></div>';
+        }).join('')+'</div>'+
+        '<p>Count the rows: <strong>2 + 2 + 2 = 6.</strong> Because the 2 endings repeat for <em>all 3</em> first choices, that is <strong>3 groups of 2 = 3 × 2</strong>. The last position is forced, so its factor is × 1.</p>';
+      result='3 × 2 × 1 = 6 complete orders. We call this 3!';
+    }else if(level===2){
+      var a4=["A","B","C","D"];
+      body='<p>Fix the first book. There are <strong>3 books left</strong>. You just discovered that <strong>3 different books have 6 orders</strong>. Therefore, whichever first book you choose, there are 6 ways to finish.</p>'+
+        '<div class="cb-order-buckets">'+a4.map(function(first){
+          var endings=permute(a4.filter(function(x){return x!==first;}));
+          return '<div class="cb-order-bucket"><b>First: '+first+' → 6 endings</b>'+
+            '<div class="cb-order-list">'+endings.map(function(end){return orderChip([first].concat(end));}).join('')+'</div></div>';
+        }).join('')+'</div>'+
+        '<p>We have <strong>4 rows</strong> with <strong>6 complete arrangements in EACH row</strong>, so 6 + 6 + 6 + 6 = 4 × 6 = 24. Since 6 = 3 × 2 × 1, we get 4 × 3 × 2 × 1.</p>';
+      result='4 × 3 × 2 × 1 = 24 complete orders. We call this 4!';
+    }else if(level===3){
+      var objects=spec.objects;
+      var selected=Math.max(0,Math.min(objects.length-1,st.factorialBranch));
+      var first=objects[selected];
+      var remainder=objects.filter(function(o){return o.id!==first.id;});
+      var endings=permute(remainder);
+      var count=factorial(n-1);
+      body='<p>The outside objects are <strong>'+objects.map(function(o){return escapeHtml(o.name);}).join(', ')+'</strong>. Pick any object for the first position. Once it is fixed, there are <strong>'+(n-1)+' objects left</strong>, and you already know how to count their arrangements.</p>'+
+        '<div class="cb-first-branch" role="group" aria-label="Choose a first object to inspect">'+objects.map(function(o,i){
+          return '<button type="button" class="cb-branch-button" data-cb-action="factorial-branch" data-index="'+i+'" aria-pressed="'+(i===selected?'true':'false')+'">'+
+            escapeHtml(o.name)+' <small>'+fmt(count)+' endings</small></button>';
+        }).join('')+'</div>'+
+        '<div class="cb-order-bucket"><b>First object: '+escapeHtml(first.name)+'</b>'+
+        '<p>Keep this object first. These are <strong>all '+fmt(count)+'</strong> possible endings (each full sequence uses every outside object exactly once):</p>'+
+        '<div class="cb-order-list cb-order-list-scroll" role="list">'+endings.map(function(end){return orderChip([first].concat(end));}).join('')+'</div>'+
+        '<small>Change the first object above. Every button reveals a different set of '+fmt(count)+' whole orders, with NO overlap because the first object is different.</small></div>'+
+        '<p><strong>'+n+' choices for the first object</strong>, with <strong>'+fmt(count)+' endings for each</strong>, gives '+n+' groups of '+fmt(count)+'.</p>';
+      result=n+' × '+(n-1)+'! = '+n+' × '+fmt(count)+' = '+fmt(spec.outerWays)+' = '+n+'! outside orders';
+    }else{
+      body='<p>For <strong>n different objects</strong> arranged in a line, the first position has <strong>n choices</strong>. After you choose one, only <strong>n − 1</strong> remain. Every one of the n first choices has the same number of ways to finish: <strong>(n − 1)!</strong>.</p>'+
+        '<div class="cb-general-steps">'+
+        '<div><b>1 object</b><span>Only 1 order</span><strong>1! = 1</strong></div>'+
+        '<div><b>2 objects</b><span>2 first choices × 1 ending each</span><strong>2! = 2 × 1</strong></div>'+
+        '<div><b>3 objects</b><span>3 first choices × 2 endings each</span><strong>3! = 3 × 2 × 1</strong></div>'+
+        '<div><b>4 objects</b><span>4 first choices × 3! endings each</span><strong>4! = 4 × 3 × 2 × 1</strong></div>'+
+        '<div><b>n objects</b><span>n first choices × (n − 1)! endings each</span><strong>n! = n × (n − 1) × ··· × 1</strong></div></div>'+
+        '<div class="cb-nudge"><strong>Why none are missed or repeated:</strong> Every complete order has exactly ONE first object, so it belongs to exactly ONE row. Within that row, each distinct order of the remaining books appears exactly once.</div>'+
+        '<p>This formula applies when <strong>all n objects are different</strong>, every object is used exactly once, and their positions form a line.</p>';
+      result='n! = n × (n − 1) × (n − 2) × ··· × 2 × 1';
+    }
+    return '<section class="cb-factorial-lab" aria-label="Discover why n factorial counts arrangements">'+
+      '<div class="cb-factorial-top"><span class="cb-tag">DISCOVER n! · '+(level+1)+' / 5</span>'+
+      '<span class="cb-factorial-markers" aria-hidden="true">'+Array.from({length:5},function(_,i){return '<span class="'+(i<=level?'active':'')+'"></span>';}).join('')+'</span></div>'+
+      '<h4>'+titles[level]+'</h4>'+body+'<div class="cb-count">'+result+'</div>'+
+      '<div class="cb-factorial-actions">'+
+      '<button type="button" class="cb-button" data-cb-action="factorial-prev" '+(level===0?'disabled':'')+'>← Earlier example</button>'+
+      '<button type="button" class="cb-button primary" data-cb-action="factorial-next" '+(level===4?'disabled':'')+'>'+
+      (level===4?'Rule discovered ✓':['Add a third book →','Add a fourth book →','Apply it to our shelf →','Explain the general n! rule →'][level])+'</button>'+
+      '<button type="button" class="cb-button" data-cb-action="factorial-restart">↺ Start with 2 books</button></div>'+
+      '<p class="cb-shortcut">Question to ask: <em>“If I fix the first object, how many different ways can I finish?”</em></p></section>';
+  }
+
   function sceneOutside(st) {
     var spec=st.spec,ids=st.placed;
     var available=spec.objects.filter(function(o){return ids.indexOf(o.id)===-1;});
@@ -176,10 +260,11 @@
       '<div class="cb-count">'+chain(n)+' = '+n+'! = '+fmt(spec.outerWays)+' outside orders</div>'+
       '<p class="cb-copy">You saw '+n+' possibilities for spot 1, then '+(n-1)+' for spot 2 <em>for each first choice</em>, then fewer choices at every step. That branching is the reason for multiplication.</p>'+maybeTree(spec)+twoSpotPairs(spec) :
       '<p class="cb-copy">'+sentence+'</p>'+
-      (k>0?'<div class="cb-nudge"><strong>Why multiply?</strong> Each different choice for the first position can combine with EACH available choice for the next position. Example: '+n+' possible first choices, and '+(n-1)+' second choices for each, giving '+(n*(n-1))+' first-two-position arrangements.</div>':'');
+      (k>0?'<div class="cb-nudge"><strong>Why multiply?</strong> For EACH possible first object, the remaining '+(n-1)+' choices are available again in the second spot. That is '+n+' groups of '+(n-1)+' possible beginnings, or '+n+' × '+(n-1)+'. Try the full example above to see why the branching continues.</div>':'');
     return '<h3 class="cb-title">2. Fill the shelf using ONLY the movable objects</h3>'+
       '<p class="cb-question">How many different outside orders are possible for these '+n+' objects?</p>'+
       '<p class="cb-copy">'+directions+'</p>'+
+      factorialDiscovery(st)+
       '<div class="cb-figure"><span class="cb-fig-title">Shelf slots — select objects one by one</span><div class="cb-positions">'+slots+'</div>'+
       (k<n?'<span class="cb-tag">'+nextCount+' choices remain for spot '+(k+1)+'</span>':'<span class="cb-tag">✓ One legal outside order completed</span>')+'</div>'+
       factorCards(n,k)+
@@ -354,6 +439,15 @@
         focus="next";
       }else if(action==="clear-placements"){
         st.placed=[];focus="fill";
+      }else if(action==="factorial-next"){
+        st.factorialLevel=Math.min(4,st.factorialLevel+1);focus="factorial-next";
+      }else if(action==="factorial-prev"){
+        st.factorialLevel=Math.max(0,st.factorialLevel-1);focus="factorial-next";
+      }else if(action==="factorial-restart"){
+        st.factorialLevel=0;st.factorialBranch=0;focus="factorial-next";
+      }else if(action==="factorial-branch"){
+        var branchIndex=Number(node.dataset.index);
+        if(Number.isInteger(branchIndex) && branchIndex>=0 && branchIndex<spec.n)st.factorialBranch=branchIndex;
       }else if(action==="swap"){
         var i=Number(node.dataset.index);
         if(Number.isInteger(i) && i>=0 && i<spec.groups.length){
